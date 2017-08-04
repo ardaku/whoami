@@ -1,0 +1,17 @@
+[package]
+name = "whoami"
+version = "0.1.0"
+authors = ["Jeron Aldaron Lau <jeron.lau@plopgrizzly.tech>"]
+license = "MIT"
+keywords = ["user", "username", "whoami", "platform", "detect"]
+categories = ["command-line-utilities", "os"]
+homepage = "http://at.plopgrizzly.tech/whoami/"
+repository = "https://github.com/aldarons-tech/whoami/"
+
+[[bin]]
+name = "whoami"
+doc = false
+
+[dependencies]
+libc = "^0.2.28"
+term = { version = "0.4.6", optional = true }
