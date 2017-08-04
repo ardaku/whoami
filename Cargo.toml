@@ -1,5 +1,6 @@
 [package]
 name = "whoami"
+description = "A library and program that gets the current user and environment."
 version = "0.1.0"
 authors = ["Jeron Aldaron Lau <jeron.lau@plopgrizzly.tech>"]
 license = "MIT"
