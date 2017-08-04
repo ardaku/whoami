@@ -8,6 +8,7 @@ keywords = ["user", "username", "whoami", "platform", "detect"]
 categories = ["command-line-utilities", "os"]
 homepage = "http://at.plopgrizzly.tech/whoami/"
 repository = "https://github.com/aldarons-tech/whoami/"
+documentation = "https://docs.rs/whoami/"
 
 [[bin]]
 name = "whoami"
