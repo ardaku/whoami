@@ -1,19 +1,56 @@
+# Whoami                                                                       #
+# Copyright (c) 2017 Plop Grizzly, Jeron Lau <jeron.lau@plopgrizzly.com>       #
+# Licensed under the MIT LICENSE                                               #
+#                             _        _                                       #
+#                            /@\——————/@\                                      #
+# .———  .                   |   o    o   |     .————      .            .       #
+# |   | |  .———   .———   .——.     []     .——.  |      .——    ———: ———: | .   . #
+# |   | |  |   |  |   |  \   \   <##>   /   /  |      |   |    /    /  | |   | #
+# |———  |  |   |  |   |   |   ¯        ¯   |   |   -- |   |   /    /   |  \ /  #
+# |     |  |   |  |———    |                |   |    | |   |  /    /    |   |   #
+# |     |   ———   |       |                |    ————  |   | :——— :———  |   |   #
+#                 |        \              /                              __/   #
+#                           ¯————————————¯                                     #
+# Cargo.toml                                                                   #
+
+################################################################################
+
 [package]
 name = "whoami"
-description = "A library and program that gets the current user and environment."
 version = "0.1.1"
-authors = ["Jeron Aldaron Lau <jeron.lau@plopgrizzly.tech>"]
+authors = ["Jeron Aldaron Lau <jeron.lau@plopgrizzly.com>"]
+
+################################################################################
+
 license = "MIT"
+documentation = "https://docs.rs/whoami"
+homepage = "http://plopgrizzly.com/whoami"
+repository = "https://github.com/plopgrizzly/whoami"
+
+################################################################################
+
+readme = "README.md"
+description = """
+    Whoami is is a library developed by Plop Grizzly for retrieving the current
+    user and environment.
+"""
 keywords = ["user", "username", "whoami", "platform", "detect"]
-categories = ["command-line-utilities", "os"]
-homepage = "http://at.plopgrizzly.tech/whoami/"
-repository = "https://github.com/aldarons-tech/whoami/"
-documentation = "https://docs.rs/whoami/"
+categories = ["os"]
+
+################################################################################
+
+exclude = ["examples/*", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", ".gitignore"]
+
+################################################################################
+
+[dependencies]
+libc = "^0.2"
+term = { version = "0.4.6", optional = true }
+
+################################################################################
 
 [[bin]]
 name = "whoami"
 doc = false
 
-[dependencies]
-libc = "^0.2"
-term = { version = "0.4.6", optional = true }
+################################################################################

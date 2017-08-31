@@ -1,8 +1,8 @@
-// lib.rs
-// whoami
-// Copyright 2017 (c) Aldaron's Tech
-// Copyright 2017 (c) Jeron Lau
+// Whoami
+// Copyright (c) 2017 Plop Grizzly, Jeron Lau <jeron.lau@plopgrizzly.com>
 // Licensed under the MIT LICENSE
+//
+// src/lib.rs
 
 //! Crate for getting the user's username and realname.
 
