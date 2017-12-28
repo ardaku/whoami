@@ -1,34 +1,27 @@
 // Whoami
-// Copyright (c) 2017 Plop Grizzly, Jeron Lau <jeron.lau@plopgrizzly.com>
+// Copyright (c) 2017 Jeron Lau (Plop Grizzly) <jeron.lau@plopgrizzly.com>
 // Licensed under the MIT LICENSE
 //
 // src/main.rs
 
 #[cfg(feature = "term")]
 extern crate term;
-
-#[allow(dead_code)] // Because it's a library
-mod lib;
+extern crate whoami;
 
 #[cfg(feature = "term")]
 fn version() {
 	let mut t = term::stdout().unwrap();
-	t.attr(term::Attr::Bold).unwrap();
-	t.attr(term::Attr::Underline(true)).unwrap();
 	t.fg(term::color::BRIGHT_BLUE).unwrap();
 	write!(t, "whoami").unwrap();
 	t.reset().unwrap();
-	write!(t, ".Aldaron's Tech ").unwrap();
-	t.attr(term::Attr::Italic(true)).unwrap();
+	write!(t, ".Plop Grizzly ").unwrap();
+	t.fg(term::color::BRIGHT_GREEN).unwrap();
 	writeln!(t, env!("CARGO_PKG_VERSION")).unwrap();
 	t.reset().unwrap();
 	write!(t, concat!("\nCopyright: ")).unwrap();
-	t.attr(term::Attr::Italic(true)).unwrap();
-	writeln!(t, concat!("(C) 2017 Aldaron's Tech, ",
-		env!("CARGO_PKG_AUTHORS"))).unwrap();
-	t.attr(term::Attr::Italic(false)).unwrap();
+	writeln!(t, "(C) 2017 Jeron Aldaron Lau (Plop Grizzly) \
+		<jeron.lau@plopgrizzly.com>");
 	write!(t, "License: ").unwrap();
-	t.attr(term::Attr::Italic(true)).unwrap();
 	writeln!(t, "MIT").unwrap();
 	t.reset().unwrap();
 }
@@ -36,9 +29,9 @@ fn version() {
 #[cfg(feature = "term")]
 fn help() {
 	let mut t = term::stdout().unwrap();
-	t.attr(term::Attr::Bold).unwrap();
+//	t.attr(term::Attr::Bold).unwrap();
 	write!(t, "Usage: ").unwrap();
-	t.reset().unwrap();
+//	t.reset().unwrap();
 	writeln!(t, "whoami [OPTION]").unwrap();
 	writeln!(t, "Print the name of the user who is logged in.").unwrap();
 	writeln!(t).unwrap();
@@ -66,23 +59,23 @@ fn main() {
 
 	if let Some(a) = args.nth(1) {
 		if args.count() > 2 {
-			println!("too many arguments, try `whoami --help`");
+			println!("too many arguments, try `whoami help`");
 		} else {
 			match a.as_str() {
 				"help" => help(),
 				"version" => version(),
-				"realname" => println!("{}", lib::realname()),
-				"username" => println!("{}", lib::username()),
+				"realname" => println!("{}", whoami::realname()),
+				"username" => println!("{}", whoami::username()),
 				// TODO: Set Hostname on Linux & Aldaron's OS
-				"hostname" => println!("{}", lib::hostname()),
-				"computer" => println!("{}", lib::computer()),
+				"hostname" => println!("{}", whoami::hostname()),
+				"computer" => println!("{}", whoami::computer()),
 				"allnames" => println!(
 					"username: {}\nrealname: {}\nhostame: {\
 					}",
-					lib::username(), lib::realname(),
-					lib::hostname()),
-				"env" => println!("{}", lib::env()),
-				"os" => println!("{}", lib::os()),
+					whoami::username(), whoami::realname(),
+					whoami::hostname()),
+				"env" => println!("{}", whoami::env()),
+				"os" => println!("{}", whoami::os()),
 				a => {
 					print!("Unknown Argument: {}\n\n", a);
 					help();
@@ -90,6 +83,6 @@ fn main() {
 			}
 		}
 	} else {
-		println!("{}", lib::username()); // no args
+		println!("{}", whoami::username()); // no args
 	}
 }
