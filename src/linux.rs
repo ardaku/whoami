@@ -4,6 +4,7 @@
 //
 // src/linux.rs
 
+use super::libc;
 use super::DesktopEnv;
 
 use std::ptr::{ null_mut };

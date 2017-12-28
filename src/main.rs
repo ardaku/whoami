@@ -20,7 +20,7 @@ fn version() {
 	t.reset().unwrap();
 	write!(t, concat!("\nCopyright: ")).unwrap();
 	writeln!(t, "(C) 2017 Jeron Aldaron Lau (Plop Grizzly) \
-		<jeron.lau@plopgrizzly.com>");
+		<jeron.lau@plopgrizzly.com>").unwrap();
 	write!(t, "License: ").unwrap();
 	writeln!(t, "MIT").unwrap();
 	t.reset().unwrap();
@@ -55,7 +55,7 @@ fn help() {
 
 #[cfg(feature = "term")]
 fn main() {
-	let mut args = &mut ::std::env::args();
+	let args = &mut ::std::env::args();
 
 	if let Some(a) = args.nth(1) {
 		if args.count() > 2 {
