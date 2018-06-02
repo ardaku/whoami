@@ -1,8 +1,5 @@
-// Whoami
-// Copyright (c) 2017 Jeron Lau (Plop Grizzly) <jeron.lau@plopgrizzly.com>
-// Licensed under the MIT LICENSE
-//
-// src/main.rs
+// "whoami" crate - Licensed under the MIT LICENSE
+//  * Copyright (c) 2017-2018  Jeron A. Lau <jeron.lau@plopgrizzly.com>
 
 #[cfg(feature = "term")]
 extern crate term;
@@ -14,13 +11,11 @@ fn version() {
 	t.fg(term::color::BRIGHT_BLUE).unwrap();
 	write!(t, "whoami").unwrap();
 	t.reset().unwrap();
-	write!(t, ".Plop Grizzly ").unwrap();
+	write!(t, " (Plop Grizzly) ").unwrap();
 	t.fg(term::color::BRIGHT_GREEN).unwrap();
 	writeln!(t, env!("CARGO_PKG_VERSION")).unwrap();
 	t.reset().unwrap();
-	write!(t, concat!("\nCopyright: ")).unwrap();
-	writeln!(t, "(C) 2017 Jeron Aldaron Lau (Plop Grizzly) \
-		<jeron.lau@plopgrizzly.com>").unwrap();
+	writeln!(t, "Copyright (c) 2017-2018 Jeron A. Lau").unwrap();
 	write!(t, "License: ").unwrap();
 	writeln!(t, "MIT").unwrap();
 	t.reset().unwrap();
@@ -62,20 +57,27 @@ fn main() {
 			println!("too many arguments, try `whoami help`");
 		} else {
 			match a.as_str() {
-				"help" => help(),
-				"version" => version(),
-				"realname" => println!("{}", whoami::realname()),
-				"username" => println!("{}", whoami::username()),
+				"help" | "--help" => help(),
+				"version" | "--version" => version(),
+				"realname" | "--realname" =>
+					println!("{}", whoami::realname()),
+				"username" | "--username" =>
+					println!("{}", whoami::username()),
 				// TODO: Set Hostname on Linux & Aldaron's OS
-				"hostname" => println!("{}", whoami::hostname()),
-				"computer" => println!("{}", whoami::computer()),
-				"allnames" => println!(
-					"username: {}\nrealname: {}\nhostame: {\
-					}",
-					whoami::username(), whoami::realname(),
-					whoami::hostname()),
-				"env" => println!("{}", whoami::env()),
-				"os" => println!("{}", whoami::os()),
+				"hostname" | "--hostname" =>
+					println!("{}", whoami::hostname()),
+				"computer" | "--computer" =>
+					println!("{}", whoami::computer()),
+				"allnames" | "--allnames" => {
+					println!("username: {}\nrealname: {}\n\
+						hostame: {}",
+						whoami::username(),
+						whoami::realname(),
+						whoami::hostname());
+				}
+				"env" | "--env" =>
+					println!("{}", whoami::env()),
+				"os" | "--os" => println!("{}", whoami::os()),
 				a => {
 					print!("Unknown Argument: {}\n\n", a);
 					help();

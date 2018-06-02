@@ -1,8 +1,5 @@
-// Whoami
-// Copyright (c) 2017 Jeron Lau (Plop Grizzly) <jeron.lau@plopgrizzly.com>
-// Licensed under the MIT LICENSE
-//
-// src/linux.rs
+// "whoami" crate - Licensed under the MIT LICENSE
+//  * Copyright (c) 2017-2018  Jeron A. Lau <jeron.lau@plopgrizzly.com>
 
 use super::libc;
 use super::DesktopEnv;

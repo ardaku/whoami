@@ -1,9 +1,6 @@
-// Whoami
-// Copyright (c) 2017 Jeron Lau (Plop Grizzly) <jeron.lau@plopgrizzly.com>
-// Licensed under the MIT LICENSE
+// "whoami" crate - Licensed under the MIT LICENSE
+//  * Copyright (c) 2017-2018  Jeron A. Lau <jeron.lau@plopgrizzly.com>
 //
-// src/lib.rs
-
 //! Crate for getting the user's username and realname.
 
 extern crate libc;
