@@ -10,19 +10,12 @@ use super::DesktopEnv;
 use std::ptr::{ null_mut };
 use std::io::BufReader;
 use std::io::Read;
+use std::mem;
 use std::process::Command;
 use std::process::Stdio;
 
 fn getpwuid(buffer: &mut [i8;16384]) -> libc::passwd {
-	let mut pwent = libc::passwd {
-		pw_name: null_mut(),
-		pw_passwd: null_mut(),
-		pw_uid: 0,
-		pw_gid: 0,
-		pw_gecos: null_mut(),
-		pw_dir: null_mut(),
-		pw_shell: null_mut(),
-	};
+	let mut pwent: libc::passwd = unsafe { mem::zeroed() };
 	let mut pwentp = null_mut();
 
 	unsafe {
