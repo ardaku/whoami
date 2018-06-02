@@ -18,11 +18,11 @@ Install with `cargo install --features="term" --force`.
 * Get the computer's OS name and version
 
 ## Support
-**awi**'s current support:
+**whoami**'s current support:
 * Linux
 * Windows
 
-**awi**'s planned support:
+**whoami**'s planned support:
 * No OS
 * Nintendo Switch
 * Mac OS
