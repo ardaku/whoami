@@ -1,56 +1,40 @@
-# Whoami                                                                       #
-# Copyright (c) 2017 Jeron Lau (Plop Grizzly) <jeron.lau@plopgrizzly.com>      #
-# Licensed under the MIT LICENSE                                               #
-#                             _        _                                       #
-#                            /@\——————/@\                                      #
-# .———  .                   |   o    o   |     .————      .            .       #
-# |   | |  .———   .———   .——.     []     .——.  |      .——    ———: ———: | .   . #
-# |   | |  |   |  |   |  \   \   <##>   /   /  |      |   |    /    /  | |   | #
-# |———  |  |   |  |   |   |   ¯        ¯   |   |   -- |   |   /    /   |  \ /  #
-# |     |  |   |  |———    |                |   |    | |   |  /    /    |   |   #
-# |     |   ———   |       |                |    ————  |   | :——— :———  |   |   #
-#                 |        \              /                              __/   #
-#                           ¯————————————¯                                     #
-# Cargo.toml                                                                   #
-
-################################################################################
+# "whoami" crate - Licensed under the MIT LICENSE
+#  * Copyright (c) 2017-2018  Jeron A. Lau <jeron.lau@plopgrizzly.com>
+#                             _        _
+#                            /@\——————/@\
+# .———  .                   |   o    o   |     .————      .            .
+# |   | |  .———   .———   .——.     []     .——.  |      .——    ———: ———: | .   .
+# |   | |  |   |  |   |  \   \   <##>   /   /  |      |   |    /    /  | |   |
+# |———  |  |   |  |   |   |   ¯        ¯   |   |   -- |   |   /    /   |  \ /
+# |     |  |   |  |———    |                |   |    | |   |  /    /    |   |
+# |     |   ———   |       |                |    ————  |   | :——— :———  |   |
+#                 |        \              /                              __/
+#                           ¯————————————¯
 
 [package]
 name = "whoami"
-version = "0.2.0"
-authors = ["Jeron Aldaron Lau (Plop Grizzly) <jeron.lau@plopgrizzly.com>"]
-
-################################################################################
+version = "0.2.1"
+authors = [
+	"Jeron A. Lau <jeron.lau@plopgrizzly.com>",
+	"Mark Swaanenburg <cygnus9@users.noreply.github.com>"
+]
 
 license = "MIT"
 documentation = "https://docs.rs/whoami"
 homepage = "http://plopgrizzly.com/whoami"
 repository = "https://github.com/plopgrizzly/whoami"
 
-################################################################################
-
-readme = "README.md"
-description = """
-    Whoami is is a library developed by Plop Grizzly for retrieving the current
-    user and environment.
-"""
+readme = "readme.md"
+description = "Retrieve the current user and environment."
 keywords = ["user", "username", "whoami", "platform", "detect"]
 categories = ["os"]
 
-################################################################################
-
-exclude = ["examples/*", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", ".gitignore"]
-
-################################################################################
+exclude = ["examples/*", "code_of_conduct.md", "contributing.md", ".gitignore"]
 
 [dependencies]
-libc = "^0.2"
-term = { version = "0.4.6", optional = true }
-
-################################################################################
+libc = "0.2"
+term = { version = "0.5", optional = true }
 
 [[bin]]
 name = "whoami"
 doc = false
-
-################################################################################
