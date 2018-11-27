@@ -15,7 +15,7 @@ pub fn username() -> String {
 		GetUserNameW(&mut name[0], &mut size);
 	}
 	
-	String::from_utf16_lossy(&name[..size])
+	String::from_utf16_lossy(if size == 0 { &[] } else { &name[..size-1] })
 }
 
 pub fn realname() -> String {
