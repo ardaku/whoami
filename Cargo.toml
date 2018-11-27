@@ -13,7 +13,7 @@
 
 [package]
 name = "whoami"
-version = "0.2.2"
+version = "0.2.3"
 authors = [
 	"Jeron A. Lau <jeron.lau@plopgrizzly.com>",
 	"Mark Swaanenburg <cygnus9@users.noreply.github.com>"
@@ -21,7 +21,7 @@ authors = [
 
 license = "MIT"
 documentation = "https://docs.rs/whoami"
-homepage = "http://plopgrizzly.com/whoami"
+homepage = "https://github.com/plopgrizzly/whoami"
 repository = "https://github.com/plopgrizzly/whoami"
 
 readme = "readme.md"
