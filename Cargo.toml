@@ -13,18 +13,18 @@
 
 [package]
 name = "whoami"
-version = "0.2.3"
+version = "0.2.4"
 authors = [
 	"Jeron A. Lau <jeron.lau@plopgrizzly.com>",
 	"Mark Swaanenburg <cygnus9@users.noreply.github.com>"
 ]
 
-license = "MIT"
+license = "MIT / BSL-1.0"
 documentation = "https://docs.rs/whoami"
-homepage = "https://github.com/plopgrizzly/whoami"
+homepage = "https://free.plopgrizzly.com/whoami"
 repository = "https://github.com/plopgrizzly/whoami"
 
-readme = "readme.md"
+readme = "README.md"
 description = "Retrieve the current user and environment."
 keywords = ["user", "username", "whoami", "platform", "detect"]
 categories = ["os"]
