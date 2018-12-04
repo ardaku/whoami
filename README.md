@@ -25,4 +25,6 @@ Otherwise, install with `cargo install whoami --features="term" --force`.
 * [Contributing](https://plopgrizzly.com/contributing)
 * [Code of Conduct](https://free.plopgrizzly.com/whoami/code_of_conduct)
 
+---
+
 [![Plop Grizzly](https://plopgrizzly.com/images/logo-bar.png)](https://plopgrizzly.com)
