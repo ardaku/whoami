@@ -23,7 +23,7 @@ Otherwise, install with `cargo install whoami --features="term" --force`.
 * [Documentation](https://docs.rs/whoami)
 * [Change Log](https://free.plopgrizzly.com/whoami/changelog)
 * [Contributing](https://plopgrizzly.com/contributing)
-* [Code of Conduct](https://free.plopgrizzly.com/whoami/code_of_conduct)
+* [Code of Conduct](code_of_conduct.md)
 
 ---
 
