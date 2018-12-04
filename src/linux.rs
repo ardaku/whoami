@@ -11,7 +11,7 @@ use std::mem;
 use std::process::Command;
 use std::process::Stdio;
 
-fn getpwuid(buffer: &mut [i8;16384]) -> libc::passwd {
+fn getpwuid(buffer: &mut [libc::c_char;16384]) -> libc::passwd {
 	let mut pwent: libc::passwd = unsafe { mem::zeroed() };
 	let mut pwentp = null_mut();
 
@@ -23,7 +23,7 @@ fn getpwuid(buffer: &mut [i8;16384]) -> libc::passwd {
 	pwent
 }
 
-fn ptr_to_string(name: *mut i8) -> String {
+fn ptr_to_string(name: *mut libc::c_char) -> String {
 	let uname = name as *mut _ as *mut u8;
 
 	let s;
@@ -39,14 +39,14 @@ fn ptr_to_string(name: *mut i8) -> String {
 
 #[cfg(not(target_os = "windows"))]
 pub fn username() -> String {
-	let mut buffer = [0i8;16384]; // from the man page
+	let mut buffer = [0 as libc::c_char;16384]; // from the man page
 	let pwent = getpwuid(&mut buffer);
 
 	ptr_to_string(pwent.pw_name)
 }
 
 pub fn realname() -> String {
-	let mut buffer = [0i8;16384]; // from the man page
+	let mut buffer = [0 as libc::c_char;16384]; // from the man page
 	let pwent = getpwuid(&mut buffer);
 
 	ptr_to_string(pwent.pw_gecos)
