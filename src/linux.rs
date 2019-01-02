@@ -101,7 +101,7 @@ pub fn os() -> String {
 		}
 	}
 
-	return "uknown".to_string();
+	return "unknown".to_string();
 }
 
 #[inline(always)]
