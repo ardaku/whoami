@@ -1,24 +1,25 @@
-# "whoami" crate - Licensed under the MIT LICENSE
-#  * Copyright (c) 2017-2018  Jeron A. Lau <jeron.lau@plopgrizzly.com>
-#                             _        _
-#                            /@\——————/@\
-# .———  .                   |   o    o   |     .————      .            .
-# |   | |  .———   .———   .——.     []     .——.  |      .——    ———: ———: | .   .
-# |   | |  |   |  |   |  \   \   <##>   /   /  |      |   |    /    /  | |   |
-# |———  |  |   |  |   |   |   ¯        ¯   |   |   -- |   |   /    /   |  \ /
-# |     |  |   |  |———    |                |   |    | |   |  /    /    |   |
-# |     |   ———   |       |                |    ————  |   | :——— :———  |   |
-#                 |        \              /                              __/
-#                           ¯————————————¯
+# Copyright © Jeron Lau 2017 - 2019.
+# Dual-licensed under either the MIT License or the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+
+# XXXX  X                    /5\——————/5\       XXXX      X           X
+# X   X X   XXX   XXXX      |   0    0   |     X      XXX   XXXX XXXX X X   X
+# X   X X  X   X  X   X  /"\|     <>     |/"\  X      X   X    X    X X X   X
+# XXXX  X  X   X  X   X  \  \\_  ====  _//  /  X   XX X   X   X    X  X  X X
+# X     X  X   X  XXXX    \_              _/   X    X X   X  X    X   X   X
+# X     X   XXX   X       / \            / \    XXXX  X   X XXXX XXXX X   X
+#                 X       \                /                            XX
+#                          --____________--
 
 [package]
 name = "whoami"
-version = "0.2.4"
+version = "0.3.0"
 authors = [
-	"Jeron A. Lau <jeron.lau@plopgrizzly.com>",
-	"Mark Swaanenburg <cygnus9@users.noreply.github.com>"
+    "Jeron Lau <jeronaldaron@gmail.com>",
+    "Mark Swaanenburg <cygnus9@users.noreply.github.com>",
+    "Daniel Schäfer <schaefer.dev@gmail.com>",
 ]
-
+edition = "2018"
 license = "MIT / BSL-1.0"
 documentation = "https://docs.rs/whoami"
 homepage = "https://free.plopgrizzly.com/whoami"
@@ -29,7 +30,7 @@ description = "Retrieve the current user and environment."
 keywords = ["user", "username", "whoami", "platform", "detect"]
 categories = ["os"]
 
-exclude = ["examples/*", "code_of_conduct.md", "contributing.md", ".gitignore"]
+exclude = ["examples/*", "code_of_conduct.md", ".gitignore"]
 
 [dependencies]
 libc = "0.2"

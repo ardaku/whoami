@@ -1,5 +1,5 @@
 # Whoami
-A library and program that gets the current user.
+A library and program that retrieves the current user and environment.
 
 ## Installing
 If you clone the repo, install with `cargo install --path . --features="term" --force`.
@@ -15,7 +15,7 @@ Otherwise, install with `cargo install whoami --features="term" --force`.
 * Works on Linux / Windows / Mac OS (for some functions)
 
 ## TODO
-* Work on Mac OS / Android / Nintendo Switch / Wasm (Web Assembly) / other OS's.
+* Work on Mac OS / iOS / Android / Nintendo Switch / Wasm (Web Assembly) / other OS's.
 
 ## Links
 * [Website](https://free.plopgrizzly.com/whoami)

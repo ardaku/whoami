@@ -1,3 +1,9 @@
+## 0.3.0
+* Fix typo for uknown -> unknown.
+* Added more fallbacks.
+* Rename realname -> user
+* Rename computer -> host
+
 ## 0.2.4
 * Works now on platforms that use u8 instead of i8 for chars (like ARM).
 
