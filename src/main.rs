@@ -58,9 +58,7 @@ fn help() {
     t.fg(term::color::BRIGHT_CYAN).unwrap();
     write!(t, "        user            ").unwrap();
     t.reset().unwrap();
-    writeln!(t, "Print the user's first, middle, and last name, if they
-                        have been provided.")
-        .unwrap();
+    writeln!(t, "Print the user's full name.").unwrap();
     t.fg(term::color::BRIGHT_CYAN).unwrap();
     write!(t, "        username        ").unwrap();
     t.reset().unwrap();
@@ -71,7 +69,7 @@ fn help() {
     t.fg(term::color::BRIGHT_CYAN).unwrap();
     write!(t, "        host            ").unwrap();
     t.reset().unwrap();
-    writeln!(t, "Print the host device's name.").unwrap();
+    writeln!(t, "Print the host device's (pretty) name.").unwrap();
 
     t.fg(term::color::BRIGHT_CYAN).unwrap();
     write!(t, "        hostname        ").unwrap();

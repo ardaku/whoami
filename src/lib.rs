@@ -4,8 +4,12 @@
 
 //! Crate for getting the user's username and realname.
 
+#![warn(missing_docs)]
+
 extern crate libc;
 
+/// Which Desktop Environment
+#[allow(missing_docs)]
 pub enum DesktopEnv {
     Gnome,
     Windows,
@@ -66,27 +70,31 @@ pub fn username() -> String {
     native::username()
 }
 
-/// Get the user's full name.  Format: `FIRST_NAME [MIDDLE_NAME] [LAST_NAME]`
+/// Get the user's full name.
 pub fn user() -> String {
     native::realname()
 }
 
-/// Get the computer's pretty name.
+/// Get the host device's (pretty) name.
 pub fn host() -> String {
     native::computer()
 }
 
-/// Get the computer's hostname.
+/// Get the host device's hostname.
 pub fn hostname() -> String {
     native::hostname()
 }
 
-/// Get the OS.  Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
+/// Get the the operating system name and version.
+///
+/// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 pub fn os() -> String {
     native::os()
 }
 
-/// Get the Desktop Environment.  Example: "gnome" or "windows"
+/// Get the desktop environment.
+///
+/// Example: "gnome" or "windows"
 #[inline(always)]
 pub fn env() -> DesktopEnv {
     native::env()
