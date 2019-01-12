@@ -1,3 +1,8 @@
+## 0.4.0
+* Works on Mac now
+* `env` on Ubuntu now returns DesktopEnv::Ubuntu instead of DesktopEnv::Other("UBUNTU")
+* Split off the binary into `whome` (who me?) crate
+
 ## 0.3.0
 * Fix typo for uknown -> unknown.
 * Added more fallbacks.

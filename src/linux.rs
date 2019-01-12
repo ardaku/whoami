@@ -5,8 +5,6 @@
 use super::libc;
 use super::DesktopEnv;
 
-// use std::io::BufReader;
-// use std::io::Read;
 use std::mem;
 use std::process::Command;
 use std::process::Stdio;
@@ -163,16 +161,12 @@ pub fn os() -> String {
 pub fn os() -> String {
     let mut distro = String::new();
 
-    let mut program = Command::new("cat")
+    let program = Command::new("cat")
         .arg("/etc/os-release")
         .output()
         .expect(&format!("Couldn't Find `cat`"));
 
     distro.push_str(String::from_utf8(program.stdout).unwrap().as_str());
-
-//    let mut pretty = BufReader::new(program.stdout.as_mut().unwrap());
-
-//    pretty.read_to_string(&mut distro).unwrap();
 
     let mut fallback = None;
 

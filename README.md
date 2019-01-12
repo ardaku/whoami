@@ -1,5 +1,5 @@
 # Whoami
-A library and program that retrieves the current user and environment.
+Retrieve the current user and environment.
 
 ## Getting Started
 Using the whoami crate is super easy!  All of the exported items are simple functions with no parameters that return `String`s (with the exception of `env`, which returns an enum).  The following example shows how to use all of the functions:
@@ -30,10 +30,6 @@ fn main() {
 }
 ```
 
-## Installing
-If you clone the repo, install with `cargo install --path . --features="term" --force`.
-Otherwise, install with `cargo install whoami --features="term" --force`.
-
 ## Features
 * Get the user's full name
 * Get the user's username
@@ -42,6 +38,9 @@ Otherwise, install with `cargo install whoami --features="term" --force`.
 * Get the computer's desktop environment
 * Get the computer's OS name and version
 * Works on Linux / Windows / Mac OS (for some functions)
+
+## Binary
+[whome](https://crates.io/crates/whome): replacement of the `whoami` command that depends on this crate.
 
 ## TODO
 * Work on Mac OS / iOS / Android / Nintendo Switch / Wasm (Web Assembly) / other OS's.

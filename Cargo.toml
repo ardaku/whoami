@@ -13,9 +13,9 @@
 
 [package]
 name = "whoami"
-version = "0.3.0"
+version = "0.4.0"
 authors = [
-    "Jeron Lau <jeronaldaron@gmail.com>",
+    "Jeron Aldaron Lau <jeronaldaron@gmail.com>",
     "Mark Swaanenburg <cygnus9@users.noreply.github.com>",
     "Daniel Schäfer <schaefer.dev@gmail.com>",
 ]
@@ -34,8 +34,3 @@ exclude = ["examples/*", "code_of_conduct.md", ".gitignore"]
 
 [dependencies]
 libc = "0.2"
-term = { version = "0.5", optional = true }
-
-[[bin]]
-name = "whoami"
-doc = false
