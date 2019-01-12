@@ -1,3 +1,6 @@
+## 0.4.1
+* Fixed README errors.
+
 ## 0.4.0
 * Works on Mac now
 * `env` on Ubuntu now returns DesktopEnv::Ubuntu instead of DesktopEnv::Other("UBUNTU")
