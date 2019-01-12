@@ -5,8 +5,8 @@
 use super::libc;
 use super::DesktopEnv;
 
-// use std::io::BufReader;
-// use std::io::Read;
+use std::io::BufReader;
+use std::io::Read;
 use std::mem;
 use std::process::Command;
 use std::process::Stdio;
@@ -91,25 +91,14 @@ pub fn realname() -> String {
 pub fn computer() -> String {
     let mut computer = String::new();
 
-    let program = if cfg!(not(target_os = "macos")) {
-	Command::new("hostnamectl")
-        	.arg("--pretty")
-        	.stdout(Stdio::piped())
-        	.output()
-        	.expect(&format!("Couldn't Find `hostnamectl`"))
-    } else {
-	Command::new("scutil")
-		.arg("--get")
-		.arg("LocalHostName")
-		.output()
-		.expect("Couldn't find `scutil`")
-    };
+    let mut program = Command::new("hostnamectl")
+        .arg("--pretty")
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect(&format!("Couldn't Find `hostnamectl`"));
+    let mut pretty = BufReader::new(program.stdout.as_mut().unwrap());
 
-    computer.push_str(String::from_utf8(program.stdout).unwrap().as_str());
-
-//    let mut pretty = BufReader::new(program.stdout.as_mut().unwrap());
-
-//    pretty.read_to_string(&mut computer).unwrap();
+    pretty.read_to_string(&mut computer).unwrap();
 
     computer.pop();
 
@@ -128,51 +117,17 @@ pub fn hostname() -> String {
     ptr_to_string(&mut string[0])
 }
 
-#[cfg(target_os = "macos")]
-pub fn os() -> String {
-    let mut distro = String::new();
-
-    let product_name = Command::new("sw_vers")
-	.arg("-productName")
-	.output()
-	.expect("Couldn't find `sw_vers`");
-
-    let product_version = Command::new("sw_vers")
-	.arg("-productVersion")
-	.output()
-	.expect("Couldn't find `sw_vers`");
-
-    let build_version = Command::new("sw_vers")
-	.arg("-buildVersion")
-	.output()
-	.expect("Couldn't find `sw_vers`");
-
-    distro.push_str(String::from_utf8(product_name.stdout).unwrap().as_str());
-    distro.pop();
-    distro.push(' ');
-    distro.push_str(String::from_utf8(product_version.stdout).unwrap().as_str());
-    distro.pop();
-    distro.push(' ');
-    distro.push_str(String::from_utf8(build_version.stdout).unwrap().as_str());
-    distro.pop();
-
-    distro
-}
-
-#[cfg(not(target_os = "macos"))]
 pub fn os() -> String {
     let mut distro = String::new();
 
     let mut program = Command::new("cat")
         .arg("/etc/os-release")
-        .output()
+        .stdout(Stdio::piped())
+        .spawn()
         .expect(&format!("Couldn't Find `cat`"));
+    let mut pretty = BufReader::new(program.stdout.as_mut().unwrap());
 
-    distro.push_str(String::from_utf8(program.stdout).unwrap().as_str());
-
-//    let mut pretty = BufReader::new(program.stdout.as_mut().unwrap());
-
-//    pretty.read_to_string(&mut distro).unwrap();
+    pretty.read_to_string(&mut distro).unwrap();
 
     let mut fallback = None;
 
@@ -193,13 +148,6 @@ pub fn os() -> String {
     }
 }
 
-#[cfg(target_os = "macos")]
-#[inline(always)]
-pub fn env() -> DesktopEnv {
-    DesktopEnv::Mac
-}
-
-#[cfg(not(target_os = "macos"))]
 #[inline(always)]
 pub fn env() -> DesktopEnv {
     match ::std::env::var_os("DESKTOP_SESSION") {

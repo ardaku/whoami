@@ -80,7 +80,6 @@ impl ::std::fmt::Display for DesktopEnv {
                 Android => "android".to_string(),
                 Wasm => "wasm".to_string(),
                 Console => "console".to_string(),
-                Ubuntu => "ubuntu".to_string(),
                 Unknown(a) => format!("Unknown: \"{}\"", a),
             }
         )
