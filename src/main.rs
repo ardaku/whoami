@@ -112,15 +112,15 @@ fn main() {
                 "host" | "--host" => println!("{}", whoami::host()),
                 "print" | "--print" => {
                     print!(
-                        "user = {}\nusername = {}\n\
-                         host = {}\nhostname = {}\n\
-                         env = {}\nos = {}\n",
+                        "user:         {}\nusername:     {}\n\
+                         host:         {}\nhostname:     {}\n\
+                         os:           {}\nenv:          {}\n",
                         whoami::user(),
                         whoami::username(),
                         whoami::host(),
                         whoami::hostname(),
-                        whoami::env(),
                         whoami::os(),
+                        whoami::env(),
                     );
                 }
                 "env" | "--env" => println!("{}", whoami::env()),
