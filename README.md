@@ -1,4 +1,6 @@
-# Whoami
+![whoami](https://free.plopgrizzly.com/whoami/icon.svg)
+
+# WhoAmI
 Retrieve the current user and environment.
 
 ## Getting Started
