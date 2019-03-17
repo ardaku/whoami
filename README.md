@@ -45,16 +45,11 @@ fn main() {
 [whome](https://crates.io/crates/whome): replacement of the `whoami` command that depends on this crate.
 
 ## TODO
-* Support iOS / Android / Nintendo Switch / Wasm (Web Assembly) / other OS's.
+* Support iOS / Android / Nintendo Switch (and other consoles) / Wasm (Web Assembly) / other OS's.
 
 ## Links
 * [Website](https://free.plopgrizzly.com/whoami)
 * [Cargo](https://crates.io/crates/whoami)
 * [Documentation](https://docs.rs/whoami)
 * [Change Log](https://free.plopgrizzly.com/whoami/changelog)
-* [Contributing](https://plopgrizzly.com/contributing)
 * [Code of Conduct](https://free.plopgrizzly.com/whoami/codeofconduct)
-
----
-
-[![Plop Grizzly](https://plopgrizzly.com/images/logo-bar.png)](https://plopgrizzly.com)

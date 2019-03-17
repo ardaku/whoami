@@ -1,0 +1,41 @@
+language: rust
+sudo: false
+
+cache: cargo
+cache:
+    directories:
+      - $HOME/.cargo
+      - $HOME/target
+
+before-cache:
+  - rm -rf $HOME/.cargo/registry
+
+rust:
+  - beta
+  - nightly
+
+matrix:
+    allow_failures:
+      - rust: nightly
+    fast_finish: true
+    include:
+      - os: linux
+        rust: stable
+        compiler: gcc
+
+      - os: windows
+        rust: stable
+
+      - os: osx
+        rust: stable
+
+after_success:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh success $WEBHOOK_URL
+
+after_failure:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh failure $WEBHOOK_URL
+
