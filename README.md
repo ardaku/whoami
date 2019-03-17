@@ -1,6 +1,6 @@
 ![whoami](https://jeronaldaron.plopgrizzly.com/whoami/icon.svg)
 
-[![Build Status](https://travis-ci.com/plopgrizzly/whoami.svg?branch=master)](https://travis-ci.com/plopgrizzly/whoami)
+[![Build Status](https://travis-ci.com/OxyDeadbeef/whoami.svg?branch=master)](https://travis-ci.com/OxyDeadbeef/whoami)
 
 # WhoAmI
 Retrieve the current user and environment.
