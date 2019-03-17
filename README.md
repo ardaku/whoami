@@ -52,4 +52,5 @@ fn main() {
 * [Cargo](https://crates.io/crates/whoami)
 * [Documentation](https://docs.rs/whoami)
 * [Change Log](https://free.plopgrizzly.com/whoami/changelog)
+* [Contributors](https://free.plopgrizzly.com/whoami/contributors)
 * [Code of Conduct](https://free.plopgrizzly.com/whoami/codeofconduct)

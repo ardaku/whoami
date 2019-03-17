@@ -1,5 +1,3 @@
-use whoami;
-
 fn main() {
     print!(
         "--------------------------------------------------------------------------------\n\
@@ -9,6 +7,7 @@ fn main() {
          host's fancy name (host):             {}\n\
          hostname (hostname):                  {}\n\
          --------------------------------------------------------------------------------\n\
+         platform (platform):                  {}\n\
          operating system (os):                {}\n\
          desktop environment (env):            {}\n\
          --------------------------------------------------------------------------------\n\
@@ -17,6 +16,7 @@ fn main() {
         whoami::username(),
         whoami::host(),
         whoami::hostname(),
+        whoami::platform(),
         whoami::os(),
         whoami::env(),
     );

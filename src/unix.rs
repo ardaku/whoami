@@ -1,9 +1,5 @@
-// Copyright © Jeron Lau 2017 - 2019.
-// Dual-licensed under either the MIT License or the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
-
-use super::libc;
-use super::DesktopEnv;
+use crate::{DesktopEnv, Platform};
+use libc;
 
 use std::mem;
 use std::process::Command;
@@ -41,7 +37,6 @@ fn ptr_to_string(name: *mut libc::c_char) -> String {
     string
 }
 
-#[cfg(not(target_os = "windows"))]
 pub fn username() -> String {
     let mut buffer = [0 as libc::c_char; 16384]; // from the man page
     let pwent = getpwuid(&mut buffer);
@@ -90,24 +85,24 @@ pub fn computer() -> String {
     let mut computer = String::new();
 
     let program = if cfg!(not(target_os = "macos")) {
-	Command::new("hostnamectl")
-        	.arg("--pretty")
-        	.stdout(Stdio::piped())
-        	.output()
-        	.expect(&format!("Couldn't Find `hostnamectl`"))
+        Command::new("hostnamectl")
+            .arg("--pretty")
+            .stdout(Stdio::piped())
+            .output()
+            .expect(&format!("Couldn't Find `hostnamectl`"))
     } else {
-	Command::new("scutil")
-		.arg("--get")
-		.arg("LocalHostName")
-		.output()
-		.expect("Couldn't find `scutil`")
+        Command::new("scutil")
+            .arg("--get")
+            .arg("LocalHostName")
+            .output()
+            .expect("Couldn't find `scutil`")
     };
 
     computer.push_str(String::from_utf8(program.stdout).unwrap().as_str());
 
-//    let mut pretty = BufReader::new(program.stdout.as_mut().unwrap());
+    //    let mut pretty = BufReader::new(program.stdout.as_mut().unwrap());
 
-//    pretty.read_to_string(&mut computer).unwrap();
+    //    pretty.read_to_string(&mut computer).unwrap();
 
     computer.pop();
 
@@ -131,19 +126,19 @@ pub fn os() -> String {
     let mut distro = String::new();
 
     let product_name = Command::new("sw_vers")
-	.arg("-productName")
-	.output()
-	.expect("Couldn't find `sw_vers`");
+        .arg("-productName")
+        .output()
+        .expect("Couldn't find `sw_vers`");
 
     let product_version = Command::new("sw_vers")
-	.arg("-productVersion")
-	.output()
-	.expect("Couldn't find `sw_vers`");
+        .arg("-productVersion")
+        .output()
+        .expect("Couldn't find `sw_vers`");
 
     let build_version = Command::new("sw_vers")
-	.arg("-buildVersion")
-	.output()
-	.expect("Couldn't find `sw_vers`");
+        .arg("-buildVersion")
+        .output()
+        .expect("Couldn't find `sw_vers`");
 
     distro.push_str(String::from_utf8(product_name.stdout).unwrap().as_str());
     distro.pop();
@@ -189,7 +184,7 @@ pub fn os() -> String {
 
 #[cfg(target_os = "macos")]
 #[inline(always)]
-pub fn env() -> DesktopEnv {
+pub const fn env() -> DesktopEnv {
     DesktopEnv::Mac
 }
 
@@ -217,4 +212,16 @@ pub fn env() -> DesktopEnv {
         // TODO: Other Linux Desktop Environments
         None => DesktopEnv::Unknown("Unknown".to_string()),
     }
+}
+
+#[cfg(target_os = "macos")]
+#[inline(always)]
+pub const fn platform() -> Platform {
+    Platform::MacOS
+}
+
+#[cfg(not(target_os = "macos"))]
+#[inline(always)]
+pub const fn platform() -> Platform {
+    Platform::Linux
 }

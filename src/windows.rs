@@ -1,8 +1,4 @@
-// Copyright © Jeron Lau 2017 - 2019.
-// Dual-licensed under either the MIT License or the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
-
-use super::DesktopEnv;
+use crate::{DesktopEnv, Platform};
 
 pub fn username() -> String {
     extern "system" {
@@ -19,10 +15,12 @@ pub fn username() -> String {
     String::from_utf16_lossy(if size == 0 { &[] } else { &name[..size - 1] })
 }
 
+#[inline(always)]
 pub fn realname() -> String {
     username()
 }
 
+#[inline(always)]
 pub fn computer() -> String {
     hostname()
 }
@@ -73,6 +71,11 @@ pub fn os() -> String {
 }
 
 #[inline(always)]
-pub fn env() -> DesktopEnv {
+pub const fn env() -> DesktopEnv {
     DesktopEnv::Windows
+}
+
+#[inline(always)]
+pub const fn platform() -> Platform {
+    Platform::Windows
 }
