@@ -1,3 +1,8 @@
+## 0.5.0
+* Added `Platform` enum with corresponding `platform()` function.
+* Added `Dive`, `Fuchsia`, and `Redox` to `DesktopEnv` enum.
+* Started using `const fn` for some functions.
+
 ## 0.4.1
 * Fixed README errors.
 

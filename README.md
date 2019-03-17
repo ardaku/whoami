@@ -1,4 +1,4 @@
-![whoami](https://free.plopgrizzly.com/whoami/icon.svg)
+![whoami](https://jeronaldaron.plopgrizzly.com/whoami/icon.svg)
 
 [![Build Status](https://travis-ci.com/plopgrizzly/whoami.svg?branch=master)](https://travis-ci.com/plopgrizzly/whoami)
 
@@ -6,28 +6,28 @@
 Retrieve the current user and environment.
 
 ## Getting Started
-Using the whoami crate is super easy!  All of the exported items are simple functions with no parameters that return `String`s (with the exception of `env`, which returns an enum).  The following example shows how to use all of the functions:
+Using the whoami crate is super easy!  All of the exported items are simple functions with no parameters that return either a `String` or enum.  The following example shows how to use all of the functions:
 
 ```rust
-use whoami;
-
 fn main() {
     print!(
-        "--------------------------------------\n\
+        "--------------------------------------------------------------------------------\n\
          user's full name (user):              {}\n\
          username (username):                  {}\n\
-         --------------------------------------\n\
+         --------------------------------------------------------------------------------\n\
          host's fancy name (host):             {}\n\
          hostname (hostname):                  {}\n\
-         --------------------------------------\n\
+         --------------------------------------------------------------------------------\n\
+         platform (platform):                  {}\n\
          operating system (os):                {}\n\
          desktop environment (env):            {}\n\
-         --------------------------------------\n\
+         --------------------------------------------------------------------------------\n\
          ",
         whoami::user(),
         whoami::username(),
         whoami::host(),
         whoami::hostname(),
+        whoami::platform(),
         whoami::os(),
         whoami::env(),
     );
@@ -41,6 +41,7 @@ fn main() {
 * Get the computer's fancy name
 * Get the computer's desktop environment
 * Get the computer's OS name and version
+* Get the computer's platform name
 * Works on Linux, Windows and Mac OS
 
 ## Binary
@@ -50,9 +51,9 @@ fn main() {
 * Support iOS / Android / Nintendo Switch (and other consoles) / Wasm (Web Assembly) / other OS's.
 
 ## Links
-* [Website](https://free.plopgrizzly.com/whoami)
+* [Website](https://jeronaldaron.plopgrizzly.com/whoami)
 * [Cargo](https://crates.io/crates/whoami)
 * [Documentation](https://docs.rs/whoami)
-* [Change Log](https://free.plopgrizzly.com/whoami/changelog)
-* [Contributors](https://free.plopgrizzly.com/whoami/contributors)
-* [Code of Conduct](https://free.plopgrizzly.com/whoami/codeofconduct)
+* [Change Log](https://jeronaldaron.plopgrizzly.com/whoami/changelog)
+* [Contributors](https://jeronaldaron.plopgrizzly.com/whoami/contributors)
+* [Code of Conduct](https://jeronaldaron.plopgrizzly.com/whoami/codeofconduct)
