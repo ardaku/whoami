@@ -31,9 +31,8 @@
 
 #![warn(missing_docs)]
 #![doc(
-    html_logo_url = "https://free.plopgrizzly.com/whoami/icon.svg",
-    html_favicon_url = "https://free.plopgrizzly.com/whoami/icon.svg",
-    html_root_url = "http://free.plopgrizzly.com/whoami/"
+    html_logo_url = "https://jeronaldaron.github.io/whoami/icon.svg",
+    html_favicon_url = "https://jeronaldaron.github.io/whoami/icon.svg",
 )]
 
 /// Which Desktop Environment

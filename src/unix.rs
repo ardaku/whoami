@@ -89,7 +89,7 @@ pub fn computer() -> String {
             .arg("--pretty")
             .stdout(Stdio::piped())
             .output()
-            .expect(&format!("Couldn't Find `hostnamectl`"))
+            .expect("Couldn't Find `hostnamectl`")
     } else {
         Command::new("scutil")
             .arg("--get")
@@ -159,7 +159,7 @@ pub fn os() -> String {
     let program = Command::new("cat")
         .arg("/etc/os-release")
         .output()
-        .expect(&format!("Couldn't Find `cat`"));
+        .expect("Couldn't Find `cat`");
 
     distro.push_str(String::from_utf8(program.stdout).unwrap().as_str());
 

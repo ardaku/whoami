@@ -1,4 +1,4 @@
-![whoami](https://jeronaldaron.plopgrizzly.com/whoami/icon.svg)
+![whoami](https://jeronaldaron.github.io/whoami/icon.svg)
 
 [![Build Status](https://travis-ci.com/OxyDeadbeef/whoami.svg?branch=master)](https://travis-ci.com/OxyDeadbeef/whoami)
 
@@ -51,9 +51,9 @@ fn main() {
 * Support iOS / Android / Nintendo Switch (and other consoles) / Wasm (Web Assembly) / other OS's.
 
 ## Links
-* [Website](https://jeronaldaron.plopgrizzly.com/whoami)
+* [Website](https://jeronaldaron.github.io/whoami)
 * [Cargo](https://crates.io/crates/whoami)
 * [Documentation](https://docs.rs/whoami)
-* [Change Log](https://jeronaldaron.plopgrizzly.com/whoami/changelog)
-* [Contributors](https://jeronaldaron.plopgrizzly.com/whoami/contributors)
-* [Code of Conduct](https://jeronaldaron.plopgrizzly.com/whoami/codeofconduct)
+* [Change Log](https://jeronaldaron.github.io/whoami/CHANGELOG)
+* [Contributors](https://jeronaldaron.github.io/whoami/CONTRIBUTORS)
+* [Code of Conduct](https://jeronaldaron.github.io/whoami/CODEOFCONDUCT)
