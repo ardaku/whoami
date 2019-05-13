@@ -7,14 +7,14 @@
 
 [package]
 name = "whoami"
-version = "0.5.1"
+version = "0.5.2"
 authors = [
     "Jeron Aldaron Lau <jeronaldaron@gmail.com>",
 ]
 edition = "2018"
 license = "MIT / BSL-1.0"
 documentation = "https://docs.rs/whoami"
-homepage = "https://jeronaldaron.plopgrizzly.com/whoami"
+homepage = "https://jeronaldaron.github.io/whoami"
 repository = "https://github.com/OxyDeadbeef/whoami"
 readme = "README.md"
 description = "Retrieve the current user and environment."
