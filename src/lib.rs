@@ -31,8 +31,8 @@
 
 #![warn(missing_docs)]
 #![doc(
-    html_logo_url = "https://jeronaldaron.github.io/whoami/icon.svg",
-    html_favicon_url = "https://jeronaldaron.github.io/whoami/icon.svg"
+    html_logo_url = "https://aldarobot.plopgrizzly.com/whoami/icon.svg",
+    html_favicon_url = "https://aldarobot.plopgrizzly.com/whoami/icon.svg"
 )]
 
 /// Which Desktop Environment
@@ -76,7 +76,7 @@ impl std::fmt::Display for DesktopEnv {
                 Kde => "KDE".to_string(),
                 Cinnamon => "Cinnamon".to_string(),
                 I3 => "I3".to_string(),
-                Mac => "Mac".to_string(),
+                Mac => "Mac OS".to_string(),
                 Ios => "IOS".to_string(),
                 Android => "Android".to_string(),
                 Wasm => "Wasm".to_string(),

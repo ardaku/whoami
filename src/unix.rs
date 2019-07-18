@@ -11,9 +11,17 @@ struct PassWd {
     pw_passwd: *const c_void,
     pw_uid: u32,
     pw_gid: u32,
+    #[cfg(target_os = "macos")]
+    pw_change: isize,
+    #[cfg(target_os = "macos")]
+    pw_class: *const c_void,
     pw_gecos: *const c_void,
     pw_dir: *const c_void,
     pw_shell: *const c_void,
+    #[cfg(target_os = "macos")]
+    pw_expire: isize,
+    #[cfg(target_os = "macos")]
+    pw_fields: i32,
 }
 
 extern "system" {
@@ -30,6 +38,10 @@ extern "system" {
 }
 
 fn string_from_cstring(string: *const c_void) -> String {
+    if string.is_null() {
+	return "".to_string();
+	}
+
     // Get a byte slice of the c string.
     let slice = unsafe {
         let length = strlen(string);
@@ -124,7 +136,7 @@ pub fn computer() -> String {
     } else {
         Command::new("scutil")
             .arg("--get")
-            .arg("LocalHostName")
+            .arg("ComputerName")
             .output()
             .expect("Couldn't find `scutil`")
     };

@@ -1,6 +1,6 @@
-![whoami](https://jeronaldaron.github.io/whoami/icon.svg)
+![whoami](https://aldarobot.plopgrizzly.com/whoami/icon.svg)
 
-[![Build Status](https://travis-ci.com/JeronAldaron/whoami.svg?branch=master)](https://travis-ci.com/JeronAldaron/whoami)
+[![Build Status](https://travis-ci.com/Aldarobot/whoami.svg?branch=master)](https://travis-ci.com/Aldarobot/whoami)
 
 # WhoAmI
 Retrieve the current user and environment.
@@ -51,9 +51,9 @@ fn main() {
 * Support iOS / Android / Nintendo Switch (and other consoles) / Wasm (Web Assembly) / other OS's.
 
 ## Links
-* [Website](https://jeronaldaron.github.io/whoami)
+* [Website](https://aldarobot.plopgrizzly.com/whoami)
 * [Cargo](https://crates.io/crates/whoami)
 * [Documentation](https://docs.rs/whoami)
-* [Change Log](https://jeronaldaron.github.io/whoami/CHANGELOG)
-* [Contributors](https://jeronaldaron.github.io/whoami/CONTRIBUTORS)
-* [Code of Conduct](https://jeronaldaron.github.io/whoami/CODEOFCONDUCT)
+* [Change Log](https://aldarobot.plopgrizzly.com/whoami/CHANGELOG)
+* [Contributors](https://aldarobot.plopgrizzly.com/whoami/CONTRIBUTORS)
+* [Code of Conduct](https://aldarobot.plopgrizzly.com/whoami/CODEOFCONDUCT)
