@@ -1,10 +1,51 @@
 use crate::{DesktopEnv, Platform};
 
-pub fn username() -> String {
-    extern "system" {
-        fn GetUserNameW(a: *mut u16, b: *mut usize) -> i32;
-    }
+	#[allow(unused)]
+	#[repr(C)]
+	enum ExtendedNameFormat {
+		NameUnknown, // Nothing
+		NameFullyQualifiedDN, // Nothing
+		NameSamCompatible, // Hostname Followed By Username
+		NameDisplay, // Full Name
+		NameUniqueId, // Nothing
+		NameCanonical, // Nothing
+		NameUserPrincipal, // Nothing
+		NameCanonicalEx, // Nothing
+		NameServicePrincipal, // Nothing
+		NameDnsDomain, // Nothing
+		NameGivenName, // Nothing
+		NameSurname, // Nothing
+	}
+	
+	#[allow(unused)]
+	#[repr(C)]
+	enum ComputerNameFormat {
+	  ComputerNameNetBIOS, // Same as GetComputerNameW
+	  ComputerNameDnsHostname, // Fancy Name
+	  ComputerNameDnsDomain, // Nothing
+	  ComputerNameDnsFullyQualified, // Fancy Name with, for example, .com
+	  ComputerNamePhysicalNetBIOS, // Same as GetComputerNameW
+	  ComputerNamePhysicalDnsHostname, // Same as GetComputerNameW
+	  ComputerNamePhysicalDnsDomain, // Nothing
+	  ComputerNamePhysicalDnsFullyQualified, // Fancy Name with, for example, .com
+	  ComputerNameMax
+}
 
+	#[link(name = "Secur32")]
+	extern "system" {
+		fn GetUserNameExW(a: ExtendedNameFormat,
+            b: *mut u16,
+			c: *mut usize) -> u8;
+		fn GetUserNameW(a: *mut u16, b: *mut usize) -> i32;
+		fn GetComputerNameW(a: *mut u16, b: *mut usize) -> i32;
+		fn GetComputerNameExW(
+			a: ComputerNameFormat,
+            b: *mut u16,
+            c: *mut usize,
+		) -> i32;
+	}
+
+pub fn username() -> String {
     let mut name = [0; 256];
     let mut size = 256;
 
@@ -17,19 +58,33 @@ pub fn username() -> String {
 
 #[inline(always)]
 pub fn realname() -> String {
-    username()
+    let mut name = [0; 256];
+    let mut size = 256;
+
+    unsafe {
+        GetUserNameExW(ExtendedNameFormat::NameDisplay, &mut name[0], &mut size);
+    }
+
+	if size == 0 {
+		username()
+	} else {
+		String::from_utf16_lossy(&name[..size])
+	}
 }
 
 #[inline(always)]
 pub fn computer() -> String {
-    hostname()
+    let mut name = [0; 256];
+    let mut size = 256;
+
+    unsafe {
+        GetComputerNameExW(ComputerNameFormat::ComputerNameDnsFullyQualified, &mut name[0], &mut size);
+    }
+
+    String::from_utf16_lossy(&name[..size])
 }
 
 pub fn hostname() -> String {
-    extern "system" {
-        fn GetComputerNameW(a: *mut u16, b: *mut usize) -> i32;
-    }
-
     let mut name = [0; 256];
     let mut size = 256;
 

@@ -6,12 +6,15 @@ and this project adheres to [Semantic Versioning](https://code.plopgrizzly.com/s
 
 ## [Unreleased]
 
-## [0.5.3] - 2019-07-17
+## [0.5.3] - 2019-07-18
 ### Changed
 - Now uses a more modern Rust coding style (replace `::std::` with `std::`).
 - Now uses a more modern Rust coding style with `mem::MaybeUninit`.
 - `impl Display` for desktop environment now uses proper capitalization.
 - Don't depend on `libc` anymore.
+### Fixed
+- `user()` now uses Windows Display Name on Windows rather than the username.
+- `host()` now uses Windows Name DNS Fully Qualified rather than the hostname.
 
 ## [0.5.2] - 2019-05-12
 ### Fixed
