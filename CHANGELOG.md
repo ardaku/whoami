@@ -13,8 +13,9 @@ and this project adheres to [Semantic Versioning](https://code.plopgrizzly.com/s
 - `impl Display` for desktop environment now uses proper capitalization.
 - Don't depend on `libc` anymore.
 ### Fixed
-- `user()` now uses Windows Display Name on Windows rather than the username.
-- `host()` now uses Windows Name DNS Fully Qualified rather than the hostname.
+- Fancy Names not working on Windows
+  - `user()` now uses Windows Display Name on Windows rather than the username.
+  - `host()` now uses Windows Name DNS Fully Qualified rather than the hostname.
 
 ## [0.5.2] - 2019-05-12
 ### Fixed

@@ -186,7 +186,9 @@ pub fn os() -> String {
 pub fn os() -> String {
     let mut distro = String::new();
 
-    let program = std::fs::read_to_string("/etc/os-release").expect("Couldn't read file /etc/os-release").into_bytes();
+    let program = std::fs::read_to_string("/etc/os-release")
+        .expect("Couldn't read file /etc/os-release")
+        .into_bytes();
 
     distro.push_str(String::from_utf8(program).unwrap().as_str());
 
