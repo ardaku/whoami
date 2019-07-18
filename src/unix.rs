@@ -1,50 +1,81 @@
 use crate::{DesktopEnv, Platform};
-use libc;
 
+use std::ffi::c_void;
 use std::mem;
 use std::process::Command;
 use std::process::Stdio;
-use std::ptr::null_mut;
 
-fn getpwuid(buffer: &mut [libc::c_char; 16384]) -> libc::passwd {
-    let mut pwent: libc::passwd = unsafe { mem::zeroed() };
-    let mut pwentp = null_mut();
-
-    unsafe {
-        libc::getpwuid_r(
-            libc::geteuid(),
-            &mut pwent,
-            &mut buffer[0],
-            buffer.len(),
-            &mut pwentp,
-        );
-    }
-
-    pwent
+#[repr(C)]
+struct PassWd {
+    pw_name: *const c_void,
+    pw_passwd: *const c_void,
+    pw_uid: u32,
+    pw_gid: u32,
+    pw_gecos: *const c_void,
+    pw_dir: *const c_void,
+    pw_shell: *const c_void,
 }
 
-fn ptr_to_string(name: *mut libc::c_char) -> String {
-    let uname = name as *mut _ as *mut u8;
+extern "system" {
+    fn getpwuid_r(
+        uid: u32,
+        pwd: *mut PassWd,
+        buf: *mut c_void,
+        buflen: usize,
+        result: *mut *mut PassWd,
+    ) -> i32;
+    fn geteuid() -> u32;
+    fn strlen(cs: *const c_void) -> usize;
+    fn gethostname(name: *mut c_void, len: usize) -> i32;
+}
 
-    let s;
-    let string;
+fn string_from_cstring(string: *const c_void) -> String {
+    // Get a byte slice of the c string.
+    let slice = unsafe {
+        let length = strlen(string);
+        std::slice::from_raw_parts(string as *const u8, length)
+    };
 
-    unsafe {
-        s = ::std::slice::from_raw_parts(uname, libc::strlen(name));
-        string = String::from_utf8_lossy(s).to_string();
-    }
+    // Turn byte slice into Rust String.
+    String::from_utf8_lossy(slice).to_string()
+}
 
-    string
+// This function must return `String`s, because a slice or Cow<str> would still
+// reference `passwd` which is dropped when this function returns.
+#[inline(always)]
+fn getpwuid() -> (String, String) {
+    const BUF_SIZE: usize = 16_384; // size from the man page
+    let mut buffer = mem::MaybeUninit::<[u8; BUF_SIZE]>::uninit();
+    let mut passwd = mem::MaybeUninit::<PassWd>::uninit();
+    let mut _passwd = mem::MaybeUninit::<*mut PassWd>::uninit();
+
+    // Get PassWd `struct`.
+    let passwd = unsafe {
+        getpwuid_r(
+            geteuid(),
+            passwd.as_mut_ptr(),
+            buffer.as_mut_ptr() as *mut c_void,
+            BUF_SIZE,
+            _passwd.as_mut_ptr(),
+        );
+
+        passwd.assume_init()
+    };
+
+    // Extract names.
+    let a = string_from_cstring(passwd.pw_name);
+    let b = string_from_cstring(passwd.pw_gecos);
+
+    (a, b)
 }
 
 pub fn username() -> String {
-    let mut buffer = [0 as libc::c_char; 16384]; // from the man page
-    let pwent = getpwuid(&mut buffer);
+    let pwent = getpwuid();
 
-    ptr_to_string(pwent.pw_name)
+    pwent.0
 }
 
-fn fancy_fallback(computer: &mut String, fallback_fn: fn() -> String) {
+fn fancy_fallback(mut computer: String, fallback_fn: fn() -> String) -> String {
     let mut cap = true;
 
     if computer.is_empty() {
@@ -69,16 +100,16 @@ fn fancy_fallback(computer: &mut String, fallback_fn: fn() -> String) {
             }
         }
     }
+
+    computer
 }
 
 pub fn realname() -> String {
-    let mut buffer = [0 as libc::c_char; 16384]; // from the man page
-    let pwent = getpwuid(&mut buffer);
-    let mut realname = ptr_to_string(pwent.pw_gecos);
+    let pwent = getpwuid();
+    let realname = pwent.1;
 
-    fancy_fallback(&mut realname, username);
-
-    realname
+    // If no real name is provided, guess based on username.
+    fancy_fallback(realname, username)
 }
 
 pub fn computer() -> String {
@@ -106,47 +137,46 @@ pub fn computer() -> String {
 
     computer.pop();
 
-    fancy_fallback(&mut computer, hostname);
-
-    computer
+    fancy_fallback(computer, hostname)
 }
 
 pub fn hostname() -> String {
-    let mut string = [0 as libc::c_char; 255];
+    // Maximum hostname length = 255, plus a NULL byte.
+    let mut string = mem::MaybeUninit::<[u8; 256]>::uninit();
+    let string = unsafe {
+        gethostname(string.as_mut_ptr() as *mut c_void, 255);
+        &string.assume_init()[..strlen(string.as_ptr() as *const c_void)]
+    };
 
-    unsafe {
-        libc::gethostname(&mut string[0], 255);
-    }
-
-    ptr_to_string(&mut string[0])
+    String::from_utf8_lossy(string).to_string()
 }
 
 #[cfg(target_os = "macos")]
 pub fn os() -> String {
     let mut distro = String::new();
 
-    let product_name = Command::new("sw_vers")
+    let name = Command::new("sw_vers")
         .arg("-productName")
         .output()
         .expect("Couldn't find `sw_vers`");
 
-    let product_version = Command::new("sw_vers")
+    let version = Command::new("sw_vers")
         .arg("-productVersion")
         .output()
         .expect("Couldn't find `sw_vers`");
 
-    let build_version = Command::new("sw_vers")
+    let build = Command::new("sw_vers")
         .arg("-buildVersion")
         .output()
         .expect("Couldn't find `sw_vers`");
 
-    distro.push_str(String::from_utf8(product_name.stdout).unwrap().as_str());
+    distro.push_str(String::from_utf8(name.stdout).unwrap().as_str());
     distro.pop();
     distro.push(' ');
-    distro.push_str(String::from_utf8(product_version.stdout).unwrap().as_str());
+    distro.push_str(String::from_utf8(version.stdout).unwrap().as_str());
     distro.pop();
     distro.push(' ');
-    distro.push_str(String::from_utf8(build_version.stdout).unwrap().as_str());
+    distro.push_str(String::from_utf8(build.stdout).unwrap().as_str());
     distro.pop();
 
     distro
@@ -156,12 +186,9 @@ pub fn os() -> String {
 pub fn os() -> String {
     let mut distro = String::new();
 
-    let program = Command::new("cat")
-        .arg("/etc/os-release")
-        .output()
-        .expect("Couldn't Find `cat`");
+    let program = std::fs::read_to_string("/etc/os-release").expect("Couldn't read file /etc/os-release").into_bytes();
 
-    distro.push_str(String::from_utf8(program.stdout).unwrap().as_str());
+    distro.push_str(String::from_utf8(program).unwrap().as_str());
 
     let mut fallback = None;
 
@@ -169,8 +196,12 @@ pub fn os() -> String {
         let mut j = i.split('=');
 
         match j.next().unwrap() {
-            "PRETTY_NAME" => return j.next().unwrap().trim_matches('"').to_string(),
-            "NAME" => fallback = Some(j.next().unwrap().trim_matches('"').to_string()),
+            "PRETTY_NAME" => {
+                return j.next().unwrap().trim_matches('"').to_string()
+            }
+            "NAME" => {
+                fallback = Some(j.next().unwrap().trim_matches('"').to_string())
+            }
             _ => {}
         }
     }
@@ -191,7 +222,7 @@ pub const fn env() -> DesktopEnv {
 #[cfg(not(target_os = "macos"))]
 #[inline(always)]
 pub fn env() -> DesktopEnv {
-    match ::std::env::var_os("DESKTOP_SESSION") {
+    match std::env::var_os("DESKTOP_SESSION") {
         Some(env) => {
             let env = env.to_str().unwrap().to_uppercase();
 

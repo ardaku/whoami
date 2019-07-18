@@ -1,4 +1,4 @@
 # Contributors
-- [JeronAldaron](https://github.com/JeronAldaron)
+- [Aldarobot](https://github.com/Aldarobot)
 - [cygnus9](https://github.com/cygnus9)
 - [schaefer-dev](https://github.com/schaefer-dev)

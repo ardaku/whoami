@@ -51,7 +51,8 @@ pub fn os() -> String {
 
     let major: u8 = ((bits & 0b00000000_00000000_00000000_11111111) >> 0) as u8;
     let minor: u8 = ((bits & 0b00000000_00000000_11111111_00000000) >> 8) as u8;
-    let build: u16 = ((bits & 0b11111111_11111111_00000000_00000000) >> 16) as u16;
+    let build: u16 =
+        ((bits & 0b11111111_11111111_00000000_00000000) >> 16) as u16;
 
     match major {
         5 => out.push_str("XP"),

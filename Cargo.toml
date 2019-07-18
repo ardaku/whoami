@@ -7,15 +7,15 @@
 
 [package]
 name = "whoami"
-version = "0.5.2"
+version = "0.5.3"
 authors = [
-    "Jeron Aldaron Lau <jeronaldaron@gmail.com>",
+    "Jeron Aldaron Lau <jeronlau@plopgrizzly.com>",
 ]
 edition = "2018"
 license = "MIT / BSL-1.0"
 documentation = "https://docs.rs/whoami"
-homepage = "https://jeronaldaron.github.io/whoami"
-repository = "https://github.com/OxyDeadbeef/whoami"
+homepage = "https://aldarobot.plopgrizzly.com/whoami"
+repository = "https://github.com/Aldarobot/whoami"
 readme = "README.md"
 description = "Retrieve the current user and environment."
 keywords = ["user", "username", "whoami", "platform", "detect"]
@@ -23,4 +23,3 @@ categories = ["os"]
 exclude = ["examples/*", "code_of_conduct.md", "contributors.md", "changelog.md", ".gitignore"]
 
 [dependencies]
-libc = "0.2"

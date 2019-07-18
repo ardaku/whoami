@@ -32,7 +32,7 @@
 #![warn(missing_docs)]
 #![doc(
     html_logo_url = "https://jeronaldaron.github.io/whoami/icon.svg",
-    html_favicon_url = "https://jeronaldaron.github.io/whoami/icon.svg",
+    html_favicon_url = "https://jeronaldaron.github.io/whoami/icon.svg"
 )]
 
 /// Which Desktop Environment
@@ -59,32 +59,32 @@ pub enum DesktopEnv {
     Unknown(String),
 }
 
-impl ::std::fmt::Display for DesktopEnv {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+impl std::fmt::Display for DesktopEnv {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use self::DesktopEnv::*;
 
         write!(
             f,
             "{}",
             match self {
-                Gnome => "gnome".to_string(),
-                Windows => "windows".to_string(),
-                Lxde => "lxde".to_string(),
-                Openbox => "openbox".to_string(),
-                Mate => "mate".to_string(),
-                Xfce => "xfce".to_string(),
-                Kde => "kde".to_string(),
-                Cinnamon => "cinnamon".to_string(),
-                I3 => "i3".to_string(),
-                Mac => "mac".to_string(),
-                Ios => "ios".to_string(),
-                Android => "android".to_string(),
-                Wasm => "wasm".to_string(),
-                Console => "console".to_string(),
-                Ubuntu => "ubuntu".to_string(),
-                Dive => "dive".to_string(),
-                Fuchsia => "fuchsia".to_string(),
-                Redox => "redox".to_string(),
+                Gnome => "Gnome".to_string(),
+                Windows => "Windows".to_string(),
+                Lxde => "LXDE".to_string(),
+                Openbox => "Openbox".to_string(),
+                Mate => "Mate".to_string(),
+                Xfce => "XFCE".to_string(),
+                Kde => "KDE".to_string(),
+                Cinnamon => "Cinnamon".to_string(),
+                I3 => "I3".to_string(),
+                Mac => "Mac".to_string(),
+                Ios => "IOS".to_string(),
+                Android => "Android".to_string(),
+                Wasm => "Wasm".to_string(),
+                Console => "Console".to_string(),
+                Ubuntu => "Ubuntu".to_string(),
+                Dive => "Dive".to_string(),
+                Fuchsia => "Fuchsia".to_string(),
+                Redox => "Redox".to_string(),
                 Unknown(a) => format!("Unknown: \"{}\"", a),
             }
         )
@@ -110,8 +110,8 @@ pub enum Platform {
     Unknown(String),
 }
 
-impl ::std::fmt::Display for Platform {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+impl std::fmt::Display for Platform {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use self::Platform::*;
 
         write!(
