@@ -20,6 +20,5 @@ readme = "README.md"
 description = "Retrieve the current user and environment."
 keywords = ["user", "username", "whoami", "platform", "detect"]
 categories = ["os"]
-exclude = ["examples/*", "code_of_conduct.md", "contributors.md", "changelog.md", ".gitignore"]
 
 [dependencies]
