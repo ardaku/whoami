@@ -1,6 +1,6 @@
-![whoami](https://aldarobot.plopgrizzly.com/whoami/icon.svg)
+![whoami](https://libcala.github.io/whoami/icon.svg)
 
-[![Build Status](https://travis-ci.com/Aldarobot/whoami.svg?branch=master)](https://travis-ci.com/Aldarobot/whoami)
+[![Build Status](https://travis-ci.com/libcala/whoami.svg?branch=master)](https://travis-ci.com/libcala/whoami)
 
 # WhoAmI
 Retrieve the current user and environment.
@@ -51,9 +51,9 @@ fn main() {
 * Support iOS / Android / Nintendo Switch (and other consoles) / Wasm (Web Assembly) / other OS's.
 
 ## Links
-* [Website](https://aldarobot.plopgrizzly.com/whoami)
+* [Website](https://libcala.github.io/whoami)
 * [Cargo](https://crates.io/crates/whoami)
 * [Documentation](https://docs.rs/whoami)
-* [Change Log](https://aldarobot.plopgrizzly.com/whoami/CHANGELOG)
-* [Contributors](https://aldarobot.plopgrizzly.com/whoami/CONTRIBUTORS)
-* [Code of Conduct](https://aldarobot.plopgrizzly.com/whoami/CODEOFCONDUCT)
+* [Change Log](https://libcala.github.io/whoami/CHANGELOG)
+* [Contributors](https://libcala.github.io/whoami/CONTRIBUTORS)
+* [Code of Conduct](https://libcala.github.io/whoami/CODEOFCONDUCT)
