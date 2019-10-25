@@ -42,13 +42,13 @@ fn main() {
 * Get the computer's desktop environment
 * Get the computer's OS name and version
 * Get the computer's platform name
-* Works on Linux, Windows and Mac OS
+* Works on Linux, Windows, Mac OS, and Web Assembly
 
 ## Binary
 [whome](https://crates.io/crates/whome): replacement of the `whoami` command that depends on this crate.
 
 ## TODO
-* Support iOS / Android / Nintendo Switch (and other consoles) / Wasm (Web Assembly) / other OS's.
+* Support iOS / Android / Nintendo Switch (and other consoles) / other OS's.
 
 ## Links
 * [Website](https://libcala.github.io/whoami)
