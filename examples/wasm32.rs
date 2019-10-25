@@ -3,8 +3,8 @@ fn main() {}
 
 #[cfg(target_arch = "wasm32")]
 fn main() {
-    use whoami;
     use stdweb;
+    use whoami;
 
     stdweb::initialize();
 

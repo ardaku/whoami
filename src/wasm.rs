@@ -1,5 +1,5 @@
-use stdweb::{self, js};
 use crate::{DesktopEnv, Platform};
+use stdweb::{self, js};
 
 fn user_agent() -> String {
     let value: stdweb::Value = js! {
@@ -28,10 +28,18 @@ pub fn realname() -> String {
 pub fn computer() -> String {
     let orig_string = user_agent();
 
-    let end = if let Some(e) = orig_string.rfind("/") { e} else { return "Unknown Browser".to_string();};
-    let start = if let Some(s) = orig_string.rfind(" ") { s} else { return "Unknown Browser".to_string();};
+    let end = if let Some(e) = orig_string.rfind("/") {
+        e
+    } else {
+        return "Unknown Browser".to_string();
+    };
+    let start = if let Some(s) = orig_string.rfind(" ") {
+        s
+    } else {
+        return "Unknown Browser".to_string();
+    };
 
-    let string = orig_string.get(start+1..end).unwrap().to_string();
+    let string = orig_string.get(start + 1..end).unwrap().to_string();
 
     js! {
         console.log(@{&string});
@@ -56,16 +64,28 @@ pub fn hostname() -> String {
 pub fn os() -> String {
     let string = user_agent();
 
-    let begin = if let Some(b) = string.find('(') { b } else { return "Unknown".to_string(); };
-    let end = if let Some(e) = string.find(')') { e } else { return "Unknown".to_string(); };
-    let string = &string[begin+1..end];
+    let begin = if let Some(b) = string.find('(') {
+        b
+    } else {
+        return "Unknown".to_string();
+    };
+    let end = if let Some(e) = string.find(')') {
+        e
+    } else {
+        return "Unknown".to_string();
+    };
+    let string = &string[begin + 1..end];
 
     if string.contains("Win32") {
         "Windows".to_string()
     } else if string.contains("Linux") {
         let string = if string.contains("X11") || string.contains("Wayland") {
-            let begin = if let Some(b) = string.find(";") { b} else { return "Unknown Linux".to_string();};
-            let string = &string[begin+2..];
+            let begin = if let Some(b) = string.find(";") {
+                b
+            } else {
+                return "Unknown Linux".to_string();
+            };
+            let string = &string[begin + 2..];
 
             string
         } else {
@@ -74,8 +94,12 @@ pub fn os() -> String {
 
         if string.starts_with("Linux") {
             "Unknown Linux".to_string()
-        } else {    
-            let end = if let Some(e) = string.find(";") { e} else { return "Unknown Linux".to_string();};
+        } else {
+            let end = if let Some(e) = string.find(";") {
+                e
+            } else {
+                return "Unknown Linux".to_string();
+            };
             string[..end].to_string()
         }
     } else if string.contains("OSX") {
@@ -102,9 +126,17 @@ pub const fn env() -> DesktopEnv {
 pub fn platform() -> Platform {
     let string = user_agent();
 
-    let begin = if let Some(b) = string.find('(') { b } else { return Platform::Unknown("Unknown".to_string()); };
-    let end = if let Some(e) = string.find(')') { e } else { return Platform::Unknown("Unknown".to_string()); };
-    let string = &string[begin+1..end];
+    let begin = if let Some(b) = string.find('(') {
+        b
+    } else {
+        return Platform::Unknown("Unknown".to_string());
+    };
+    let end = if let Some(e) = string.find(')') {
+        e
+    } else {
+        return Platform::Unknown("Unknown".to_string());
+    };
+    let string = &string[begin + 1..end];
 
     if string.contains("Win32") {
         Platform::Windows

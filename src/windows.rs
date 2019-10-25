@@ -54,7 +54,11 @@ pub fn username() -> String {
         name.assume_init()
     };
 
-    String::from_utf16_lossy(if size[0] == 0 { &[] } else { &name[..size[0] - 1] })
+    String::from_utf16_lossy(if size[0] == 0 {
+        &[]
+    } else {
+        &name[..size[0] - 1]
+    })
 }
 
 #[inline(always)]
@@ -68,7 +72,7 @@ pub fn realname() -> String {
             name.as_mut_ptr() as *mut _,
             size.as_mut_ptr(),
         );
-		name.assume_init()
+        name.assume_init()
     };
 
     if size[0] == 0 {
@@ -89,7 +93,7 @@ pub fn computer() -> String {
             name.as_mut_ptr() as *mut _,
             size.as_mut_ptr(),
         );
-		name.assume_init()
+        name.assume_init()
     };
 
     String::from_utf16_lossy(&name[..size[0]])
@@ -101,7 +105,7 @@ pub fn hostname() -> String {
 
     let name = unsafe {
         GetComputerNameW(name.as_mut_ptr() as *mut _, size.as_mut_ptr());
-		name.assume_init()
+        name.assume_init()
     };
 
     String::from_utf16_lossy(&name[..size[0]])

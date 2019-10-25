@@ -39,8 +39,8 @@ extern "system" {
 
 fn string_from_cstring(string: *const c_void) -> String {
     if string.is_null() {
-	return "".to_string();
-	}
+        return "".to_string();
+    }
 
     // Get a byte slice of the c string.
     let slice = unsafe {
@@ -221,9 +221,9 @@ pub fn os() -> String {
     }
 
     if let Some(x) = fallback {
-        return x;
+        x
     } else {
-        return "unknown".to_string();
+        "unknown".to_string()
     }
 }
 
