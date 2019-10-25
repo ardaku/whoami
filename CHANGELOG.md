@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://code.plopgrizzly.com/s
 
 ## [Unreleased]
 
+## [0.6.0] - 2019-10-25
+### Added
+- Web Assembly support
+
+### Removed
+- `Platform::Web` variant of enum
+
+### Changed
+- `platform()` is no longer a const fn (needed for wasm platform
+  detection)
+
 ## [0.5.3] - 2019-07-18
 ### Changed
 - Now uses a more modern Rust coding style (replace `::std::` with `std::`).

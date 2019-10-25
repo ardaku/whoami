@@ -31,8 +31,8 @@
 
 #![warn(missing_docs)]
 #![doc(
-    html_logo_url = "https://aldarobot.plopgrizzly.com/whoami/icon.svg",
-    html_favicon_url = "https://aldarobot.plopgrizzly.com/whoami/icon.svg"
+    html_logo_url = "https://libcala.github.io/whoami/icon.svg",
+    html_favicon_url = "https://libcala.github.io/whoami/icon.svg"
 )]
 
 /// Which Desktop Environment
@@ -103,7 +103,6 @@ pub enum Platform {
     Nintendo,
     Xbox,
     PlayStation,
-    Web,
     Dive,
     Fuchsia,
     Redox,
@@ -127,7 +126,6 @@ impl std::fmt::Display for Platform {
                 Nintendo => "Nintendo".to_string(),
                 Xbox => "XBox".to_string(),
                 PlayStation => "PlayStation".to_string(),
-                Web => "Web".to_string(),
                 Dive => "Dive".to_string(),
                 Fuchsia => "Fuchsia".to_string(),
                 Redox => "Redox".to_string(),
@@ -137,14 +135,18 @@ impl std::fmt::Display for Platform {
     }
 }
 
-#[cfg(not(target_os = "windows"))]
-mod unix;
-#[cfg(not(target_os = "windows"))]
-use self::unix as native;
 #[cfg(target_os = "windows")]
 mod windows;
 #[cfg(target_os = "windows")]
 use self::windows as native;
+#[cfg(target_arch = "wasm32")]
+mod wasm;
+#[cfg(target_arch = "wasm32")]
+use self::wasm as native;
+#[cfg(not(any(target_os = "windows", target_arch = "wasm32")))]
+mod unix;
+#[cfg(not(any(target_os = "windows", target_arch = "wasm32")))]
+use self::unix as native;
 
 /// Get the user's username.
 #[inline(always)]
@@ -188,6 +190,6 @@ pub fn env() -> DesktopEnv {
 
 /// Get the platform.
 #[inline(always)]
-pub const fn platform() -> Platform {
+pub fn platform() -> Platform {
     native::platform()
 }
