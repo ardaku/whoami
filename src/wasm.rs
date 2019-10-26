@@ -114,8 +114,13 @@ pub fn os() -> String {
             };
             string[..end].to_string()
         }
-    } else if string.contains("OSX") {
-        "Mac OS".to_string()
+    } else if string.contains("Mac OS X") {
+        let begin = string.find("Mac OS X").unwrap();
+	if let Some(end) = string[begin..].find(";") {
+	    string[begin..begin + end].to_string()
+	} else {
+	    string[begin..].to_string().replace("_", ".")
+	}
     } else {
         // TODO:
         // Platform::FreeBsd,
@@ -154,7 +159,7 @@ pub fn platform() -> Platform {
         Platform::Windows
     } else if string.contains("Linux") {
         Platform::Linux
-    } else if string.contains("OSX") {
+    } else if string.contains("Mac OS X") {
         Platform::MacOS
     } else {
         // TODO:
