@@ -11,11 +11,11 @@ and this project adheres to [Semantic Versioning](https://code.plopgrizzly.com/s
 - Web Assembly support
 
 ### Removed
-- `Platform::Web` variant of enum
+- `Platform::Web` variant of enum, use `env()` if you need to.
 
 ### Changed
 - `platform()` is no longer a const fn (needed for wasm platform
-  detection)
+  detection).
 
 ## [0.5.3] - 2019-07-18
 ### Changed

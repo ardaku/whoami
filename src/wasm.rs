@@ -116,11 +116,11 @@ pub fn os() -> String {
         }
     } else if string.contains("Mac OS X") {
         let begin = string.find("Mac OS X").unwrap();
-	if let Some(end) = string[begin..].find(";") {
-	    string[begin..begin + end].to_string()
-	} else {
-	    string[begin..].to_string().replace("_", ".")
-	}
+        if let Some(end) = string[begin..].find(";") {
+            string[begin..begin + end].to_string()
+        } else {
+            string[begin..].to_string().replace("_", ".")
+        }
     } else {
         // TODO:
         // Platform::FreeBsd,
