@@ -76,8 +76,20 @@ pub fn os() -> String {
     };
     let string = &string[begin + 1..end];
 
-    if string.contains("Win32") {
-        "Windows".to_string()
+    if string.contains("Win32") || string.contains("Win64") {
+        let begin = if let Some(b) = string.find("NT") {
+            b
+        } else {
+            return "Windows".to_string();
+        };
+        let end = if let Some(e) = string.find(".") {
+            e
+        } else {
+            return "Windows".to_string();
+        };
+        let string = &string[begin + 3..end];
+
+        format!("Windows {}", string)
     } else if string.contains("Linux") {
         let string = if string.contains("X11") || string.contains("Wayland") {
             let begin = if let Some(b) = string.find(";") {
@@ -138,7 +150,7 @@ pub fn platform() -> Platform {
     };
     let string = &string[begin + 1..end];
 
-    if string.contains("Win32") {
+    if string.contains("Win32") || string.contains("Win64") {
         Platform::Windows
     } else if string.contains("Linux") {
         Platform::Linux

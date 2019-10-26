@@ -3,9 +3,6 @@ fn main() {}
 
 #[cfg(target_arch = "wasm32")]
 fn main() {
-    use stdweb;
-    use whoami;
-
     stdweb::initialize();
 
     let a = format!(
