@@ -1,7 +1,10 @@
 //! Crate for getting the user's username, realname and environment.
 //!
 //! ## Getting Started
-//! Using the whoami crate is super easy!  All of the public items are simple functions with no parameters that return `String`s (with the exception of `env`, which returns an enum).  The following example shows how to use all of the functions:
+//! Using the whoami crate is super easy!  All of the public items are simple
+//! functions with no parameters that return `String`s (with the exception of
+//! [`env()`](fn.env.html), and [`platform()`](fn.platform.html) which return
+//! enums).  The following example shows how to use all of the functions:
 //!
 //! ```rust
 //! fn main() {
@@ -37,6 +40,8 @@
 
 /// Which Desktop Environment
 #[allow(missing_docs)]
+#[derive(Debug)]
+#[non_exhaustive]
 pub enum DesktopEnv {
     Gnome,
     Windows,
@@ -93,6 +98,8 @@ impl std::fmt::Display for DesktopEnv {
 
 /// Which Platform
 #[allow(missing_docs)]
+#[derive(Debug)]
+#[non_exhaustive]
 pub enum Platform {
     Linux,
     FreeBsd,

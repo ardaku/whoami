@@ -1,19 +1,19 @@
 use crate::{DesktopEnv, Platform};
 
-// WhoAmI javascript functions.
+// navigator.userAgent
 extern {
     /// Get the length of the string in utf-16 codepoints.
-    fn jscala_user_agent1() -> usize;
+    fn navigator_userAgent_Len() -> usize;
     /// Fill in a utf-16 buffer with the string data.
-    fn jscala_user_agent2(ptr: *mut u16);
+    fn navigator_userAgent_Ptr(ptr: *mut u16);
 }
 
 fn user_agent() -> String {
     let ret = unsafe {
-        let len = jscala_user_agent1();
+        let len = navigator_userAgent_Len();
         let mut vec = Vec::with_capacity(len);
 
-        jscala_user_agent2(vec.as_mut_ptr());
+        navigator_userAgent_Ptr(vec.as_mut_ptr());
         vec.set_len(len);
 
         String::from_utf16_lossy(&vec)

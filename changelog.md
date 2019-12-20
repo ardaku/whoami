@@ -6,9 +6,20 @@ and this project adheres to [Semantic Versioning](https://code.plopgrizzly.com/s
 
 ## [Unreleased]
 
+## [0.7.0] - 2019-12-20
+### Removed
+- `stdweb` dependency when targetting web assembly.
+
+### Changed
+- All public enums now have the attribute `#[non_exhaustive]` and derive
+  `Debug`.
+
+### Fixed
+- Some out-of-date documentation
+
 ## [0.6.0] - 2019-10-25
 ### Added
-- Web Assembly support
+- Web Assembly support.
 
 ### Removed
 - `Platform::Web` variant of enum, use `env()` if you need to.

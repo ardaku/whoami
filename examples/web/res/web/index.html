@@ -13,17 +13,17 @@ fetch('cala.wasm').then(response =>
     const module = new WebAssembly.Module(bin);
     const instance = new WebAssembly.Instance(module, {
         env: {
-            jscala_alert: (ptr, len) => {
+            alert: (ptr, len) => {
                 alert(str_from_rs(ptr, len));
             },
-            jscala_user_agent1: () => {
+            navigator_userAgent_Len: () => {
                 temp_global_text = new String(navigator.userAgent);
                 return temp_global_text.length;
             },
-            jscala_user_agent2: (ptr) => {
+            navigator_userAgent_Ptr: (ptr) => {
                 return str_into_rs(ptr);
             },
-            jscala_print: (ptr, len) => {
+            console_log: (ptr, len) => {
                 console.log(str_from_rs(ptr, len));
             },
         }

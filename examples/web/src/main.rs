@@ -1,13 +1,13 @@
 extern {
-    fn jscala_print(data: *const u16, size: usize);
+    fn console_log(data: *const u16, size: usize);
 }
 
 macro_rules! print {
     ($($what:expr),* $(,)?) => {{
-            let mut temp = String::new();
-            $(temp.push_str(&format!("{}", $what));)*
-            let temp: Vec<u16> = temp.encode_utf16().collect();
-            unsafe { jscala_print(temp.as_ptr(), temp.len()); }
+        let mut temp = String::new();
+        $(temp.push_str(&format!("{}", $what));)*
+        let temp: Vec<u16> = temp.encode_utf16().collect();
+        unsafe { console_log(temp.as_ptr(), temp.len()); }
     }}
 }
 

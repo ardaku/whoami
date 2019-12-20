@@ -73,7 +73,7 @@ This code of conduct and its related procedures also applies to unacceptable beh
 
 ## 9. Contact info
 
-jeronaldaron@gmail.com
+jeronlau@plopgrizzly.com
 
 ## 10. License and attribution
 
