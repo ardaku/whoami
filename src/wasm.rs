@@ -1,18 +1,25 @@
 use crate::{DesktopEnv, Platform};
-use stdweb::{self, js};
+
+// WhoAmI javascript functions.
+extern {
+    /// Get the length of the string in utf-16 codepoints.
+    fn jscala_user_agent1() -> usize;
+    /// Fill in a utf-16 buffer with the string data.
+    fn jscala_user_agent2(ptr: *mut u16);
+}
 
 fn user_agent() -> String {
-    let value: stdweb::Value = js! {
-        var string = navigator.userAgent;
-        return string;
+    let ret = unsafe {
+        let len = jscala_user_agent1();
+        let mut vec = Vec::with_capacity(len);
+
+        jscala_user_agent2(vec.as_mut_ptr());
+        vec.set_len(len);
+
+        String::from_utf16_lossy(&vec)
     };
 
-    use stdweb::Value::*;
-
-    match value {
-        String(string) => string, // js! { console.log(@{string}) },
-        _ => unreachable!(),
-    }
+    ret
 }
 
 #[inline(always)]
@@ -40,10 +47,6 @@ pub fn computer() -> String {
     };
 
     let string = orig_string.get(start + 1..end).unwrap().to_string();
-
-    js! {
-        console.log(@{&string});
-    };
 
     if string == "Safari" {
         if orig_string.contains("Chrome") {

@@ -1,0 +1,8 @@
+[package]
+name = "web"
+version = "0.1.0"
+authors = ["Jeron Aldaron Lau <jeronlau@plopgrizzly.com>"]
+edition = "2018"
+
+[dependencies]
+whoami = { path = "../../" }

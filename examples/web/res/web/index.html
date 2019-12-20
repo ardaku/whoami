@@ -1,0 +1,59 @@
+<html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example</title>
+<link rel="icon" href="icon.svg">
+<head>
+<script>
+fetch('cala.wasm').then(response =>
+    response.arrayBuffer()
+).then(function(bin) {
+    var temp_global_text;
+
+    const module = new WebAssembly.Module(bin);
+    const instance = new WebAssembly.Instance(module, {
+        env: {
+            jscala_alert: (ptr, len) => {
+                alert(str_from_rs(ptr, len));
+            },
+            jscala_user_agent1: () => {
+                temp_global_text = new String(navigator.userAgent);
+                return temp_global_text.length;
+            },
+            jscala_user_agent2: (ptr) => {
+                return str_into_rs(ptr);
+            },
+            jscala_print: (ptr, len) => {
+                console.log(str_from_rs(ptr, len));
+            },
+        }
+    });
+    var linear_memory = instance.exports.memory;
+
+    function str_from_rs(ptr, len) {
+        var buffer = new Uint16Array(linear_memory.buffer, ptr, len);
+
+        let str = "";
+        for(let i = 0; i < buffer.length; i++) {
+            str += String.fromCharCode(buffer[i]);
+        }
+        return str;
+    }
+
+    function str_into_rs(ptr) {
+        var buffer = new Uint16Array(
+            linear_memory.buffer, ptr, temp_global_text.length
+        );
+
+        for(let i = 0; i < temp_global_text.length; i++) {
+            buffer[i] = temp_global_text.charCodeAt(i);
+        }
+    }
+
+    instance.exports.main()
+});
+</script>
+</head>
+<body>
+</body>
+</html>
