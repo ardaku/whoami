@@ -68,29 +68,33 @@ impl std::fmt::Display for DesktopEnv {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use self::DesktopEnv::*;
 
+        if let Unknown(_) = self {
+            write!(f, "Unknown: ")?;
+        }
+
         write!(
             f,
             "{}",
             match self {
-                Gnome => "Gnome".to_string(),
-                Windows => "Windows".to_string(),
-                Lxde => "LXDE".to_string(),
-                Openbox => "Openbox".to_string(),
-                Mate => "Mate".to_string(),
-                Xfce => "XFCE".to_string(),
-                Kde => "KDE".to_string(),
-                Cinnamon => "Cinnamon".to_string(),
-                I3 => "I3".to_string(),
-                Mac => "Mac OS".to_string(),
-                Ios => "IOS".to_string(),
-                Android => "Android".to_string(),
-                Wasm => "Wasm".to_string(),
-                Console => "Console".to_string(),
-                Ubuntu => "Ubuntu".to_string(),
-                Dive => "Dive".to_string(),
-                Fuchsia => "Fuchsia".to_string(),
-                Redox => "Redox".to_string(),
-                Unknown(a) => format!("Unknown: \"{}\"", a),
+                Gnome => "Gnome",
+                Windows => "Windows",
+                Lxde => "LXDE",
+                Openbox => "Openbox",
+                Mate => "Mate",
+                Xfce => "XFCE",
+                Kde => "KDE",
+                Cinnamon => "Cinnamon",
+                I3 => "I3",
+                Mac => "Mac OS",
+                Ios => "IOS",
+                Android => "Android",
+                Wasm => "Wasm",
+                Console => "Console",
+                Ubuntu => "Ubuntu",
+                Dive => "Dive",
+                Fuchsia => "Fuchsia",
+                Redox => "Redox",
+                Unknown(a) => &a,
             }
         )
     }
@@ -120,31 +124,35 @@ impl std::fmt::Display for Platform {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use self::Platform::*;
 
+        if let Unknown(_) = self {
+            write!(f, "Unknown: ")?;
+        }
+
         write!(
             f,
             "{}",
             match self {
-                Linux => "Linux".to_string(),
-                FreeBsd => "Free BSD".to_string(),
-                Windows => "Windows".to_string(),
-                MacOS => "Mac OS".to_string(),
-                Ios => "iOS".to_string(),
-                Android => "Android".to_string(),
-                Nintendo => "Nintendo".to_string(),
-                Xbox => "XBox".to_string(),
-                PlayStation => "PlayStation".to_string(),
-                Dive => "Dive".to_string(),
-                Fuchsia => "Fuchsia".to_string(),
-                Redox => "Redox".to_string(),
-                Unknown(a) => format!("Unknown: \"{}\"", a),
+                Linux => "Linux",
+                FreeBsd => "Free BSD",
+                Windows => "Windows",
+                MacOS => "Mac OS",
+                Ios => "iOS",
+                Android => "Android",
+                Nintendo => "Nintendo",
+                Xbox => "XBox",
+                PlayStation => "PlayStation",
+                Dive => "Dive",
+                Fuchsia => "Fuchsia",
+                Redox => "Redox",
+                Unknown(a) => a,
             }
         )
     }
 }
 
-#[cfg(target_os = "windows")]
+#[cfg(all(target_os = "windows", not(target_arch = "wasm32")))]
 mod windows;
-#[cfg(target_os = "windows")]
+#[cfg(all(target_os = "windows", not(target_arch = "wasm32")))]
 use self::windows as native;
 #[cfg(target_arch = "wasm32")]
 mod wasm;
