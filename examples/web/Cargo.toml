@@ -6,3 +6,4 @@ edition = "2018"
 
 [dependencies]
 whoami = { path = "../../" }
+devout = "0.0.1"
