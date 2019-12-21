@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://code.plopgrizzly.com/s
 
 ## [Unreleased]
 
-## [0.7.0] - 2019-12-20
+## [0.7.0] - 2019-12-21
 ### Removed
 - `stdweb` dependency when targetting web assembly.
 
