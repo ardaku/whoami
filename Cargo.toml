@@ -21,4 +21,12 @@ description = "Retrieve the current user and environment."
 keywords = ["user", "username", "whoami", "platform", "detect"]
 categories = ["os"]
 
+[lib]
+name = "whoami"
+path = "src/lib.rs"
+
+[[bin]]
+name = "whoami-demo"
+path = "src/main.rs"
+
 [dependencies]

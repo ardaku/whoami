@@ -43,6 +43,8 @@ fn main() {
 }
 ```
 
+You can also preview similar output with the `whoami-demo` binary.
+
 ## Features
 * Get the user's full name
 * Get the user's username
