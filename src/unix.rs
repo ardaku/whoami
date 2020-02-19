@@ -236,9 +236,11 @@ pub const fn env() -> DesktopEnv {
 #[cfg(not(target_os = "macos"))]
 #[inline(always)]
 pub fn env() -> DesktopEnv {
-    match std::env::var_os("DESKTOP_SESSION") {
-        Some(env) => {
-            let env = env.to_str().unwrap().to_uppercase();
+    match std::env::var_os("DESKTOP_SESSION")
+        .map(|env| env.to_string_lossy().to_string())
+    {
+        Some(env_orig) => {
+            let env = env_orig.to_uppercase();
 
             if env.contains("GNOME") {
                 DesktopEnv::Gnome
@@ -250,8 +252,10 @@ pub fn env() -> DesktopEnv {
                 DesktopEnv::I3
             } else if env.contains("UBUNTU") {
                 DesktopEnv::Ubuntu
+            } else if env.contains("PLASMA5") {
+                DesktopEnv::Kde
             } else {
-                DesktopEnv::Unknown(env)
+                DesktopEnv::Unknown(env_orig)
             }
         }
         // TODO: Other Linux Desktop Environments
