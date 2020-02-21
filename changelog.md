@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://code.plopgrizzly.com/semver/).
 
-## [Unreleased]
+## [0.8.0] - Unreleased
+### Added
+- Detection for KDE desktop environment.
+
+### Fixed
+- No auto-capitilization for unknown desktop environment.
+- Don't unwrap on non-unicode for desktop environment.
 
 ## [0.7.0] - 2019-12-21
 ### Removed
