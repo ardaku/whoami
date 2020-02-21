@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://code.plopgrizzly.com/s
 - Unknown desktop environment may now contain lowercase characters.
 
 ### Fixed
-- Don't unwrap on unicode conversion failures.
+- No longer unwraps in any place where bad data from the OS could cause
+  a panic.
 
 ## [0.7.0] - 2019-12-21
 ### Removed

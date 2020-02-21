@@ -188,7 +188,7 @@ pub fn hostname() -> String {
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn os() -> String {
-    native::os()
+    native::os().unwrap_or_else(|| "Unknown".to_string())
 }
 
 /// Get the desktop environment.

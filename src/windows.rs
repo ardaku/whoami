@@ -111,7 +111,7 @@ pub fn hostname() -> String {
     String::from_utf16_lossy(&name[..size[0]])
 }
 
-pub fn os() -> String {
+pub fn os() -> Option<String> {
     extern "system" {
         fn GetVersion() -> usize;
     }
@@ -139,7 +139,7 @@ pub fn os() -> String {
         _ => out.push_str("Unknown"),
     }
 
-    out
+    Some(out)
 }
 
 #[inline(always)]

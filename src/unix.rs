@@ -143,10 +143,6 @@ pub fn computer() -> String {
 
     computer.push_str(String::from_utf8_lossy(&program.stdout).to_mut());
 
-    //    let mut pretty = BufReader::new(program.stdout.as_mut().unwrap());
-
-    //    pretty.read_to_string(&mut computer).unwrap();
-
     computer.pop();
 
     fancy_fallback(computer, hostname)
@@ -164,7 +160,7 @@ pub fn hostname() -> String {
 }
 
 #[cfg(target_os = "macos")]
-pub fn os() -> String {
+pub fn os() -> Option<String> {
     let mut distro = String::new();
 
     let name = Command::new("sw_vers")
@@ -182,20 +178,20 @@ pub fn os() -> String {
         .output()
         .expect("Couldn't find `sw_vers`");
 
-    distro.push_str(String::from_utf8_lossy(name.stdout).as_str());
+    distro.push_str(String::from_utf8_lossy(&name.stdout).to_mut());
     distro.pop();
     distro.push(' ');
-    distro.push_str(String::from_utf8_lossy(version.stdout).as_str());
+    distro.push_str(String::from_utf8_lossy(&version.stdout).to_mut());
     distro.pop();
     distro.push(' ');
-    distro.push_str(String::from_utf8_lossy(build.stdout).as_str());
+    distro.push_str(String::from_utf8_lossy(&build.stdout).to_mut());
     distro.pop();
 
-    distro
+    Some(distro)
 }
 
 #[cfg(not(target_os = "macos"))]
-pub fn os() -> String {
+pub fn os() -> Option<String> {
     let mut distro = String::new();
 
     let program = std::fs::read_to_string("/etc/os-release")
@@ -209,21 +205,21 @@ pub fn os() -> String {
     for i in distro.split('\n') {
         let mut j = i.split('=');
 
-        match j.next().unwrap() {
+        match j.next()? {
             "PRETTY_NAME" => {
-                return j.next().unwrap().trim_matches('"').to_string()
+                return Some(j.next()?.trim_matches('"').to_string())
             }
             "NAME" => {
-                fallback = Some(j.next().unwrap().trim_matches('"').to_string())
+                fallback = Some(j.next()?.trim_matches('"').to_string())
             }
             _ => {}
         }
     }
 
     if let Some(x) = fallback {
-        x
+        Some(x)
     } else {
-        "unknown".to_string()
+        None
     }
 }
 

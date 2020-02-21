@@ -64,18 +64,18 @@ pub fn hostname() -> String {
     "localhost".to_string()
 }
 
-pub fn os() -> String {
+pub fn os() -> Option<String> {
     let string = user_agent();
 
     let begin = if let Some(b) = string.find('(') {
         b
     } else {
-        return "Unknown".to_string();
+        return None;
     };
     let end = if let Some(e) = string.find(')') {
         e
     } else {
-        return "Unknown".to_string();
+        return None;
     };
     let string = &string[begin + 1..end];
 
@@ -83,22 +83,22 @@ pub fn os() -> String {
         let begin = if let Some(b) = string.find("NT") {
             b
         } else {
-            return "Windows".to_string();
+            return Some("Windows".to_string());
         };
         let end = if let Some(e) = string.find(".") {
             e
         } else {
-            return "Windows".to_string();
+            return Some("Windows".to_string());
         };
         let string = &string[begin + 3..end];
 
-        format!("Windows {}", string)
+        Some(format!("Windows {}", string))
     } else if string.contains("Linux") {
         let string = if string.contains("X11") || string.contains("Wayland") {
             let begin = if let Some(b) = string.find(";") {
                 b
             } else {
-                return "Unknown Linux".to_string();
+                return Some("Unknown Linux".to_string());
             };
             let string = &string[begin + 2..];
 
@@ -108,22 +108,22 @@ pub fn os() -> String {
         };
 
         if string.starts_with("Linux") {
-            "Unknown Linux".to_string()
+            Some("Unknown Linux".to_string())
         } else {
             let end = if let Some(e) = string.find(";") {
                 e
             } else {
-                return "Unknown Linux".to_string();
+                return Some("Unknown Linux".to_string());
             };
-            string[..end].to_string()
+            Some(string[..end].to_string())
         }
     } else if string.contains("Mac OS X") {
         let begin = string.find("Mac OS X").unwrap();
-        if let Some(end) = string[begin..].find(";") {
+        Some(if let Some(end) = string[begin..].find(";") {
             string[begin..begin + end].to_string()
         } else {
             string[begin..].to_string().replace("_", ".")
-        }
+        })
     } else {
         // TODO:
         // Platform::FreeBsd,
@@ -135,7 +135,7 @@ pub fn os() -> String {
         // Platform::Dive,
         // Platform::Fuchsia,
         // Platform::Redox
-        string.to_string()
+        Some(string.to_string())
     }
 }
 
