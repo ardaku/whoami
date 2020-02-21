@@ -20,17 +20,13 @@ following example shows how to use all of the functions:
 ```rust
 fn main() {
     print!(
-        "--------------------------------------------------------------------------------\n\
-         user's full name (user):              {}\n\
-         username (username):                  {}\n\
-         --------------------------------------------------------------------------------\n\
-         host's fancy name (host):             {}\n\
-         hostname (hostname):                  {}\n\
-         --------------------------------------------------------------------------------\n\
-         platform (platform):                  {}\n\
-         operating system (os):                {}\n\
-         desktop environment (env):            {}\n\
-         --------------------------------------------------------------------------------\n\
+        "user's full name     whoami::user():      {}\n\
+         username             whoami::username():  {}\n\
+         host's fancy name    whoami::host():      {}\n\
+         hostname             whoami::hostname():  {}\n\
+         platform             whoami::platform():  {}\n\
+         operating system     whoami::os():        {}\n\
+         desktop environment  whoami::env():       {}\n\
          ",
         whoami::user(),
         whoami::username(),
@@ -42,8 +38,6 @@ fn main() {
     );
 }
 ```
-
-You can also preview similar output with the `whoami-demo` binary.
 
 ## Features
 * Get the user's full name
