@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](https://code.plopgrizzly.com/s
 ### Added
 - Detection for KDE desktop environment.
 
+### Changed
+- Unknown desktop environment may now contain lowercase characters.
+
 ### Fixed
-- No auto-capitilization for unknown desktop environment.
-- Don't unwrap on non-unicode for desktop environment.
+- Don't unwrap on unicode conversion failures.
 
 ## [0.7.0] - 2019-12-21
 ### Removed

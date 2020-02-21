@@ -141,7 +141,7 @@ pub fn computer() -> String {
             .expect("Couldn't find `scutil`")
     };
 
-    computer.push_str(String::from_utf8(program.stdout).unwrap().as_str());
+    computer.push_str(String::from_utf8_lossy(&program.stdout).to_mut());
 
     //    let mut pretty = BufReader::new(program.stdout.as_mut().unwrap());
 
@@ -182,13 +182,13 @@ pub fn os() -> String {
         .output()
         .expect("Couldn't find `sw_vers`");
 
-    distro.push_str(String::from_utf8(name.stdout).unwrap().as_str());
+    distro.push_str(String::from_utf8_lossy(name.stdout).as_str());
     distro.pop();
     distro.push(' ');
-    distro.push_str(String::from_utf8(version.stdout).unwrap().as_str());
+    distro.push_str(String::from_utf8_lossy(version.stdout).as_str());
     distro.pop();
     distro.push(' ');
-    distro.push_str(String::from_utf8(build.stdout).unwrap().as_str());
+    distro.push_str(String::from_utf8_lossy(build.stdout).as_str());
     distro.pop();
 
     distro
@@ -202,7 +202,7 @@ pub fn os() -> String {
         .expect("Couldn't read file /etc/os-release")
         .into_bytes();
 
-    distro.push_str(String::from_utf8(program).unwrap().as_str());
+    distro.push_str(String::from_utf8_lossy(&program).to_mut());
 
     let mut fallback = None;
 
