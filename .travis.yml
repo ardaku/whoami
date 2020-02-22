@@ -1,8 +1,6 @@
 language: rust
-sudo: false
 
 cache: cargo
-cache:
     directories:
       - $HOME/.cargo
       - $HOME/target
