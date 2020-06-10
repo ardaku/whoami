@@ -1,6 +1,7 @@
 use crate::{DesktopEnv, Platform};
 
 use std::mem;
+use std::os::raw::{c_int, c_ulong, c_char, c_uchar};
 
 #[allow(unused)]
 #[repr(C)]
@@ -35,14 +36,14 @@ enum ComputerNameFormat {
 
 #[link(name = "Secur32")]
 extern "system" {
-    fn GetUserNameExW(a: ExtendedNameFormat, b: *mut u16, c: *mut usize) -> u8;
-    fn GetUserNameW(a: *mut u16, b: *mut usize) -> i32;
-    fn GetComputerNameW(a: *mut u16, b: *mut usize) -> i32;
+    fn GetUserNameExW(a: ExtendedNameFormat, b: *mut c_char, c: *mut c_ulong) -> c_uchar;
+    fn GetUserNameW(a: *mut c_char, b: *mut c_ulong) -> c_int;
+    fn GetComputerNameW(a: *mut c_char, b: *mut c_ulong) -> c_int;
     fn GetComputerNameExW(
         a: ComputerNameFormat,
-        b: *mut u16,
-        c: *mut usize,
-    ) -> i32;
+        b: *mut c_char,
+        c: *mut c_ulong,
+    ) -> c_int;
 }
 
 pub fn username() -> String {
@@ -57,7 +58,7 @@ pub fn username() -> String {
     String::from_utf16_lossy(if size[0] == 0 {
         &[]
     } else {
-        &name[..size[0] - 1]
+        &name[..size[0] as usize - 1]
     })
 }
 
@@ -78,7 +79,7 @@ pub fn realname() -> String {
     if size[0] == 0 {
         username()
     } else {
-        String::from_utf16_lossy(&name[..size[0]])
+        String::from_utf16_lossy(&name[..size[0] as usize])
     }
 }
 
@@ -96,7 +97,7 @@ pub fn computer() -> String {
         name.assume_init()
     };
 
-    String::from_utf16_lossy(&name[..size[0]])
+    String::from_utf16_lossy(&name[..size[0] as usize])
 }
 
 pub fn hostname() -> String {
@@ -108,7 +109,7 @@ pub fn hostname() -> String {
         name.assume_init()
     };
 
-    String::from_utf16_lossy(&name[..size[0]])
+    String::from_utf16_lossy(&name[..size[0] as usize])
 }
 
 pub fn os() -> Option<String> {
