@@ -1,41 +1,46 @@
 use crate::{DesktopEnv, Platform};
 
-use std::mem;
-use std::os::raw::{c_int, c_ulong, c_char, c_uchar};
+use std::{
+	ptr,
+	char,
+	convert::TryInto,
+	os::raw::{c_int, c_ulong, c_char, c_uchar},
+};
 
 #[allow(unused)]
 #[repr(C)]
 enum ExtendedNameFormat {
-    NameUnknown,          // Nothing
-    NameFullyQualifiedDN, // Nothing
-    NameSamCompatible,    // Hostname Followed By Username
-    NameDisplay,          // Full Name
-    NameUniqueId,         // Nothing
-    NameCanonical,        // Nothing
-    NameUserPrincipal,    // Nothing
-    NameCanonicalEx,      // Nothing
-    NameServicePrincipal, // Nothing
-    NameDnsDomain,        // Nothing
-    NameGivenName,        // Nothing
-    NameSurname,          // Nothing
+    Unknown,          // Nothing
+    FullyQualifiedDN, // Nothing
+    SamCompatible,    // Hostname Followed By Username
+    Display,          // Full Name
+    UniqueId,         // Nothing
+    Canonical,        // Nothing
+    UserPrincipal,    // Nothing
+    CanonicalEx,      // Nothing
+    ServicePrincipal, // Nothing
+    DnsDomain,        // Nothing
+    GivenName,        // Nothing
+    Surname,          // Nothing
 }
 
 #[allow(unused)]
 #[repr(C)]
 enum ComputerNameFormat {
-    ComputerNameNetBIOS,             // Same as GetComputerNameW
-    ComputerNameDnsHostname,         // Fancy Name
-    ComputerNameDnsDomain,           // Nothing
-    ComputerNameDnsFullyQualified,   // Fancy Name with, for example, .com
-    ComputerNamePhysicalNetBIOS,     // Same as GetComputerNameW
-    ComputerNamePhysicalDnsHostname, // Same as GetComputerNameW
-    ComputerNamePhysicalDnsDomain,   // Nothing
-    ComputerNamePhysicalDnsFullyQualified, // Fancy Name with, for example, .com
-    ComputerNameMax,
+    NetBIOS,             // Same as GetComputerNameW
+    DnsHostname,         // Fancy Name
+    DnsDomain,           // Nothing
+    DnsFullyQualified,   // Fancy Name with, for example, .com
+    PhysicalNetBIOS,     // Same as GetComputerNameW
+    PhysicalDnsHostname, // Same as GetComputerNameW
+    PhysicalDnsDomain,   // Nothing
+    PhysicalDnsFullyQualified, // Fancy Name with, for example, .com
+    Max,
 }
 
 #[link(name = "Secur32")]
 extern "system" {
+	fn GetLastError() -> c_ulong;
     fn GetUserNameExW(a: ExtendedNameFormat, b: *mut c_char, c: *mut c_ulong) -> c_uchar;
     fn GetUserNameW(a: *mut c_char, b: *mut c_ulong) -> c_int;
     fn GetComputerNameW(a: *mut c_char, b: *mut c_ulong) -> c_int;
@@ -47,69 +52,140 @@ extern "system" {
 }
 
 pub fn username() -> String {
-    let mut name = mem::MaybeUninit::<[u16; 256]>::uninit();
-    let mut size = [256];
+	// Step 1. Retreive the entire length of the username
+	let mut size = 0;
+	let fail = unsafe {
+		// Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
+		GetUserNameW(ptr::null_mut(), &mut size) == 0
+	};
+	debug_assert_eq!(fail, true);
+	
+	// Step 2. Allocate memory to put the Windows (UTF-16) string.
+	let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
+	let orig_size = size;
+	let fail = unsafe {
+		GetUserNameW(name.as_mut_ptr().cast(), &mut size) == 0
+	};
+	if fail {
+		panic!("Failed to get username: {}, report at https://github.com/libcala/whoami/issues",
+			unsafe { GetLastError() });
+	}
+	debug_assert_eq!(orig_size, size);
+	unsafe {
+		name.set_len(size.try_into().unwrap());
+	}
+	debug_assert_eq!(name.pop(), Some(0u16)); // Remove Trailing Null
 
-    let name = unsafe {
-        GetUserNameW(name.as_mut_ptr() as *mut _, size.as_mut_ptr());
-        name.assume_init()
-    };
-
-    String::from_utf16_lossy(if size[0] == 0 {
-        &[]
-    } else {
-        &name[..size[0] as usize - 1]
-    })
+	// Step 3. Convert to Rust String
+	char::decode_utf16(name)
+		.map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
+		.collect()
 }
 
 #[inline(always)]
 pub fn realname() -> String {
-    let mut name = mem::MaybeUninit::<[u16; 256]>::uninit();
-    let mut size = [256];
+	// Step 1. Retreive the entire length of the username
+	let mut size = 0;
+	let fail = unsafe {
+		GetUserNameExW(ExtendedNameFormat::Display, ptr::null_mut(), &mut size) == 0
+	};
+	debug_assert_eq!(fail, true);
+	match unsafe { GetLastError() } {
+		0x00EA /* more data */ => { /* Success, continue */ }
+		0x054B /* no such domain */ => {
+			// If domain controller over the network can't be contacted, return
+			// "Unknown".
+			return "Unknown".to_string()
+		}
+		0x0534 /* none mapped */ => {
+			// Fallback to username
+			return username();
+		}
+		u => {
+			eprintln!("Unknown error code: {}, report at https://github.com/libcala/whoami/issues", u);
+			unreachable!();
+		}		
+	}
 
-    let name = unsafe {
-        GetUserNameExW(
-            ExtendedNameFormat::NameDisplay,
-            name.as_mut_ptr() as *mut _,
-            size.as_mut_ptr(),
-        );
-        name.assume_init()
-    };
+	// Step 2. Allocate memory to put the Windows (UTF-16) string.
+	let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
+	let orig_size = size;
+	let fail = unsafe {
+		GetUserNameExW(ExtendedNameFormat::Display, name.as_mut_ptr().cast(), &mut size) == 0
+	};
+	if fail {
+		panic!("Failed to get username: {}, report at https://github.com/libcala/whoami/issues",
+			unsafe { GetLastError() });
+	}
+	debug_assert_eq!(orig_size, size);
+	unsafe {
+		name.set_len(size.try_into().unwrap());
+	}
 
-    if size[0] == 0 {
-        username()
-    } else {
-        String::from_utf16_lossy(&name[..size[0] as usize])
-    }
+	// Step 3. Convert to Rust String
+	char::decode_utf16(name)
+		.map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
+		.collect()
 }
 
 #[inline(always)]
 pub fn computer() -> String {
-    let mut name = mem::MaybeUninit::<[u16; 256]>::uninit();
-    let mut size = [256];
+	// Step 1. Retreive the entire length of the username
+	let mut size = 0;
+	let fail = unsafe {
+		// Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
+		GetComputerNameExW(
+            ComputerNameFormat::DnsFullyQualified, ptr::null_mut(), &mut size) == 0
+	};
+	debug_assert_eq!(fail, true);
+	
+	// Step 2. Allocate memory to put the Windows (UTF-16) string.
+	let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
+	let fail = unsafe {
+		GetComputerNameExW(
+            ComputerNameFormat::DnsFullyQualified, name.as_mut_ptr().cast(), &mut size) == 0
+	};
+	if fail {
+		panic!("Failed to get computer name: {}, report at https://github.com/libcala/whoami/issues",
+			unsafe { GetLastError() });
+	}
+	unsafe {
+		name.set_len(size.try_into().unwrap());
+	}
 
-    let name = unsafe {
-        GetComputerNameExW(
-            ComputerNameFormat::ComputerNameDnsFullyQualified,
-            name.as_mut_ptr() as *mut _,
-            size.as_mut_ptr(),
-        );
-        name.assume_init()
-    };
-
-    String::from_utf16_lossy(&name[..size[0] as usize])
+	// Step 3. Convert to Rust String
+	char::decode_utf16(name)
+		.map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
+		.collect()
 }
 
 pub fn hostname() -> String {
-    let mut name = mem::MaybeUninit::<[u16; 256]>::uninit();
-    let mut size = [256];
+	// Step 1. Retreive the entire length of the username
+	let mut size = 0;
+	let fail = unsafe {
+		// Ignore error, we know that it will be ERROR_BUFFER_OVERFLOW
+		GetComputerNameW(ptr::null_mut(), &mut size) == 0
+	};
+	debug_assert_eq!(fail, true);
+	
+	// Step 2. Allocate memory to put the Windows (UTF-16) string.
+	let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
+	let fail = unsafe {
+		GetComputerNameW(name.as_mut_ptr().cast(), &mut size) == 0
+	};
+	if fail {
+		panic!("Failed to get username: {}, report at https://github.com/libcala/whoami/issues",
+			unsafe { GetLastError() });
+	}
 
-    let name = unsafe {
-        GetComputerNameW(name.as_mut_ptr() as *mut _, size.as_mut_ptr());
-        name.assume_init()
-    };
+	unsafe {
+		name.set_len(size.try_into().unwrap());
+	}
 
-    String::from_utf16_lossy(&name[..size[0] as usize])
+	// Step 3. Convert to Rust String
+	char::decode_utf16(name)
+		.map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
+		.collect()
 }
 
 pub fn os() -> Option<String> {
@@ -121,7 +197,7 @@ pub fn os() -> Option<String> {
 
     let mut out = "Windows ".to_string();
 
-    let major: u8 = ((bits & 0b00000000_00000000_00000000_11111111) >> 0) as u8;
+    let major: u8 = (bits & 0b00000000_00000000_00000000_11111111) as u8;
     let minor: u8 = ((bits & 0b00000000_00000000_11111111_00000000) >> 8) as u8;
     let build: u16 =
         ((bits & 0b11111111_11111111_00000000_00000000) >> 16) as u16;
