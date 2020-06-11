@@ -1,4 +1,4 @@
-![whoami](https://libcala.github.io/whoami/icon.svg)
+![WhoAmI Logo](https://libcala.github.io/whoami/icon.svg)
 
 [![docs.rs](https://docs.rs/whoami/badge.svg)](https://docs.rs/whoami)
 [![tests](https://github.com/libcala/whoami/workflows/tests/badge.svg)](https://github.com/libcala/whoami/actions?query=workflow%3Atests)
@@ -8,7 +8,7 @@
 
 [About](https://libcala.github.io/whoami) |
 [Source](https://github.com/libcala/whoami) |
-[Changelog](https://libcala.github.io/whoami/changelog)
+[Changelog](https://github.com/libcala/whoami/blob/master/CHANGELOG.md)
 
 # WhoAmI
 Retrieve the current user and environment.
