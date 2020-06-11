@@ -38,7 +38,7 @@ enum ComputerNameFormat {
     Max,
 }
 
-#[link(name = "Secur32")]
+#[link(name = "secur32")]
 extern "system" {
 	fn GetLastError() -> c_ulong;
     fn GetUserNameExW(a: ExtendedNameFormat, b: *mut c_char, c: *mut c_ulong) -> c_uchar;
