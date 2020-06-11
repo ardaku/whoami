@@ -4,115 +4,120 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://code.plopgrizzly.com/semver/).
 
+## [0.8.2] - Unreleased (2020-06-11)
+### Fixed
+ - Windows FFI Undefined Behavior because of not checking for errors
+ - Cross-compiling from Linux to Windows
+
 ## [0.8.1] - 2020-02-22
 ### Fixed
-- Remove unnecessary use of `to_mut()` on `Cow`s returned from
-  `String::from_utf8_lossy()`.
+ - Remove unnecessary use of `to_mut()` on `Cow`s returned from
+   `String::from_utf8_lossy()`.
 
 ## [0.8.0] - 2020-02-21
 ### Added
-- Detection for KDE desktop environment.
+ - Detection for KDE desktop environment.
 
 ### Changed
-- Unknown desktop environment may now contain lowercase characters.
+ - Unknown desktop environment may now contain lowercase characters.
 
 ### Fixed
-- No longer unwraps in any place where bad data from the OS could cause
-  a panic.
+ - No longer unwraps in any place where bad data from the OS could cause
+   a panic.
 
 ## [0.7.0] - 2019-12-21
 ### Removed
-- `stdweb` dependency when targetting web assembly.
+ - `stdweb` dependency when targetting web assembly.
 
 ### Changed
-- All public enums now have the attribute `#[non_exhaustive]` and derive
-  `Debug`.
+ - All public enums now have the attribute `#[non_exhaustive]` and derive
+   `Debug`.
 
 ### Fixed
-- Some out-of-date documentation
+ - Some out-of-date documentation
 
 ## [0.6.0] - 2019-10-25
 ### Added
-- Web Assembly support.
+ - Web Assembly support.
 
 ### Removed
-- `Platform::Web` variant of enum, use `env()` if you need to.
+ - `Platform::Web` variant of enum, use `env()` if you need to.
 
 ### Changed
-- `platform()` is no longer a const fn (needed for wasm platform
-  detection).
+ - `platform()` is no longer a const fn (needed for wasm platform
+   detection).
 
 ## [0.5.3] - 2019-07-18
 ### Changed
-- Now uses a more modern Rust coding style (replace `::std::` with `std::`).
-- Now uses a more modern Rust coding style with `mem::MaybeUninit`.
-- `impl Display` for desktop environment now uses proper capitalization.
-- Don't depend on `libc` anymore.
+ - Now uses a more modern Rust coding style (replace `::std::` with `std::`).
+ - Now uses a more modern Rust coding style with `mem::MaybeUninit`.
+ - `impl Display` for desktop environment now uses proper capitalization.
+ - Don't depend on `libc` anymore.
 ### Fixed
-- Fancy Names not working on Windows
-  - `user()` now uses Windows Display Name on Windows rather than the username.
-  - `host()` now uses Windows Name DNS Fully Qualified rather than the hostname.
+ - Fancy Names not working on Windows
+   - `user()` now uses Windows Display Name on Windows rather than the username.
+   - `host()` now uses Windows Name DNS Fully Qualified rather than the hostname.
 
 ## [0.5.2] - 2019-05-12
 ### Fixed
-- Fixed more broken links!
+ - Fixed more broken links!
 
 ## [0.5.1] - 2019-05-12
 ### Fixed
-- Clippy lint warning: change `expect(&format!("…"))` to `expect("…")` for optimization in 2 cases.
-- Fixed broken links
+ - Clippy lint warning: change `expect(&format!("…"))` to `expect("…")` for optimization in 2 cases.
+ - Fixed broken links
 
 ## [0.5.0] - 2019-03-17
 ### Added
-- `Platform` enum with corresponding `platform()` function.
-- `Dive`, `Fuchsia`, and `Redox` to `DesktopEnv` enum.
+ - `Platform` enum with corresponding `platform()` function.
+ - `Dive`, `Fuchsia`, and `Redox` to `DesktopEnv` enum.
 ### Changed
-- Started using `const fn` for some functions.
+ - Started using `const fn` for some functions.
 
 ## [0.4.1] - 2019-01-12
 ### Fixed
-- Fixed README errors.
+ - Fixed README errors.
 
 ## [0.4.0] - 2019-01-12
 ### Added
-- MacOS support.
+ - MacOS support.
 ### Changed
-- `env` on Ubuntu now returns DesktopEnv::Ubuntu instead of DesktopEnv::Other("UBUNTU")
-- Split off the binary into `whome` (who me?) crate
+ - `env` on Ubuntu now returns DesktopEnv::Ubuntu instead of DesktopEnv::Other("UBUNTU")
+ - Split off the binary into `whome` (who me?) crate
 
 ## [0.3.0] - 2019-01-04
 ### Added
-- Added more fallbacks.
+ - Added more fallbacks.
 ### Changed
-- Rename realname -> user
-- Rename computer -> host
+ - Rename realname -> user
+ - Rename computer -> host
 ### Fixed
-- Fix typo for uknown -> unknown.
+ - Fix typo for uknown -> unknown.
 
 ## [0.2.4] - 2018-12-04
 ### Fixed
-- Works now on platforms that use u8 instead of i8 for chars (like ARM).
+ - Works now on platforms that use u8 instead of i8 for chars (like ARM).
 
 ## [0.2.3] - 2018-11-26
 ### Fixed
-- Trailing newline on Windows.
+ - Trailing newline on Windows.
 
 ## [0.2.2] - 2018-06-02
 ### Fixed
-- Typo in markdown.
+ - Typo in markdown.
 
 ## [0.2.1] - 2018-06-02
 ### Fixed
-- Undefined behavior on Linux.
+ - Undefined behavior on Linux.
 
 ## [0.2.0] - 2017-12-28
 ### Added
-- Windows support.
+ - Windows support.
 
 ## [0.1.1] - 2017-08-04
 ### Fixed
-- Something in the markdown.
+ - Something in the markdown.
 
 ## [0.1.0] - 2017-08-04
 ### Added
-- Published to crates.io.
+ - Published to crates.io.
