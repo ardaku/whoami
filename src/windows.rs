@@ -43,7 +43,6 @@ extern "system" {
 	fn GetLastError() -> c_ulong;
     fn GetUserNameExW(a: ExtendedNameFormat, b: *mut c_char, c: *mut c_ulong) -> c_uchar;
     fn GetUserNameW(a: *mut c_char, b: *mut c_ulong) -> c_int;
-    fn GetComputerNameW(a: *mut c_char, b: *mut c_ulong) -> c_int;
     fn GetComputerNameExW(
         a: ComputerNameFormat,
         b: *mut c_char,
@@ -135,7 +134,7 @@ pub fn computer() -> String {
 	let fail = unsafe {
 		// Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
 		GetComputerNameExW(
-            ComputerNameFormat::DnsFullyQualified, ptr::null_mut(), &mut size) == 0
+            ComputerNameFormat::DnsHostname, ptr::null_mut(), &mut size) == 0
 	};
 	debug_assert_eq!(fail, true);
 	
@@ -143,7 +142,7 @@ pub fn computer() -> String {
 	let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
 	let fail = unsafe {
 		GetComputerNameExW(
-            ComputerNameFormat::DnsFullyQualified, name.as_mut_ptr().cast(), &mut size) == 0
+            ComputerNameFormat::DnsHostname, name.as_mut_ptr().cast(), &mut size) == 0
 	};
 	if fail {
 		panic!("Failed to get computer name: {}, report at https://github.com/libcala/whoami/issues",
@@ -163,28 +162,31 @@ pub fn hostname() -> String {
 	// Step 1. Retreive the entire length of the username
 	let mut size = 0;
 	let fail = unsafe {
-		// Ignore error, we know that it will be ERROR_BUFFER_OVERFLOW
-		GetComputerNameW(ptr::null_mut(), &mut size) == 0
+		// Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
+		GetComputerNameExW(
+            ComputerNameFormat::NetBIOS, ptr::null_mut(), &mut size) == 0
 	};
 	debug_assert_eq!(fail, true);
 	
 	// Step 2. Allocate memory to put the Windows (UTF-16) string.
 	let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
 	let fail = unsafe {
-		GetComputerNameW(name.as_mut_ptr().cast(), &mut size) == 0
+		GetComputerNameExW(
+            ComputerNameFormat::NetBIOS, name.as_mut_ptr().cast(), &mut size) == 0
 	};
 	if fail {
-		panic!("Failed to get username: {}, report at https://github.com/libcala/whoami/issues",
+		panic!("Failed to get computer name: {}, report at https://github.com/libcala/whoami/issues",
 			unsafe { GetLastError() });
 	}
-
 	unsafe {
 		name.set_len(size.try_into().unwrap());
 	}
 
-	// Step 3. Convert to Rust String
+	// Step 3. Convert to Rust String (Hostnames are case insensitive, so to
+	// match unix implementations return as lowercase.
 	char::decode_utf16(name)
-		.map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
+		.map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER).to_lowercase())
+		.flatten()
 		.collect()
 }
 
