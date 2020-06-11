@@ -26,7 +26,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         tc: [stable]
-        cc: [x86_64-apple-darwin, x86_64-windows-gnu]
+        cc: [x86_64-apple-darwin, x86_64-pc-windows-gnu]
     steps:
     - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
@@ -38,6 +38,7 @@ jobs:
     - uses: actions-rs/cargo@v1
       with:
         command: build
+        args: --target=${{ matrix.cc }}
   readme:
     runs-on: ${{ matrix.os }}
     strategy:
