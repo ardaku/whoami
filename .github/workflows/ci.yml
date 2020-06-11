@@ -1,6 +1,6 @@
 on: [push, pull_request]
 
-name: Continuous Integration
+name: tests
 
 jobs:
   test:
@@ -20,6 +20,24 @@ jobs:
       with:
         command: test
         args: --all
+  cross-compilation:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        tc: [stable]
+        cc: [x86_64-apple-darwin, x86_64-windows-gnu]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ matrix.tc }}
+        target: ${{ matrix.cc }}
+        override: true
+    - uses: actions-rs/cargo@v1
+      with:
+        command: build
   readme:
     runs-on: ${{ matrix.os }}
     strategy:
