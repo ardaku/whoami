@@ -18,7 +18,7 @@ jobs:
         override: true
     - uses: actions-rs/cargo@v1
       with:
-        command: test --all --all-features
+        command: [test, --all]
   readme:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -34,4 +34,4 @@ jobs:
         override: true
     - uses: actions-rs/cargo@v1
       with:
-        command: test --all --all-features
+        command: [test, --all, --all-features]
