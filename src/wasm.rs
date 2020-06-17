@@ -1,25 +1,26 @@
+use std::sync::Once;
+use std::mem::MaybeUninit;
+
+use cala_core::os::web::{JsString, JsFn};
+
 use crate::{DesktopEnv, Platform};
 
-// navigator.userAgent
-extern {
-    /// Get the length of the string in utf-16 codepoints.
-    fn navigator_userAgent_Len() -> usize;
-    /// Fill in a utf-16 buffer with the string data.
-    fn navigator_userAgent_Ptr(ptr: *mut u16);
-}
+static mut USER_AGENT: MaybeUninit<JsFn> = MaybeUninit::uninit();
+static INIT: Once = Once::new();
 
+// Get the user agent
 fn user_agent() -> String {
-    let ret = unsafe {
-        let len = navigator_userAgent_Len();
-        let mut vec = Vec::with_capacity(len);
-
-        navigator_userAgent_Ptr(vec.as_mut_ptr());
-        vec.set_len(len);
-
+    unsafe {
+        INIT.call_once(|| {
+            USER_AGENT = MaybeUninit::new(
+                JsFn::new("return _cala_js_malloc(navigator.userAgent);")
+            );
+        });
+        let user_agent = &*USER_AGENT.as_ptr();
+        let string = JsString::from_var(user_agent.call(None, None).unwrap());
+        let vec = string.as_var().as_vec();
         String::from_utf16_lossy(&vec)
-    };
-
-    ret
+    }
 }
 
 #[inline(always)]

@@ -1,9 +1,17 @@
 [package]
-name = "web"
+name = "web_whoami"
 version = "0.1.0"
 authors = ["Jeron Aldaron Lau <jeronlau@plopgrizzly.com>"]
 edition = "2018"
 
+[lib]
+crate-type = ["cdylib"]
+
+# [[bin]]
+# name = "whoami"
+# path = "src/lib.rs"
+
 [dependencies]
 whoami = { path = "../../" }
-devout = "0.0.1"
+cala_core = { path = "../../../cala_core" }
+devout = { path = "../../../devout" } # "0.0.1"
