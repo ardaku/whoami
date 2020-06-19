@@ -6,19 +6,37 @@ use cala_core::os::web::{JsString, JsFn};
 use crate::{DesktopEnv, Platform};
 
 static mut USER_AGENT: MaybeUninit<JsFn> = MaybeUninit::uninit();
-static INIT: Once = Once::new();
+static INIT_USER_AGENT: Once = Once::new();
+
+static mut DOCUMENT_DOMAIN: MaybeUninit<JsFn> = MaybeUninit::uninit();
+static INIT_DOCUMENT_DOMAIN: Once = Once::new();
 
 // Get the user agent
 fn user_agent() -> String {
     unsafe {
-        INIT.call_once(|| {
+        INIT_USER_AGENT.call_once(|| {
             USER_AGENT = MaybeUninit::new(
-                JsFn::new("return _cala_js_malloc(navigator.userAgent);")
+                JsFn::new("return navigator.userAgent;")
             );
         });
         let user_agent = &*USER_AGENT.as_ptr();
         let string = JsString::from_var(user_agent.call(None, None).unwrap());
-        let vec = string.as_var().as_vec();
+        let vec = string.as_var().as_str();
+        String::from_utf16_lossy(&vec)
+    }
+}
+
+// Get the document domain
+fn document_domain() -> String {
+    unsafe {
+        INIT_DOCUMENT_DOMAIN.call_once(|| {
+            DOCUMENT_DOMAIN = MaybeUninit::new(
+                JsFn::new("return document.domain;")
+            );
+        });
+        let domain = &*DOCUMENT_DOMAIN.as_ptr();
+        let string = JsString::from_var(domain.call(None, None).unwrap());
+        let vec = string.as_var().as_str();
         String::from_utf16_lossy(&vec)
     }
 }
@@ -36,18 +54,13 @@ pub fn realname() -> String {
 pub fn computer() -> String {
     let orig_string = user_agent();
 
-    let end = if let Some(e) = orig_string.rfind("/") {
-        e
-    } else {
-        return "Unknown Browser".to_string();
-    };
     let start = if let Some(s) = orig_string.rfind(" ") {
         s
     } else {
         return "Unknown Browser".to_string();
     };
 
-    let string = orig_string.get(start + 1..end).unwrap().to_string();
+    let string = orig_string.get(start + 1..).unwrap_or("Unknown Browser").replace('/', " ");
 
     if string == "Safari" {
         if orig_string.contains("Chrome") {
@@ -62,7 +75,7 @@ pub fn computer() -> String {
 
 #[inline(always)]
 pub fn hostname() -> String {
-    "localhost".to_string()
+    document_domain()
 }
 
 pub fn os() -> Option<String> {

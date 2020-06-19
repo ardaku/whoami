@@ -1,4 +1,4 @@
-![WhoAmI Logo](https://libcala.github.io/whoami/icon.svg)
+![WhoAmI Logo](https://libcala.github.io/whoami/res/icon.svg)
 
 [![docs.rs](https://docs.rs/whoami/badge.svg)](https://docs.rs/whoami)
 [![tests](https://github.com/libcala/whoami/workflows/tests/badge.svg)](https://github.com/libcala/whoami/actions?query=workflow%3Atests)

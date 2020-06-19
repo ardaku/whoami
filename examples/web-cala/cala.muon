@@ -1,0 +1,14 @@
+# Cala Project File
+edition: 2018
+version: 0.1.0
+webpage: https://whoami.libcala.github.io/examples/web
+label: res/label.muon
+icon: ../../res/icon.svg
+author:=Jeron Aldaron Lau <jeronlau@plopgrizzly.com>
+
+deps: whoami
+    path: ../../
+deps: cala_core
+    path: ../../../cala_core
+deps: devout
+    path: ../../../devout
