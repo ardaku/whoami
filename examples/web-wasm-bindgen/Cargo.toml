@@ -1,5 +1,5 @@
 [package]
-name = "web_whoami"
+name = "whoami_wasmbindgen"
 version = "0.1.0"
 authors = ["Jeron Aldaron Lau <jeronlau@plopgrizzly.com>"]
 edition = "2018"
@@ -8,7 +8,6 @@ edition = "2018"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-whoami = { path = "../../" }
+whoami = { path = "../../", features = ["wasm-bindgen"] }
 wasm-bindgen = "0.2"
-cala_core = { path = "../../../cala_core", features = ["wasm-bindgen"] }
 devout = { path = "../../../devout", features = ["dev"] } # "0.0.1"

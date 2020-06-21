@@ -8,6 +8,7 @@ author:=Jeron Aldaron Lau <jeronlau@plopgrizzly.com>
 
 deps: whoami
     path: ../../
+    feature: cala
 deps: cala_core
     path: ../../../cala_core
 deps: devout

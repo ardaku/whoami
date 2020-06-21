@@ -1,13 +1,14 @@
 # A Web Example
 
-## Install `cargo-cala`
+## Install `wasm-pack` and `http`
 ```bash
-cargo install cargo-cala --force
+curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+cargo install https
 ```
 
 ## Build & Run Web Server
 ```bash
-cargo cala web
+wasm-pack build --target web && http .
 ```
 
 Now, open 0.0.0.0:8080 in your web browser and check the javascript console.

@@ -5,6 +5,5 @@ authors = ["Jeron Aldaron Lau <jeronlau@plopgrizzly.com>"]
 edition = "2018"
 
 [dependencies]
-whoami = { path = "../../" }
-cala_core = { path = "../../../cala_core", features = ["stdweb"] }
+whoami = { path = "../../", features = ["stdweb"] }
 devout = { path = "../../../devout", features = ["dev"] } # "0.0.1"

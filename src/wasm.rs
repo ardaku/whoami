@@ -21,8 +21,9 @@ fn user_agent() -> String {
         });
         let user_agent = &*USER_AGENT.as_ptr();
         let string = JsString::from_var(user_agent.call(None, None).unwrap());
-        let vec = string.as_var().as_str();
-        String::from_utf16_lossy(&vec)
+        let mut text = Vec::new();
+        string.as_var().read_utf16(&mut text);
+        String::from_utf16_lossy(&text)
     }
 }
 
@@ -36,8 +37,9 @@ fn document_domain() -> String {
         });
         let domain = &*DOCUMENT_DOMAIN.as_ptr();
         let string = JsString::from_var(domain.call(None, None).unwrap());
-        let vec = string.as_var().as_str();
-        String::from_utf16_lossy(&vec)
+        let mut text = Vec::new();
+        string.as_var().read_utf16(&mut text);
+        String::from_utf16_lossy(&text)
     }
 }
 

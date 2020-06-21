@@ -4,7 +4,8 @@
   </head>
   <body>
     <script>
-        var _cala_inst = null;
+        var _cala_memory = null;
+        var _cala_wake = null;
         var _cala_heap = new Array();
         var _cala_garbage = new Array();
         function _cala_js_malloc(o) {
@@ -18,14 +19,32 @@
                 return idx;
             }
         }
-        function _cala_js_string(p,l) {
-            var buf = new Uint16Array(_cala_inst.buffer,p,l);
+        function _cala_js_text(p,l) {
+            var buf = new Uint16Array(_cala_memory.buffer,p,l);
             var str = "";
             for(var i = 0; i < l; i++) {
                 str += String.fromCharCode(buf[i]);
             }
-            let tmp = _cala_js_malloc(str);
-            return tmp;
+            return _cala_js_malloc(str);
+        }
+        function _cala_js_copy(dst,src,len) {
+            for(var i = 0; i < len; i++) { dst[i] = src[i]; }
+        }
+        function _cala_js_write_bytes(j,p,l) {
+            var d = new Uint8Array(_cala_memory.buffer,p,l);
+            _cala_js_copy(j,d,l);
+        }
+        function _cala_js_write_ints(j,p,l) {
+            var d = new Int32Array(_cala_memory.buffer,p,l);
+            _cala_js_copy(j,d,l);
+        }
+        function _cala_js_write_floats(j,p,l) {
+            var d = new Float32Array(_cala_memory.buffer,p,l);
+            _cala_js_copy(j,d,l);
+        }
+        function _cala_js_write_doubles(j,p,l) {
+            var d = new Float64Array(_cala_memory.buffer,p,l);
+            _cala_js_copy(j,d,l);
         }
         function _cala_js_function(i) {
             return _cala_js_malloc(Function(_cala_heap[i])());
@@ -33,50 +52,63 @@
         function _cala_js_call(f, a, b) {
             let o = _cala_heap[f](_cala_heap[a], _cala_heap[b]);
             if(o == undefined) {
-                return 4294967295;
+                return -1;
             } else {
                 return _cala_js_malloc(o);
             }
         }
         function _cala_js_free(i) { return _cala_garbage.push(i); }
-        function _cala_js_readstr(j, p, l) {
-            var buf = new Uint16Array(_cala_inst.buffer,p,l);
+        function _cala_js_read_text(j,p,l) {
+            var buf = new Uint16Array(_cala_memory.buffer,p,l);
             let get = _cala_heap[j];
             for(var i = 0; i < l; i++) {
                 buf[i] = get.charCodeAt(i);
             }
             return get.length;
         }
-        function _cala_js_read8(j, p, l) {
-            var buf = new Uint8Array(_cala_inst.buffer,p,l);
-            let get = _cala_heap[j];
-            for(var i = 0; i < l; i++) {
+        function _cala_js_read_copy(buf,get,len) {
+            for(var i = 0; i < len; i++) {
                 buf[i] = get[i];
             }
             return get.length;
         }
-        function _cala_js_read16(j, p, l) {
-            var buf = new Uint16Array(_cala_inst.buffer,p,l);
-            let get = _cala_heap[j];
-            for(var i = 0; i < l; i++) {
-                buf[i] = get[i];
-            }
-            return get.length;
+        function _cala_js_read_bytes(j,p,l) {
+            var buf = new Uint8Array(_cala_memory.buffer,p,l);
+            return _cala_js_read_copy(buf,_cala_heap[j],l);
         }
-        function _cala_js_read32(j, p, l) {
-            var buf = new Uint32Array(_cala_inst.buffer,p,l);
-            let get = _cala_heap[j];
-            for(var i = 0; i < l; i++) {
-                buf[i] = get[i];
-            }
-            return get.length;
+        function _cala_js_read_ints(j, p, l) {
+            var buf = new Int32Array(_cala_memory.buffer,p,l);
+            return _cala_js_read_copy(buf,_cala_heap[j],l);
         }
+        function _cala_js_read_floats(j, p, l) {
+            var buf = new Float32Array(_cala_memory.buffer,p,l);
+            return _cala_js_read_copy(buf,_cala_heap[j],l);
+        }
+        function _cala_js_read_doubles(j, p, l) {
+            var buf = new Float64Array(_cala_memory.buffer,p,l);
+            return _cala_js_read_copy(buf,_cala_heap[j],l);
+        }
+        function _cala_js_waker(j) {
+            _cala_heap[j].then((o) => {
+                if(o == undefined || o == null) {
+                    _cala_wake(j, -1);
+                } else {
+                    _cala_wake(j, _cala_js_malloc(o))
+                }
+            });
+        }
+        function _cala_js_store_int(o) { return _cala_js_malloc(o); }
+        function _cala_js_load_int(o) { return _cala_heap[o]; }
+        function _cala_js_store_float(o) { return _cala_js_malloc(o); }
+        function _cala_js_load_float(o) { return _cala_heap[o]; }
+        function _cala_js_store_double(o) { return _cala_js_malloc(o); }
+        function _cala_js_load_double(o) { return _cala_heap[o]; }
     </script>
     <script type="module">
-        import init, {wasm_main} from './pkg/web_whoami.js';
-
+        import init, {wasm_main, wake} from './pkg/whoami_wasmbindgen.js';
         init().then(function(wasm) {
-            _cala_inst = wasm.memory;
+            _cala_memory = wasm.memory;
+            _cala_wake = wake;
             wasm_main();
         });
     </script>
