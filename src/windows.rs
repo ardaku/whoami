@@ -1,10 +1,10 @@
 use crate::{DesktopEnv, Platform};
 
 use std::{
-    char,
     convert::TryInto,
-    os::raw::{c_char, c_int, c_uchar, c_ulong},
+    os::{windows::ffi::OsStringExt, raw::{c_char, c_int, c_uchar, c_ulong}},
     ptr,
+    ffi::OsString,
 };
 
 #[allow(unused)]
@@ -54,7 +54,19 @@ extern "system" {
     ) -> c_int;
 }
 
+// Convert an OsString into a String
+fn string_from_os(string: OsString) -> String {
+    match string.into_string() {
+        Ok(string) => string,
+        Err(string) => string.to_string_lossy().to_string(),
+    }
+}
+
 pub fn username() -> String {
+    string_from_os(username_os())
+}
+
+pub fn username_os() -> OsString {
     // Step 1. Retreive the entire length of the username
     let mut size = 0;
     let fail = unsafe {
@@ -81,13 +93,16 @@ pub fn username() -> String {
     debug_assert_eq!(name.pop(), Some(0u16)); // Remove Trailing Null
 
     // Step 3. Convert to Rust String
-    char::decode_utf16(name)
-        .map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
-        .collect()
+    OsString::from_wide(&name)
 }
 
 #[inline(always)]
 pub fn realname() -> String {
+    string_from_os(realname_os())
+}
+
+#[inline(always)]
+pub fn realname_os() -> OsString {
     // Step 1. Retreive the entire length of the username
     let mut size = 0;
     let fail = unsafe {
@@ -100,11 +115,11 @@ pub fn realname() -> String {
 		0x054B /* no such domain */ => {
 			// If domain controller over the network can't be contacted, return
 			// "Unknown".
-			return "Unknown".to_string()
+			return "Unknown".into()
 		}
 		0x0534 /* none mapped */ => {
 			// Fallback to username
-			return username();
+			return username_os();
 		}
 		u => {
 			eprintln!("Unknown error code: {}, report at https://github.com/libcala/whoami/issues", u);
@@ -134,13 +149,16 @@ pub fn realname() -> String {
     }
 
     // Step 3. Convert to Rust String
-    char::decode_utf16(name)
-        .map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
-        .collect()
+    OsString::from_wide(&name)
 }
 
 #[inline(always)]
-pub fn computer() -> String {
+pub fn devicename() -> String {
+    string_from_os(devicename_os())
+}
+
+#[inline(always)]
+pub fn devicename_os() -> OsString {
     // Step 1. Retreive the entire length of the username
     let mut size = 0;
     let fail = unsafe {
@@ -173,12 +191,14 @@ pub fn computer() -> String {
     }
 
     // Step 3. Convert to Rust String
-    char::decode_utf16(name)
-        .map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
-        .collect()
+    OsString::from_wide(&name)
 }
 
 pub fn hostname() -> String {
+    string_from_os(hostname_os())
+}
+
+pub fn hostname_os() -> OsString {
     // Step 1. Retreive the entire length of the username
     let mut size = 0;
     let fail = unsafe {
@@ -212,13 +232,14 @@ pub fn hostname() -> String {
 
     // Step 3. Convert to Rust String (Hostnames are case insensitive, so to
     // match unix implementations return as lowercase.
-    char::decode_utf16(name)
-        .map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER).to_lowercase())
-        .flatten()
-        .collect()
+    OsString::from_wide(&name)
 }
 
-pub fn os() -> Option<String> {
+pub fn distro_os() -> Option<OsString> {
+    distro().map(|a| a.into())
+}
+
+pub fn distro() -> Option<String> {
     extern "system" {
         fn GetVersion() -> usize;
     }
@@ -250,7 +271,7 @@ pub fn os() -> Option<String> {
 }
 
 #[inline(always)]
-pub const fn env() -> DesktopEnv {
+pub const fn desktop_env() -> DesktopEnv {
     DesktopEnv::Windows
 }
 
