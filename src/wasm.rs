@@ -1,5 +1,4 @@
-use std::sync::Once;
-use std::mem::MaybeUninit;
+use std::{sync::Once, mem::MaybeUninit, ffi::OsString};
 
 use cala_core::os::web::{JsString, JsFn};
 
@@ -41,6 +40,31 @@ fn document_domain() -> String {
         string.as_var().read_utf16(&mut text);
         String::from_utf16_lossy(&text)
     }
+}
+
+#[inline(always)]
+pub fn username_os() -> OsString {
+    username().into()
+}
+
+#[inline(always)]
+pub fn realname_os() -> OsString {
+    realname().into()
+}
+
+#[inline(always)]
+pub fn computer_os() -> OsString {
+    computer().into()
+}
+
+#[inline(always)]
+pub fn hostname_os() -> OsString {
+    hostname().into()
+}
+
+#[inline(always)]
+pub fn os_os() -> Option<OsString> {
+    os().map(|a| a.into())
 }
 
 #[inline(always)]
@@ -156,7 +180,7 @@ pub fn os() -> Option<String> {
 }
 
 pub const fn env() -> DesktopEnv {
-    DesktopEnv::Wasm
+    DesktopEnv::WebBrowser
 }
 
 pub fn platform() -> Platform {

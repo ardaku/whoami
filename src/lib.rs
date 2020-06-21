@@ -2,9 +2,11 @@
 //!
 //! ## Getting Started
 //! Using the whoami crate is super easy!  All of the public items are simple
-//! functions with no parameters that return `String`s (with the exception of
-//! [`env()`](fn.env.html), and [`platform()`](fn.platform.html) which return
-//! enums).  The following example shows how to use all of the functions:
+//! functions with no parameters that return [`String`](std::string::String)s or
+//! [`OsString`](std::ffi::OsString)s (with the exception of
+//! [`desktop_env()`](fn.desktop_env.html), and [`platform()`](fn.platform.html)
+//! which return enums).  The following example shows how to use all of the
+//! functions (except those that return [`OsString`](std::ffi::OsString)):
 //!
 //! ```rust
 //! fn main() {
@@ -34,12 +36,15 @@
     html_favicon_url = "https://libcala.github.io/whoami/icon.svg"
 )]
 
+use std::ffi::OsString;
+
 /// Which Desktop Environment
 #[allow(missing_docs)]
 #[derive(Debug)]
 #[non_exhaustive]
 pub enum DesktopEnv {
     Gnome,
+    /// One of the desktop environments for a specific version of Windows
     Windows,
     Lxde,
     Openbox,
@@ -48,23 +53,31 @@ pub enum DesktopEnv {
     Kde,
     Cinnamon,
     I3,
-    Mac,
+    /// Default desktop environment for MacOS
+    Aqua,
+    /// Desktop environment for iOS
     Ios,
+    /// Desktop environment for Android
     Android,
-    Wasm,
+    /// Running as Web Assembly on a web page 
+    WebBrowser,
+    /// A desktop environment for a video game console
     Console,
+    /// Ubuntu-branded GNOME
     Ubuntu,
+    /// Default shell for Fuchsia
+    Ermine,
+    /// Default desktop environment for Redox
+    Orbital,
+    /// Default desktop environment for Dive OS
     Dive,
-    Fuchsia,
-    Redox,
+    /// Unknown desktop environment
     Unknown(String),
 }
 
 impl std::fmt::Display for DesktopEnv {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        use self::DesktopEnv::*;
-
-        if let Unknown(_) = self {
+        if let DesktopEnv::Unknown(_) = self {
             write!(f, "Unknown: ")?;
         }
 
@@ -72,25 +85,25 @@ impl std::fmt::Display for DesktopEnv {
             f,
             "{}",
             match self {
-                Gnome => "Gnome",
-                Windows => "Windows",
-                Lxde => "LXDE",
-                Openbox => "Openbox",
-                Mate => "Mate",
-                Xfce => "XFCE",
-                Kde => "KDE",
-                Cinnamon => "Cinnamon",
-                I3 => "I3",
-                Mac => "Mac OS",
-                Ios => "IOS",
-                Android => "Android",
-                Wasm => "Wasm",
-                Console => "Console",
-                Ubuntu => "Ubuntu",
-                Dive => "Dive",
-                Fuchsia => "Fuchsia",
-                Redox => "Redox",
-                Unknown(a) => &a,
+                DesktopEnv::Gnome => "Gnome",
+                DesktopEnv::Windows => "Windows",
+                DesktopEnv::Lxde => "LXDE",
+                DesktopEnv::Openbox => "Openbox",
+                DesktopEnv::Mate => "Mate",
+                DesktopEnv::Xfce => "XFCE",
+                DesktopEnv::Kde => "KDE",
+                DesktopEnv::Cinnamon => "Cinnamon",
+                DesktopEnv::I3 => "I3",
+                DesktopEnv::Aqua => "Aqua",
+                DesktopEnv::Ios => "IOS",
+                DesktopEnv::Android => "Android",
+                DesktopEnv::WebBrowser => "Web Browser",
+                DesktopEnv::Console => "Console",
+                DesktopEnv::Ubuntu => "Ubuntu",
+                DesktopEnv::Dive => "Dive",
+                DesktopEnv::Ermine => "Ermine",
+                DesktopEnv::Orbital => "Orbital",
+                DesktopEnv::Unknown(a) => &a,
             }
         )
     }
@@ -102,7 +115,7 @@ impl std::fmt::Display for DesktopEnv {
 #[non_exhaustive]
 pub enum Platform {
     Linux,
-    FreeBsd,
+    Bsd,
     Windows,
     MacOS,
     Ios,
@@ -118,9 +131,7 @@ pub enum Platform {
 
 impl std::fmt::Display for Platform {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        use self::Platform::*;
-
-        if let Unknown(_) = self {
+        if let Platform::Unknown(_) = self {
             write!(f, "Unknown: ")?;
         }
 
@@ -128,19 +139,19 @@ impl std::fmt::Display for Platform {
             f,
             "{}",
             match self {
-                Linux => "Linux",
-                FreeBsd => "Free BSD",
-                Windows => "Windows",
-                MacOS => "Mac OS",
-                Ios => "iOS",
-                Android => "Android",
-                Nintendo => "Nintendo",
-                Xbox => "XBox",
-                PlayStation => "PlayStation",
-                Dive => "Dive",
-                Fuchsia => "Fuchsia",
-                Redox => "Redox",
-                Unknown(a) => a,
+                Platform::Linux => "Linux",
+                Platform::Bsd => "BSD",
+                Platform::Windows => "Windows",
+                Platform::MacOS => "Mac OS",
+                Platform::Ios => "iOS",
+                Platform::Android => "Android",
+                Platform::Nintendo => "Nintendo",
+                Platform::Xbox => "XBox",
+                Platform::PlayStation => "PlayStation",
+                Platform::Dive => "Dive OS",
+                Platform::Fuchsia => "Fuchsia",
+                Platform::Redox => "Redox",
+                Platform::Unknown(a) => a,
             }
         )
     }
@@ -165,16 +176,36 @@ pub fn username() -> String {
     native::username()
 }
 
-/// Get the user's full name.
+/// Get the user's username.
 #[inline(always)]
-pub fn user() -> String {
+pub fn username_os() -> OsString {
+    native::username_os()
+}
+
+/// Get the user's real name.
+#[inline(always)]
+pub fn realname() -> String {
     native::realname()
 }
 
-/// Get the host device's (pretty) name.
+/// Get the user's real name.
 #[inline(always)]
-pub fn host() -> String {
+pub fn realname_os() -> OsString {
+    native::realname_os()
+}
+
+/// Get the device name (also known as "Pretty Name"), used to identify device
+/// for bluetooth pairing.
+#[inline(always)]
+pub fn devicename() -> String {
     native::computer()
+}
+
+/// Get the device name (also known as "Pretty Name"), used to identify device
+/// for bluetooth pairing.
+#[inline(always)]
+pub fn devicename_os() -> OsString {
+    native::computer_os()
 }
 
 /// Get the host device's hostname.
@@ -183,19 +214,33 @@ pub fn hostname() -> String {
     native::hostname()
 }
 
-/// Get the the operating system name and version.
+/// Get the host device's hostname.
+#[inline(always)]
+pub fn hostname_os() -> OsString {
+    native::hostname_os()
+}
+
+/// Get the name of the operating system distribution and (possibly) version.
 ///
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
-pub fn os() -> String {
+pub fn distro() -> String {
     native::os().unwrap_or_else(|| "Unknown".to_string())
+}
+
+/// Get the name of the operating system distribution and (possibly) version.
+///
+/// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
+#[inline(always)]
+pub fn distro_os() -> OsString {
+    native::os_os().unwrap_or_else(|| "Unknown".to_string().into())
 }
 
 /// Get the desktop environment.
 ///
 /// Example: "gnome" or "windows"
 #[inline(always)]
-pub fn env() -> DesktopEnv {
+pub fn desktop_env() -> DesktopEnv {
     native::env()
 }
 

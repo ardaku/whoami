@@ -1,9 +1,10 @@
 use crate::{DesktopEnv, Platform};
 
-use std::ffi::c_void;
+use std::ffi::{OsStr, OsString, c_void};
 use std::mem;
 use std::process::Command;
 use std::process::Stdio;
+use std::os::unix::ffi::OsStrExt;
 
 #[repr(C)]
 struct PassWd {
@@ -37,9 +38,17 @@ extern "system" {
     fn gethostname(name: *mut c_void, len: usize) -> i32;
 }
 
-fn string_from_cstring(string: *const c_void) -> String {
+// Convert an OsString into a String
+fn string_from_os(string: OsString) -> String {
+    match string.into_string() {
+        Ok(string) => string,
+        Err(string) => string.to_string_lossy().to_string()
+    }
+}
+
+fn os_from_cstring(string: *const c_void) -> OsString {
     if string.is_null() {
-        return "".to_string();
+        return "".to_string().into();
     }
 
     // Get a byte slice of the c string.
@@ -49,13 +58,13 @@ fn string_from_cstring(string: *const c_void) -> String {
     };
 
     // Turn byte slice into Rust String.
-    String::from_utf8_lossy(slice).to_string()
+    OsStr::from_bytes(slice).to_os_string()
 }
 
-// This function must return `String`s, because a slice or Cow<str> would still
+// This function must allocate, because a slice or Cow<OsStr> would still
 // reference `passwd` which is dropped when this function returns.
 #[inline(always)]
-fn getpwuid() -> (String, String) {
+fn getpwuid(real: bool) -> Result<OsString, OsString> {
     const BUF_SIZE: usize = 16_384; // size from the man page
     let mut buffer = mem::MaybeUninit::<[u8; BUF_SIZE]>::uninit();
     let mut passwd = mem::MaybeUninit::<PassWd>::uninit();
@@ -75,58 +84,73 @@ fn getpwuid() -> (String, String) {
     };
 
     // Extract names.
-    let a = string_from_cstring(passwd.pw_name);
-    let b = string_from_cstring(passwd.pw_gecos);
-
-    (a, b)
+    if real {
+        let string = os_from_cstring(passwd.pw_gecos);
+        if string.is_empty() {
+            Err(os_from_cstring(passwd.pw_name))
+        } else {
+            Ok(string)
+        }
+    } else {
+        Ok(os_from_cstring(passwd.pw_name))
+    }
 }
 
 pub fn username() -> String {
-    let pwent = getpwuid();
-
-    pwent.0
+    string_from_os(username_os())
 }
 
-fn fancy_fallback(mut computer: String, fallback_fn: fn() -> String) -> String {
-    let mut cap = true;
+pub fn username_os() -> OsString {
+    // Unwrap never fails
+    getpwuid(false).unwrap()
+}
 
-    if computer.is_empty() {
-        let fallback = fallback_fn();
+fn fancy_fallback(result: Result<OsString, OsString>) -> OsString {
+    match result {
+        Ok(success) => success,
+        Err(fallback) => {
+            let mut cap = true;
+            let mut new = String::new();
+            let cs = match fallback.to_str() { Some(a) => Ok(a), None => Err(fallback.to_string_lossy().to_string()) };
+            let iter = match cs { Ok(a) => a.chars(), Err(ref b) => b.chars() };
 
-        for c in fallback.chars() {
-            match c {
-                '.' | '-' | '_' => {
-                    computer.push(' ');
-                    cap = true;
-                }
-                a => {
-                    if cap {
-                        cap = false;
-                        for i in a.to_uppercase() {
-                            computer.push(i);
+            for c in iter {
+                match c {
+                    '.' | '-' | '_' => {
+                        new.push(' ');
+                        cap = true;
+                    }
+                    a => {
+                        if cap {
+                            cap = false;
+                            for i in a.to_uppercase() {
+                                new.push(i);
+                            }
+                        } else {
+                            new.push(a);
                         }
-                    } else {
-                        computer.push(a);
                     }
                 }
             }
+            new.into()
         }
     }
-
-    computer
 }
 
 pub fn realname() -> String {
-    let pwent = getpwuid();
-    let realname = pwent.1;
+    string_from_os(realname_os())
+}
 
+pub fn realname_os() -> OsString {
     // If no real name is provided, guess based on username.
-    fancy_fallback(realname, username)
+    fancy_fallback(getpwuid(true))
 }
 
 pub fn computer() -> String {
-    let mut computer = String::new();
+    string_from_os(computer_os())
+}
 
+pub fn computer_os() -> OsString {
     let program = if cfg!(not(target_os = "macos")) {
         Command::new("hostnamectl")
             .arg("--pretty")
@@ -140,27 +164,37 @@ pub fn computer() -> String {
             .output()
             .expect("Couldn't find `scutil`")
     };
-
-    computer.push_str(&String::from_utf8_lossy(&program.stdout));
-
-    computer.pop();
-
-    fancy_fallback(computer, hostname)
+    
+    let computer = &program.stdout[..program.stdout.len()-1];
+    let computer = if computer.is_empty() {
+        Err(hostname_os())
+    } else {
+        Ok(OsStr::from_bytes(computer).to_os_string())
+    };
+    fancy_fallback(computer)
 }
 
 pub fn hostname() -> String {
+    string_from_os(hostname_os())
+}
+
+pub fn hostname_os() -> OsString {
     // Maximum hostname length = 255, plus a NULL byte.
     let mut string = mem::MaybeUninit::<[u8; 256]>::uninit();
     let string = unsafe {
         gethostname(string.as_mut_ptr() as *mut c_void, 255);
         &string.assume_init()[..strlen(string.as_ptr() as *const c_void)]
     };
-
-    String::from_utf8_lossy(string).to_string()
+    OsStr::from_bytes(string).to_os_string()
 }
 
 #[cfg(target_os = "macos")]
-pub fn os() -> Option<String> {
+pub fn os() -> String {
+    string_from_os(os_os())
+}
+
+#[cfg(target_os = "macos")]
+pub fn os_os() -> Option<OsString> {
     let mut distro = String::new();
 
     let name = Command::new("sw_vers")
@@ -188,6 +222,11 @@ pub fn os() -> Option<String> {
     distro.pop();
 
     Some(distro)
+}
+
+#[cfg(not(target_os = "macos"))]
+pub fn os_os() -> Option<OsString> {
+    os().map(|a| a.into())
 }
 
 #[cfg(not(target_os = "macos"))]
