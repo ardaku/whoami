@@ -21,21 +21,21 @@ following example shows how to use all of the functions:
 ```rust
 fn main() {
     print!(
-        "user's full name     whoami::user():      {}\n\
-         username             whoami::username():  {}\n\
-         host's fancy name    whoami::host():      {}\n\
-         hostname             whoami::hostname():  {}\n\
-         platform             whoami::platform():  {}\n\
-         operating system     whoami::os():        {}\n\
-         desktop environment  whoami::env():       {}\n\
+        "user's full name     whoami::realname():    {}\n\
+         username             whoami::username():    {}\n\
+         host's fancy name    whoami::devicename():  {}\n\
+         hostname             whoami::hostname():    {}\n\
+         platform             whoami::platform():    {}\n\
+         operating system     whoami::distro():      {}\n\
+         desktop environment  whoami::desktop_env(): {}\n\
          ",
-        whoami::user(),
+        whoami::realname(),
         whoami::username(),
-        whoami::host(),
+        whoami::devicename(),
         whoami::hostname(),
         whoami::platform(),
-        whoami::os(),
-        whoami::env(),
+        whoami::distro(),
+        whoami::desktop_env(),
     );
 }
 ```
