@@ -3,8 +3,6 @@ use crate::{DesktopEnv, Platform};
 use std::ffi::{c_void, OsString};
 use std::mem;
 use std::os::unix::ffi::OsStringExt;
-use std::process::Command;
-use std::process::Stdio;
 
 #[repr(C)]
 struct PassWd {
@@ -105,40 +103,44 @@ pub fn username_os() -> OsString {
     getpwuid(false).unwrap()
 }
 
-fn fancy_fallback(result: Result<OsString, OsString>) -> OsString {
+fn fancy_fallback(result: Result<&str, String>) -> String {
+    let mut cap = true;
+    let iter = match result {
+        Ok(a) => a.chars(),
+        Err(ref b) => b.chars(),
+    };
+    let mut new = String::new();
+    for c in iter {
+        match c {
+            '.' | '-' | '_' => {
+                new.push(' ');
+                cap = true;
+            }
+            a => {
+                if cap {
+                    cap = false;
+                    for i in a.to_uppercase() {
+                        new.push(i);
+                    }
+                } else {
+                    new.push(a);
+                }
+            }
+        }
+    }
+    new
+}
+
+fn fancy_fallback_os(result: Result<OsString, OsString>) -> OsString {
     match result {
         Ok(success) => success,
         Err(fallback) => {
-            let mut cap = true;
-            let mut new = String::new();
             let cs = match fallback.to_str() {
                 Some(a) => Ok(a),
                 None => Err(fallback.to_string_lossy().to_string()),
             };
-            let iter = match cs {
-                Ok(a) => a.chars(),
-                Err(ref b) => b.chars(),
-            };
-
-            for c in iter {
-                match c {
-                    '.' | '-' | '_' => {
-                        new.push(' ');
-                        cap = true;
-                    }
-                    a => {
-                        if cap {
-                            cap = false;
-                            for i in a.to_uppercase() {
-                                new.push(i);
-                            }
-                        } else {
-                            new.push(a);
-                        }
-                    }
-                }
-            }
-            new.into()
+            
+            fancy_fallback(cs).into()
         }
     }
 }
@@ -149,27 +151,49 @@ pub fn realname() -> String {
 
 pub fn realname_os() -> OsString {
     // If no real name is provided, guess based on username.
-    fancy_fallback(getpwuid(true))
+    fancy_fallback_os(getpwuid(true))
 }
 
+#[cfg(not(target_os = "macos"))]
+pub fn devicename_os() -> OsString {
+    devicename().into()
+}
+
+#[cfg(not(target_os = "macos"))]
+pub fn devicename() -> String {
+    let mut distro = String::new();
+
+    if let Ok(program) = std::fs::read_to_string("/etc/machine-info") {
+        let program = program.into_bytes();
+
+        distro.push_str(&String::from_utf8(program).unwrap());
+
+        for i in distro.split('\n') {
+            let mut j = i.split('=');
+
+            match j.next().unwrap() {
+                "PRETTY_HOSTNAME" => {
+                    return j.next().unwrap().trim_matches('"').to_string()
+                }
+                _ => {}
+            }
+        }
+    }
+    fancy_fallback(Err(hostname()))
+}
+
+#[cfg(target_os = "macos")]
 pub fn devicename() -> String {
     string_from_os(devicename_os())
 }
 
+#[cfg(target_os = "macos")]
 pub fn devicename_os() -> OsString {
-    let mut program = if cfg!(not(target_os = "macos")) {
-        Command::new("hostnamectl")
-            .arg("--pretty")
-            .stdout(Stdio::piped())
-            .output()
-            .expect("Couldn't Find `hostnamectl`")
-    } else {
-        Command::new("scutil")
-            .arg("--get")
-            .arg("ComputerName")
-            .output()
-            .expect("Couldn't find `scutil`")
-    };
+    let mut program = std::process::Command::new("scutil")
+        .arg("--get")
+        .arg("ComputerName")
+        .output()
+        .expect("Couldn't find `scutil`");
 
     program.stdout.pop();
 
@@ -178,7 +202,7 @@ pub fn devicename_os() -> OsString {
     } else {
         Ok(OsString::from_vec(program.stdout))
     };
-    fancy_fallback(computer)
+    fancy_fallback_os(computer)
 }
 
 pub fn hostname() -> String {
@@ -204,17 +228,17 @@ pub fn distro() -> Option<String> {
 pub fn distro_os() -> Option<OsString> {
     let mut distro = Vec::new();
 
-    let name = Command::new("sw_vers")
+    let name = std::process::Command::new("sw_vers")
         .arg("-productName")
         .output()
         .expect("Couldn't find `sw_vers`");
 
-    let version = Command::new("sw_vers")
+    let version = std::process::Command::new("sw_vers")
         .arg("-productVersion")
         .output()
         .expect("Couldn't find `sw_vers`");
 
-    let build = Command::new("sw_vers")
+    let build = std::process::Command::new("sw_vers")
         .arg("-buildVersion")
         .output()
         .expect("Couldn't find `sw_vers`");
