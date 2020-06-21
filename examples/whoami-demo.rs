@@ -1,21 +1,29 @@
 fn main() {
-    print!(
-        "whoami {}\n\n\
-         User's Full Name      whoami::realname()       {}\n\
-         Username              whoami::username()       {}\n\
-         Host's Fancy Name     whoami::devicename()     {}\n\
-         Hostname              whoami::hostname()       {}\n\
-         Platform              whoami::platform()       {}\n\
-         Operating System      whoami::distro()         {}\n\
-         Desktop Environment   whoami::desktop_env()    {}\n\
-         ",
-        env!("CARGO_PKG_VERSION"),
-        whoami::realname(),
-        whoami::username(),
-        whoami::devicename(),
-        whoami::hostname(),
-        whoami::platform(),
-        whoami::distro(),
-        whoami::desktop_env(),
+    println!("WhoAmI {}", env!("CARGO_PKG_VERSION"));
+    println!();
+    println!(
+        "User→Name      whoami::realname():    {}",
+        whoami::realname()
+    );
+    println!(
+        "User→Username  whoami::username():    {}",
+        whoami::username()
+    );
+    println!(
+        "Host→Name      whoami::devicename():  {}",
+        whoami::devicename()
+    );
+    println!(
+        "Host→Hostname  whoami::hostname():    {}",
+        whoami::hostname()
+    );
+    println!(
+        "Platform       whoami::platform():    {}",
+        whoami::platform()
+    );
+    println!("OS Distro      whoami::distro():      {}", whoami::distro());
+    println!(
+        "Desktop Env.   whoami::desktop_env(): {}",
+        whoami::desktop_env()
     );
 }

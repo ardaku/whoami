@@ -1,6 +1,6 @@
-use std::{sync::Once, mem::MaybeUninit, ffi::OsString};
+use std::{ffi::OsString, mem::MaybeUninit, sync::Once};
 
-use cala_core::os::web::{JsString, JsFn};
+use cala_core::os::web::{JsFn, JsString};
 
 use crate::{DesktopEnv, Platform};
 
@@ -14,9 +14,8 @@ static INIT_DOCUMENT_DOMAIN: Once = Once::new();
 fn user_agent() -> String {
     unsafe {
         INIT_USER_AGENT.call_once(|| {
-            USER_AGENT = MaybeUninit::new(
-                JsFn::new("return navigator.userAgent;")
-            );
+            USER_AGENT =
+                MaybeUninit::new(JsFn::new("return navigator.userAgent;"));
         });
         let user_agent = &*USER_AGENT.as_ptr();
         let string = JsString::from_var(user_agent.call(None, None).unwrap());
@@ -30,9 +29,8 @@ fn user_agent() -> String {
 fn document_domain() -> String {
     unsafe {
         INIT_DOCUMENT_DOMAIN.call_once(|| {
-            DOCUMENT_DOMAIN = MaybeUninit::new(
-                JsFn::new("return document.domain;")
-            );
+            DOCUMENT_DOMAIN =
+                MaybeUninit::new(JsFn::new("return document.domain;"));
         });
         let domain = &*DOCUMENT_DOMAIN.as_ptr();
         let string = JsString::from_var(domain.call(None, None).unwrap());
@@ -53,8 +51,8 @@ pub fn realname_os() -> OsString {
 }
 
 #[inline(always)]
-pub fn computer_os() -> OsString {
-    computer().into()
+pub fn devicename_os() -> OsString {
+    devicename().into()
 }
 
 #[inline(always)]
@@ -63,8 +61,8 @@ pub fn hostname_os() -> OsString {
 }
 
 #[inline(always)]
-pub fn os_os() -> Option<OsString> {
-    os().map(|a| a.into())
+pub fn distro_os() -> Option<OsString> {
+    distro().map(|a| a.into())
 }
 
 #[inline(always)]
@@ -77,7 +75,7 @@ pub fn realname() -> String {
     "Anonymous".to_string()
 }
 
-pub fn computer() -> String {
+pub fn devicename() -> String {
     let orig_string = user_agent();
 
     let start = if let Some(s) = orig_string.rfind(" ") {
@@ -86,7 +84,10 @@ pub fn computer() -> String {
         return "Unknown Browser".to_string();
     };
 
-    let string = orig_string.get(start + 1..).unwrap_or("Unknown Browser").replace('/', " ");
+    let string = orig_string
+        .get(start + 1..)
+        .unwrap_or("Unknown Browser")
+        .replace('/', " ");
 
     if string == "Safari" {
         if orig_string.contains("Chrome") {
@@ -104,7 +105,7 @@ pub fn hostname() -> String {
     document_domain()
 }
 
-pub fn os() -> Option<String> {
+pub fn distro() -> Option<String> {
     let string = user_agent();
 
     let begin = if let Some(b) = string.find('(') {
@@ -179,7 +180,7 @@ pub fn os() -> Option<String> {
     }
 }
 
-pub const fn env() -> DesktopEnv {
+pub const fn desktop_env() -> DesktopEnv {
     DesktopEnv::WebBrowser
 }
 

@@ -20,22 +20,33 @@ following example shows how to use all of the functions:
 
 ```rust
 fn main() {
-    print!(
-        "user's full name     whoami::realname():    {}\n\
-         username             whoami::username():    {}\n\
-         host's fancy name    whoami::devicename():  {}\n\
-         hostname             whoami::hostname():    {}\n\
-         platform             whoami::platform():    {}\n\
-         operating system     whoami::distro():      {}\n\
-         desktop environment  whoami::desktop_env(): {}\n\
-         ",
-        whoami::realname(),
-        whoami::username(),
-        whoami::devicename(),
-        whoami::hostname(),
-        whoami::platform(),
-        whoami::distro(),
-        whoami::desktop_env(),
+    println!(
+        "User→Name      whoami::realname():    {}",
+        whoami::realname()
+    );
+    println!(
+        "User→Username  whoami::username():    {}",
+        whoami::username()
+    );
+    println!(
+        "Host→Name      whoami::devicename():  {}",
+        whoami::devicename()
+    );
+    println!(
+        "Host→Hostname  whoami::hostname():    {}",
+        whoami::hostname()
+    );
+    println!(
+        "Platform       whoami::platform():    {}",
+        whoami::platform()
+    );
+    println!(
+        "OS Distro      whoami::distro():      {}",
+        whoami::distro()
+    );
+    println!(
+        "Desktop Env.   whoami::desktop_env(): {}",
+        whoami::desktop_env()
     );
 }
 ```

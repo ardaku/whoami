@@ -10,22 +10,33 @@
 //!
 //! ```rust
 //! fn main() {
-//!     print!(
-//!         "user's full name     whoami::realname():    {}\n\
-//!          username             whoami::username():    {}\n\
-//!          host's fancy name    whoami::devicename():  {}\n\
-//!          hostname             whoami::hostname():    {}\n\
-//!          platform             whoami::platform():    {}\n\
-//!          operating system     whoami::distro():      {}\n\
-//!          desktop environment  whoami::desktop_env(): {}\n\
-//!          ",
-//!         whoami::realname(),
-//!         whoami::username(),
-//!         whoami::devicename(),
-//!         whoami::hostname(),
-//!         whoami::platform(),
-//!         whoami::distro(),
-//!         whoami::desktop_env(),
+//!     println!(
+//!         "User→Name      whoami::realname():    {}",
+//!         whoami::realname()
+//!     );
+//!     println!(
+//!         "User→Username  whoami::username():    {}",
+//!         whoami::username()
+//!     );
+//!     println!(
+//!         "Host→Name      whoami::devicename():  {}",
+//!         whoami::devicename()
+//!     );
+//!     println!(
+//!         "Host→Hostname  whoami::hostname():    {}",
+//!         whoami::hostname()
+//!     );
+//!     println!(
+//!         "Platform       whoami::platform():    {}",
+//!         whoami::platform()
+//!     );
+//!     println!(
+//!         "OS Distro      whoami::distro():      {}",
+//!         whoami::distro()
+//!     );
+//!     println!(
+//!         "Desktop Env.   whoami::desktop_env(): {}",
+//!         whoami::desktop_env()
 //!     );
 //! }
 //! ```
@@ -59,7 +70,7 @@ pub enum DesktopEnv {
     Ios,
     /// Desktop environment for Android
     Android,
-    /// Running as Web Assembly on a web page 
+    /// Running as Web Assembly on a web page
     WebBrowser,
     /// A desktop environment for a video game console
     Console,
@@ -198,14 +209,14 @@ pub fn realname_os() -> OsString {
 /// for bluetooth pairing.
 #[inline(always)]
 pub fn devicename() -> String {
-    native::computer()
+    native::devicename()
 }
 
 /// Get the device name (also known as "Pretty Name"), used to identify device
 /// for bluetooth pairing.
 #[inline(always)]
 pub fn devicename_os() -> OsString {
-    native::computer_os()
+    native::devicename_os()
 }
 
 /// Get the host device's hostname.
@@ -225,7 +236,7 @@ pub fn hostname_os() -> OsString {
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn distro() -> String {
-    native::os().unwrap_or_else(|| "Unknown".to_string())
+    native::distro().unwrap_or_else(|| "Unknown".to_string())
 }
 
 /// Get the name of the operating system distribution and (possibly) version.
@@ -233,7 +244,7 @@ pub fn distro() -> String {
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn distro_os() -> OsString {
-    native::os_os().unwrap_or_else(|| "Unknown".to_string().into())
+    native::distro_os().unwrap_or_else(|| "Unknown".to_string().into())
 }
 
 /// Get the desktop environment.
@@ -241,7 +252,7 @@ pub fn distro_os() -> OsString {
 /// Example: "gnome" or "windows"
 #[inline(always)]
 pub fn desktop_env() -> DesktopEnv {
-    native::env()
+    native::desktop_env()
 }
 
 /// Get the platform.

@@ -1,10 +1,10 @@
 use crate::{DesktopEnv, Platform};
 
 use std::{
-	ptr,
-	char,
-	convert::TryInto,
-	os::raw::{c_int, c_ulong, c_char, c_uchar},
+    char,
+    convert::TryInto,
+    os::raw::{c_char, c_int, c_uchar, c_ulong},
+    ptr,
 };
 
 #[allow(unused)]
@@ -27,21 +27,25 @@ enum ExtendedNameFormat {
 #[allow(unused)]
 #[repr(C)]
 enum ComputerNameFormat {
-    NetBIOS,             // Same as GetComputerNameW
-    DnsHostname,         // Fancy Name
-    DnsDomain,           // Nothing
-    DnsFullyQualified,   // Fancy Name with, for example, .com
-    PhysicalNetBIOS,     // Same as GetComputerNameW
-    PhysicalDnsHostname, // Same as GetComputerNameW
-    PhysicalDnsDomain,   // Nothing
+    NetBIOS,                   // Same as GetComputerNameW
+    DnsHostname,               // Fancy Name
+    DnsDomain,                 // Nothing
+    DnsFullyQualified,         // Fancy Name with, for example, .com
+    PhysicalNetBIOS,           // Same as GetComputerNameW
+    PhysicalDnsHostname,       // Same as GetComputerNameW
+    PhysicalDnsDomain,         // Nothing
     PhysicalDnsFullyQualified, // Fancy Name with, for example, .com
     Max,
 }
 
 #[link(name = "secur32")]
 extern "system" {
-	fn GetLastError() -> c_ulong;
-    fn GetUserNameExW(a: ExtendedNameFormat, b: *mut c_char, c: *mut c_ulong) -> c_uchar;
+    fn GetLastError() -> c_ulong;
+    fn GetUserNameExW(
+        a: ExtendedNameFormat,
+        b: *mut c_char,
+        c: *mut c_ulong,
+    ) -> c_uchar;
     fn GetUserNameW(a: *mut c_char, b: *mut c_ulong) -> c_int;
     fn GetComputerNameExW(
         a: ComputerNameFormat,
@@ -51,45 +55,47 @@ extern "system" {
 }
 
 pub fn username() -> String {
-	// Step 1. Retreive the entire length of the username
-	let mut size = 0;
-	let fail = unsafe {
-		// Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
-		GetUserNameW(ptr::null_mut(), &mut size) == 0
-	};
-	debug_assert_eq!(fail, true);
-	
-	// Step 2. Allocate memory to put the Windows (UTF-16) string.
-	let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
-	let orig_size = size;
-	let fail = unsafe {
-		GetUserNameW(name.as_mut_ptr().cast(), &mut size) == 0
-	};
-	if fail {
-		panic!("Failed to get username: {}, report at https://github.com/libcala/whoami/issues",
-			unsafe { GetLastError() });
-	}
-	debug_assert_eq!(orig_size, size);
-	unsafe {
-		name.set_len(size.try_into().unwrap());
-	}
-	debug_assert_eq!(name.pop(), Some(0u16)); // Remove Trailing Null
+    // Step 1. Retreive the entire length of the username
+    let mut size = 0;
+    let fail = unsafe {
+        // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
+        GetUserNameW(ptr::null_mut(), &mut size) == 0
+    };
+    debug_assert_eq!(fail, true);
 
-	// Step 3. Convert to Rust String
-	char::decode_utf16(name)
-		.map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
-		.collect()
+    // Step 2. Allocate memory to put the Windows (UTF-16) string.
+    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
+    let orig_size = size;
+    let fail =
+        unsafe { GetUserNameW(name.as_mut_ptr().cast(), &mut size) == 0 };
+    if fail {
+        panic!(
+            "Failed to get username: {}, report at https://github.com/libcala/whoami/issues",
+            unsafe { GetLastError() }
+        );
+    }
+    debug_assert_eq!(orig_size, size);
+    unsafe {
+        name.set_len(size.try_into().unwrap());
+    }
+    debug_assert_eq!(name.pop(), Some(0u16)); // Remove Trailing Null
+
+    // Step 3. Convert to Rust String
+    char::decode_utf16(name)
+        .map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
+        .collect()
 }
 
 #[inline(always)]
 pub fn realname() -> String {
-	// Step 1. Retreive the entire length of the username
-	let mut size = 0;
-	let fail = unsafe {
-		GetUserNameExW(ExtendedNameFormat::Display, ptr::null_mut(), &mut size) == 0
-	};
-	debug_assert_eq!(fail, true);
-	match unsafe { GetLastError() } {
+    // Step 1. Retreive the entire length of the username
+    let mut size = 0;
+    let fail = unsafe {
+        GetUserNameExW(ExtendedNameFormat::Display, ptr::null_mut(), &mut size)
+            == 0
+    };
+    debug_assert_eq!(fail, true);
+    match unsafe { GetLastError() } {
 		0x00EA /* more data */ => { /* Success, continue */ }
 		0x054B /* no such domain */ => {
 			// If domain controller over the network can't be contacted, return
@@ -103,91 +109,113 @@ pub fn realname() -> String {
 		u => {
 			eprintln!("Unknown error code: {}, report at https://github.com/libcala/whoami/issues", u);
 			unreachable!();
-		}		
+		}
 	}
 
-	// Step 2. Allocate memory to put the Windows (UTF-16) string.
-	let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
-	let orig_size = size;
-	let fail = unsafe {
-		GetUserNameExW(ExtendedNameFormat::Display, name.as_mut_ptr().cast(), &mut size) == 0
-	};
-	if fail {
-		panic!("Failed to get username: {}, report at https://github.com/libcala/whoami/issues",
-			unsafe { GetLastError() });
-	}
-	debug_assert_eq!(orig_size, size);
-	unsafe {
-		name.set_len(size.try_into().unwrap());
-	}
+    // Step 2. Allocate memory to put the Windows (UTF-16) string.
+    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
+    let orig_size = size;
+    let fail = unsafe {
+        GetUserNameExW(
+            ExtendedNameFormat::Display,
+            name.as_mut_ptr().cast(),
+            &mut size,
+        ) == 0
+    };
+    if fail {
+        panic!(
+            "Failed to get username: {}, report at https://github.com/libcala/whoami/issues",
+            unsafe { GetLastError() }
+        );
+    }
+    debug_assert_eq!(orig_size, size);
+    unsafe {
+        name.set_len(size.try_into().unwrap());
+    }
 
-	// Step 3. Convert to Rust String
-	char::decode_utf16(name)
-		.map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
-		.collect()
+    // Step 3. Convert to Rust String
+    char::decode_utf16(name)
+        .map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
+        .collect()
 }
 
 #[inline(always)]
 pub fn computer() -> String {
-	// Step 1. Retreive the entire length of the username
-	let mut size = 0;
-	let fail = unsafe {
-		// Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
-		GetComputerNameExW(
-            ComputerNameFormat::DnsHostname, ptr::null_mut(), &mut size) == 0
-	};
-	debug_assert_eq!(fail, true);
-	
-	// Step 2. Allocate memory to put the Windows (UTF-16) string.
-	let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
-	let fail = unsafe {
-		GetComputerNameExW(
-            ComputerNameFormat::DnsHostname, name.as_mut_ptr().cast(), &mut size) == 0
-	};
-	if fail {
-		panic!("Failed to get computer name: {}, report at https://github.com/libcala/whoami/issues",
-			unsafe { GetLastError() });
-	}
-	unsafe {
-		name.set_len(size.try_into().unwrap());
-	}
+    // Step 1. Retreive the entire length of the username
+    let mut size = 0;
+    let fail = unsafe {
+        // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
+        GetComputerNameExW(
+            ComputerNameFormat::DnsHostname,
+            ptr::null_mut(),
+            &mut size,
+        ) == 0
+    };
+    debug_assert_eq!(fail, true);
 
-	// Step 3. Convert to Rust String
-	char::decode_utf16(name)
-		.map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
-		.collect()
+    // Step 2. Allocate memory to put the Windows (UTF-16) string.
+    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
+    let fail = unsafe {
+        GetComputerNameExW(
+            ComputerNameFormat::DnsHostname,
+            name.as_mut_ptr().cast(),
+            &mut size,
+        ) == 0
+    };
+    if fail {
+        panic!(
+            "Failed to get computer name: {}, report at https://github.com/libcala/whoami/issues",
+            unsafe { GetLastError() }
+        );
+    }
+    unsafe {
+        name.set_len(size.try_into().unwrap());
+    }
+
+    // Step 3. Convert to Rust String
+    char::decode_utf16(name)
+        .map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
+        .collect()
 }
 
 pub fn hostname() -> String {
-	// Step 1. Retreive the entire length of the username
-	let mut size = 0;
-	let fail = unsafe {
-		// Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
-		GetComputerNameExW(
-            ComputerNameFormat::NetBIOS, ptr::null_mut(), &mut size) == 0
-	};
-	debug_assert_eq!(fail, true);
-	
-	// Step 2. Allocate memory to put the Windows (UTF-16) string.
-	let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
-	let fail = unsafe {
-		GetComputerNameExW(
-            ComputerNameFormat::NetBIOS, name.as_mut_ptr().cast(), &mut size) == 0
-	};
-	if fail {
-		panic!("Failed to get computer name: {}, report at https://github.com/libcala/whoami/issues",
-			unsafe { GetLastError() });
-	}
-	unsafe {
-		name.set_len(size.try_into().unwrap());
-	}
+    // Step 1. Retreive the entire length of the username
+    let mut size = 0;
+    let fail = unsafe {
+        // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
+        GetComputerNameExW(
+            ComputerNameFormat::NetBIOS,
+            ptr::null_mut(),
+            &mut size,
+        ) == 0
+    };
+    debug_assert_eq!(fail, true);
 
-	// Step 3. Convert to Rust String (Hostnames are case insensitive, so to
-	// match unix implementations return as lowercase.
-	char::decode_utf16(name)
-		.map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER).to_lowercase())
-		.flatten()
-		.collect()
+    // Step 2. Allocate memory to put the Windows (UTF-16) string.
+    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
+    let fail = unsafe {
+        GetComputerNameExW(
+            ComputerNameFormat::NetBIOS,
+            name.as_mut_ptr().cast(),
+            &mut size,
+        ) == 0
+    };
+    if fail {
+        panic!(
+            "Failed to get computer name: {}, report at https://github.com/libcala/whoami/issues",
+            unsafe { GetLastError() }
+        );
+    }
+    unsafe {
+        name.set_len(size.try_into().unwrap());
+    }
+
+    // Step 3. Convert to Rust String (Hostnames are case insensitive, so to
+    // match unix implementations return as lowercase.
+    char::decode_utf16(name)
+        .map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER).to_lowercase())
+        .flatten()
+        .collect()
 }
 
 pub fn os() -> Option<String> {

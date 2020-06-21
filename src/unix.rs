@@ -1,10 +1,10 @@
 use crate::{DesktopEnv, Platform};
 
-use std::ffi::{OsStr, OsString, c_void};
+use std::ffi::{c_void, OsStr, OsString};
 use std::mem;
+use std::os::unix::ffi::OsStrExt;
 use std::process::Command;
 use std::process::Stdio;
-use std::os::unix::ffi::OsStrExt;
 
 #[repr(C)]
 struct PassWd {
@@ -42,7 +42,7 @@ extern "system" {
 fn string_from_os(string: OsString) -> String {
     match string.into_string() {
         Ok(string) => string,
-        Err(string) => string.to_string_lossy().to_string()
+        Err(string) => string.to_string_lossy().to_string(),
     }
 }
 
@@ -111,8 +111,14 @@ fn fancy_fallback(result: Result<OsString, OsString>) -> OsString {
         Err(fallback) => {
             let mut cap = true;
             let mut new = String::new();
-            let cs = match fallback.to_str() { Some(a) => Ok(a), None => Err(fallback.to_string_lossy().to_string()) };
-            let iter = match cs { Ok(a) => a.chars(), Err(ref b) => b.chars() };
+            let cs = match fallback.to_str() {
+                Some(a) => Ok(a),
+                None => Err(fallback.to_string_lossy().to_string()),
+            };
+            let iter = match cs {
+                Ok(a) => a.chars(),
+                Err(ref b) => b.chars(),
+            };
 
             for c in iter {
                 match c {
@@ -146,11 +152,11 @@ pub fn realname_os() -> OsString {
     fancy_fallback(getpwuid(true))
 }
 
-pub fn computer() -> String {
-    string_from_os(computer_os())
+pub fn devicename() -> String {
+    string_from_os(devicename_os())
 }
 
-pub fn computer_os() -> OsString {
+pub fn devicename_os() -> OsString {
     let program = if cfg!(not(target_os = "macos")) {
         Command::new("hostnamectl")
             .arg("--pretty")
@@ -164,8 +170,8 @@ pub fn computer_os() -> OsString {
             .output()
             .expect("Couldn't find `scutil`")
     };
-    
-    let computer = &program.stdout[..program.stdout.len()-1];
+
+    let computer = &program.stdout[..program.stdout.len() - 1];
     let computer = if computer.is_empty() {
         Err(hostname_os())
     } else {
@@ -189,12 +195,12 @@ pub fn hostname_os() -> OsString {
 }
 
 #[cfg(target_os = "macos")]
-pub fn os() -> String {
-    string_from_os(os_os())
+pub fn distro() -> String {
+    string_from_os(distro_os())
 }
 
 #[cfg(target_os = "macos")]
-pub fn os_os() -> Option<OsString> {
+pub fn distro_os() -> Option<OsString> {
     let mut distro = String::new();
 
     let name = Command::new("sw_vers")
@@ -225,12 +231,12 @@ pub fn os_os() -> Option<OsString> {
 }
 
 #[cfg(not(target_os = "macos"))]
-pub fn os_os() -> Option<OsString> {
-    os().map(|a| a.into())
+pub fn distro_os() -> Option<OsString> {
+    distro().map(|a| a.into())
 }
 
 #[cfg(not(target_os = "macos"))]
-pub fn os() -> Option<String> {
+pub fn distro() -> Option<String> {
     let mut distro = String::new();
 
     let program = std::fs::read_to_string("/etc/os-release")
@@ -248,9 +254,7 @@ pub fn os() -> Option<String> {
             "PRETTY_NAME" => {
                 return Some(j.next()?.trim_matches('"').to_string())
             }
-            "NAME" => {
-                fallback = Some(j.next()?.trim_matches('"').to_string())
-            }
+            "NAME" => fallback = Some(j.next()?.trim_matches('"').to_string()),
             _ => {}
         }
     }
@@ -264,13 +268,13 @@ pub fn os() -> Option<String> {
 
 #[cfg(target_os = "macos")]
 #[inline(always)]
-pub const fn env() -> DesktopEnv {
+pub const fn desktop_env() -> DesktopEnv {
     DesktopEnv::Mac
 }
 
 #[cfg(not(target_os = "macos"))]
 #[inline(always)]
-pub fn env() -> DesktopEnv {
+pub fn desktop_env() -> DesktopEnv {
     match std::env::var_os("DESKTOP_SESSION")
         .map(|env| env.to_string_lossy().to_string())
     {
