@@ -1,8 +1,8 @@
 use crate::{DesktopEnv, Platform};
 
-use std::ffi::{c_void, OsStr, OsString};
+use std::ffi::{c_void, OsString};
 use std::mem;
-use std::os::unix::ffi::OsStrExt;
+use std::os::unix::ffi::OsStringExt;
 use std::process::Command;
 use std::process::Stdio;
 
@@ -58,7 +58,7 @@ fn os_from_cstring(string: *const c_void) -> OsString {
     };
 
     // Turn byte slice into Rust String.
-    OsStr::from_bytes(slice).to_os_string()
+    OsString::from_vec(slice.to_vec())
 }
 
 // This function must allocate, because a slice or Cow<OsStr> would still
@@ -157,7 +157,7 @@ pub fn devicename() -> String {
 }
 
 pub fn devicename_os() -> OsString {
-    let program = if cfg!(not(target_os = "macos")) {
+    let mut program = if cfg!(not(target_os = "macos")) {
         Command::new("hostnamectl")
             .arg("--pretty")
             .stdout(Stdio::piped())
@@ -171,11 +171,12 @@ pub fn devicename_os() -> OsString {
             .expect("Couldn't find `scutil`")
     };
 
-    let computer = &program.stdout[..program.stdout.len() - 1];
-    let computer = if computer.is_empty() {
+    program.stdout.pop();
+
+    let computer = if program.stdout.is_empty() {
         Err(hostname_os())
     } else {
-        Ok(OsStr::from_bytes(computer).to_os_string())
+        Ok(OsString::from_vec(program.stdout))
     };
     fancy_fallback(computer)
 }
@@ -186,22 +187,22 @@ pub fn hostname() -> String {
 
 pub fn hostname_os() -> OsString {
     // Maximum hostname length = 255, plus a NULL byte.
-    let mut string = mem::MaybeUninit::<[u8; 256]>::uninit();
-    let string = unsafe {
+    let mut string = Vec::<u8>::with_capacity(256);
+    unsafe {
         gethostname(string.as_mut_ptr() as *mut c_void, 255);
-        &string.assume_init()[..strlen(string.as_ptr() as *const c_void)]
+        string.set_len(strlen(string.as_ptr() as *const c_void));
     };
-    OsStr::from_bytes(string).to_os_string()
+    OsString::from_vec(string)
 }
 
 #[cfg(target_os = "macos")]
-pub fn distro() -> String {
-    string_from_os(distro_os())
+pub fn distro() -> Option<String> {
+    distro_os().map(|a| string_from_os(a))
 }
 
 #[cfg(target_os = "macos")]
 pub fn distro_os() -> Option<OsString> {
-    let mut distro = String::new();
+    let mut distro = Vec::new();
 
     let name = Command::new("sw_vers")
         .arg("-productName")
@@ -218,16 +219,16 @@ pub fn distro_os() -> Option<OsString> {
         .output()
         .expect("Couldn't find `sw_vers`");
 
-    distro.push_str(&String::from_utf8_lossy(&name.stdout));
+    distro.extend(&name.stdout);
     distro.pop();
-    distro.push(' ');
-    distro.push_str(&String::from_utf8_lossy(&version.stdout));
+    distro.push(b' ');
+    distro.extend(&version.stdout);
     distro.pop();
-    distro.push(' ');
-    distro.push_str(&String::from_utf8_lossy(&build.stdout));
+    distro.push(b' ');
+    distro.extend(&build.stdout);
     distro.pop();
 
-    Some(distro)
+    Some(OsString::from_vec(distro))
 }
 
 #[cfg(not(target_os = "macos"))]
@@ -269,7 +270,7 @@ pub fn distro() -> Option<String> {
 #[cfg(target_os = "macos")]
 #[inline(always)]
 pub const fn desktop_env() -> DesktopEnv {
-    DesktopEnv::Mac
+    DesktopEnv::Aqua
 }
 
 #[cfg(not(target_os = "macos"))]
