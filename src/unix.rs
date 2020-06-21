@@ -238,18 +238,10 @@ pub fn distro_os() -> Option<OsString> {
         .output()
         .expect("Couldn't find `sw_vers`");
 
-    let build = std::process::Command::new("sw_vers")
-        .arg("-buildVersion")
-        .output()
-        .expect("Couldn't find `sw_vers`");
-
     distro.extend(&name.stdout);
     distro.pop();
     distro.push(b' ');
     distro.extend(&version.stdout);
-    distro.pop();
-    distro.push(b' ');
-    distro.extend(&build.stdout);
     distro.pop();
 
     Some(OsString::from_vec(distro))
