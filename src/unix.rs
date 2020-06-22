@@ -4,6 +4,9 @@ use std::ffi::{c_void, OsString};
 use std::mem;
 use std::os::unix::ffi::OsStringExt;
 
+#[cfg(target_os = "macos")]
+use std::{ptr::null_mut, os::{unix::ffi::OsStrExt, raw::{c_uchar, c_long}}};
+
 #[repr(C)]
 struct PassWd {
     pw_name: *const c_void,
@@ -35,6 +38,15 @@ extern "system" {
     fn strlen(cs: *const c_void) -> usize;
     fn gethostname(name: *mut c_void, len: usize) -> i32;
 }
+#[cfg(target_os = "macos")]
+#[link(name = "CoreFoundation", kind = "framework")]
+#[link(name = "SystemConfiguration", kind = "framework")]
+extern "system" {
+    fn CFStringGetCString(the_string: *mut c_void, buffer: *mut u8, buffer_size: c_long, encoding: u32) -> c_uchar;
+    fn CFStringGetLength(the_string: *mut c_void) -> c_long;
+    fn CFStringGetMaximumSizeForEncoding(length: c_long, encoding: u32) -> c_long;
+    fn SCDynamicStoreCopyComputerName(store: *mut c_void, encoding: *mut u32) -> *mut c_void;
+}
 
 // Convert an OsString into a String
 fn string_from_os(string: OsString) -> String {
@@ -57,6 +69,26 @@ fn os_from_cstring(string: *const c_void) -> OsString {
 
     // Turn byte slice into Rust String.
     OsString::from_vec(slice.to_vec())
+}
+
+#[cfg(target_os = "macos")]
+fn os_from_cfstring(string: *mut c_void) -> OsString {
+    if string.is_null() {
+        return "".to_string().into()
+    }
+
+    unsafe {
+        let len = CFStringGetLength(string);
+        let capacity = CFStringGetMaximumSizeForEncoding(len, 134_217_984 /*UTF8*/) + 1;
+        let mut out = Vec::with_capacity(capacity as usize);
+        if CFStringGetCString(string, out.as_mut_ptr(), capacity, 134_217_984 /*UTF8*/) != 0 {
+            out.set_len(strlen(out.as_ptr().cast())); // Remove trailing NUL byte
+            out.shrink_to_fit();
+            OsString::from_vec(out)
+        } else {
+            return "".to_string().into()
+        }
+    }
 }
 
 // This function must allocate, because a slice or Cow<OsStr> would still
@@ -189,18 +221,14 @@ pub fn devicename() -> String {
 
 #[cfg(target_os = "macos")]
 pub fn devicename_os() -> OsString {
-    let mut program = std::process::Command::new("scutil")
-        .arg("--get")
-        .arg("ComputerName")
-        .output()
-        .expect("Couldn't find `scutil`");
+    let out = os_from_cfstring(unsafe {
+        SCDynamicStoreCopyComputerName(null_mut(), null_mut())
+    });
 
-    program.stdout.pop();
-
-    let computer = if program.stdout.is_empty() {
+    let computer = if out.as_bytes().is_empty() {
         Err(hostname_os())
     } else {
-        Ok(OsString::from_vec(program.stdout))
+        Ok(out)
     };
     fancy_fallback_os(computer)
 }
