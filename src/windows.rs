@@ -233,8 +233,7 @@ pub fn hostname_os() -> OsString {
         name.set_len(size.try_into().unwrap());
     }
 
-    // Step 3. Convert to Rust String (Hostnames are case insensitive, so to
-    // match unix implementations return as lowercase.
+    // Step 3. Convert to Rust String
     OsString::from_wide(&name)
 }
 
