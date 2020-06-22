@@ -63,7 +63,7 @@ extern "system" {
         store: *mut c_void,
         encoding: *mut u32,
     ) -> *mut c_void;
-    fn CFRelease(cf: *const c_void) -> ();
+    fn CFRelease(cf: *const c_void);
 }
 
 // Convert an OsString into a String
@@ -113,7 +113,7 @@ fn os_from_cfstring(string: *mut c_void) -> OsString {
             OsString::from_vec(out)
         } else {
             CFRelease(string);
-            return "".to_string().into();
+            "".to_string().into()
         }
     }
 }
@@ -317,16 +317,14 @@ fn distro_xml(data: String) -> Option<String> {
     }
     if let Some(product_name) = product_name {
         if let Some(user_visible_version) = user_visible_version {
-            return Some(format!("{} {}", product_name, user_visible_version));
+            Some(format!("{} {}", product_name, user_visible_version))
         } else {
-            return Some(product_name.to_string());
+            Some(product_name.to_string())
         }
+    } else if let Some(user_visible_version) = user_visible_version {
+        Some(format!("Mac OS (Unknown) {}", user_visible_version))
     } else {
-        if let Some(user_visible_version) = user_visible_version {
-            return Some(format!("Mac OS X {}", user_visible_version));
-        } else {
-            return None;
-        }
+        None
     }
 }
 
