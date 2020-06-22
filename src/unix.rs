@@ -5,7 +5,13 @@ use std::mem;
 use std::os::unix::ffi::OsStringExt;
 
 #[cfg(target_os = "macos")]
-use std::{ptr::null_mut, os::{unix::ffi::OsStrExt, raw::{c_uchar, c_long}}};
+use std::{
+    os::{
+        raw::{c_long, c_uchar},
+        unix::ffi::OsStrExt,
+    },
+    ptr::null_mut,
+};
 
 #[repr(C)]
 struct PassWd {
@@ -42,10 +48,22 @@ extern "system" {
 #[link(name = "CoreFoundation", kind = "framework")]
 #[link(name = "SystemConfiguration", kind = "framework")]
 extern "system" {
-    fn CFStringGetCString(the_string: *mut c_void, buffer: *mut u8, buffer_size: c_long, encoding: u32) -> c_uchar;
+    fn CFStringGetCString(
+        the_string: *mut c_void,
+        buffer: *mut u8,
+        buffer_size: c_long,
+        encoding: u32,
+    ) -> c_uchar;
     fn CFStringGetLength(the_string: *mut c_void) -> c_long;
-    fn CFStringGetMaximumSizeForEncoding(length: c_long, encoding: u32) -> c_long;
-    fn SCDynamicStoreCopyComputerName(store: *mut c_void, encoding: *mut u32) -> *mut c_void;
+    fn CFStringGetMaximumSizeForEncoding(
+        length: c_long,
+        encoding: u32,
+    ) -> c_long;
+    fn SCDynamicStoreCopyComputerName(
+        store: *mut c_void,
+        encoding: *mut u32,
+    ) -> *mut c_void;
+    fn CFRelease(cf: *const c_void) -> ();
 }
 
 // Convert an OsString into a String
@@ -74,19 +92,28 @@ fn os_from_cstring(string: *const c_void) -> OsString {
 #[cfg(target_os = "macos")]
 fn os_from_cfstring(string: *mut c_void) -> OsString {
     if string.is_null() {
-        return "".to_string().into()
+        return "".to_string().into();
     }
 
     unsafe {
         let len = CFStringGetLength(string);
-        let capacity = CFStringGetMaximumSizeForEncoding(len, 134_217_984 /*UTF8*/) + 1;
+        let capacity =
+            CFStringGetMaximumSizeForEncoding(len, 134_217_984 /*UTF8*/) + 1;
         let mut out = Vec::with_capacity(capacity as usize);
-        if CFStringGetCString(string, out.as_mut_ptr(), capacity, 134_217_984 /*UTF8*/) != 0 {
+        if CFStringGetCString(
+            string,
+            out.as_mut_ptr(),
+            capacity,
+            134_217_984, /*UTF8*/
+        ) != 0
+        {
             out.set_len(strlen(out.as_ptr().cast())); // Remove trailing NUL byte
             out.shrink_to_fit();
+            CFRelease(string);
             OsString::from_vec(out)
         } else {
-            return "".to_string().into()
+            CFRelease(string);
+            return "".to_string().into();
         }
     }
 }
@@ -171,7 +198,7 @@ fn fancy_fallback_os(result: Result<OsString, OsString>) -> OsString {
                 Some(a) => Ok(a),
                 None => Err(fallback.to_string_lossy().to_string()),
             };
-            
+
             fancy_fallback(cs).into()
         }
     }
@@ -248,31 +275,79 @@ pub fn hostname_os() -> OsString {
 }
 
 #[cfg(target_os = "macos")]
-pub fn distro() -> Option<String> {
-    distro_os().map(|a| string_from_os(a))
+fn distro_xml(data: String) -> Option<String> {
+    let mut product_name = None;
+    let mut user_visible_version = None;
+    if let Some(start) = data.find("<dict>") {
+        if let Some(end) = data.find("</dict>") {
+            let mut set_product_name = false;
+            let mut set_user_visible_version = false;
+            for line in data[start + "<dict>".len()..end].lines() {
+                let line = line.trim();
+                if line.starts_with("<key>") {
+                    match line["<key>".len()..].trim_end_matches("</key>") {
+                        "ProductName" => set_product_name = true,
+                        "ProductUserVisibleVersion" => {
+                            set_user_visible_version = true
+                        }
+                        "ProductVersion" => {
+                            if user_visible_version.is_none() {
+                                set_user_visible_version = true
+                            }
+                        }
+                        _ => {}
+                    }
+                } else if line.starts_with("<string>") {
+                    if set_product_name {
+                        product_name = Some(
+                            line["<string>".len()..]
+                                .trim_end_matches("</string>"),
+                        );
+                        set_product_name = false;
+                    } else if set_user_visible_version {
+                        user_visible_version = Some(
+                            line["<string>".len()..]
+                                .trim_end_matches("</string>"),
+                        );
+                        set_user_visible_version = false;
+                    }
+                }
+            }
+        }
+    }
+    if let Some(product_name) = product_name {
+        if let Some(user_visible_version) = user_visible_version {
+            return Some(format!("{} {}", product_name, user_visible_version));
+        } else {
+            return Some(product_name.to_string());
+        }
+    } else {
+        if let Some(user_visible_version) = user_visible_version {
+            return Some(format!("Mac OS X {}", user_visible_version));
+        } else {
+            return None;
+        }
+    }
 }
 
 #[cfg(target_os = "macos")]
 pub fn distro_os() -> Option<OsString> {
-    let mut distro = Vec::new();
+    distro().map(|a| a.into())
+}
 
-    let name = std::process::Command::new("sw_vers")
-        .arg("-productName")
-        .output()
-        .expect("Couldn't find `sw_vers`");
-
-    let version = std::process::Command::new("sw_vers")
-        .arg("-productVersion")
-        .output()
-        .expect("Couldn't find `sw_vers`");
-
-    distro.extend(&name.stdout);
-    distro.pop();
-    distro.push(b' ');
-    distro.extend(&version.stdout);
-    distro.pop();
-
-    Some(OsString::from_vec(distro))
+#[cfg(target_os = "macos")]
+pub fn distro() -> Option<String> {
+    if let Ok(data) = std::fs::read_to_string(
+        "/System/Library/CoreServices/ServerVersion.plist",
+    ) {
+        distro_xml(data)
+    } else if let Ok(data) = std::fs::read_to_string(
+        "/System/Library/CoreServices/SystemVersion.plist",
+    ) {
+        distro_xml(data)
+    } else {
+        None
+    }
 }
 
 #[cfg(not(target_os = "macos"))]

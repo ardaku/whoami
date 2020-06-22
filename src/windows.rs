@@ -2,9 +2,12 @@ use crate::{DesktopEnv, Platform};
 
 use std::{
     convert::TryInto,
-    os::{windows::ffi::OsStringExt, raw::{c_char, c_int, c_uchar, c_ulong}},
-    ptr,
     ffi::OsString,
+    os::{
+        raw::{c_char, c_int, c_uchar, c_ulong},
+        windows::ffi::OsStringExt,
+    },
+    ptr,
 };
 
 #[allow(unused)]
