@@ -93,7 +93,8 @@ pub fn username_os() -> OsString {
     unsafe {
         name.set_len(size.try_into().unwrap());
     }
-    debug_assert_eq!(name.pop(), Some(0u16)); // Remove Trailing Null
+    let terminator = name.pop();  // Remove Trailing Null
+    debug_assert_eq!(terminator, Some(0u16));
 
     // Step 3. Convert to Rust String
     OsString::from_wide(&name)
