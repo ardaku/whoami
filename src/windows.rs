@@ -106,10 +106,10 @@ pub fn realname() -> String {
 
 #[inline(always)]
 pub fn realname_os() -> OsString {
-    // Step 1. Retreive the entire length of the username
-    let mut size = 0;
+    // Step 1. Retrieve the entire length of the username
+    let mut buf_size = 0;
     let fail = unsafe {
-        GetUserNameExW(ExtendedNameFormat::Display, ptr::null_mut(), &mut size)
+        GetUserNameExW(ExtendedNameFormat::Display, ptr::null_mut(), &mut buf_size)
             == 0
     };
     debug_assert_eq!(fail, true);
@@ -131,13 +131,13 @@ pub fn realname_os() -> OsString {
 	}
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
-    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
-    let orig_size = size;
+    let mut name: Vec<u16> = Vec::with_capacity(buf_size.try_into().unwrap());
+    let mut name_len = buf_size;
     let fail = unsafe {
         GetUserNameExW(
             ExtendedNameFormat::Display,
             name.as_mut_ptr().cast(),
-            &mut size,
+            &mut name_len,
         ) == 0
     };
     if fail {
@@ -146,9 +146,9 @@ pub fn realname_os() -> OsString {
             unsafe { GetLastError() }
         );
     }
-    debug_assert_eq!(orig_size, size);
+    debug_assert_eq!(buf_size, name_len + 1);
     unsafe {
-        name.set_len(size.try_into().unwrap());
+        name.set_len(name_len.try_into().unwrap());
     }
 
     // Step 3. Convert to Rust String
