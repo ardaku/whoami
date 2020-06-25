@@ -10,6 +10,8 @@ deps: whoami
     path: ../../
     feature: cala
 deps: cala_core
-    path: ../../../cala_core
+    version: 0.1
+    feature: cala
 deps: devout
-    path: ../../../devout
+    version: 0.1
+    feature: cala

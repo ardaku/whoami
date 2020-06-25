@@ -8,7 +8,7 @@
 
 [package]
 name = "whoami"
-version = "0.8.2"
+version = "0.9.0"
 authors = [
     "Jeron Aldaron Lau <jeronlau@plopgrizzly.com>",
 ]
@@ -24,7 +24,7 @@ categories = ["os"]
 
 # Use cala_core to support all of: wasm-pack, cargo-cala-web and cargo-web
 [target.'cfg(target_arch = "wasm32")'.dependencies.cala_core]
-path = "../cala_core"
+version = "0.1"
 optional = true
 
 [features]

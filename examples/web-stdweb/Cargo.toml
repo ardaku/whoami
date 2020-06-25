@@ -6,4 +6,4 @@ edition = "2018"
 
 [dependencies]
 whoami = { path = "../../", features = ["stdweb"] }
-devout = { path = "../../../devout", features = ["dev"] } # "0.0.1"
+devout = { version = "0.1", features = ["stdweb"] }
