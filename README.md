@@ -4,7 +4,6 @@
 [![tests](https://github.com/libcala/whoami/workflows/tests/badge.svg)](https://github.com/libcala/whoami/actions?query=workflow%3Atests)
 [![build status](https://api.travis-ci.com/libcala/whoami.svg?branch=master)](https://travis-ci.com/libcala/whoami)
 [![crates.io](https://img.shields.io/crates/v/whoami.svg)](https://crates.io/crates/whoami)
-[![discord](https://img.shields.io/badge/discord-Cala%20Project-green.svg)](https://discord.gg/nXwF59K)
 
 [About](https://libcala.github.io/whoami) |
 [Source](https://github.com/libcala/whoami) |
