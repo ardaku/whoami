@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/semver).
 
 ## [0.9.0] - Unreleased
+### Changed
+- Renamed `DesktopEnv::Mac` to `DesktopEnv::Aqua`
+- Renamed `DesktopEnv::Wasm` to `DesktopEnv::WebBrowser`
+- Renamed `DesktopEnv::Redox` to `DesktopEnv::Orbital`
+- Renamed `DesktopEnv::Fuchsia` to `DesktopEnv::Ermine`
 
 ## [0.8.2] - 2020-06-11
 ### Changed
