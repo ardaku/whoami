@@ -22,13 +22,12 @@ description = "Retrieve the current user and environment."
 keywords = ["user", "username", "whoami", "platform", "detect"]
 categories = ["os"]
 
-# Use cala_core to support all of: wasm-pack, cargo-cala-web and cargo-web
-[target.'cfg(target_arch = "wasm32")'.dependencies.cala_core]
-version = "0.1"
-optional = true
+# Needed target-specific dependency to work with wasm-pack.
+[target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
+version = "0.3"
+features = ["Navigator", "HtmlDocument", "Document", "Window"]
+[target.'cfg(target_arch = "wasm32")'.dependencies.wasm-bindgen]
+version = "0.2"
 
 [features]
 default = []
-cala = ["cala_core/cala"]
-stdweb = ["cala_core/stdweb"]
-wasm-bindgen = ["cala_core/wasm-bindgen"]
