@@ -11,31 +11,31 @@
 //! ```rust
 //! fn main() {
 //!     println!(
-//!         "User→Name      whoami::realname():    {}",
+//!         "User's Name            whoami::realname():    {}",
 //!         whoami::realname()
 //!     );
 //!     println!(
-//!         "User→Username  whoami::username():    {}",
+//!         "User's Username        whoami::username():    {}",
 //!         whoami::username()
 //!     );
 //!     println!(
-//!         "Host→Name      whoami::devicename():  {}",
+//!         "Device's Pretty Name   whoami::devicename():  {}",
 //!         whoami::devicename()
 //!     );
 //!     println!(
-//!         "Host→Hostname  whoami::hostname():    {}",
+//!         "Device's Hostname      whoami::hostname():    {}",
 //!         whoami::hostname()
 //!     );
 //!     println!(
-//!         "Platform       whoami::platform():    {}",
+//!         "Device's Platform      whoami::platform():    {}",
 //!         whoami::platform()
 //!     );
 //!     println!(
-//!         "OS Distro      whoami::distro():      {}",
+//!         "Device's OS Distro     whoami::distro():      {}",
 //!         whoami::distro()
 //!     );
 //!     println!(
-//!         "Desktop Env.   whoami::desktop_env(): {}",
+//!         "Device's Desktop Env.  whoami::desktop_env(): {}",
 //!         whoami::desktop_env()
 //!     );
 //! }

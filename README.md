@@ -6,23 +6,23 @@
 [![docs](https://docs.rs/whoami/badge.svg)][0]
 [![crates.io](https://img.shields.io/crates/v/whoami.svg)][1]
 
-[About][4] | [Source][5] | [Changelog][3] <!-- | [Tutorial][6] -->
+[About][4] | [Source][5] | [Changelog][3]
 
-Retrieve the current user and environment.
+Retrieve the current user and environment through simple functions.
 
 Check out the [documentation][0] for examples.
 
 ### Features
  - Get the user's full name
  - Get the user's username
- - Get the computer's hostname
- - Get the computer's fancy name
- - Get the computer's desktop environment
- - Get the computer's OS name and version
- - Get the computer's platform name
+ - Get the devices's hostname
+ - Get the devices's "pretty" or "fancy" name
+ - Get the devices's desktop environment
+ - Get the devices's OS name and version
+ - Get the devices's platform name
 
 ### Supported Platforms
-WhoAmI targets all platforms that can run Rust.
+WhoAmI targets all platforms that can run Rust:
  - Linux
  - Windows
  - Mac OS

@@ -21,11 +21,11 @@ pub fn main() {
     console_error_panic_hook::set_once();
 
     // Print out code from regular example.
-    log!(INFO, "User→Name      whoami::realname():    {}", whoami::realname());
-    log!(INFO, "User→Username  whoami::username():    {}", whoami::username());
-    log!(INFO, "Host→Name      whoami::devicename():  {}", whoami::devicename());
-    log!(INFO, "Host→Hostname  whoami::hostname():    {}", whoami::hostname());
-    log!(INFO, "Platform       whoami::platform():    {}", whoami::platform());
-    log!(INFO, "OS Distro      whoami::distro():      {}", whoami::distro());
-    log!(INFO, "Desktop Env.   whoami::desktop_env(): {}", whoami::desktop_env());
+    log!(INFO, "User's Name            whoami::realname():    {}", whoami::realname());
+    log!(INFO, "User's Username        whoami::username():    {}", whoami::username());
+    log!(INFO, "Device's Pretty Name   whoami::devicename():  {}", whoami::devicename());
+    log!(INFO, "Device's Hostname      whoami::hostname():    {}", whoami::hostname());
+    log!(INFO, "Device's Platform      whoami::platform():    {}", whoami::platform());
+    log!(INFO, "Device's OS Distro     whoami::distro():      {}", whoami::distro());
+    log!(INFO, "Device's Desktop Env.  whoami::desktop_env(): {}", whoami::desktop_env());
 }
