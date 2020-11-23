@@ -80,8 +80,6 @@ pub enum DesktopEnv {
     Ermine,
     /// Default desktop environment for Redox
     Orbital,
-    /// Default desktop environment for Dive OS
-    Dive,
     /// Unknown desktop environment
     Unknown(String),
 }
@@ -111,7 +109,6 @@ impl std::fmt::Display for DesktopEnv {
                 DesktopEnv::WebBrowser => "Web Browser",
                 DesktopEnv::Console => "Console",
                 DesktopEnv::Ubuntu => "Ubuntu",
-                DesktopEnv::Dive => "Dive",
                 DesktopEnv::Ermine => "Ermine",
                 DesktopEnv::Orbital => "Orbital",
                 DesktopEnv::Unknown(a) => &a,
@@ -134,7 +131,6 @@ pub enum Platform {
     Nintendo,
     Xbox,
     PlayStation,
-    Dive,
     Fuchsia,
     Redox,
     Unknown(String),
@@ -159,7 +155,6 @@ impl std::fmt::Display for Platform {
                 Platform::Nintendo => "Nintendo",
                 Platform::Xbox => "XBox",
                 Platform::PlayStation => "PlayStation",
-                Platform::Dive => "Dive OS",
                 Platform::Fuchsia => "Fuchsia",
                 Platform::Redox => "Redox",
                 Platform::Unknown(a) => a,
