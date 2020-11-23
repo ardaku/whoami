@@ -4,38 +4,38 @@
 //! Using the whoami crate is super easy!  All of the public items are simple
 //! functions with no parameters that return [`String`](std::string::String)s or
 //! [`OsString`](std::ffi::OsString)s (with the exception of
-//! [`desktop_env()`](fn.desktop_env.html), and [`platform()`](fn.platform.html)
+//! [`desktop_env()`](crate::desktop_env), and [`platform()`](crate::platform)
 //! which return enums).  The following example shows how to use all of the
 //! functions (except those that return [`OsString`](std::ffi::OsString)):
 //!
 //! ```rust
 //! fn main() {
 //!     println!(
-//!         "User→Name      whoami::realname():    {}",
+//!         "User's Name            whoami::realname():    {}",
 //!         whoami::realname()
 //!     );
 //!     println!(
-//!         "User→Username  whoami::username():    {}",
+//!         "User's Username        whoami::username():    {}",
 //!         whoami::username()
 //!     );
 //!     println!(
-//!         "Host→Name      whoami::devicename():  {}",
+//!         "Device's Pretty Name   whoami::devicename():  {}",
 //!         whoami::devicename()
 //!     );
 //!     println!(
-//!         "Host→Hostname  whoami::hostname():    {}",
+//!         "Device's Hostname      whoami::hostname():    {}",
 //!         whoami::hostname()
 //!     );
 //!     println!(
-//!         "Platform       whoami::platform():    {}",
+//!         "Device's Platform      whoami::platform():    {}",
 //!         whoami::platform()
 //!     );
 //!     println!(
-//!         "OS Distro      whoami::distro():      {}",
+//!         "Device's OS Distro     whoami::distro():      {}",
 //!         whoami::distro()
 //!     );
 //!     println!(
-//!         "Desktop Env.   whoami::desktop_env(): {}",
+//!         "Device's Desktop Env.  whoami::desktop_env(): {}",
 //!         whoami::desktop_env()
 //!     );
 //! }
@@ -43,8 +43,8 @@
 
 #![warn(missing_docs)]
 #![doc(
-    html_logo_url = "https://libcala.github.io/whoami/icon.svg",
-    html_favicon_url = "https://libcala.github.io/whoami/icon.svg"
+    html_logo_url = "https://libcala.github.io/whoami/res/icon.svg",
+    html_favicon_url = "https://libcala.github.io/whoami/res/icon.svg"
 )]
 
 use std::ffi::OsString;
@@ -80,8 +80,6 @@ pub enum DesktopEnv {
     Ermine,
     /// Default desktop environment for Redox
     Orbital,
-    /// Default desktop environment for Dive OS
-    Dive,
     /// Unknown desktop environment
     Unknown(String),
 }
@@ -111,7 +109,6 @@ impl std::fmt::Display for DesktopEnv {
                 DesktopEnv::WebBrowser => "Web Browser",
                 DesktopEnv::Console => "Console",
                 DesktopEnv::Ubuntu => "Ubuntu",
-                DesktopEnv::Dive => "Dive",
                 DesktopEnv::Ermine => "Ermine",
                 DesktopEnv::Orbital => "Orbital",
                 DesktopEnv::Unknown(a) => &a,
@@ -134,7 +131,6 @@ pub enum Platform {
     Nintendo,
     Xbox,
     PlayStation,
-    Dive,
     Fuchsia,
     Redox,
     Unknown(String),
@@ -159,7 +155,6 @@ impl std::fmt::Display for Platform {
                 Platform::Nintendo => "Nintendo",
                 Platform::Xbox => "XBox",
                 Platform::PlayStation => "PlayStation",
-                Platform::Dive => "Dive OS",
                 Platform::Fuchsia => "Fuchsia",
                 Platform::Redox => "Redox",
                 Platform::Unknown(a) => a,

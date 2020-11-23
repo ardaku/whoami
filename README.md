@@ -1,97 +1,60 @@
 ![WhoAmI Logo](https://libcala.github.io/whoami/res/icon.svg)
 
-[![docs.rs](https://docs.rs/whoami/badge.svg)](https://docs.rs/whoami)
-[![tests](https://github.com/libcala/whoami/workflows/tests/badge.svg)](https://github.com/libcala/whoami/actions?query=workflow%3Atests)
-[![build status](https://api.travis-ci.com/libcala/whoami.svg?branch=master)](https://travis-ci.com/libcala/whoami)
-[![crates.io](https://img.shields.io/crates/v/whoami.svg)](https://crates.io/crates/whoami)
+#### WhoAmI
 
-[About](https://libcala.github.io/whoami) |
-[Source](https://github.com/libcala/whoami) |
-[Changelog](https://github.com/libcala/whoami/blob/master/CHANGELOG.md)
+[![tests](https://github.com/libcala/whoami/workflows/tests/badge.svg)][2]
+[![docs](https://docs.rs/whoami/badge.svg)][0]
+[![crates.io](https://img.shields.io/crates/v/whoami.svg)][1]
 
-# WhoAmI
-Retrieve the current user and environment.
+[About][4] | [Source][5] | [Changelog][3]
 
-## Getting Started
-Using the whoami crate is super easy!  All of the exported items are simple
-functions with no parameters that return either a `String` or enum.  The
-following example shows how to use all of the functions:
+Retrieve the current user and environment through simple functions.
 
-```rust
-fn main() {
-    println!(
-        "User→Name      whoami::realname():    {}",
-        whoami::realname()
-    );
-    println!(
-        "User→Username  whoami::username():    {}",
-        whoami::username()
-    );
-    println!(
-        "Host→Name      whoami::devicename():  {}",
-        whoami::devicename()
-    );
-    println!(
-        "Host→Hostname  whoami::hostname():    {}",
-        whoami::hostname()
-    );
-    println!(
-        "Platform       whoami::platform():    {}",
-        whoami::platform()
-    );
-    println!(
-        "OS Distro      whoami::distro():      {}",
-        whoami::distro()
-    );
-    println!(
-        "Desktop Env.   whoami::desktop_env(): {}",
-        whoami::desktop_env()
-    );
-}
-```
+Check out the [documentation][0] for examples.
 
-## Features
-* Get the user's full name
-* Get the user's username
-* Get the computer's hostname
-* Get the computer's fancy name
-* Get the computer's desktop environment
-* Get the computer's OS name and version
-* Get the computer's platform name
-* Works on Linux, Windows, Mac OS, and Web Assembly
+### Features
+ - Get the user's full name
+ - Get the user's username
+ - Get the devices's hostname
+ - Get the devices's "pretty" or "fancy" name
+ - Get the devices's desktop environment
+ - Get the devices's OS name and version
+ - Get the devices's platform name
+
+### Supported Platforms
+WhoAmI targets all platforms that can run Rust:
+ - Linux
+ - Windows
+ - Mac OS
+ - Web Assembly
+ - Android and BSD (may partially or fully work, but untested) **planned next**
+ - iOS / various game consoles **planned later**
 
 ## Binary
-[whome](https://crates.io/crates/whome): replacement of the `whoami` command that depends on this crate.
+[whome](https://crates.io/crates/whome): `whoami` command RiR (Re-written in
+Rust) that depends on this crate.
 
-## TODO
-* Support iOS / Android / Nintendo Switch (and other consoles) / other OS's.
-
-# Contributing
-Contributors are always welcome!  Whether it is a bug report, bug fix, feature
-request, feature implementation or whatever.  Don't be shy about getting
-involved.  I always make time to fix bugs, so usually a patched version of the
-library will be out soon after a report.  Features take me longer, though.  I'll
-also always listen to any design critiques you have.  If you have any questions
-you can email me at jeronlau@plopgrizzly.com.  Otherwise, here's a link to the
-[issues on GitHub](https://github.com/libcala/whoami/issues).
-
-And, as always, make sure to always follow the
-[code of conduct](https://github.com/libcala/whoami/blob/master/CODEOFCONDUCT.md).
-Happy coding!
-
-# License
-This repository is licensed under either of the following:
-
-- MIT License (MIT) - See accompanying file
-  [LICENSE_MIT.txt](https://github.com/libcala/whoami/blob/master/LICENSE_MIT.txt)
-  or copy at https://opensource.org/licenses/MIT
-- Boost Software License (BSL-1.0) - See accompanying file
-  [LICENSE_BSL.txt](https://github.com/libcala/whoami/blob/master/LICENSE_BSL.txt)
-  or copy at https://www.boost.org/LICENSE_1_0.txt
-
+## License
+Licensed under either of
+ - Apache License, Version 2.0,
+   ([LICENSE-APACHE][7] or [https://www.apache.org/licenses/LICENSE-2.0][8])
+ - Zlib License,
+   ([LICENSE-ZLIB][9] or [https://opensource.org/licenses/Zlib][10])
 at your option.
 
-## Contribution Licensing
+### Contribution
 Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in the work by you shall be dual licensed as above without any
-additional terms or conditions.
+for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
+dual licensed as above, without any additional terms or conditions.
+
+[0]: https://docs.rs/whoami
+[1]: https://crates.io/crates/whoami
+[2]: https://github.com/libcala/whoami/actions?query=workflow%3Atests
+[3]: https://github.com/libcala/whoami/blob/master/CHANGELOG.md
+[4]: https://libcala.github.io/whoami/
+[5]: https://github.com/libcala/whoami/
+[6]: https://aldaronlau.com/
+[7]: https://github.com/libcala/whoami/blob/master/LICENSE-APACHE
+[8]: https://www.apache.org/licenses/LICENSE-2.0
+[9]: https://github.com/libcala/whoami/blob/master/LICENSE-ZLIB
+[10]: https://opensource.org/licenses/Zlib

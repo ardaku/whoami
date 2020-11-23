@@ -1,9 +1,0 @@
-[package]
-name = "web_whoami"
-version = "0.1.0"
-authors = ["Jeron Aldaron Lau <jeronlau@plopgrizzly.com>"]
-edition = "2018"
-
-[dependencies]
-whoami = { path = "../../", features = ["stdweb"] }
-devout = { version = "0.1", features = ["stdweb"] }

@@ -1,43 +1,18 @@
-use std::{ffi::OsString, mem::MaybeUninit, sync::Once};
+use std::ffi::OsString;
 
-use cala_core::os::web::{JsFn, JsString};
+use wasm_bindgen::JsCast;
+use web_sys::{window, HtmlDocument};
 
 use crate::{DesktopEnv, Platform};
 
-static mut USER_AGENT: MaybeUninit<JsFn> = MaybeUninit::uninit();
-static INIT_USER_AGENT: Once = Once::new();
-
-static mut DOCUMENT_DOMAIN: MaybeUninit<JsFn> = MaybeUninit::uninit();
-static INIT_DOCUMENT_DOMAIN: Once = Once::new();
-
 // Get the user agent
 fn user_agent() -> String {
-    unsafe {
-        INIT_USER_AGENT.call_once(|| {
-            USER_AGENT =
-                MaybeUninit::new(JsFn::new("return navigator.userAgent;"));
-        });
-        let user_agent = &*USER_AGENT.as_ptr();
-        let string = JsString::from_var(user_agent.call(None, None).unwrap());
-        let mut text = Vec::new();
-        string.as_var().read_utf16(&mut text);
-        String::from_utf16_lossy(&text)
-    }
+    window().unwrap().navigator().user_agent().unwrap_or_else(|_| String::new())
 }
 
 // Get the document domain
 fn document_domain() -> String {
-    unsafe {
-        INIT_DOCUMENT_DOMAIN.call_once(|| {
-            DOCUMENT_DOMAIN =
-                MaybeUninit::new(JsFn::new("return document.domain;"));
-        });
-        let domain = &*DOCUMENT_DOMAIN.as_ptr();
-        let string = JsString::from_var(domain.call(None, None).unwrap());
-        let mut text = Vec::new();
-        string.as_var().read_utf16(&mut text);
-        String::from_utf16_lossy(&text)
-    }
+    window().unwrap().document().unwrap().unchecked_into::<HtmlDocument>().domain()
 }
 
 #[inline(always)]
