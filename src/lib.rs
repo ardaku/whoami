@@ -43,8 +43,8 @@
 
 #![warn(missing_docs)]
 #![doc(
-    html_logo_url = "https://libcala.github.io/whoami/icon.svg",
-    html_favicon_url = "https://libcala.github.io/whoami/icon.svg"
+    html_logo_url = "https://libcala.github.io/whoami/res/icon.svg",
+    html_favicon_url = "https://libcala.github.io/whoami/res/icon.svg"
 )]
 
 use std::ffi::OsString;
