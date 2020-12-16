@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/semver).
 
+## [1.0.1] - 2020-12-16
+### Added
+ - Official support for BSD and variants
+
+### Fixed
+ - `platform()` will now return `Platform::Bsd` when running BSD.
+ - Misaligned address error on FreeBSD when calling `username()`.
+
 ## [1.0.0] - 2020-11-23
 ### Removed
  - `Platform::Dive` and `DesktopEnv::Dive`, as that was an OS idea not a real OS
