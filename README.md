@@ -27,7 +27,8 @@ WhoAmI targets all platforms that can run Rust:
  - Windows
  - Mac OS
  - Web Assembly
- - Android and BSD (may partially or fully work, but untested) **planned next**
+ - BSD
+ - Android (may partially or fully work, but untested) **planned next**
  - iOS / various game consoles **planned later**
 
 ## Binary

@@ -7,12 +7,21 @@ use crate::{DesktopEnv, Platform};
 
 // Get the user agent
 fn user_agent() -> String {
-    window().unwrap().navigator().user_agent().unwrap_or_else(|_| String::new())
+    window()
+        .unwrap()
+        .navigator()
+        .user_agent()
+        .unwrap_or_else(|_| String::new())
 }
 
 // Get the document domain
 fn document_domain() -> String {
-    window().unwrap().document().unwrap().unchecked_into::<HtmlDocument>().domain()
+    window()
+        .unwrap()
+        .document()
+        .unwrap()
+        .unchecked_into::<HtmlDocument>()
+        .domain()
 }
 
 #[inline(always)]

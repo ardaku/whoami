@@ -19,16 +19,44 @@ struct PassWd {
     pw_passwd: *const c_void,
     pw_uid: u32,
     pw_gid: u32,
-    #[cfg(target_os = "macos")]
+    #[cfg(any(
+        target_os = "macos",
+        target_os = "freebsd",
+        target_os = "dragonfly",
+        target_os = "bitrig",
+        target_os = "openbsd",
+        target_os = "netbsd"
+    ))]
     pw_change: isize,
-    #[cfg(target_os = "macos")]
+    #[cfg(any(
+        target_os = "macos",
+        target_os = "freebsd",
+        target_os = "dragonfly",
+        target_os = "bitrig",
+        target_os = "openbsd",
+        target_os = "netbsd"
+    ))]
     pw_class: *const c_void,
     pw_gecos: *const c_void,
     pw_dir: *const c_void,
     pw_shell: *const c_void,
-    #[cfg(target_os = "macos")]
+    #[cfg(any(
+        target_os = "macos",
+        target_os = "freebsd",
+        target_os = "dragonfly",
+        target_os = "bitrig",
+        target_os = "openbsd",
+        target_os = "netbsd"
+    ))]
     pw_expire: isize,
-    #[cfg(target_os = "macos")]
+    #[cfg(any(
+        target_os = "macos",
+        target_os = "freebsd",
+        target_os = "dragonfly",
+        target_os = "bitrig",
+        target_os = "openbsd",
+        target_os = "netbsd"
+    ))]
     pw_fields: i32,
 }
 
@@ -426,8 +454,27 @@ pub const fn platform() -> Platform {
     Platform::MacOS
 }
 
-#[cfg(not(target_os = "macos"))]
+#[cfg(not(any(
+    target_os = "macos",
+    target_os = "freebsd",
+    target_os = "dragonfly",
+    target_os = "bitrig",
+    target_os = "openbsd",
+    target_os = "netbsd"
+)))]
 #[inline(always)]
 pub const fn platform() -> Platform {
     Platform::Linux
+}
+
+#[cfg(any(
+    target_os = "freebsd",
+    target_os = "dragonfly",
+    target_os = "bitrig",
+    target_os = "openbsd",
+    target_os = "netbsd"
+))]
+#[inline(always)]
+pub const fn platform() -> Platform {
+    Platform::Bsd
 }

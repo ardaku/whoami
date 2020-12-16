@@ -93,7 +93,7 @@ pub fn username_os() -> OsString {
     unsafe {
         name.set_len(size.try_into().unwrap());
     }
-    let terminator = name.pop();  // Remove Trailing Null
+    let terminator = name.pop(); // Remove Trailing Null
     debug_assert_eq!(terminator, Some(0u16));
 
     // Step 3. Convert to Rust String
@@ -110,8 +110,11 @@ pub fn realname_os() -> OsString {
     // Step 1. Retrieve the entire length of the username
     let mut buf_size = 0;
     let fail = unsafe {
-        GetUserNameExW(ExtendedNameFormat::Display, ptr::null_mut(), &mut buf_size)
-            == 0
+        GetUserNameExW(
+            ExtendedNameFormat::Display,
+            ptr::null_mut(),
+            &mut buf_size,
+        ) == 0
     };
     debug_assert_eq!(fail, true);
     match unsafe { GetLastError() } {
