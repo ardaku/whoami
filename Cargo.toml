@@ -8,12 +8,12 @@
 
 [package]
 name = "whoami"
-version = "1.0.1"
+version = "1.0.2"
 authors = [
     "Jeron Aldaron Lau <jeronlau@plopgrizzly.com>",
 ]
 edition = "2018"
-license = "Apache-2.0/Zlib"
+license = "Apache-2.0 OR MIT OR BSL-1.0"
 documentation = "https://docs.rs/whoami"
 homepage = "https://libcala.github.io/whoami"
 repository = "https://github.com/libcala/whoami"
