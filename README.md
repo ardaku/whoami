@@ -1,12 +1,10 @@
 ![WhoAmI Logo](https://raw.githubusercontent.com/libcala/whoami/main/res/icon.svg)
 
-#### WhoAmI
+#### [Changelog][3] | [Source][4] | [Getting Started][5]
 
 [![tests](https://github.com/libcala/whoami/workflows/tests/badge.svg)][2]
 [![docs](https://docs.rs/whoami/badge.svg)][0]
 [![crates.io](https://img.shields.io/crates/v/whoami.svg)][1]
-
-[Changelog][3] | [Source][4] | [Getting Started][5]
 
 Retrieve the current user and environment through simple functions.
 
