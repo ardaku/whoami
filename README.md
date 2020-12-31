@@ -56,7 +56,7 @@ email at [aldaronlau@gmail.com][13].
 [2]: https://github.com/libcala/whoami/actions?query=workflow%3Atests
 [3]: https://github.com/libcala/whoami/blob/main/CHANGELOG.md
 [4]: https://github.com/libcala/whoami/
-[5]: https://docs.rs/whoami/1.0.1/whoami/#getting-started
+[5]: https://docs.rs/whoami#getting-started
 [6]: https://aldaronlau.com/
 [7]: https://github.com/libcala/whoami/blob/main/LICENSE_APACHE_2_0.txt
 [8]: https://www.apache.org/licenses/LICENSE-2.0
