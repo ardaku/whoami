@@ -20,14 +20,17 @@ Check out the [documentation][0] for examples.
  - Get the devices's platform name
 
 ### Supported Platforms
-WhoAmI targets all platforms that can run Rust:
+WhoAmI targets all platforms that can run Rust, including:
  - Linux
  - Windows
  - Mac OS
  - Web Assembly
  - BSD
- - Android (may partially or fully work, but untested) **planned next**
+ - Android (may partially or fully work, but untested) **planned later**
  - iOS / various game consoles **planned later**
+ - Redox **planned later**
+ - Fuchsia **planned later**
+ - Others? (make a PR)
 
 ## Binary
 [whome](https://crates.io/crates/whome): `whoami` command RiR (Re-written in
