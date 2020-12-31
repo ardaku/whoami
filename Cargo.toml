@@ -1,10 +1,12 @@
 # WhoAmI
-#
 # Copyright © 2017-2020 Jeron Aldaron Lau.
-# Dual-licensed under either the MIT License or the Boost Software License,
-# Version 1.0. (See accompanying file LICENSE_BSL.txt or copy at
-# https://www.boost.org/LICENSE_1_0.txt, and accompanying file LICENSE_MIT.txt
-# or copy at https://opensource.org/licenses/MIT)
+#
+# Licensed under any of:
+#  - Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+#  - MIT License (https://mit-license.org/)
+#  - Boost Software License, Version 1.0 (https://www.boost.org/LICENSE_1_0.txt)
+# At your choosing (See accompanying files LICENSE_APACHE_2_0.txt,
+# LICENSE_MIT.txt and LICENSE_BOOST_1_0.txt).
 
 [package]
 name = "whoami"
@@ -15,12 +17,12 @@ authors = [
 edition = "2018"
 license = "Apache-2.0 OR MIT OR BSL-1.0"
 documentation = "https://docs.rs/whoami"
-homepage = "https://libcala.github.io/whoami"
+homepage = "https://github.com/libcala/whoami/blob/main/CHANGELOG.md"
 repository = "https://github.com/libcala/whoami"
 readme = "README.md"
 description = "Retrieve the current user and environment."
 keywords = ["user", "username", "whoami", "platform", "detect"]
-categories = ["os"]
+categories = ["os::freebsd-apis", "wasm", "os::linux-apis", "os::macos-apis", "os::windows-apis"]
 
 # Needed target-specific dependency to work with wasm-pack.
 [target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]

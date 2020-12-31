@@ -49,10 +49,14 @@ Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
 licensed as described above, without any additional terms or conditions.
 
+## Help
+If you want help using or contributing to this library, feel free to send me an
+email at [aldaronlau@gmail.com][13].
+
 [0]: https://docs.rs/whoami
 [1]: https://crates.io/crates/whoami
 [2]: https://github.com/libcala/whoami/actions?query=workflow%3Atests
-[3]: https://github.com/libcala/whoami/blob/master/CHANGELOG.md
+[3]: https://github.com/libcala/whoami/blob/main/CHANGELOG.md
 [4]: https://libcala.github.io/whoami/
 [5]: https://github.com/libcala/whoami/
 [6]: https://aldaronlau.com/
@@ -62,3 +66,4 @@ licensed as described above, without any additional terms or conditions.
 [10]: https://mit-license.org/
 [11]: https://github.com/libcala/whoami/blob/main/LICENSE_BOOST_1_0.txt
 [12]: https://www.boost.org/LICENSE_1_0.txt
+[13]: mailto:aldaronlau@gmail.com
