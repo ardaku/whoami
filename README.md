@@ -1,4 +1,4 @@
-![WhoAmI Logo](https://libcala.github.io/whoami/res/icon.svg)
+![WhoAmI Logo](https://raw.githubusercontent.com/libcala/whoami/main/res/icon.svg)
 
 #### WhoAmI
 
@@ -6,7 +6,7 @@
 [![docs](https://docs.rs/whoami/badge.svg)][0]
 [![crates.io](https://img.shields.io/crates/v/whoami.svg)][1]
 
-[About][4] | [Source][5] | [Changelog][3]
+[Changelog][3] | [Source][4] | [Getting Started][5]
 
 Retrieve the current user and environment through simple functions.
 
@@ -57,8 +57,8 @@ email at [aldaronlau@gmail.com][13].
 [1]: https://crates.io/crates/whoami
 [2]: https://github.com/libcala/whoami/actions?query=workflow%3Atests
 [3]: https://github.com/libcala/whoami/blob/main/CHANGELOG.md
-[4]: https://libcala.github.io/whoami/
-[5]: https://github.com/libcala/whoami/
+[4]: https://github.com/libcala/whoami/
+[5]: https://docs.rs/whoami/1.0.1/whoami/#getting-started
 [6]: https://aldaronlau.com/
 [7]: https://github.com/libcala/whoami/blob/main/LICENSE_APACHE_2_0.txt
 [8]: https://www.apache.org/licenses/LICENSE-2.0
