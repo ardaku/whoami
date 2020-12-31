@@ -10,7 +10,7 @@
 
 [package]
 name = "whoami"
-version = "1.0.2"
+version = "1.0.3"
 authors = [
     "Jeron Aldaron Lau <jeronlau@plopgrizzly.com>",
 ]
