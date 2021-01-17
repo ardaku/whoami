@@ -29,6 +29,10 @@
 //!         whoami::username()
 //!     );
 //!     println!(
+//!         "User's Language        whoami::lang():        {}",
+//!         whoami::lang()
+//!     );
+//!     println!(
 //!         "Device's Pretty Name   whoami::devicename():  {}",
 //!         whoami::devicename()
 //!     );
@@ -53,8 +57,8 @@
 
 #![warn(missing_docs)]
 #![doc(
-    html_logo_url = "https://libcala.github.io/whoami/res/icon.svg",
-    html_favicon_url = "https://libcala.github.io/whoami/res/icon.svg"
+    html_logo_url = "https://raw.githubusercontent.com/libcala/whoami/main/res/icon.svg",
+    html_favicon_url = "https://raw.githubusercontent.com/libcala/whoami/main/res/icon.svg"
 )]
 
 use std::ffi::OsString;
@@ -266,7 +270,9 @@ pub fn platform() -> Platform {
     native::platform()
 }
 
-/// Get the user's language.  Returned as two letter language code (lowercase)
+/// Get the user's language.
+///
+/// Returned as two letter language code (lowercase)
 /// followed by an underscore, then the two letter region code (uppercase).
 #[inline(always)]
 pub fn lang() -> String {

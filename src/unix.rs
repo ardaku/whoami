@@ -491,5 +491,10 @@ pub const fn platform() -> Platform {
 
 #[inline(always)]
 pub fn lang() -> String {
-    std::env::var("LANG").unwrap_or(String::new()).split(".").next().unwrap_or_else(|| "en_US").to_string()
+    std::env::var("LANG")
+        .unwrap_or(String::new())
+        .split(".")
+        .next()
+        .unwrap_or_else(|| "en_US")
+        .to_string()
 }
