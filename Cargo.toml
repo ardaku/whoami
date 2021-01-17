@@ -1,5 +1,5 @@
 # WhoAmI
-# Copyright © 2017-2020 Jeron Aldaron Lau.
+# Copyright © 2017-2021 Jeron Aldaron Lau.
 #
 # Licensed under any of:
 #  - Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
@@ -10,7 +10,7 @@
 
 [package]
 name = "whoami"
-version = "1.0.3"
+version = "1.1.0"
 authors = [
     "Jeron Aldaron Lau <jeronlau@plopgrizzly.com>",
 ]
@@ -22,7 +22,8 @@ repository = "https://github.com/libcala/whoami"
 readme = "README.md"
 description = "Retrieve the current user and environment."
 keywords = ["user", "username", "whoami", "platform", "detect"]
-categories = ["os::freebsd-apis", "wasm", "os::linux-apis", "os::macos-apis", "os::windows-apis"]
+categories = ["os", "wasm", "internationalization", "localization", "value-formatting"]
+include = ["Cargo.toml", "src/*"]
 
 # Needed target-specific dependency to work with wasm-pack.
 [target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]

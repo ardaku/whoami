@@ -23,6 +23,7 @@ pub fn main() {
     // Print out code from regular example.
     log!(INFO, "User's Name            whoami::realname():    {}", whoami::realname());
     log!(INFO, "User's Username        whoami::username():    {}", whoami::username());
+    log!(INFO, "User's Languages       whoami::lang():        {:?}", whoami::lang().collect::<Vec<String>>());
     log!(INFO, "Device's Pretty Name   whoami::devicename():  {}", whoami::devicename());
     log!(INFO, "Device's Hostname      whoami::hostname():    {}", whoami::hostname());
     log!(INFO, "Device's Platform      whoami::platform():    {}", whoami::platform());

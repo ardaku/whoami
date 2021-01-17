@@ -13,6 +13,7 @@ Check out the [documentation][0] for examples.
 ### Features
  - Get the user's full name
  - Get the user's username
+ - Get the user's preferred language(s)
  - Get the devices's hostname
  - Get the devices's "pretty" or "fancy" name
  - Get the devices's desktop environment
@@ -41,8 +42,9 @@ Licensed under any of
  - Apache License, Version 2.0, ([LICENSE_APACHE_2_0.txt][7]
    or [https://www.apache.org/licenses/LICENSE-2.0][8])
  - MIT License, ([LICENSE_MIT.txt][9] or [https://mit-license.org/][10])
- - Boost License, Version 1.0, ([LICENSE_BOOST_1_0.txt][11]
+ - Boost Software License, Version 1.0, ([LICENSE_BOOST_1_0.txt][11]
    or [https://www.boost.org/LICENSE_1_0.txt][12])
+
 at your option.
 
 ### Contribution
