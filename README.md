@@ -20,14 +20,17 @@ Check out the [documentation][0] for examples.
  - Get the devices's platform name
 
 ### Supported Platforms
-WhoAmI targets all platforms that can run Rust:
+WhoAmI targets all platforms that can run Rust, including:
  - Linux
  - Windows
  - Mac OS
  - Web Assembly
  - BSD
- - Android (may partially or fully work, but untested) **planned next**
+ - Android (may partially or fully work, but untested) **planned later**
  - iOS / various game consoles **planned later**
+ - Redox **planned later**
+ - Fuchsia **planned later**
+ - Others? (make a PR)
 
 ## Binary
 [whome](https://crates.io/crates/whome): `whoami` command RiR (Re-written in
@@ -57,7 +60,7 @@ email at [aldaronlau@gmail.com][13].
 [2]: https://github.com/libcala/whoami/actions?query=workflow%3Atests
 [3]: https://github.com/libcala/whoami/blob/main/CHANGELOG.md
 [4]: https://github.com/libcala/whoami/
-[5]: https://docs.rs/whoami/1.0.1/whoami/#getting-started
+[5]: https://docs.rs/whoami#getting-started
 [6]: https://aldaronlau.com/
 [7]: https://github.com/libcala/whoami/blob/main/LICENSE_APACHE_2_0.txt
 [8]: https://www.apache.org/licenses/LICENSE-2.0
