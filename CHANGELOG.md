@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/semver).
 
+## [1.1.0] - 2021-01-17
+### Added
+ - `lang()` function which returns an iterator over user's preferred language(s)
+
 ## [1.0.3] - 2020-12-31
 ### Fixed
  - Link to logo in documentation.
