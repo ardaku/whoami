@@ -493,7 +493,7 @@ struct LangIter {
 
 impl Iterator for LangIter {
     type Item = String;
-    
+
     fn next(&mut self) -> Option<Self::Item> {
         if self.index? {
             self.index = Some(false);

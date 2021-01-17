@@ -41,7 +41,7 @@ struct LangIter {
 
 impl Iterator for LangIter {
     type Item = String;
-    
+
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(value) = self.array.get(self.index) {
             self.index += 1;
@@ -54,13 +54,9 @@ impl Iterator for LangIter {
 
 #[inline(always)]
 pub fn lang() -> impl Iterator<Item = String> {
-    let array = window()
-        .unwrap()
-        .navigator()
-        .languages()
-        .to_vec();
+    let array = window().unwrap().navigator().languages().to_vec();
     let index = 0;
-        
+
     LangIter { array, index }
 }
 
