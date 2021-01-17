@@ -15,8 +15,10 @@
 //! functions with no parameters that return [`String`](std::string::String)s or
 //! [`OsString`](std::ffi::OsString)s (with the exception of
 //! [`desktop_env()`](crate::desktop_env), and [`platform()`](crate::platform)
-//! which return enums).  The following example shows how to use all of the
-//! functions (except those that return [`OsString`](std::ffi::OsString)):
+//! which return enums, and [`lang()`](crate::lang) that returns an iterator of
+//! [`String`](std::string::String)s).  The following example shows how to use
+//! all of the functions (except those that return
+//! [`OsString`](std::ffi::OsString)):
 //!
 //! ```rust
 //! fn main() {
