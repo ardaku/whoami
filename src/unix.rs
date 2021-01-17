@@ -268,11 +268,8 @@ pub fn devicename() -> String {
         for i in distro.split('\n') {
             let mut j = i.split('=');
 
-            match j.next().unwrap() {
-                "PRETTY_HOSTNAME" => {
-                    return j.next().unwrap().trim_matches('"').to_string()
-                }
-                _ => {}
+            if j.next().unwrap() == "PRETTY_HOSTNAME" {
+                return j.next().unwrap().trim_matches('"').to_string();
             }
         }
     }
@@ -492,9 +489,9 @@ pub const fn platform() -> Platform {
 #[inline(always)]
 pub fn lang() -> String {
     std::env::var("LANG")
-        .unwrap_or(String::new())
-        .split(".")
+        .unwrap_or_default()
+        .split('.')
         .next()
-        .unwrap_or_else(|| "en_US")
+        .unwrap_or("en_US")
         .to_string()
 }
