@@ -13,6 +13,7 @@ Check out the [documentation][0] for examples.
 ### Features
  - Get the user's full name
  - Get the user's username
+ - Get the user's preferred language(s)
  - Get the devices's hostname
  - Get the devices's "pretty" or "fancy" name
  - Get the devices's desktop environment
