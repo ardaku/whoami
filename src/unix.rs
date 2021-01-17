@@ -486,12 +486,40 @@ pub const fn platform() -> Platform {
     Platform::Bsd
 }
 
+struct LangIter {
+    array: String,
+    index: Option<bool>,
+}
+
+impl Iterator for LangIter {
+    type Item = String;
+    
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.index? {
+            self.index = Some(false);
+            let mut temp = self.array.split('-').next().unwrap().to_string();
+            std::mem::swap(&mut temp, &mut self.array);
+            Some(temp)
+        } else {
+            self.index = None;
+            let mut temp = String::new();
+            std::mem::swap(&mut temp, &mut self.array);
+            Some(temp)
+        }
+    }
+}
+
 #[inline(always)]
-pub fn lang() -> String {
-    std::env::var("LANG")
+pub fn lang() -> impl Iterator<Item = String> {
+    let array = std::env::var("LANG")
         .unwrap_or_default()
         .split('.')
         .next()
         .unwrap_or("en_US")
         .to_string()
+        .replace("_", "-");
+    LangIter {
+        array,
+        index: Some(true),
+    }
 }

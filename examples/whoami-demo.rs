@@ -10,8 +10,8 @@ fn main() {
         whoami::username()
     );
     println!(
-        "User's Language        whoami::lang():        {}",
-        whoami::lang()
+        "User's Language        whoami::lang():        {:?}",
+        whoami::lang().collect::<Vec<String>>(),
     );
     println!(
         "Device's Pretty Name   whoami::devicename():  {}",

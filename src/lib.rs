@@ -270,11 +270,12 @@ pub fn platform() -> Platform {
     native::platform()
 }
 
-/// Get the user's language.
+/// Get the user's preferred language(s).
 ///
-/// Returned as two letter language code (lowercase)
-/// followed by an underscore, then the two letter region code (uppercase).
+/// Returned as iterator of two letter language codes (lowercase), optionally
+/// followed by a dash (-) and a two letter region code (uppercase).  The most
+/// preferred language is returned first, followed by next preferred, and so on.
 #[inline(always)]
-pub fn lang() -> String {
+pub fn lang() -> impl Iterator<Item = String> {
     native::lang()
 }
