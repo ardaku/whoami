@@ -1,5 +1,5 @@
 // WhoAmI
-// Copyright © 2017-2020 Jeron Aldaron Lau.
+// Copyright © 2017-2021 Jeron Aldaron Lau.
 //
 // Licensed under any of:
 //  - Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
@@ -487,4 +487,9 @@ pub const fn platform() -> Platform {
 #[inline(always)]
 pub const fn platform() -> Platform {
     Platform::Bsd
+}
+
+#[inline(always)]
+pub fn lang() -> String {
+    std::env::var("LANG").unwrap_or(String::new()).split(".").next().unwrap_or_else(|| "en_US").to_string()
 }

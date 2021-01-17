@@ -1,5 +1,5 @@
 // WhoAmI
-// Copyright © 2017-2020 Jeron Aldaron Lau.
+// Copyright © 2017-2021 Jeron Aldaron Lau.
 //
 // Licensed under any of:
 //  - Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
@@ -264,4 +264,11 @@ pub fn desktop_env() -> DesktopEnv {
 #[inline(always)]
 pub fn platform() -> Platform {
     native::platform()
+}
+
+/// Get the user's language.  Returned as two letter language code (lowercase)
+/// followed by an underscore, then the two letter region code (uppercase).
+#[inline(always)]
+pub fn lang() -> String {
+    native::lang()
 }
