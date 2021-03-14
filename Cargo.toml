@@ -10,10 +10,11 @@
 
 [package]
 name = "whoami"
-version = "1.1.0"
+version = "1.1.1"
 authors = [
     "Jeron Aldaron Lau <jeronlau@plopgrizzly.com>",
 ]
+build = "build.rs"
 edition = "2018"
 license = "Apache-2.0 OR MIT OR BSL-1.0"
 documentation = "https://docs.rs/whoami"
