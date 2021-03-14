@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/semver).
 
+## [1.1.1] - 2021-03-13
+### Fixed
+ - Not compiling on target `x86_64-pc-windows-gnu`.
+
 ## [1.1.0] - 2021-01-17
 ### Added
  - `lang()` function which returns an iterator over user's preferred language(s)
