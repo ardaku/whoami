@@ -24,7 +24,7 @@ readme = "README.md"
 description = "Retrieve the current user and environment."
 keywords = ["user", "username", "whoami", "platform", "detect"]
 categories = ["os", "wasm", "internationalization", "localization", "value-formatting"]
-include = ["Cargo.toml", "src/*"]
+include = ["Cargo.toml", "src/*", "build.rs"]
 
 # Needed target-specific dependency to work with wasm-pack.
 [target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
