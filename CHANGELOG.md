@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/semver).
 
+## [1.1.2] - 2021-04-03
+### Fixed
+ - Not parsing the gecos field properly on unix systems (affects the
+   `realname()` and `realname_os()` functions; they will no longer return
+   extraneous commas on some systems).
+
 ## [1.1.1] - 2021-03-13
 ### Fixed
  - Not compiling on target `x86_64-pc-windows-gnu`.

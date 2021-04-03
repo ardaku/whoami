@@ -141,6 +141,8 @@ pub enum Platform {
     Linux,
     Bsd,
     Windows,
+    // For now, maybe deprecate and add `Mac`?
+    #[allow(clippy::upper_case_acronyms)]
     MacOS,
     Ios,
     Android,
