@@ -79,9 +79,9 @@ extern "system" {
         result: *mut *mut PassWd,
     ) -> i32;
     fn geteuid() -> u32;
-    fn strlen(cs: *const c_void) -> usize;
     fn gethostname(name: *mut c_void, len: usize) -> i32;
 }
+
 #[cfg(target_os = "macos")]
 #[link(name = "CoreFoundation", kind = "framework")]
 #[link(name = "SystemConfiguration", kind = "framework")]
@@ -104,12 +104,47 @@ extern "system" {
     fn CFRelease(cf: *const c_void);
 }
 
+unsafe fn strlen(cs: *const c_void) -> usize {
+    let mut len = 0;
+    let mut cs: *const u8 = cs.cast();
+    while *cs != 0 {
+        len += 1;
+        cs = cs.offset(1);
+    }
+    len
+}
+
+unsafe fn strlen_gecos(cs: *const c_void) -> usize {
+    let mut len = 0;
+    let mut cs: *const u8 = cs.cast();
+    while *cs != 0 && *cs != b',' {
+        len += 1;
+        cs = cs.offset(1);
+    }
+    len
+}
+
 // Convert an OsString into a String
 fn string_from_os(string: OsString) -> String {
     match string.into_string() {
         Ok(string) => string,
         Err(string) => string.to_string_lossy().to_string(),
     }
+}
+
+fn os_from_cstring_gecos(string: *const c_void) -> OsString {
+    if string.is_null() {
+        return "".to_string().into();
+    }
+
+    // Get a byte slice of the c string.
+    let slice = unsafe {
+        let length = strlen_gecos(string);
+        std::slice::from_raw_parts(string as *const u8, length)
+    };
+
+    // Turn byte slice into Rust String.
+    OsString::from_vec(slice.to_vec())
 }
 
 fn os_from_cstring(string: *const c_void) -> OsString {
@@ -180,7 +215,7 @@ fn getpwuid(real: bool) -> Result<OsString, OsString> {
 
     // Extract names.
     if real {
-        let string = os_from_cstring(passwd.pw_gecos);
+        let string = os_from_cstring_gecos(passwd.pw_gecos);
         if string.is_empty() {
             Err(os_from_cstring(passwd.pw_name))
         } else {
