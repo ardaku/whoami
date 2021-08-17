@@ -202,13 +202,17 @@ fn getpwuid(real: bool) -> Result<OsString, OsString> {
 
     // Get PassWd `struct`.
     let passwd = unsafe {
-        getpwuid_r(
+        let ret = getpwuid_r(
             geteuid(),
             passwd.as_mut_ptr(),
             buffer.as_mut_ptr() as *mut c_void,
             BUF_SIZE,
             _passwd.as_mut_ptr(),
         );
+
+        if ret != 0 {
+            return Ok("".to_string().into());
+        }
 
         passwd.assume_init()
     };
