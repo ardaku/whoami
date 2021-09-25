@@ -140,6 +140,9 @@ fn os_from_cstring_gecos(string: *const c_void) -> Option<OsString> {
     // Get a byte slice of the c string.
     let slice = unsafe {
         let length = strlen_gecos(string);
+        if length == 0 {
+            return None;
+        }
         std::slice::from_raw_parts(string as *const u8, length)
     };
 
@@ -194,7 +197,7 @@ fn os_from_cfstring(string: *mut c_void) -> OsString {
 // This function must allocate, because a slice or Cow<OsStr> would still
 // reference `passwd` which is dropped when this function returns.
 #[inline(always)]
-fn getpwuid(real: bool) -> Result<OsString, OsString> {
+fn getpwuid(real: bool) -> OsString {
     const BUF_SIZE: usize = 16_384; // size from the man page
     let mut buffer = mem::MaybeUninit::<[u8; BUF_SIZE]>::uninit();
     let mut passwd = mem::MaybeUninit::<PassWd>::uninit();
@@ -211,7 +214,7 @@ fn getpwuid(real: bool) -> Result<OsString, OsString> {
         );
 
         if ret != 0 {
-            return Ok("".to_string().into());
+            return "Unknown".to_string().into();
         }
 
         passwd.assume_init()
@@ -220,13 +223,14 @@ fn getpwuid(real: bool) -> Result<OsString, OsString> {
     // Extract names.
     if real {
         let string = os_from_cstring_gecos(passwd.pw_gecos);
-        if let Some(string) = string {
+        let result = if let Some(string) = string {
             Ok(string)
         } else {
             Err(os_from_cstring(passwd.pw_name))
-        }
+        };
+        fancy_fallback_os(result)
     } else {
-        Ok(os_from_cstring(passwd.pw_name))
+        os_from_cstring(passwd.pw_name)
     }
 }
 
@@ -235,8 +239,7 @@ pub fn username() -> String {
 }
 
 pub fn username_os() -> OsString {
-    // Unwrap never fails
-    getpwuid(false).unwrap()
+    getpwuid(false)
 }
 
 fn fancy_fallback(result: Result<&str, String>) -> String {
@@ -286,8 +289,7 @@ pub fn realname() -> String {
 }
 
 pub fn realname_os() -> OsString {
-    // If no real name is provided, guess based on username.
-    fancy_fallback_os(getpwuid(true))
+    getpwuid(true)
 }
 
 #[cfg(not(target_os = "macos"))]
@@ -307,8 +309,10 @@ pub fn devicename() -> String {
         for i in distro.split('\n') {
             let mut j = i.split('=');
 
-            if j.next().unwrap() == "PRETTY_HOSTNAME" {
-                return j.next().unwrap().trim_matches('"').to_string();
+            if j.next() == Some("PRETTY_HOSTNAME") {
+                if let Some(value) = j.next() {
+                    return value.trim_matches('"').to_string();
+                }
             }
         }
     }
@@ -532,7 +536,7 @@ impl Iterator for LangIter {
     fn next(&mut self) -> Option<Self::Item> {
         if self.index? {
             self.index = Some(false);
-            let mut temp = self.array.split('-').next().unwrap().to_string();
+            let mut temp = self.array.split('-').next()?.to_string();
             std::mem::swap(&mut temp, &mut self.array);
             Some(temp)
         } else {
