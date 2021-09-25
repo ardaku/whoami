@@ -132,9 +132,9 @@ fn string_from_os(string: OsString) -> String {
     }
 }
 
-fn os_from_cstring_gecos(string: *const c_void) -> OsString {
+fn os_from_cstring_gecos(string: *const c_void) -> Option<OsString> {
     if string.is_null() {
-        return "".to_string().into();
+        return None;
     }
 
     // Get a byte slice of the c string.
@@ -144,7 +144,7 @@ fn os_from_cstring_gecos(string: *const c_void) -> OsString {
     };
 
     // Turn byte slice into Rust String.
-    OsString::from_vec(slice.to_vec())
+    Some(OsString::from_vec(slice.to_vec()))
 }
 
 fn os_from_cstring(string: *const c_void) -> OsString {
@@ -220,10 +220,10 @@ fn getpwuid(real: bool) -> Result<OsString, OsString> {
     // Extract names.
     if real {
         let string = os_from_cstring_gecos(passwd.pw_gecos);
-        if string.is_empty() {
-            Err(os_from_cstring(passwd.pw_name))
-        } else {
+        if let Some(string) = string {
             Ok(string)
+        } else {
+            Err(os_from_cstring(passwd.pw_name))
         }
     } else {
         Ok(os_from_cstring(passwd.pw_name))
@@ -302,7 +302,7 @@ pub fn devicename() -> String {
     if let Ok(program) = std::fs::read_to_string("/etc/machine-info") {
         let program = program.into_bytes();
 
-        distro.push_str(&String::from_utf8(program).unwrap());
+        distro.push_str(&String::from_utf8_lossy(&program));
 
         for i in distro.split('\n') {
             let mut j = i.split('=');
@@ -432,7 +432,7 @@ pub fn distro() -> Option<String> {
     let mut distro = String::new();
 
     let program = std::fs::read_to_string("/etc/os-release")
-        .expect("Couldn't read file /etc/os-release")
+        .ok()?
         .into_bytes();
 
     distro.push_str(&String::from_utf8_lossy(&program));

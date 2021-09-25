@@ -202,7 +202,7 @@ pub fn devicename() -> String {
 
 #[inline(always)]
 pub fn devicename_os() -> OsString {
-    // Step 1. Retreive the entire length of the username
+    // Step 1. Retreive the entire length of the device name
     let mut size = 0;
     let fail = unsafe {
         // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
