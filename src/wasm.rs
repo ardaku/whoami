@@ -10,28 +10,19 @@
 
 use std::ffi::OsString;
 
-use wasm_bindgen::{JsCast, JsValue};
-use web_sys::{window, HtmlDocument};
+use wasm_bindgen::JsValue;
+use web_sys::window;
 
 use crate::{DesktopEnv, Platform};
 
 // Get the user agent
-fn user_agent() -> String {
-    window()
-        .unwrap()
-        .navigator()
-        .user_agent()
-        .unwrap_or_else(|_| String::new())
+fn user_agent() -> Option<String> {
+    window()?.navigator().user_agent().ok()
 }
 
 // Get the document domain
-fn document_domain() -> String {
-    window()
-        .unwrap()
-        .document()
-        .unwrap()
-        .unchecked_into::<HtmlDocument>()
-        .domain()
+fn document_domain() -> Option<String> {
+    window()?.document()?.location()?.hostname().ok()
 }
 
 struct LangIter {
@@ -45,7 +36,11 @@ impl Iterator for LangIter {
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(value) = self.array.get(self.index) {
             self.index += 1;
-            Some(value.as_string().unwrap())
+            if let Some(lang) = value.as_string() {
+                Some(lang)
+            } else {
+                self.next()
+            }
         } else {
             None
         }
@@ -54,7 +49,11 @@ impl Iterator for LangIter {
 
 #[inline(always)]
 pub fn lang() -> impl Iterator<Item = String> {
-    let array = window().unwrap().navigator().languages().to_vec();
+    let array = if let Some(window) = window() {
+        window.navigator().languages().to_vec()
+    } else {
+        Vec::new()
+    };
     let index = 0;
 
     LangIter { array, index }
@@ -96,9 +95,9 @@ pub fn realname() -> String {
 }
 
 pub fn devicename() -> String {
-    let orig_string = user_agent();
+    let orig_string = user_agent().unwrap_or_else(String::new);
 
-    let start = if let Some(s) = orig_string.rfind(" ") {
+    let start = if let Some(s) = orig_string.rfind(' ') {
         s
     } else {
         return "Unknown Browser".to_string();
@@ -123,21 +122,15 @@ pub fn devicename() -> String {
 #[inline(always)]
 pub fn hostname() -> String {
     document_domain()
+        .filter(|x| !x.is_empty())
+        .unwrap_or_else(|| "localhost".to_string())
 }
 
 pub fn distro() -> Option<String> {
-    let string = user_agent();
+    let string = user_agent()?;
 
-    let begin = if let Some(b) = string.find('(') {
-        b
-    } else {
-        return None;
-    };
-    let end = if let Some(e) = string.find(')') {
-        e
-    } else {
-        return None;
-    };
+    let begin = string.find('(')?;
+    let end = string.find(')')?;
     let string = &string[begin + 1..end];
 
     if string.contains("Win32") || string.contains("Win64") {
@@ -146,7 +139,7 @@ pub fn distro() -> Option<String> {
         } else {
             return Some("Windows".to_string());
         };
-        let end = if let Some(e) = string.find(".") {
+        let end = if let Some(e) = string.find('.') {
             e
         } else {
             return Some("Windows".to_string());
@@ -156,14 +149,12 @@ pub fn distro() -> Option<String> {
         Some(format!("Windows {}", string))
     } else if string.contains("Linux") {
         let string = if string.contains("X11") || string.contains("Wayland") {
-            let begin = if let Some(b) = string.find(";") {
+            let begin = if let Some(b) = string.find(';') {
                 b
             } else {
                 return Some("Unknown Linux".to_string());
             };
-            let string = &string[begin + 2..];
-
-            string
+            &string[begin + 2..]
         } else {
             string
         };
@@ -171,16 +162,15 @@ pub fn distro() -> Option<String> {
         if string.starts_with("Linux") {
             Some("Unknown Linux".to_string())
         } else {
-            let end = if let Some(e) = string.find(";") {
+            let end = if let Some(e) = string.find(';') {
                 e
             } else {
                 return Some("Unknown Linux".to_string());
             };
             Some(string[..end].to_string())
         }
-    } else if string.contains("Mac OS X") {
-        let begin = string.find("Mac OS X").unwrap();
-        Some(if let Some(end) = string[begin..].find(";") {
+    } else if let Some(begin) = string.find("Mac OS X") {
+        Some(if let Some(end) = string[begin..].find(';') {
             string[begin..begin + end].to_string()
         } else {
             string[begin..].to_string().replace("_", ".")
@@ -205,7 +195,7 @@ pub const fn desktop_env() -> DesktopEnv {
 }
 
 pub fn platform() -> Platform {
-    let string = user_agent();
+    let string = user_agent().unwrap_or_else(String::new);
 
     let begin = if let Some(b) = string.find('(') {
         b

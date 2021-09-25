@@ -108,26 +108,24 @@ pub fn username() -> String {
 pub fn username_os() -> OsString {
     // Step 1. Retreive the entire length of the username
     let mut size = 0;
-    let fail = unsafe {
+    let success = unsafe {
         // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
         GetUserNameW(ptr::null_mut(), &mut size) == 0
     };
-    debug_assert_eq!(fail, true);
+    assert!(success);
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
-    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
+    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap_or(usize::MAX));
+    size = name.capacity().try_into().unwrap_or(c_ulong::MAX);
     let orig_size = size;
     let fail =
         unsafe { GetUserNameW(name.as_mut_ptr().cast(), &mut size) == 0 };
     if fail {
-        panic!(
-            "Failed to get username: {}, report at https://github.com/libcala/whoami/issues",
-            unsafe { GetLastError() }
-        );
+        return "unknown".to_string().into();
     }
     debug_assert_eq!(orig_size, size);
     unsafe {
-        name.set_len(size.try_into().unwrap());
+        name.set_len(size.try_into().unwrap_or(usize::MAX));
     }
     let terminator = name.pop(); // Remove Trailing Null
     debug_assert_eq!(terminator, Some(0u16));
@@ -145,34 +143,25 @@ pub fn realname() -> String {
 pub fn realname_os() -> OsString {
     // Step 1. Retrieve the entire length of the username
     let mut buf_size = 0;
-    let fail = unsafe {
+    let success = unsafe {
         GetUserNameExW(
             ExtendedNameFormat::Display,
             ptr::null_mut(),
             &mut buf_size,
         ) == 0
     };
-    debug_assert_eq!(fail, true);
+    assert!(success);
     match unsafe { GetLastError() } {
 		0x00EA /* more data */ => { /* Success, continue */ }
-		0x054B /* no such domain */ => {
-			// If domain controller over the network can't be contacted, return
-			// "Unknown".
-			return "Unknown".into()
-		}
-		0x0534 /* none mapped */ => {
+		_ /* network error or none mapped */ => {
 			// Fallback to username
 			return username_os();
-		}
-		u => {
-			eprintln!("Unknown error code: {}, report at https://github.com/libcala/whoami/issues", u);
-			unreachable!();
 		}
 	}
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
-    let mut name: Vec<u16> = Vec::with_capacity(buf_size.try_into().unwrap());
-    let mut name_len = buf_size;
+    let mut name: Vec<u16> = Vec::with_capacity(buf_size.try_into().unwrap_or(usize::MAX));
+    let mut name_len = name.capacity().try_into().unwrap_or(c_ulong::MAX);
     let fail = unsafe {
         GetUserNameExW(
             ExtendedNameFormat::Display,
@@ -181,14 +170,11 @@ pub fn realname_os() -> OsString {
         ) == 0
     };
     if fail {
-        panic!(
-            "Failed to get username: {}, report at https://github.com/libcala/whoami/issues",
-            unsafe { GetLastError() }
-        );
+        return "Unknown".to_string().into();
     }
     debug_assert_eq!(buf_size, name_len + 1);
     unsafe {
-        name.set_len(name_len.try_into().unwrap());
+        name.set_len(name_len.try_into().unwrap_or(usize::MAX));
     }
 
     // Step 3. Convert to Rust String
@@ -204,7 +190,7 @@ pub fn devicename() -> String {
 pub fn devicename_os() -> OsString {
     // Step 1. Retreive the entire length of the device name
     let mut size = 0;
-    let fail = unsafe {
+    let success = unsafe {
         // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
         GetComputerNameExW(
             ComputerNameFormat::DnsHostname,
@@ -212,10 +198,11 @@ pub fn devicename_os() -> OsString {
             &mut size,
         ) == 0
     };
-    debug_assert_eq!(fail, true);
+    assert!(success);
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
-    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
+    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap_or(usize::MAX));
+    size = name.capacity().try_into().unwrap_or(c_ulong::MAX);
     let fail = unsafe {
         GetComputerNameExW(
             ComputerNameFormat::DnsHostname,
@@ -224,13 +211,10 @@ pub fn devicename_os() -> OsString {
         ) == 0
     };
     if fail {
-        panic!(
-            "Failed to get computer name: {}, report at https://github.com/libcala/whoami/issues",
-            unsafe { GetLastError() }
-        );
+        return "Unknown".to_string().into();
     }
     unsafe {
-        name.set_len(size.try_into().unwrap());
+        name.set_len(size.try_into().unwrap_or(usize::MAX));
     }
 
     // Step 3. Convert to Rust String
@@ -252,10 +236,11 @@ pub fn hostname_os() -> OsString {
             &mut size,
         ) == 0
     };
-    debug_assert_eq!(fail, true);
+    debug_assert!(fail);
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
-    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap());
+    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap_or(usize::MAX));
+    size = name.capacity().try_into().unwrap_or(c_ulong::MAX);
     let fail = unsafe {
         GetComputerNameExW(
             ComputerNameFormat::NetBIOS,
@@ -264,13 +249,10 @@ pub fn hostname_os() -> OsString {
         ) == 0
     };
     if fail {
-        panic!(
-            "Failed to get computer name: {}, report at https://github.com/libcala/whoami/issues",
-            unsafe { GetLastError() }
-        );
+        return "localhost".to_string().into();
     }
     unsafe {
-        name.set_len(size.try_into().unwrap());
+        name.set_len(size.try_into().unwrap_or(usize::MAX));
     }
 
     // Step 3. Convert to Rust String

@@ -29,7 +29,7 @@ include = ["Cargo.toml", "src/*", "build.rs"]
 # Needed target-specific dependency to work with wasm-pack.
 [target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
 version = "0.3"
-features = ["Navigator", "HtmlDocument", "Document", "Window"]
+features = ["Navigator", "Document", "Window", "Location"]
 [target.'cfg(target_arch = "wasm32")'.dependencies.wasm-bindgen]
 version = "0.2"
 
