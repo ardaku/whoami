@@ -127,7 +127,7 @@ impl std::fmt::Display for DesktopEnv {
                 DesktopEnv::Ubuntu => "Ubuntu",
                 DesktopEnv::Ermine => "Ermine",
                 DesktopEnv::Orbital => "Orbital",
-                DesktopEnv::Unknown(a) => &a,
+                DesktopEnv::Unknown(a) => a,
             }
         )
     }

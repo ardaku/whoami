@@ -451,11 +451,7 @@ pub fn distro() -> Option<String> {
         }
     }
 
-    if let Some(x) = fallback {
-        Some(x)
-    } else {
-        None
-    }
+    fallback
 }
 
 #[cfg(target_os = "macos")]
