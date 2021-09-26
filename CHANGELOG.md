@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/semver).
 
-## [1.1.4] - 2021-09-25
+## [1.1.4] - 2021-09-26
 ### Changed
  - There are no longer any known panics within the code, all possible panics
    with whoami are now considered bugs.
