@@ -127,7 +127,7 @@ impl std::fmt::Display for DesktopEnv {
                 DesktopEnv::Ubuntu => "Ubuntu",
                 DesktopEnv::Ermine => "Ermine",
                 DesktopEnv::Orbital => "Orbital",
-                DesktopEnv::Unknown(a) => &a,
+                DesktopEnv::Unknown(a) => a,
             }
         )
     }
@@ -249,7 +249,7 @@ pub fn hostname_os() -> OsString {
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn distro() -> String {
-    native::distro().unwrap_or_else(|| "Unknown".to_string())
+    native::distro().unwrap_or_else(|| format!("Unknown {}", platform()))
 }
 
 /// Get the name of the operating system distribution and (possibly) version.
@@ -257,7 +257,8 @@ pub fn distro() -> String {
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn distro_os() -> OsString {
-    native::distro_os().unwrap_or_else(|| "Unknown".to_string().into())
+    native::distro_os()
+        .unwrap_or_else(|| format!("Unknown {}", platform()).into())
 }
 
 /// Get the desktop environment.

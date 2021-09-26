@@ -10,13 +10,13 @@
 
 [package]
 name = "whoami"
-version = "1.1.3"
+version = "1.1.4"
 authors = [
     "Jeron Aldaron Lau <jeronlau@plopgrizzly.com>",
 ]
 build = "build.rs"
 edition = "2018"
-license = "Apache-2.0 OR MIT OR BSL-1.0"
+license = "Apache-2.0 OR BSL-1.0 OR MIT"
 documentation = "https://docs.rs/whoami"
 homepage = "https://github.com/libcala/whoami/blob/main/CHANGELOG.md"
 repository = "https://github.com/libcala/whoami"
@@ -29,7 +29,7 @@ include = ["Cargo.toml", "src/*", "build.rs"]
 # Needed target-specific dependency to work with wasm-pack.
 [target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
 version = "0.3"
-features = ["Navigator", "HtmlDocument", "Document", "Window"]
+features = ["Navigator", "Document", "Window", "Location"]
 [target.'cfg(target_arch = "wasm32")'.dependencies.wasm-bindgen]
 version = "0.2"
 
