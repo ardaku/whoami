@@ -217,6 +217,12 @@ fn getpwuid(real: bool) -> OsString {
             return "Unknown".to_string().into();
         }
 
+        let _passwd = _passwd.assume_init();
+
+        if _passwd.is_null() {
+            return "Unknown".to_string().into();
+        }
+
         passwd.assume_init()
     };
 
