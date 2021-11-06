@@ -115,8 +115,9 @@ pub fn username_os() -> OsString {
     assert!(success);
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
-    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap_or(usize::MAX));
-    size = name.capacity().try_into().unwrap_or(c_ulong::MAX);
+    let mut name: Vec<u16> =
+        Vec::with_capacity(size.try_into().unwrap_or(std::usize::MAX));
+    size = name.capacity().try_into().unwrap_or(std::u32::MAX);
     let orig_size = size;
     let fail =
         unsafe { GetUserNameW(name.as_mut_ptr().cast(), &mut size) == 0 };
@@ -125,7 +126,7 @@ pub fn username_os() -> OsString {
     }
     debug_assert_eq!(orig_size, size);
     unsafe {
-        name.set_len(size.try_into().unwrap_or(usize::MAX));
+        name.set_len(size.try_into().unwrap_or(std::usize::MAX));
     }
     let terminator = name.pop(); // Remove Trailing Null
     debug_assert_eq!(terminator, Some(0u16));
@@ -160,8 +161,9 @@ pub fn realname_os() -> OsString {
 	}
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
-    let mut name: Vec<u16> = Vec::with_capacity(buf_size.try_into().unwrap_or(usize::MAX));
-    let mut name_len = name.capacity().try_into().unwrap_or(c_ulong::MAX);
+    let mut name: Vec<u16> =
+        Vec::with_capacity(buf_size.try_into().unwrap_or(std::usize::MAX));
+    let mut name_len = name.capacity().try_into().unwrap_or(std::u32::MAX);
     let fail = unsafe {
         GetUserNameExW(
             ExtendedNameFormat::Display,
@@ -174,7 +176,7 @@ pub fn realname_os() -> OsString {
     }
     debug_assert_eq!(buf_size, name_len + 1);
     unsafe {
-        name.set_len(name_len.try_into().unwrap_or(usize::MAX));
+        name.set_len(name_len.try_into().unwrap_or(std::usize::MAX));
     }
 
     // Step 3. Convert to Rust String
@@ -201,8 +203,9 @@ pub fn devicename_os() -> OsString {
     assert!(success);
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
-    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap_or(usize::MAX));
-    size = name.capacity().try_into().unwrap_or(c_ulong::MAX);
+    let mut name: Vec<u16> =
+        Vec::with_capacity(size.try_into().unwrap_or(std::usize::MAX));
+    size = name.capacity().try_into().unwrap_or(std::u32::MAX);
     let fail = unsafe {
         GetComputerNameExW(
             ComputerNameFormat::DnsHostname,
@@ -214,7 +217,7 @@ pub fn devicename_os() -> OsString {
         return "Unknown".to_string().into();
     }
     unsafe {
-        name.set_len(size.try_into().unwrap_or(usize::MAX));
+        name.set_len(size.try_into().unwrap_or(std::usize::MAX));
     }
 
     // Step 3. Convert to Rust String
@@ -239,8 +242,9 @@ pub fn hostname_os() -> OsString {
     debug_assert!(fail);
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
-    let mut name: Vec<u16> = Vec::with_capacity(size.try_into().unwrap_or(usize::MAX));
-    size = name.capacity().try_into().unwrap_or(c_ulong::MAX);
+    let mut name: Vec<u16> =
+        Vec::with_capacity(size.try_into().unwrap_or(std::usize::MAX));
+    size = name.capacity().try_into().unwrap_or(std::u32::MAX);
     let fail = unsafe {
         GetComputerNameExW(
             ComputerNameFormat::NetBIOS,
@@ -252,7 +256,7 @@ pub fn hostname_os() -> OsString {
         return "localhost".to_string().into();
     }
     unsafe {
-        name.set_len(size.try_into().unwrap_or(usize::MAX));
+        name.set_len(size.try_into().unwrap_or(std::usize::MAX));
     }
 
     // Step 3. Convert to Rust String

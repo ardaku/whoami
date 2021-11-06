@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/semver).
 
+## [1.2.0] - 2021-11-06
+### Added
+ - Derives for `Clone`, `PartialEq` and `Eq` on `DesktopEnv` and `Platform`
+
+### Changed
+ - Lower MSRV for Windows
+
 ## [1.1.5] - 2021-09-28
 ### Fixed
  - Segfault that occurs when passwd entry missing in docker

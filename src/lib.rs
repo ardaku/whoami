@@ -67,7 +67,7 @@ use std::ffi::OsString;
 
 /// Which Desktop Environment
 #[allow(missing_docs)]
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[non_exhaustive]
 pub enum DesktopEnv {
     Gnome,
@@ -135,7 +135,7 @@ impl std::fmt::Display for DesktopEnv {
 
 /// Which Platform
 #[allow(missing_docs)]
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[non_exhaustive]
 pub enum Platform {
     Linux,
