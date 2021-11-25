@@ -270,6 +270,7 @@ pub fn distro() -> Option<String> {
             hfile: isize,
             dwflags: u32,
         ) -> isize;
+        fn FreeLibrary(hmodule: isize) -> i32;
         fn GetProcAddress(
             hmodule: isize,
             procname: *mut u8,
@@ -298,6 +299,7 @@ pub fn distro() -> Option<String> {
         (*version.as_mut_ptr()).os_version_info_size =
             std::mem::size_of::<OsVersionInfoEx>() as u32;
         get_version(version.as_mut_ptr());
+        FreeLibrary(inst);
         version.assume_init()
     };
 
