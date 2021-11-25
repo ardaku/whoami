@@ -78,11 +78,6 @@ extern "system" {
     ) -> c_int;
 }
 
-#[link(name = "ntdll")]
-extern "system" {
-    fn RtlGetVersion(a: *mut OsVersionInfoEx) -> u32;
-}
-
 #[link(name = "kernel32")]
 extern "system" {
     fn GetUserPreferredUILanguages(
@@ -268,12 +263,41 @@ pub fn distro_os() -> Option<OsString> {
 }
 
 pub fn distro() -> Option<String> {
+    // Due to MingW Limitations, we must dynamically load ntdll.dll
+    extern "system" {
+        fn LoadLibraryExW(
+            filename: *mut u16,
+            hfile: isize,
+            dwflags: u32,
+        ) -> isize;
+        fn GetProcAddress(
+            hmodule: isize,
+            procname: *mut u8,
+        ) -> *mut std::os::raw::c_void;
+    }
+
+    let mut path = "ntdll.dll\0".encode_utf16().collect::<Vec<u16>>();
+    let path = path.as_mut_ptr();
+
+    let inst = unsafe { LoadLibraryExW(path, 0, 0x00000800) };
+
+    let mut path = "RtlGetVersion\0".bytes().collect::<Vec<u8>>();
+    let path = path.as_mut_ptr();
+    let func = unsafe { GetProcAddress(inst, path) };
+
+    if func.is_null() {
+        return Some("Windows (Unknown)".to_string());
+    }
+
+    let get_version: unsafe extern "system" fn(a: *mut OsVersionInfoEx) -> u32 =
+        unsafe { std::mem::transmute(func) };
+
     let mut version = std::mem::MaybeUninit::<OsVersionInfoEx>::zeroed();
 
     let version = unsafe {
         (*version.as_mut_ptr()).os_version_info_size =
             std::mem::size_of::<OsVersionInfoEx>() as u32;
-        RtlGetVersion(version.as_mut_ptr());
+        get_version(version.as_mut_ptr());
         version.assume_init()
     };
 
