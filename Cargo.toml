@@ -9,10 +9,7 @@
 
 [package]
 name = "whoami"
-version = "1.2.1"
-authors = [
-    "Jeron Aldaron Lau <jeronlau@plopgrizzly.com>",
-]
+version = "1.2.2"
 edition = "2018"
 license = "Apache-2.0 OR BSL-1.0 OR MIT"
 documentation = "https://docs.rs/whoami"
@@ -22,7 +19,7 @@ readme = "README.md"
 description = "Retrieve the current user and environment."
 keywords = ["user", "username", "whoami", "platform", "detect"]
 categories = ["os", "wasm", "internationalization", "localization", "value-formatting"]
-include = ["README.md", "src/*", "build.rs"]
+include = ["README.md", "src/*"]
 rust-version = "1.40"
 
 # Needed target-specific dependency to work with wasm-pack.
