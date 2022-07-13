@@ -1,4 +1,3 @@
-use devout::{Tag, log};
 use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
@@ -7,7 +6,9 @@ use wasm_bindgen::prelude::*;
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
-const INFO: Tag = Tag::new("Info");
+fn log(text: String) {
+    web_sys::console::log_1(&text.into())
+}
 
 #[wasm_bindgen]
 pub fn main() {
@@ -21,12 +22,36 @@ pub fn main() {
     console_error_panic_hook::set_once();
 
     // Print out code from regular example.
-    log!(INFO, "User's Name            whoami::realname():    {}", whoami::realname());
-    log!(INFO, "User's Username        whoami::username():    {}", whoami::username());
-    log!(INFO, "User's Languages       whoami::lang():        {:?}", whoami::lang().collect::<Vec<String>>());
-    log!(INFO, "Device's Pretty Name   whoami::devicename():  {}", whoami::devicename());
-    log!(INFO, "Device's Hostname      whoami::hostname():    {}", whoami::hostname());
-    log!(INFO, "Device's Platform      whoami::platform():    {}", whoami::platform());
-    log!(INFO, "Device's OS Distro     whoami::distro():      {}", whoami::distro());
-    log!(INFO, "Device's Desktop Env.  whoami::desktop_env(): {}", whoami::desktop_env());
+    log(format!(
+        "User's Name            whoami::realname():    {}",
+        whoami::realname()
+    ));
+    log(format!(
+        "User's Username        whoami::username():    {}",
+        whoami::username()
+    ));
+    log(format!(
+        "User's Languages       whoami::lang():        {:?}",
+        whoami::lang().collect::<Vec<String>>()
+    ));
+    log(format!(
+        "Device's Pretty Name   whoami::devicename():  {}",
+        whoami::devicename()
+    ));
+    log(format!(
+        "Device's Hostname      whoami::hostname():    {}",
+        whoami::hostname()
+    ));
+    log(format!(
+        "Device's Platform      whoami::platform():    {}",
+        whoami::platform()
+    ));
+    log(format!(
+        "Device's OS Distro     whoami::distro():      {}",
+        whoami::distro()
+    ));
+    log(format!(
+        "Device's Desktop Env.  whoami::desktop_env(): {}",
+        whoami::desktop_env()
+    ));
 }
