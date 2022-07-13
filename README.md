@@ -2,9 +2,14 @@
 
 #### [Changelog][3] | [Source][4] | [Getting Started][5]
 
-[![tests](https://github.com/ardaku/whoami/workflows/tests/badge.svg)][2]
-[![docs](https://docs.rs/whoami/badge.svg)][0]
-[![crates.io](https://img.shields.io/crates/v/whoami.svg)][1]
+[![tests](https://github.com/ardaku/whoami/actions/workflows/ci.yml/badge.svg)](https://github.com/ardaku/whoami/actions/workflows/ci.yml)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/y/ardaku/whoami)](https://github.com/ardaku/whoami/)
+[![GitHub contributors](https://img.shields.io/github/contributors/ardaku/whoami)](https://github.com/ardaku/whoami/graphs/contributors)  
+[![Crates.io](https://img.shields.io/crates/v/whoami)](https://crates.io/crates/whoami)
+[![Crates.io](https://img.shields.io/crates/d/whoami)](https://crates.io/crates/whoami)
+[![Crates.io (recent)](https://img.shields.io/crates/dr/whoami)](https://crates.io/crates/whoami)  
+[![Crates.io](https://img.shields.io/crates/l/whoami)](https://github.com/ardaku/whoami/search?l=Text&q=license)
+[![Docs.rs](https://docs.rs/whoami/badge.svg)](https://docs.rs/whoami/)
 
 Retrieve the current user and environment through simple functions.
 
