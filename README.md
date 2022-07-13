@@ -33,6 +33,9 @@ WhoAmI targets all platforms that can run Rust, including:
  - Fuchsia **planned later**
  - Others? (make a PR)
 
+## MSRV
+WhoAmI targets Rust 1.40.0 stable and later
+
 ## Binary
 [whome](https://crates.io/crates/whome): `whoami` command RiR (Re-written in
 Rust) that depends on this crate.
