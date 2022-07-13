@@ -41,9 +41,9 @@ Rust) that depends on this crate.
 Licensed under any of
  - Apache License, Version 2.0, ([LICENSE_APACHE_2_0.txt][7]
    or [https://www.apache.org/licenses/LICENSE-2.0][8])
- - MIT License, ([LICENSE_MIT.txt][9] or [https://mit-license.org/][10])
  - Boost Software License, Version 1.0, ([LICENSE_BOOST_1_0.txt][11]
    or [https://www.boost.org/LICENSE_1_0.txt][12])
+ - MIT License, ([LICENSE_MIT.txt][9] or [https://mit-license.org/][10])
 
 at your option.
 
