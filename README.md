@@ -42,9 +42,9 @@ WhoAmI targets all platforms that can run Rust, including:
 WhoAmI targets Rust 1.40.0 stable and later.
 
 The MSRV can only be updated on major version bumps.  It's planned to upgrade
-the major version around the next Rust edition release (2024), when the MSRV
-will be bumped to 1.59.0 stable.  The reason for this policy is that there is
-currently no pressing need to upgrade the MSRV, but that might change in the
+the major version to 2.0.0 around the next Rust edition release (2024), when the
+MSRV will be bumped to 1.60.0 stable.  The reason for this policy is that there
+is currently no pressing need to upgrade the MSRV, but that might change in the
 future.
 
 ## Binary
