@@ -347,7 +347,7 @@ pub fn hostname() -> String {
     string_from_os(hostname_os())
 }
 
-pub fn hostname_os() -> OsString {
+fn hostname_os() -> OsString {
     // Maximum hostname length = 255, plus a NULL byte.
     let mut string = Vec::<u8>::with_capacity(256);
     unsafe {

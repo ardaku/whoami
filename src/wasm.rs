@@ -74,11 +74,6 @@ pub fn devicename_os() -> OsString {
 }
 
 #[inline(always)]
-pub fn hostname_os() -> OsString {
-    hostname().into()
-}
-
-#[inline(always)]
 pub fn distro_os() -> Option<OsString> {
     distro().map(|a| a.into())
 }

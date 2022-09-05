@@ -267,12 +267,7 @@ pub fn hostname() -> String {
 /// `devicename()`).
 #[inline(always)]
 pub fn hostname_os() -> OsString {
-    let hostname = native::hostname_os();
-    // FIXME: When whoami 2.0.0
-    // hostname.make_ascii_lowercase();
-    // hostname
-    use core::mem::transmute;
-    unsafe { transmute(transmute::<_, &[u8]>(&hostname[..]).to_ascii_lowercase()) }
+    hostname().into()
 }
 
 /// Get the name of the operating system distribution and (possibly) version.

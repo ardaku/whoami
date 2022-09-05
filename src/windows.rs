@@ -222,7 +222,7 @@ pub fn hostname() -> String {
     string_from_os(hostname_os())
 }
 
-pub fn hostname_os() -> OsString {
+fn hostname_os() -> OsString {
     // Step 1. Retreive the entire length of the username
     let mut size = 0;
     let fail = unsafe {
