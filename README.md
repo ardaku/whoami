@@ -36,16 +36,15 @@ WhoAmI targets all platforms that can run Rust, including:
  - iOS / various game consoles **planned later**
  - Redox **planned later**
  - Fuchsia **planned later**
+ - Ardaku **planned later**
  - Others? (make a PR)
 
 ## MSRV
-WhoAmI targets Rust 1.40.0 stable and later.
+WhoAmI 1.x.y targets Rust 1.40.0 stable and later, and the 1.x.y track will
+be maintained until at least the release of the Rust 2024 edition.
 
-The MSRV can only be updated on major version bumps.  It's planned to upgrade
-the major version to 2.0.0 around the next Rust edition release (2024), when the
-MSRV will be bumped to 1.60.0 stable.  The reason for this policy is that there
-is currently no pressing need to upgrade the MSRV, but that might change in the
-future.
+The MSRV will only be updated on major version bumps, and version 2.0.0 will
+most likely target Rust 1.60.0 and later.
 
 ## Binary
 [whome](https://crates.io/crates/whome): `whoami` command RiR (Re-written in
