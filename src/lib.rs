@@ -23,35 +23,35 @@
 //! fn main() {
 //!     println!(
 //!         "User's Name            whoami::realname():    {}",
-//!         whoami::realname()
+//!         whoami::realname(),
 //!     );
 //!     println!(
 //!         "User's Username        whoami::username():    {}",
-//!         whoami::username()
+//!         whoami::username(),
 //!     );
 //!     println!(
 //!         "User's Language        whoami::lang():        {:?}",
-//!         whoami::lang().collect::<Vec<String>>()
+//!         whoami::lang().collect::<Vec<String>>(),
 //!     );
 //!     println!(
 //!         "Device's Pretty Name   whoami::devicename():  {}",
-//!         whoami::devicename()
+//!         whoami::devicename(),
 //!     );
 //!     println!(
 //!         "Device's Hostname      whoami::hostname():    {}",
-//!         whoami::hostname()
+//!         whoami::hostname(),
 //!     );
 //!     println!(
 //!         "Device's Platform      whoami::platform():    {}",
-//!         whoami::platform()
+//!         whoami::platform(),
 //!     );
 //!     println!(
 //!         "Device's OS Distro     whoami::distro():      {}",
-//!         whoami::distro()
+//!         whoami::distro(),
 //!     );
 //!     println!(
 //!         "Device's Desktop Env.  whoami::desktop_env(): {}",
-//!         whoami::desktop_env()
+//!         whoami::desktop_env(),
 //!     );
 //! }
 //! ```
@@ -65,21 +65,29 @@
 use std::ffi::OsString;
 
 /// Which Desktop Environment
-#[allow(missing_docs)]
 #[derive(Debug, PartialEq, Eq, Clone)]
 #[non_exhaustive]
 pub enum DesktopEnv {
+    /// Popular GTK-based desktop environment on Linux
     Gnome,
     /// One of the desktop environments for a specific version of Windows
     Windows,
+    /// Linux desktop environment optimized for low resource requirements
     Lxde,
+    /// Stacking window manager for X Windows on Linux
     Openbox,
+    /// Desktop environment for Linux, BSD and Illumos
     Mate,
+    /// Lightweight desktop enivornment for unix-like operating systems
     Xfce,
+    /// KDE Plasma desktop enviroment
+    // FIXME: Rename to 'Plasma' in whoami 2.0.0
     Kde,
+    /// Default desktop environment on Linux Mint
     Cinnamon,
+    /// Tiling window manager for Linux
     I3,
-    /// Default desktop environment for MacOS
+    /// Desktop environment for MacOS
     Aqua,
     /// Desktop environment for iOS
     Ios,
@@ -140,8 +148,7 @@ pub enum Platform {
     Linux,
     Bsd,
     Windows,
-    // For now, maybe deprecate and add `Mac`?
-    #[allow(clippy::upper_case_acronyms)]
+    // FIXME: Non-standard casing; Rename to 'Mac' rather than 'MacOs' in whoami 2.0.0
     MacOS,
     Ios,
     Android,
@@ -194,50 +201,68 @@ mod unix;
 use self::unix as native;
 
 /// Get the user's username.
+///
+/// On unix-systems this differs from `realname()` most notably in that spaces
+/// are not allowed.
 #[inline(always)]
 pub fn username() -> String {
     native::username()
 }
 
 /// Get the user's username.
+///
+/// On unix-systems this differs from `realname()` most notably in that spaces
+/// are not allowed.
 #[inline(always)]
 pub fn username_os() -> OsString {
     native::username_os()
 }
 
-/// Get the user's real name.
+/// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname() -> String {
     native::realname()
 }
 
-/// Get the user's real name.
+/// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname_os() -> OsString {
     native::realname_os()
 }
 
-/// Get the device name (also known as "Pretty Name"), used to identify device
-/// for bluetooth pairing.
+/// Get the device name (also known as "Pretty Name").
+///
+/// Often used to identify device for bluetooth pairing.
 #[inline(always)]
 pub fn devicename() -> String {
     native::devicename()
 }
 
-/// Get the device name (also known as "Pretty Name"), used to identify device
-/// for bluetooth pairing.
+/// Get the device name (also known as "Pretty Name").
+///
+/// Often used to identify device for bluetooth pairing.
 #[inline(always)]
 pub fn devicename_os() -> OsString {
     native::devicename_os()
 }
 
 /// Get the host device's hostname.
+///
+/// Limited to a-z (case insensitve), 0-9, and dashes.  This limit also applies
+/// to `devicename()` when targeting Windows.  Since the hostname is
+/// case-insensitive, this method normalizes to lowercase (unlike
+/// `devicename()`).
 #[inline(always)]
 pub fn hostname() -> String {
     native::hostname()
 }
 
 /// Get the host device's hostname.
+///
+/// Limited to a-z (case insensitve), 0-9, and dashes.  This limit also applies
+/// to `devicename()` when targeting Windows.  Since the hostname is
+/// case-insensitive, this method normalizes to lowercase (unlike
+/// `devicename()`).
 #[inline(always)]
 pub fn hostname_os() -> OsString {
     native::hostname_os()
