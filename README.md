@@ -1,10 +1,15 @@
-![WhoAmI Logo](https://raw.githubusercontent.com/libcala/whoami/main/res/icon.svg)
+![WhoAmI Logo](https://raw.githubusercontent.com/ardaku/whoami/stable/res/icon.svg)
 
 #### [Changelog][3] | [Source][4] | [Getting Started][5]
 
-[![tests](https://github.com/libcala/whoami/workflows/tests/badge.svg)][2]
-[![docs](https://docs.rs/whoami/badge.svg)][0]
-[![crates.io](https://img.shields.io/crates/v/whoami.svg)][1]
+[![tests](https://github.com/ardaku/whoami/actions/workflows/ci.yml/badge.svg)](https://github.com/ardaku/whoami/actions/workflows/ci.yml)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/y/ardaku/whoami)](https://github.com/ardaku/whoami/)
+[![GitHub contributors](https://img.shields.io/github/contributors/ardaku/whoami)](https://github.com/ardaku/whoami/graphs/contributors)  
+[![Crates.io](https://img.shields.io/crates/v/whoami)](https://crates.io/crates/whoami)
+[![Crates.io](https://img.shields.io/crates/d/whoami)](https://crates.io/crates/whoami)
+[![Crates.io (recent)](https://img.shields.io/crates/dr/whoami)](https://crates.io/crates/whoami)  
+[![Crates.io](https://img.shields.io/crates/l/whoami)](https://github.com/ardaku/whoami/search?l=Text&q=license)
+[![Docs.rs](https://docs.rs/whoami/badge.svg)](https://docs.rs/whoami/)
 
 Retrieve the current user and environment through simple functions.
 
@@ -31,7 +36,15 @@ WhoAmI targets all platforms that can run Rust, including:
  - iOS / various game consoles **planned later**
  - Redox **planned later**
  - Fuchsia **planned later**
+ - Ardaku **planned later**
  - Others? (make a PR)
+
+## MSRV
+WhoAmI 1.x.y targets Rust 1.40.0 stable and later, and the 1.x.y track will
+be maintained until at least the release of the Rust 2024 edition.
+
+The MSRV will only be updated on major version bumps, and version 2.0.0 will
+most likely target Rust 1.60.0 and later.
 
 ## Binary
 [whome](https://crates.io/crates/whome): `whoami` command RiR (Re-written in
@@ -41,9 +54,9 @@ Rust) that depends on this crate.
 Licensed under any of
  - Apache License, Version 2.0, ([LICENSE_APACHE_2_0.txt][7]
    or [https://www.apache.org/licenses/LICENSE-2.0][8])
- - MIT License, ([LICENSE_MIT.txt][9] or [https://mit-license.org/][10])
  - Boost Software License, Version 1.0, ([LICENSE_BOOST_1_0.txt][11]
    or [https://www.boost.org/LICENSE_1_0.txt][12])
+ - MIT License, ([LICENSE_MIT.txt][9] or [https://mit-license.org/][10])
 
 at your option.
 
@@ -58,15 +71,15 @@ email at [aldaronlau@gmail.com][13].
 
 [0]: https://docs.rs/whoami
 [1]: https://crates.io/crates/whoami
-[2]: https://github.com/libcala/whoami/actions?query=workflow%3Atests
-[3]: https://github.com/libcala/whoami/blob/main/CHANGELOG.md
-[4]: https://github.com/libcala/whoami/
+[2]: https://github.com/ardaku/whoami/actions?query=workflow%3Atests
+[3]: https://github.com/ardaku/whoami/blob/stable/CHANGELOG.md
+[4]: https://github.com/ardaku/whoami/
 [5]: https://docs.rs/whoami#getting-started
 [6]: https://aldaronlau.com/
-[7]: https://github.com/libcala/whoami/blob/main/LICENSE_APACHE_2_0.txt
+[7]: https://github.com/ardaku/whoami/blob/stable/LICENSE_APACHE_2_0.txt
 [8]: https://www.apache.org/licenses/LICENSE-2.0
-[9]: https://github.com/libcala/whoami/blob/main/LICENSE_MIT.txt
+[9]: https://github.com/ardaku/whoami/blob/stable/LICENSE_MIT.txt
 [10]: https://mit-license.org/
-[11]: https://github.com/libcala/whoami/blob/main/LICENSE_BOOST_1_0.txt
+[11]: https://github.com/ardaku/whoami/blob/stable/LICENSE_BOOST_1_0.txt
 [12]: https://www.boost.org/LICENSE_1_0.txt
 [13]: mailto:aldaronlau@gmail.com

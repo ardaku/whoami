@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/semver).
 
+## [1.2.2] - Unreleased
+### Added
+ - More details to the method documentation
+
+### Changed
+ - WhoAmI now has an official MSRV of Rust 1.40.0
+ - `whoami::hostname()` is now normalized to lowercase
+
 ## [1.2.1] - 2021-11-24
 ### Fixed
  - The Windows GNU target support being broken

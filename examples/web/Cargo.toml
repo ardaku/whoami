@@ -32,9 +32,10 @@ optional = true
 version = "0.4"
 optional = true
 
-# The `devout` crate lets us log in the web console.
-[dependencies.devout]
-version = "0.2"
+# The `web-sys` crate lets us log in the web console.
+[dependencies.web-sys]
+version = "0.3"
+features = ["console"]
 
 # `whoami` - the crate we're testing!
 [dependencies.whoami]

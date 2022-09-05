@@ -16,7 +16,7 @@ too.  I mark feature requests as "enhancements" on GitHub issues.
 
 Happy coding!
 
-[open an issue]: https://github.com/libcala/whoami/issues
+[open an issue]: https://github.com/ardaku/whoami/issues
 [send me an email]: mailto:aldaronlau@gmail.com
-[open a PR]: https://github.com/libcala/whoami/pulls
-[Post to GitHub Discussions]: https://github.com/libcala/whoami/discussions
+[open a PR]: https://github.com/ardaku/whoami/pulls
+[Post to GitHub Discussions]: https://github.com/ardaku/whoami/discussions
