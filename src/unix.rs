@@ -561,7 +561,7 @@ pub fn lang() -> impl Iterator<Item = String> {
         .next()
         .unwrap_or("en_US")
         .to_string()
-        .replace("_", "-");
+        .replace('_', "-");
     LangIter {
         array,
         index: Some(true),
