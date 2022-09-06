@@ -27,7 +27,7 @@ rust-version = "1.40"
 version = "0.3"
 features = ["Navigator", "Document", "Window", "Location"]
 [target.'cfg(target_arch = "wasm32")'.dependencies.wasm-bindgen]
-version = ">= 0.2, <= 0.2.78"
+version = ">= 0.2, <= 0.2.83"
 [target.'cfg(target_arch = "wasm32")'.dependencies.bumpalo]
 version = ">= 3.0, <= 3.4"
 
