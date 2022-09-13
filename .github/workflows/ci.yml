@@ -81,12 +81,6 @@ jobs:
         target: ${{ matrix.cc }}
         override: true
     - uses: actions-rs/cargo@v1
-    - name: Patch wasm-bindgen dependency
-      command: update
-      args: -p wasm-bindgen --precise 0.2.78
-    - name: Patch bumpalo dependency
-      command: update
-      args: -p bumpalo --precise 3.4.0
-    - name: Build wasm
-      command: build
-      args: --all-features --target=${{ matrix.cc }}
+    - run: cargo update -p wasm-bindgen --precise 0.2.78
+    - run: cargo update -p bumpalo --precise 3.4.0
+    - run: cargo build --all-features --target=${{ matrix.cc }}
