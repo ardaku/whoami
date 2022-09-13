@@ -32,7 +32,6 @@ jobs:
         - i686-pc-windows-gnu
         - i686-unknown-freebsd
         - i686-unknown-linux-gnu
-        - wasm32-unknown-unknown
         - x86_64-apple-darwin
         - x86_64-unknown-redox
     steps:
@@ -66,3 +65,24 @@ jobs:
       with:
         command: build
         args: --all-features --target=${{ matrix.cc }}
+  cross-compile-wasm:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        tc: [1.40.0, stable, beta, nightly]
+        cc: [wasm32-unknown-unknown]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ matrix.tc }}
+        target: ${{ matrix.cc }}
+        override: true
+    - uses: actions-rs/cargo@v1
+    - run: cargo update -p bumpalo --precise 3.4.0
+    - run: cargo update -p web-sys --precise 0.3.55
+    - run: cargo update -p js-sys --precise 0.3.55
+    - run: cargo update -p wasm-bindgen --precise 0.2.78
+    - run: cargo build --all-features --target=${{ matrix.cc }}
