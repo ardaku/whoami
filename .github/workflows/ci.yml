@@ -81,6 +81,7 @@ jobs:
         target: ${{ matrix.cc }}
         override: true
     - uses: actions-rs/cargo@v1
+    - run: cargo update -p web-sys --precise 0.3.55
     - run: cargo update -p wasm-bindgen --precise 0.2.78
     - run: cargo update -p bumpalo --precise 3.4.0
     - run: cargo build --all-features --target=${{ matrix.cc }}
