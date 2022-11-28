@@ -24,6 +24,7 @@ Check out the [documentation][0] for examples.
  - Get the devices's desktop environment
  - Get the devices's OS name and version
  - Get the devices's platform name
+ - Get the devices's CPU architecture and its width
 
 ### Supported Platforms
 WhoAmI targets all platforms that can run Rust, including:

@@ -7,11 +7,17 @@
 // At your choosing (See accompanying files LICENSE_APACHE_2_0.txt,
 // LICENSE_MIT.txt and LICENSE_BOOST_1_0.txt).
 
-use crate::{DesktopEnv, Platform};
+use crate::{Arch, DesktopEnv, Platform};
 
-use std::ffi::{c_void, OsString};
-use std::mem;
-use std::os::unix::ffi::OsStringExt;
+use std::{
+    borrow::Cow,
+    ffi::{c_void, CStr, OsString},
+    mem,
+    os::{
+        raw::{c_char, c_int},
+        unix::ffi::OsStringExt,
+    },
+};
 
 #[cfg(target_os = "macos")]
 use std::{
@@ -453,7 +459,7 @@ pub fn distro() -> Option<String> {
 
         match j.next()? {
             "PRETTY_NAME" => {
-                return Some(j.next()?.trim_matches('"').to_string())
+                return Some(j.next()?.trim_matches('"').to_string());
             }
             "NAME" => fallback = Some(j.next()?.trim_matches('"').to_string()),
             _ => {}
@@ -542,12 +548,12 @@ impl Iterator for LangIter {
         if self.index? {
             self.index = Some(false);
             let mut temp = self.array.split('-').next()?.to_string();
-            std::mem::swap(&mut temp, &mut self.array);
+            mem::swap(&mut temp, &mut self.array);
             Some(temp)
         } else {
             self.index = None;
             let mut temp = String::new();
-            std::mem::swap(&mut temp, &mut self.array);
+            mem::swap(&mut temp, &mut self.array);
             Some(temp)
         }
     }
@@ -566,4 +572,129 @@ pub fn lang() -> impl Iterator<Item = String> {
         array,
         index: Some(true),
     }
+}
+
+#[repr(C)]
+#[cfg(any(
+    target_os = "macos",
+    target_os = "ios",
+    target_os = "freebsd",
+    target_os = "dragonfly",
+    target_os = "netbsd",
+    target_os = "openbsd"
+))]
+struct UtsName {
+        #[cfg(not(target_os = "dragonfly"))]
+        pub sysname: [c_char; 256],
+        #[cfg(target_os = "dragonfly")]
+        pub sysname: [c_char; 32],
+        #[cfg(not(target_os = "dragonfly"))]
+        pub nodename: [c_char; 256],
+        #[cfg(target_os = "dragonfly")]
+        pub nodename: [c_char; 32],
+        #[cfg(not(target_os = "dragonfly"))]
+        pub release: [c_char; 256],
+        #[cfg(target_os = "dragonfly")]
+        pub release: [c_char; 32],
+        #[cfg(not(target_os = "dragonfly"))]
+        pub version: [c_char; 256],
+        #[cfg(target_os = "dragonfly")]
+        pub version: [c_char; 32],
+        #[cfg(not(target_os = "dragonfly"))]
+        pub machine: [c_char; 256],
+        #[cfg(target_os = "dragonfly")]
+        pub machine: [c_char; 32],
+}
+
+#[repr(C)]
+#[cfg(any(
+    target_os = "linux",
+    target_os = "android",
+    target_os = "fuchsia",
+    target_os = "redox"
+))]
+struct UtsName {
+    pub sysname: [c_char; 65],
+    pub nodename: [c_char; 65],
+    pub release: [c_char; 65],
+    pub version: [c_char; 65],
+    pub machine: [c_char; 65],
+    pub domainname: [c_char; 65],
+}
+
+// Buffer initialization
+impl Default for UtsName {
+    fn default() -> Self {
+        unsafe { mem::zeroed() }
+    }
+}
+
+extern "C" {
+    #[cfg(not(target_os = "freebsd"))]
+    fn uname(buf: *mut UtsName) -> c_int;
+
+    #[cfg(target_os = "freebsd")]
+    fn __xuname(nmln: c_int, buf: *mut c_void) -> c_int;
+}
+#[inline]
+#[cfg(target_os = "freebsd")]
+unsafe extern "C" fn uname(buf: *mut UtsName) -> c_int {
+     __xuname(256, buf.cast())
+}
+
+impl Arch {
+    fn from_str(s: Cow<str>) -> Self {
+        let arch_str = match s {
+            Cow::Borrowed(str) => str,
+            Cow::Owned(ref str) => str ,
+        };
+        match arch_str {
+            "aarch64" | "arm64" | "aarch64_be" | "armv8b" | "armv8l" => {
+                Arch::Aarch64
+            }
+            "arm" => Arch::Arm,
+            "armeb" => Arch::ArmEb,
+            "armv4t" => Arch::ArmV4T,
+            "armv5te" => Arch::ArmV5Te,
+            "armv6" => Arch::ArmV6,
+            "armv7" => Arch::ArmV7,
+            "hexagon" => Arch::Hexagon,
+            "i386" => Arch::I386,
+            "i586" => Arch::I586,
+            "i686" | "i686-AT386" => Arch::I686,
+            "m68k" => Arch::M68k,
+            "mips" => Arch::Mips,
+            "mipsel" => Arch::MipsEl,
+            "mips64" => Arch::Mips64,
+            "mips64el" => Arch::Mips64El,
+            "powerpc" | "ppc" | "ppcle" => {
+                Arch::PowerPc
+            }
+            "powerpc64" | "ppc64" | "ppc64le" => Arch::PowerPc64,
+            "powerpc64le" => Arch::PowerPc64Le,
+            "riscv32gc" => Arch::Riscv32Gc,
+            "riscv64gc" | "riscv64" => Arch::Riscv64Gc,
+            "s390x" => Arch::S390x,
+            "sparc" => Arch::Sparc,
+            "sparc64" => Arch::Sparc64,
+            "thumbv7neon" => Arch::ThumbV7Neon,
+            "wasm32" => Arch::Wasm32,
+            "wasm64" => Arch::Wasm64,
+            "x86_64" | "amd64" => Arch::X64,
+            _ => Arch::Unknown(arch_str.to_owned()),
+        }
+    }
+}
+
+pub fn arch() -> Arch {
+    let mut buf = UtsName::default();
+    let result = unsafe { uname(&mut buf as *mut UtsName) };
+    if result == -1 {
+        return Arch::Unknown("uname(2) failed to execute".to_owned());
+    }
+
+    let arch_str = unsafe { CStr::from_ptr(buf.machine.as_ptr()) }
+       .to_string_lossy();
+
+    Arch::from_str(arch_str)
 }
