@@ -14,9 +14,9 @@
 //! functions with no parameters that return [`String`](std::string::String)s or
 //! [`OsString`](std::ffi::OsString)s (with the exception of
 //! [`desktop_env()`](crate::desktop_env), [`platform()`](crate::platform) and
-//! [`arch()`](crate:arch), which return enums, and [`lang()`](crate::lang) 
+//! [`arch()`](crate:arch), which return enums, and [`lang()`](crate::lang)
 //! that returns an iterator of [`String`](std::string::String)s).  
-//! The following example shows how to use all of the functions (except 
+//! The following example shows how to use all of the functions (except
 //! those that return [`OsString`](std::ffi::OsString)):
 //!
 //! ```rust
@@ -66,10 +66,7 @@
     html_favicon_url = "https://raw.githubusercontent.com/ardaku/whoami/stable/res/icon.svg"
 )]
 
-use std::{
-    ffi::OsString,
-    io,
-};
+use std::{ffi::OsString, io};
 
 /// Which Desktop Environment
 #[derive(Debug, PartialEq, Eq, Clone)]
@@ -155,7 +152,8 @@ pub enum Platform {
     Linux,
     Bsd,
     Windows,
-    // FIXME: Non-standard casing; Rename to 'Mac' rather than 'MacOs' in whoami 2.0.0
+    // FIXME: Non-standard casing; Rename to 'Mac' rather than 'MacOs' in
+    // whoami 2.0.0
     MacOS,
     Ios,
     Android,
@@ -387,7 +385,6 @@ pub enum Arch {
     Unknown(String),
 }
 
-
 impl std::fmt::Display for Arch {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let arch_str = match self {
@@ -426,7 +423,7 @@ impl std::fmt::Display for Arch {
             write!(f, "Unknown: ")?;
         }
 
-        write!( f, "{}", arch_str)
+        write!(f, "{}", arch_str)
     }
 }
 
@@ -487,12 +484,13 @@ impl Arch {
             | Arch::Sparc64
             | Arch::Wasm64
             | Arch::X64 => Ok(Width::Bits64),
-            Arch::Unknown(unknown_arch) => Err(
-                io::Error::new(
-                    io::ErrorKind::InvalidData,
-                    format!("Tried getting width of unknown arch ({})", unknown_arch)
-                )
-            ),
+            Arch::Unknown(unknown_arch) => Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                format!(
+                    "Tried getting width of unknown arch ({})",
+                    unknown_arch
+                ),
+            )),
         }
     }
 }

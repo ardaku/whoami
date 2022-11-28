@@ -7,8 +7,6 @@
 // At your choosing (See accompanying files LICENSE_APACHE_2_0.txt,
 // LICENSE_MIT.txt and LICENSE_BOOST_1_0.txt).
 
-use crate::{Arch, DesktopEnv, Platform};
-
 use std::{
     borrow::Cow,
     ffi::{c_void, CStr, OsString},
@@ -18,7 +16,6 @@ use std::{
         unix::ffi::OsStringExt,
     },
 };
-
 #[cfg(target_os = "macos")]
 use std::{
     os::{
@@ -27,6 +24,8 @@ use std::{
     },
     ptr::null_mut,
 };
+
+use crate::{Arch, DesktopEnv, Platform};
 
 #[repr(C)]
 struct PassWd {
@@ -179,13 +178,13 @@ fn os_from_cfstring(string: *mut c_void) -> OsString {
     unsafe {
         let len = CFStringGetLength(string);
         let capacity =
-            CFStringGetMaximumSizeForEncoding(len, 134_217_984 /*UTF8*/) + 1;
+            CFStringGetMaximumSizeForEncoding(len, 134_217_984 /* UTF8 */) + 1;
         let mut out = Vec::with_capacity(capacity as usize);
         if CFStringGetCString(
             string,
             out.as_mut_ptr(),
             capacity,
-            134_217_984, /*UTF8*/
+            134_217_984, /* UTF8 */
         ) != 0
         {
             out.set_len(strlen(out.as_ptr().cast())); // Remove trailing NUL byte
@@ -584,26 +583,26 @@ pub fn lang() -> impl Iterator<Item = String> {
     target_os = "openbsd"
 ))]
 struct UtsName {
-        #[cfg(not(target_os = "dragonfly"))]
-        pub sysname: [c_char; 256],
-        #[cfg(target_os = "dragonfly")]
-        pub sysname: [c_char; 32],
-        #[cfg(not(target_os = "dragonfly"))]
-        pub nodename: [c_char; 256],
-        #[cfg(target_os = "dragonfly")]
-        pub nodename: [c_char; 32],
-        #[cfg(not(target_os = "dragonfly"))]
-        pub release: [c_char; 256],
-        #[cfg(target_os = "dragonfly")]
-        pub release: [c_char; 32],
-        #[cfg(not(target_os = "dragonfly"))]
-        pub version: [c_char; 256],
-        #[cfg(target_os = "dragonfly")]
-        pub version: [c_char; 32],
-        #[cfg(not(target_os = "dragonfly"))]
-        pub machine: [c_char; 256],
-        #[cfg(target_os = "dragonfly")]
-        pub machine: [c_char; 32],
+    #[cfg(not(target_os = "dragonfly"))]
+    pub sysname: [c_char; 256],
+    #[cfg(target_os = "dragonfly")]
+    pub sysname: [c_char; 32],
+    #[cfg(not(target_os = "dragonfly"))]
+    pub nodename: [c_char; 256],
+    #[cfg(target_os = "dragonfly")]
+    pub nodename: [c_char; 32],
+    #[cfg(not(target_os = "dragonfly"))]
+    pub release: [c_char; 256],
+    #[cfg(target_os = "dragonfly")]
+    pub release: [c_char; 32],
+    #[cfg(not(target_os = "dragonfly"))]
+    pub version: [c_char; 256],
+    #[cfg(target_os = "dragonfly")]
+    pub version: [c_char; 32],
+    #[cfg(not(target_os = "dragonfly"))]
+    pub machine: [c_char; 256],
+    #[cfg(target_os = "dragonfly")]
+    pub machine: [c_char; 32],
 }
 
 #[repr(C)]
@@ -639,14 +638,14 @@ extern "C" {
 #[inline]
 #[cfg(target_os = "freebsd")]
 unsafe extern "C" fn uname(buf: *mut UtsName) -> c_int {
-     __xuname(256, buf.cast())
+    __xuname(256, buf.cast())
 }
 
 impl Arch {
     fn from_str(s: Cow<str>) -> Self {
         let arch_str = match s {
             Cow::Borrowed(str) => str,
-            Cow::Owned(ref str) => str ,
+            Cow::Owned(ref str) => str,
         };
         match arch_str {
             "aarch64" | "arm64" | "aarch64_be" | "armv8b" | "armv8l" => {
@@ -667,9 +666,7 @@ impl Arch {
             "mipsel" => Arch::MipsEl,
             "mips64" => Arch::Mips64,
             "mips64el" => Arch::Mips64El,
-            "powerpc" | "ppc" | "ppcle" => {
-                Arch::PowerPc
-            }
+            "powerpc" | "ppc" | "ppcle" => Arch::PowerPc,
             "powerpc64" | "ppc64" | "ppc64le" => Arch::PowerPc64,
             "powerpc64le" => Arch::PowerPc64Le,
             "riscv32gc" => Arch::Riscv32Gc,
@@ -693,8 +690,8 @@ pub fn arch() -> Arch {
         return Arch::Unknown("uname(2) failed to execute".to_owned());
     }
 
-    let arch_str = unsafe { CStr::from_ptr(buf.machine.as_ptr()) }
-       .to_string_lossy();
+    let arch_str =
+        unsafe { CStr::from_ptr(buf.machine.as_ptr()) }.to_string_lossy();
 
     Arch::from_str(arch_str)
 }

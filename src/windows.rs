@@ -7,8 +7,6 @@
 // At your choosing (See accompanying files LICENSE_APACHE_2_0.txt,
 // LICENSE_MIT.txt and LICENSE_BOOST_1_0.txt).
 
-use crate::{Arch, DesktopEnv, Platform};
-
 use std::{
     convert::TryInto,
     ffi::OsString,
@@ -18,6 +16,8 @@ use std::{
     },
     ptr,
 };
+
+use crate::{Arch, DesktopEnv, Platform};
 
 #[repr(C)]
 struct OsVersionInfoEx {
@@ -428,18 +428,18 @@ pub fn arch() -> Arch {
     let mut buf = SystemInfo::default();
     unsafe { get_native_system_info(&mut buf as *mut SystemInfo) };
 
-
     // The variants listed below are only platforms where Rust toolchain is
-    // supported, to see the full list of architectures supported by Windows, see
-    // https://docs.rs/winsafe/latest/winsafe/co/struct.PROCESSOR_ARCHITECTURE.html
+    // supported, to see the full list of architectures supported by Windows,
+    // see https://docs.rs/winsafe/latest/winsafe/co/struct.PROCESSOR_ARCHITECTURE.html
     match buf.w_processor_architecture {
         0 => Arch::I686,
         5 => Arch::Arm,
         9 => Arch::X64,
         12 => Arch::Aarch64,
         13 => Arch::Arm,
-        unknown_arch_number => Arch::Unknown(
-            format!("Unknown Arch Number: {}", unknown_arch_number)
-        ),
+        unknown_arch_number => Arch::Unknown(format!(
+            "Unknown Arch Number: {}",
+            unknown_arch_number
+        )),
     }
 }
