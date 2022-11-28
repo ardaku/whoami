@@ -7,13 +7,17 @@
 // At your choosing (See accompanying files LICENSE_APACHE_2_0.txt,
 // LICENSE_MIT.txt and LICENSE_BOOST_1_0.txt).
 
-use crate::{DesktopEnv, Platform};
+use crate::{Arch, DesktopEnv, Platform};
 
-use std::convert::TryInto;
-use std::ffi::OsString;
-use std::os::raw::{c_char, c_int, c_uchar, c_ulong, c_ushort};
-use std::os::windows::ffi::OsStringExt;
-use std::ptr;
+use std::{
+    convert::TryInto,
+    ffi::OsString,
+    os::{
+        raw::{c_char, c_int, c_uchar, c_ulong, c_ushort, c_void},
+        windows::ffi::OsStringExt,
+    },
+    ptr,
+};
 
 #[repr(C)]
 struct OsVersionInfoEx {
@@ -147,12 +151,12 @@ pub fn realname_os() -> OsString {
     };
     assert!(success);
     match unsafe { GetLastError() } {
-		0x00EA /* more data */ => { /* Success, continue */ }
-		_ /* network error or none mapped */ => {
-			// Fallback to username
-			return username_os();
-		}
-	}
+        0x00EA /* more data */ => { /* Success, continue */ }
+        _ /* network error or none mapped */ => {
+            // Fallback to username
+            return username_os();
+        }
+    }
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
     let mut name: Vec<u16> =
@@ -392,4 +396,50 @@ pub fn lang() -> impl Iterator<Item = String> {
     let index = 0;
 
     LangIter { array, index }
+}
+
+#[repr(C)]
+struct SystemInfo {
+    pub w_processor_architecture: u16,
+    w_reserved: u16,
+    pub dw_page_size: u32,
+    pub lp_minimum_application_address: *mut c_void,
+    pub lp_maximum_application_address: *mut c_void,
+    pub dw_active_processor_mask: usize,
+    pub dw_number_of_processors: u32,
+    pub dw_processor_type: u32,
+    pub dw_allocation_granularity: u32,
+    pub w_processor_level: u16,
+    pub w_processor_revision: u16,
+}
+
+impl Default for SystemInfo {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+extern "C" {
+    #[link_name = "GetNativeSystemInfo"]
+    fn get_native_system_info(buf: *mut SystemInfo);
+}
+
+pub fn arch() -> Arch {
+    let mut buf = SystemInfo::default();
+    unsafe { get_native_system_info(&mut buf as *mut SystemInfo) };
+
+
+    // The variants listed below are only platforms where Rust toolchain is
+    // supported, to see the full list of architectures supported by Windows, see
+    // https://docs.rs/winsafe/latest/winsafe/co/struct.PROCESSOR_ARCHITECTURE.html
+    match buf.w_processor_architecture {
+        0 => Arch::I686,
+        5 => Arch::Arm,
+        9 => Arch::X64,
+        12 => Arch::Aarch64,
+        13 => Arch::Arm,
+        unknown_arch_number => Arch::Unknown(
+            format!("Unknown Arch Number: {}", unknown_arch_number)
+        ),
+    }
 }

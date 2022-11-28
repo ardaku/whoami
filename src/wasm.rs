@@ -12,7 +12,7 @@ use std::ffi::OsString;
 use wasm_bindgen::JsValue;
 use web_sys::window;
 
-use crate::{DesktopEnv, Platform};
+use crate::{Arch, DesktopEnv, Platform};
 
 // Get the user agent
 fn user_agent() -> Option<String> {
@@ -222,4 +222,13 @@ pub fn platform() -> Platform {
         // Platform::Redox,
         Platform::Unknown(string.to_string())
     }
+}
+
+pub fn arch() -> Arch {
+    #[cfg(target_pointer_width = "32")]
+    return Arch::Wasm32;
+    #[cfg(target_pointer_width = "64")]
+    return Arch::Wasm64;
+    #[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
+    compile_error!("Arches other than wasm32 and wasm64 are not supported")
 }
