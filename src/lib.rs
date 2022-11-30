@@ -427,7 +427,7 @@ impl std::fmt::Display for Arch {
     }
 }
 
-/// Get CPU Architecture.
+/// Get the CPU Architecture.
 #[inline(always)]
 pub fn arch() -> Arch {
     native::arch()
@@ -453,7 +453,7 @@ impl std::fmt::Display for Width {
 }
 
 impl Arch {
-    /// The width of this architecture.
+    /// Get the width of this architecture.
     pub fn width(&self) -> io::Result<Width> {
         match self {
             Arch::Arm

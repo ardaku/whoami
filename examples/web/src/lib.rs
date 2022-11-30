@@ -54,4 +54,8 @@ pub fn main() {
         "Device's Desktop Env.  whoami::desktop_env(): {}",
         whoami::desktop_env()
     ));
+    log(format!(
+        "Device's CPU Arch      whoami::arch():        {}",
+        whoami::arch()
+    ));
 }
