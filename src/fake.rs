@@ -18,7 +18,7 @@ use crate::{Arch, DesktopEnv, Platform};
 
 #[inline(always)]
 pub fn lang() -> impl Iterator<Item = String> {
-    std::iter::once("en_US".to_string())
+    std::iter::once("en-US".to_string())
 }
 
 #[inline(always)]
