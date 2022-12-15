@@ -226,9 +226,17 @@ pub fn platform() -> Platform {
 
 pub fn arch() -> Arch {
     #[cfg(target_pointer_width = "32")]
-    return Arch::Wasm32;
+    {
+        Arch::Wasm32
+    }
+
     #[cfg(target_pointer_width = "64")]
-    return Arch::Wasm64;
+    {
+        Arch::Wasm64
+    }
+
     #[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
-    compile_error!("Arches other than wasm32 and wasm64 are not supported")
+    {
+        compile_error!("WebAssembly support is limited to wasm32 and wasm64")
+    }
 }

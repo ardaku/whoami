@@ -22,14 +22,17 @@ categories = ["os", "wasm", "internationalization", "localization", "value-forma
 include = ["README.md", "src/*"]
 rust-version = "1.40"
 
-# Needed target-specific dependency to work with wasm-pack.
-[target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
+# Target-specific dependency required to work with wasm-bindgen
+[target.'cfg(all(target_arch = "wasm32", not(target_os = "wasi"), not(target_os = "daku")))'.dependencies.web-sys]
 version = "0.3"
 features = ["Navigator", "Document", "Window", "Location"]
-[target.'cfg(target_arch = "wasm32")'.dependencies.wasm-bindgen]
+optional = true
+[target.'cfg(all(target_arch = "wasm32", not(target_os = "wasi"), not(target_os = "daku")))'.dependencies.wasm-bindgen]
 version = "0.2"
-[target.'cfg(target_arch = "wasm32")'.dependencies.bumpalo]
-version = "3.0"
+optional = true
 
 [features]
-default = []
+default = ["web"]
+# Enabling this feature indicates that the wasm32-unknown-unknown target should
+# be assumed to be in a web environment where it can call DOM APIs.
+web = ["web-sys", "wasm-bindgen"]

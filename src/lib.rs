@@ -198,11 +198,51 @@ mod windows;
 #[cfg(all(target_os = "windows", not(target_arch = "wasm32")))]
 use self::windows as native;
 
-#[cfg(target_arch = "wasm32")]
-mod wasm;
+#[cfg(all(
+    target_arch = "wasm32",
+    not(target_os = "wasi"),
+    not(target_os = "daku"),
+    feature = "web",
+))]
+mod web;
 
-#[cfg(target_arch = "wasm32")]
-use self::wasm as native;
+#[cfg(all(
+    target_arch = "wasm32",
+    not(target_os = "wasi"),
+    not(target_os = "daku"),
+    feature = "web",
+))]
+use self::web as native;
+
+#[cfg(all(
+    target_arch = "wasm32",
+    not(target_os = "wasi"),
+    not(target_os = "daku"),
+    not(feature = "web"),
+))]
+mod fake;
+
+#[cfg(all(
+    target_arch = "wasm32",
+    not(target_os = "wasi"),
+    not(target_os = "daku"),
+    not(feature = "web"),
+))]
+use self::fake as native;
+
+// FIXME: WASI
+#[cfg(all(target_arch = "wasm32", target_os = "wasi"))]
+mod fake;
+
+#[cfg(all(target_arch = "wasm32", target_os = "wasi"))]
+use self::fake as native;
+
+// FIXME: Daku
+#[cfg(all(target_arch = "wasm32", target_os = "daku"))]
+mod fake;
+
+#[cfg(all(target_arch = "wasm32", target_os = "daku"))]
+use self::fake as native;
 
 #[cfg(not(any(target_os = "windows", target_arch = "wasm32")))]
 mod unix;
