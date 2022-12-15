@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/
 ### Added
  - `arch()` function which returns an `Arch` representing a CPU arch
  - `Arch::width(&self)` function which returns the `Width` of a specific CPU arch
+ - *`web`* feature (enabled by default).  Disabling this feature allows you to
+   use wasm32-unknown-unknown with whoami outside of the browser with a mock
+   implementation.
 
 ## [1.2.3] - 2022-09-12
 ### Fixed

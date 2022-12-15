@@ -7,6 +7,9 @@
 // At your choosing (See accompanying files LICENSE_APACHE_2_0.txt,
 // LICENSE_MIT.txt and LICENSE_BOOST_1_0.txt).
 
+#[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
+compile_error!("Unexpected pointer width for target platform");
+
 use std::ffi::OsString;
 
 use wasm_bindgen::JsValue;
@@ -225,18 +228,9 @@ pub fn platform() -> Platform {
 }
 
 pub fn arch() -> Arch {
-    #[cfg(target_pointer_width = "32")]
-    {
-        Arch::Wasm32
-    }
-
-    #[cfg(target_pointer_width = "64")]
-    {
+    if cfg!(target_pointer_width = "64") {
         Arch::Wasm64
-    }
-
-    #[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
-    {
-        compile_error!("WebAssembly support is limited to wasm32 and wasm64")
+    } else {
+        Arch::Wasm32
     }
 }
