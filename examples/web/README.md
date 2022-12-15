@@ -11,4 +11,5 @@ cargo install https
 wasm-pack build --target web && http .
 ```
 
-Now, open 0.0.0.0:8080 in your web browser and check the javascript console.
+Now, open http://localhost:8000/ in your web browser and check the javascript
+console.
