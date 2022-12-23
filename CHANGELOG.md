@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/
  - `arch()` function which returns an `Arch` representing a CPU arch
  - `Arch::width(&self)` function which returns the `Width` of a specific CPU arch
 
+### Fixed
+ - Handling of `lang()` when `$LANG` environment variable on unix set to "C",
+   causing duplicated iterator elements `["C", "C"]`; now produces `["en-US"]`.
+
 ## [1.2.3] - 2022-09-12
 ### Fixed
  - WebAssembly target requiring older versions of dependencies
