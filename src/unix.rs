@@ -544,7 +544,7 @@ impl Iterator for LangIter {
     type Item = String;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index? {
+        if self.index? && self.array.contains('-') {
             self.index = Some(false);
             let mut temp = self.array.split('-').next()?.to_string();
             mem::swap(&mut temp, &mut self.array);
@@ -560,15 +560,22 @@ impl Iterator for LangIter {
 
 #[inline(always)]
 pub fn lang() -> impl Iterator<Item = String> {
+    const DEFAULT_LANG: &str = "en_US";
+
     let array = std::env::var("LANG")
         .unwrap_or_default()
         .split('.')
         .next()
-        .unwrap_or("en_US")
-        .to_string()
-        .replace('_', "-");
+        .unwrap_or(DEFAULT_LANG)
+        .to_string();
+    let array = if array == "C" {
+        DEFAULT_LANG.to_string()
+    } else {
+        array
+    };
+
     LangIter {
-        array,
+        array: array.replace('_', "-"),
         index: Some(true),
     }
 }

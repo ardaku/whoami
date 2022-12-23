@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/
    use wasm32-unknown-unknown with whoami outside of the browser with a mock
    implementation.
 
+### Fixed
+ - Handling of `lang()` when `$LANG` environment variable on unix set to "C",
+   causing duplicated iterator elements `["C", "C"]`; now produces `["en-US"]`.
+
 ## [1.2.3] - 2022-09-12
 ### Fixed
  - WebAssembly target requiring older versions of dependencies
