@@ -46,7 +46,7 @@ jobs:
         components: clippy
         override: true
     - uses: actions-rs/cargo@v1
-    - run: RUSTFLAGS="-D warnings" cargo clippy --all-features --target=${{ matrix.cc }}
+    - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
   cross-compile-ios:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -64,7 +64,7 @@ jobs:
         components: clippy
         override: true
     - uses: actions-rs/cargo@v1
-    - run: RUSTFLAGS="-D warnings" cargo clippy --all-features --target=${{ matrix.cc }}
+    - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
   cross-compile-wasm:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -86,6 +86,6 @@ jobs:
     - run: cargo update -p web-sys --precise 0.3.55
     - run: cargo update -p js-sys --precise 0.3.55
     - run: cargo update -p wasm-bindgen --precise 0.2.78
-    - run: RUSTFLAGS="-D warnings" cargo clippy --all-features --target=${{ matrix.cc }}
-    - run: RUSTFLAGS="-D warnings" cargo clippy --no-default-features --target=${{ matrix.cc }}
-    - run: RUSTFLAGS="-D warnings --cfg target_os=\"daku\"" cargo clippy --target=${{ matrix.cc }}
+    - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
+    - run: cargo clippy --no-default-features --target=${{ matrix.cc }} -- -D warnings
+    - run: RUSTFLAGS="--cfg target_os=\"daku\"" cargo clippy --target=${{ matrix.cc }} -- -D warnings
