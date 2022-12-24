@@ -105,9 +105,28 @@ pub fn devicename() -> String {
         .unwrap_or("Unknown Browser")
         .replace('/', " ");
 
-    if string == "Safari" {
-        if orig_string.contains("Chrome") {
-            "Chrome".to_string()
+    if let Some(s) = string.rfind("Safari") {
+        if let Some(s) = orig_string.rfind("Chrome") {
+            if let Some(e) = orig_string.get(s..).unwrap_or_default().find(' ')
+            {
+                orig_string
+                    .get(s..)
+                    .unwrap_or("Chrome")
+                    .get(..e)
+                    .unwrap_or("Chrome")
+                    .to_string()
+            } else {
+                "Chrome".to_string()
+            }
+        } else if let Some(e) =
+            orig_string.get(s..).unwrap_or_default().find(' ')
+        {
+            orig_string
+                .get(s..)
+                .unwrap_or("Safari")
+                .get(..e)
+                .unwrap_or("Safari")
+                .to_string()
         } else {
             "Safari".to_string()
         }
