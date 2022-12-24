@@ -244,11 +244,11 @@ fn getpwuid(real: bool) -> OsString {
     }
 }
 
-pub fn username() -> String {
+pub(crate) fn username() -> String {
     string_from_os(username_os())
 }
 
-pub fn username_os() -> OsString {
+pub(crate) fn username_os() -> OsString {
     getpwuid(false)
 }
 
@@ -294,21 +294,21 @@ fn fancy_fallback_os(result: Result<OsString, OsString>) -> OsString {
     }
 }
 
-pub fn realname() -> String {
+pub(crate) fn realname() -> String {
     string_from_os(realname_os())
 }
 
-pub fn realname_os() -> OsString {
+pub(crate) fn realname_os() -> OsString {
     getpwuid(true)
 }
 
 #[cfg(not(target_os = "macos"))]
-pub fn devicename_os() -> OsString {
+pub(crate) fn devicename_os() -> OsString {
     devicename().into()
 }
 
 #[cfg(not(target_os = "macos"))]
-pub fn devicename() -> String {
+pub(crate) fn devicename() -> String {
     let mut distro = String::new();
 
     if let Ok(program) = std::fs::read_to_string("/etc/machine-info") {
@@ -330,12 +330,12 @@ pub fn devicename() -> String {
 }
 
 #[cfg(target_os = "macos")]
-pub fn devicename() -> String {
+pub(crate) fn devicename() -> String {
     string_from_os(devicename_os())
 }
 
 #[cfg(target_os = "macos")]
-pub fn devicename_os() -> OsString {
+pub(crate) fn devicename_os() -> OsString {
     let out = os_from_cfstring(unsafe {
         SCDynamicStoreCopyComputerName(null_mut(), null_mut())
     });
@@ -348,7 +348,7 @@ pub fn devicename_os() -> OsString {
     fancy_fallback_os(computer)
 }
 
-pub fn hostname() -> String {
+pub(crate) fn hostname() -> String {
     string_from_os(hostname_os())
 }
 
@@ -417,12 +417,12 @@ fn distro_xml(data: String) -> Option<String> {
 }
 
 #[cfg(target_os = "macos")]
-pub fn distro_os() -> Option<OsString> {
+pub(crate) fn distro_os() -> Option<OsString> {
     distro().map(|a| a.into())
 }
 
 #[cfg(target_os = "macos")]
-pub fn distro() -> Option<String> {
+pub(crate) fn distro() -> Option<String> {
     if let Ok(data) = std::fs::read_to_string(
         "/System/Library/CoreServices/ServerVersion.plist",
     ) {
@@ -437,12 +437,12 @@ pub fn distro() -> Option<String> {
 }
 
 #[cfg(not(target_os = "macos"))]
-pub fn distro_os() -> Option<OsString> {
+pub(crate) fn distro_os() -> Option<OsString> {
     distro().map(|a| a.into())
 }
 
 #[cfg(not(target_os = "macos"))]
-pub fn distro() -> Option<String> {
+pub(crate) fn distro() -> Option<String> {
     let mut distro = String::new();
 
     let program = std::fs::read_to_string("/etc/os-release")
@@ -470,13 +470,13 @@ pub fn distro() -> Option<String> {
 
 #[cfg(target_os = "macos")]
 #[inline(always)]
-pub const fn desktop_env() -> DesktopEnv {
+pub(crate) const fn desktop_env() -> DesktopEnv {
     DesktopEnv::Aqua
 }
 
 #[cfg(not(target_os = "macos"))]
 #[inline(always)]
-pub fn desktop_env() -> DesktopEnv {
+pub(crate) fn desktop_env() -> DesktopEnv {
     match std::env::var_os("DESKTOP_SESSION")
         .map(|env| env.to_string_lossy().to_string())
     {
@@ -506,7 +506,7 @@ pub fn desktop_env() -> DesktopEnv {
 
 #[cfg(target_os = "macos")]
 #[inline(always)]
-pub const fn platform() -> Platform {
+pub(crate) const fn platform() -> Platform {
     Platform::MacOS
 }
 
@@ -519,7 +519,7 @@ pub const fn platform() -> Platform {
     target_os = "netbsd"
 )))]
 #[inline(always)]
-pub const fn platform() -> Platform {
+pub(crate) const fn platform() -> Platform {
     Platform::Linux
 }
 
@@ -531,7 +531,7 @@ pub const fn platform() -> Platform {
     target_os = "netbsd"
 ))]
 #[inline(always)]
-pub const fn platform() -> Platform {
+pub(crate) const fn platform() -> Platform {
     Platform::Bsd
 }
 
@@ -559,7 +559,7 @@ impl Iterator for LangIter {
 }
 
 #[inline(always)]
-pub fn lang() -> impl Iterator<Item = String> {
+pub(crate) fn lang() -> impl Iterator<Item = String> {
     const DEFAULT_LANG: &str = "en_US";
 
     let array = std::env::var("LANG")
@@ -591,25 +591,25 @@ pub fn lang() -> impl Iterator<Item = String> {
 ))]
 struct UtsName {
     #[cfg(not(target_os = "dragonfly"))]
-    pub sysname: [c_char; 256],
+    sysname: [c_char; 256],
     #[cfg(target_os = "dragonfly")]
-    pub sysname: [c_char; 32],
+    sysname: [c_char; 32],
     #[cfg(not(target_os = "dragonfly"))]
-    pub nodename: [c_char; 256],
+    nodename: [c_char; 256],
     #[cfg(target_os = "dragonfly")]
-    pub nodename: [c_char; 32],
+    nodename: [c_char; 32],
     #[cfg(not(target_os = "dragonfly"))]
-    pub release: [c_char; 256],
+    release: [c_char; 256],
     #[cfg(target_os = "dragonfly")]
-    pub release: [c_char; 32],
+    release: [c_char; 32],
     #[cfg(not(target_os = "dragonfly"))]
-    pub version: [c_char; 256],
+    version: [c_char; 256],
     #[cfg(target_os = "dragonfly")]
-    pub version: [c_char; 32],
+    version: [c_char; 32],
     #[cfg(not(target_os = "dragonfly"))]
-    pub machine: [c_char; 256],
+    machine: [c_char; 256],
     #[cfg(target_os = "dragonfly")]
-    pub machine: [c_char; 32],
+    machine: [c_char; 32],
 }
 
 #[repr(C)]
@@ -620,12 +620,12 @@ struct UtsName {
     target_os = "redox"
 ))]
 struct UtsName {
-    pub sysname: [c_char; 65],
-    pub nodename: [c_char; 65],
-    pub release: [c_char; 65],
-    pub version: [c_char; 65],
-    pub machine: [c_char; 65],
-    pub domainname: [c_char; 65],
+    sysname: [c_char; 65],
+    nodename: [c_char; 65],
+    release: [c_char; 65],
+    version: [c_char; 65],
+    machine: [c_char; 65],
+    domainname: [c_char; 65],
 }
 
 // Buffer initialization
@@ -649,26 +649,21 @@ unsafe extern "C" fn uname(buf: *mut UtsName) -> c_int {
 }
 
 impl Arch {
-    fn from_str(s: Cow<str>) -> Self {
+    fn from_str(s: Cow<'_, str>) -> Self {
         let arch_str = match s {
             Cow::Borrowed(str) => str,
             Cow::Owned(ref str) => str,
         };
         match arch_str {
             "aarch64" | "arm64" | "aarch64_be" | "armv8b" | "armv8l" => {
-                Arch::Aarch64
+                Arch::Arm64
             }
-            "arm" => Arch::Arm,
-            "armeb" => Arch::ArmEb,
-            "armv4t" => Arch::ArmV4T,
-            "armv5te" => Arch::ArmV5Te,
-            "armv6" => Arch::ArmV6,
+            "armv5" => Arch::ArmV5,
+            "armv6" | "arm" => Arch::ArmV6,
             "armv7" => Arch::ArmV7,
-            "hexagon" => Arch::Hexagon,
             "i386" => Arch::I386,
             "i586" => Arch::I586,
             "i686" | "i686-AT386" => Arch::I686,
-            "m68k" => Arch::M68k,
             "mips" => Arch::Mips,
             "mipsel" => Arch::MipsEl,
             "mips64" => Arch::Mips64,
@@ -676,12 +671,11 @@ impl Arch {
             "powerpc" | "ppc" | "ppcle" => Arch::PowerPc,
             "powerpc64" | "ppc64" | "ppc64le" => Arch::PowerPc64,
             "powerpc64le" => Arch::PowerPc64Le,
-            "riscv32gc" => Arch::Riscv32Gc,
-            "riscv64gc" | "riscv64" => Arch::Riscv64Gc,
+            "riscv32" => Arch::Riscv32,
+            "riscv64" => Arch::Riscv64,
             "s390x" => Arch::S390x,
             "sparc" => Arch::Sparc,
             "sparc64" => Arch::Sparc64,
-            "thumbv7neon" => Arch::ThumbV7Neon,
             "wasm32" => Arch::Wasm32,
             "wasm64" => Arch::Wasm64,
             "x86_64" | "amd64" => Arch::X64,
@@ -690,9 +684,9 @@ impl Arch {
     }
 }
 
-pub fn arch() -> Arch {
+pub(crate) fn arch() -> Arch {
     let mut buf = UtsName::default();
-    let result = unsafe { uname(&mut buf as *mut UtsName) };
+    let result = unsafe { uname(&mut buf) };
     if result == -1 {
         return Arch::Unknown("uname(2) failed to execute".to_owned());
     }

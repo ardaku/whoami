@@ -435,7 +435,7 @@ pub fn arch() -> Arch {
         0 => Arch::I686,
         5 => Arch::Arm,
         9 => Arch::X64,
-        12 => Arch::Aarch64,
+        12 => Arch::Arm64,
         13 => Arch::Arm,
         unknown_arch_number => Arch::Unknown(format!(
             "Unknown Arch Number: {}",
