@@ -10,6 +10,7 @@
 use std::{
     convert::TryInto,
     ffi::OsString,
+    mem::MaybeUninit,
     os::{
         raw::{c_char, c_int, c_uchar, c_ulong, c_ushort, c_void},
         windows::ffi::OsStringExt,
@@ -32,6 +33,23 @@ struct OsVersionInfoEx {
     suite_mask: c_ushort,
     product_type: c_uchar,
     reserved: c_uchar,
+}
+
+// Source:
+// https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/ns-sysinfoapi-system_info#syntax
+#[repr(C)]
+struct SystemInfo {
+    processor_architecture: c_ushort,
+    reserved: c_ushort,
+    dw_page_size: c_ulong,
+    minimum_application_address: *mut c_void,
+    maximum_application_address: *mut c_void,
+    active_processor_mask: usize,
+    number_of_processors: c_ulong,
+    processor_type: c_ulong,
+    allocation_granularity: c_ulong,
+    processor_level: c_ushort,
+    processor_revision: c_ushort,
 }
 
 #[allow(unused)]
@@ -89,6 +107,7 @@ extern "system" {
         pwsz_languages_buffer: *mut u16,
         pcch_languages_buffer: *mut c_ulong,
     ) -> c_int;
+    fn GetNativeSystemInfo(system_info: *mut SystemInfo);
 }
 
 // Convert an OsString into a String
@@ -99,11 +118,11 @@ fn string_from_os(string: OsString) -> String {
     }
 }
 
-pub fn username() -> String {
+pub(crate) fn username() -> String {
     string_from_os(username_os())
 }
 
-pub fn username_os() -> OsString {
+pub(crate) fn username_os() -> OsString {
     // Step 1. Retreive the entire length of the username
     let mut size = 0;
     let success = unsafe {
@@ -134,12 +153,12 @@ pub fn username_os() -> OsString {
 }
 
 #[inline(always)]
-pub fn realname() -> String {
+pub(crate) fn realname() -> String {
     string_from_os(realname_os())
 }
 
 #[inline(always)]
-pub fn realname_os() -> OsString {
+pub(crate) fn realname_os() -> OsString {
     // Step 1. Retrieve the entire length of the username
     let mut buf_size = 0;
     let success = unsafe {
@@ -182,12 +201,12 @@ pub fn realname_os() -> OsString {
 }
 
 #[inline(always)]
-pub fn devicename() -> String {
+pub(crate) fn devicename() -> String {
     string_from_os(devicename_os())
 }
 
 #[inline(always)]
-pub fn devicename_os() -> OsString {
+pub(crate) fn devicename_os() -> OsString {
     // Step 1. Retreive the entire length of the device name
     let mut size = 0;
     let success = unsafe {
@@ -222,7 +241,7 @@ pub fn devicename_os() -> OsString {
     OsString::from_wide(&name)
 }
 
-pub fn hostname() -> String {
+pub(crate) fn hostname() -> String {
     string_from_os(hostname_os())
 }
 
@@ -261,11 +280,11 @@ fn hostname_os() -> OsString {
     OsString::from_wide(&name)
 }
 
-pub fn distro_os() -> Option<OsString> {
+pub(crate) fn distro_os() -> Option<OsString> {
     distro().map(|a| a.into())
 }
 
-pub fn distro() -> Option<String> {
+pub(crate) fn distro() -> Option<String> {
     // Due to MingW Limitations, we must dynamically load ntdll.dll
     extern "system" {
         fn LoadLibraryExW(
@@ -274,16 +293,13 @@ pub fn distro() -> Option<String> {
             dwflags: u32,
         ) -> isize;
         fn FreeLibrary(hmodule: isize) -> i32;
-        fn GetProcAddress(
-            hmodule: isize,
-            procname: *mut u8,
-        ) -> *mut std::os::raw::c_void;
+        fn GetProcAddress(hmodule: isize, procname: *mut u8) -> *mut c_void;
     }
 
     let mut path = "ntdll.dll\0".encode_utf16().collect::<Vec<u16>>();
     let path = path.as_mut_ptr();
 
-    let inst = unsafe { LoadLibraryExW(path, 0, 0x00000800) };
+    let inst = unsafe { LoadLibraryExW(path, 0, 0x0000_0800) };
 
     let mut path = "RtlGetVersion\0".bytes().collect::<Vec<u8>>();
     let path = path.as_mut_ptr();
@@ -296,7 +312,7 @@ pub fn distro() -> Option<String> {
     let get_version: unsafe extern "system" fn(a: *mut OsVersionInfoEx) -> u32 =
         unsafe { std::mem::transmute(func) };
 
-    let mut version = std::mem::MaybeUninit::<OsVersionInfoEx>::zeroed();
+    let mut version = MaybeUninit::<OsVersionInfoEx>::zeroed();
 
     let version = unsafe {
         (*version.as_mut_ptr()).os_version_info_size =
@@ -325,12 +341,12 @@ pub fn distro() -> Option<String> {
 }
 
 #[inline(always)]
-pub const fn desktop_env() -> DesktopEnv {
+pub(crate) const fn desktop_env() -> DesktopEnv {
     DesktopEnv::Windows
 }
 
 #[inline(always)]
-pub const fn platform() -> Platform {
+pub(crate) const fn platform() -> Platform {
     Platform::Windows
 }
 
@@ -353,7 +369,7 @@ impl Iterator for LangIter {
 }
 
 #[inline(always)]
-pub fn lang() -> impl Iterator<Item = String> {
+pub(crate) fn lang() -> impl Iterator<Item = String> {
     let mut num_languages = 0;
     let mut buffer_size = 0;
     let mut buffer;
@@ -398,48 +414,33 @@ pub fn lang() -> impl Iterator<Item = String> {
     LangIter { array, index }
 }
 
-#[repr(C)]
-struct SystemInfo {
-    pub w_processor_architecture: u16,
-    w_reserved: u16,
-    pub dw_page_size: u32,
-    pub lp_minimum_application_address: *mut c_void,
-    pub lp_maximum_application_address: *mut c_void,
-    pub dw_active_processor_mask: usize,
-    pub dw_number_of_processors: u32,
-    pub dw_processor_type: u32,
-    pub dw_allocation_granularity: u32,
-    pub w_processor_level: u16,
-    pub w_processor_revision: u16,
-}
-
-impl Default for SystemInfo {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+pub(crate) fn arch() -> Arch {
+    fn proc(processor_type: c_ulong) -> Result<Arch, c_ulong> {
+        Ok(match processor_type {
+            386 /* PROCESSOR_INTEL_386 */ => Arch::I386,
+            486 /* PROCESSOR_INTEL_486 */ => Arch::Unknown("I486".to_string()),
+            586 /* PROCESSOR_INTEL_PENTIUM */ => Arch::I586,
+            2200 /* PROCESSOR_INTEL_IA64 */ => Arch::Unknown("IA64".to_string()),
+            8664 /* PROCESSOR_AMD_X8664 */ => Arch::X64,
+            v => return Err(v),
+        })
     }
-}
 
-extern "C" {
-    #[link_name = "GetNativeSystemInfo"]
-    fn get_native_system_info(buf: *mut SystemInfo);
-}
+    let buf: SystemInfo = unsafe {
+        let mut buf = MaybeUninit::uninit();
+        GetNativeSystemInfo(buf.as_mut_ptr());
+        buf.assume_init()
+    };
 
-pub fn arch() -> Arch {
-    let mut buf = SystemInfo::default();
-    unsafe { get_native_system_info(&mut buf as *mut SystemInfo) };
-
-    // The variants listed below are only platforms where Rust toolchain is
-    // supported, to see the full list of architectures supported by Windows,
-    // see https://docs.rs/winsafe/latest/winsafe/co/struct.PROCESSOR_ARCHITECTURE.html
-    match buf.w_processor_architecture {
-        0 => Arch::I686,
-        5 => Arch::Arm,
-        9 => Arch::X64,
-        12 => Arch::Arm64,
-        13 => Arch::Arm,
-        unknown_arch_number => Arch::Unknown(format!(
-            "Unknown Arch Number: {}",
-            unknown_arch_number
-        )),
+    // Supported architectures, source:
+    // https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/ns-sysinfoapi-system_info#members
+    match buf.processor_architecture {
+        0 /* PROCESSOR_ARCHITECTURE_INTEL */ => Arch::I686,
+        5 /* PROCESSOR_ARCHITECTURE_ARM */ => Arch::ArmV6,
+        6 /* PROCESSOR_ARCHITECTURE_IA64 */ => Arch::Unknown("IA64".to_string()),
+        9 /* PROCESSOR_ARCHITECTURE_AMD64 */ => Arch::X64,
+        12 /* PROCESSOR_ARCHITECTURE_ARM64 */ => Arch::Arm64,
+        0xFFFF /* PROCESSOR_ARCHITECTURE_UNKNOWN */ => proc(buf.processor_type).unwrap_or_else(|e| Arch::Unknown(format!("Unknown ({})", e))),
+        invalid => proc(buf.processor_type).unwrap_or_else(|e| Arch::Unknown(format!("Invalid arch: {} ({})", invalid, e))),
     }
 }
