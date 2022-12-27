@@ -15,7 +15,7 @@ jobs:
       with:
         profile: minimal
         toolchain: ${{ matrix.tc }}
-        components: rustfmt
+        components: rustfmt, clippy
         override: true
     - uses: actions-rs/cargo@v1
     - run: cargo fmt --check
@@ -100,7 +100,6 @@ jobs:
       with:
         profile: minimal
         toolchain: ${{ matrix.tc }}
-        components: clippy
         override: true
     - uses: actions-rs/cargo@v1
     - run: cargo test --all --all-features
@@ -126,7 +125,6 @@ jobs:
         profile: minimal
         toolchain: ${{ matrix.tc }}
         target: ${{ matrix.cc }}
-        components: clippy
         override: true
     - uses: actions-rs/cargo@v1
     - run: cargo build --all-features --target=${{ matrix.cc }} -- -D warnings
@@ -144,7 +142,6 @@ jobs:
         profile: minimal
         toolchain: ${{ matrix.tc }}
         target: ${{ matrix.cc }}
-        components: clippy
         override: true
     - uses: actions-rs/cargo@v1
     - run: cargo build --all-features --target=${{ matrix.cc }} -- -D warnings
@@ -162,7 +159,6 @@ jobs:
         profile: minimal
         toolchain: ${{ matrix.tc }}
         target: ${{ matrix.cc }}
-        components: clippy
         override: true
     - uses: actions-rs/cargo@v1
     - run: cargo update -p bumpalo --precise 3.4.0
