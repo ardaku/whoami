@@ -3,6 +3,22 @@ on: [push, pull_request]
 name: tests
 
 jobs:
+  fmt:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        tc: [nightly]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ matrix.tc }}
+        components: rustfmt
+        override: true
+    - uses: actions-rs/cargo@v1
+    - run: cargo fmt --check
   test:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -15,10 +31,9 @@ jobs:
       with:
         profile: minimal
         toolchain: ${{ matrix.tc }}
-        components: rustfmt, clippy
+        components: clippy
         override: true
     - uses: actions-rs/cargo@v1
-    - run: cargo fmt --check
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
     - run: cargo test --all --all-features
   cross-compile:
