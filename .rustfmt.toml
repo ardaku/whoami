@@ -5,6 +5,5 @@ max_width = 80
 reorder_impl_items = true
 group_imports = "StdExternalCrate"
 imports_granularity = "Crate"
-newline_style = "Unix"
 normalize_doc_attributes = true
 wrap_comments = true

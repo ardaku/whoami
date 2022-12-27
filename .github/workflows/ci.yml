@@ -3,7 +3,7 @@ on: [push, pull_request]
 name: tests
 
 jobs:
-  fmt:
+  checks:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -19,6 +19,75 @@ jobs:
         override: true
     - uses: actions-rs/cargo@v1
     - run: cargo fmt --check
+    - run: cargo clippy --target=${{ matrix.cc }} -- -D warnings
+  checks-cross-compile:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        tc: [nightly]
+        cc:
+        - aarch64-fuchsia
+        - aarch64-linux-android
+        - i686-pc-windows-gnu
+        - i686-unknown-freebsd
+        - i686-unknown-linux-gnu
+        - wasm32-wasi
+        - x86_64-apple-darwin
+        - x86_64-unknown-redox
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ matrix.tc }}
+        target: ${{ matrix.cc }}
+        components: clippy
+        override: true
+    - uses: actions-rs/cargo@v1
+    - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
+  checks-cross-compile-ios:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest]
+        tc: [nightly]
+        cc: [aarch64-apple-ios]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ matrix.tc }}
+        target: ${{ matrix.cc }}
+        components: clippy
+        override: true
+    - uses: actions-rs/cargo@v1
+    - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
+  checks-cross-compile-wasm:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        tc: [nightly]
+        cc: [wasm32-unknown-unknown]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ matrix.tc }}
+        target: ${{ matrix.cc }}
+        components: clippy
+        override: true
+    - uses: actions-rs/cargo@v1
+    - run: cargo update -p bumpalo --precise 3.4.0
+    - run: cargo update -p web-sys --precise 0.3.55
+    - run: cargo update -p js-sys --precise 0.3.55
+    - run: cargo update -p wasm-bindgen --precise 0.2.78
+    - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
+    - run: cargo clippy --no-default-features --target=${{ matrix.cc }} -- -D warnings
+    - run: RUSTFLAGS="--cfg target_os=\"daku\"" cargo clippy --target=${{ matrix.cc }} -- -D warnings
   test:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -34,7 +103,6 @@ jobs:
         components: clippy
         override: true
     - uses: actions-rs/cargo@v1
-    - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
     - run: cargo test --all --all-features
   cross-compile:
     runs-on: ${{ matrix.os }}
@@ -61,7 +129,7 @@ jobs:
         components: clippy
         override: true
     - uses: actions-rs/cargo@v1
-    - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
+    - run: cargo build --all-features --target=${{ matrix.cc }} -- -D warnings
   cross-compile-ios:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -79,7 +147,7 @@ jobs:
         components: clippy
         override: true
     - uses: actions-rs/cargo@v1
-    - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
+    - run: cargo build --all-features --target=${{ matrix.cc }} -- -D warnings
   cross-compile-wasm:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -101,6 +169,6 @@ jobs:
     - run: cargo update -p web-sys --precise 0.3.55
     - run: cargo update -p js-sys --precise 0.3.55
     - run: cargo update -p wasm-bindgen --precise 0.2.78
-    - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
-    - run: cargo clippy --no-default-features --target=${{ matrix.cc }} -- -D warnings
-    - run: RUSTFLAGS="--cfg target_os=\"daku\"" cargo clippy --target=${{ matrix.cc }} -- -D warnings
+    - run: cargo build --all-features --target=${{ matrix.cc }} -- -D warnings
+    - run: cargo build --no-default-features --target=${{ matrix.cc }} -- -D warnings
+    - run: RUSTFLAGS="--cfg target_os=\"daku\"" cargo build --target=${{ matrix.cc }} -- -D warnings
