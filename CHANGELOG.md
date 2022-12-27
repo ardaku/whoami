@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/
  - Handling of `lang()` when `$LANG` environment variable on unix set to "C",
    causing duplicated iterator elements `["C", "C"]`; now produces `["en-US"]`.
  - WhoAmI reporting "Safari" when running in Chrome/Chromium
+ - WhoAmI reporting "Edg" when running in Edge (now reports "Edge")
 
 ## [1.2.3] - 2022-09-12
 ### Fixed

@@ -130,6 +130,8 @@ pub(crate) fn devicename() -> String {
         } else {
             "Safari".to_string()
         }
+    } else if string.contains("Edg ") {
+        string.replace("Edg ", "Edge ")
     } else {
         string
     }
