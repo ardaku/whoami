@@ -409,10 +409,8 @@ fn distro_xml(data: String) -> Option<String> {
         } else {
             Some(product_name.to_string())
         }
-    } else if let Some(user_visible_version) = user_visible_version {
-        Some(format!("Mac OS (Unknown) {}", user_visible_version))
     } else {
-        None
+        user_visible_version.map(|v| format!("Mac OS (Unknown) {}", v))
     }
 }
 

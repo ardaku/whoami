@@ -92,7 +92,7 @@ pub(crate) fn realname() -> String {
 }
 
 pub(crate) fn devicename() -> String {
-    let orig_string = user_agent().unwrap_or_else(String::new);
+    let orig_string = user_agent().unwrap_or_default();
 
     let start = if let Some(s) = orig_string.rfind(' ') {
         s
@@ -191,7 +191,7 @@ pub(crate) fn distro() -> Option<String> {
         Some(if let Some(end) = string[begin..].find(';') {
             string[begin..begin + end].to_string()
         } else {
-            string[begin..].to_string().replace("_", ".")
+            string[begin..].to_string().replace('_', ".")
         })
     } else {
         // TODO:
@@ -213,7 +213,7 @@ pub(crate) const fn desktop_env() -> DesktopEnv {
 }
 
 pub(crate) fn platform() -> Platform {
-    let string = user_agent().unwrap_or_else(String::new);
+    let string = user_agent().unwrap_or_default();
 
     let begin = if let Some(b) = string.find('(') {
         b
