@@ -417,11 +417,16 @@ pub(crate) fn lang() -> impl Iterator<Item = String> {
 pub(crate) fn arch() -> Arch {
     fn proc(processor_type: c_ulong) -> Result<Arch, c_ulong> {
         Ok(match processor_type {
-            386 /* PROCESSOR_INTEL_386 */ => Arch::I386,
-            486 /* PROCESSOR_INTEL_486 */ => Arch::Unknown("I486".to_string()),
-            586 /* PROCESSOR_INTEL_PENTIUM */ => Arch::I586,
-            2200 /* PROCESSOR_INTEL_IA64 */ => Arch::Unknown("IA64".to_string()),
-            8664 /* PROCESSOR_AMD_X8664 */ => Arch::X64,
+            // PROCESSOR_INTEL_386
+            386 => Arch::I386,
+            // PROCESSOR_INTEL_486
+            486 => Arch::Unknown("I486".to_string()),
+            // PROCESSOR_INTEL_PENTIUM
+            586 => Arch::I586,
+            // PROCESSOR_INTEL_IA64
+            2200 => Arch::Unknown("IA64".to_string()),
+            // PROCESSOR_AMD_X8664
+            8664 => Arch::X64,
             v => return Err(v),
         })
     }
@@ -435,12 +440,21 @@ pub(crate) fn arch() -> Arch {
     // Supported architectures, source:
     // https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/ns-sysinfoapi-system_info#members
     match buf.processor_architecture {
-        0 /* PROCESSOR_ARCHITECTURE_INTEL */ => Arch::I686,
-        5 /* PROCESSOR_ARCHITECTURE_ARM */ => Arch::ArmV6,
-        6 /* PROCESSOR_ARCHITECTURE_IA64 */ => Arch::Unknown("IA64".to_string()),
-        9 /* PROCESSOR_ARCHITECTURE_AMD64 */ => Arch::X64,
-        12 /* PROCESSOR_ARCHITECTURE_ARM64 */ => Arch::Arm64,
-        0xFFFF /* PROCESSOR_ARCHITECTURE_UNKNOWN */ => proc(buf.processor_type).unwrap_or_else(|e| Arch::Unknown(format!("Unknown ({})", e))),
-        invalid => proc(buf.processor_type).unwrap_or_else(|e| Arch::Unknown(format!("Invalid arch: {} ({})", invalid, e))),
+        // PROCESSOR_ARCHITECTURE_INTEL
+        0 => Arch::I686,
+        // PROCESSOR_ARCHITECTURE_ARM
+        5 => Arch::ArmV6,
+        // PROCESSOR_ARCHITECTURE_IA64
+        6 => Arch::Unknown("IA64".to_string()),
+        // PROCESSOR_ARCHITECTURE_AMD64
+        9 => Arch::X64,
+        // PROCESSOR_ARCHITECTURE_ARM64
+        12 => Arch::Arm64,
+        // PROCESSOR_ARCHITECTURE_UNKNOWN
+        0xFFFF => proc(buf.processor_type)
+            .unwrap_or_else(|e| Arch::Unknown(format!("Unknown ({})", e))),
+        invalid => proc(buf.processor_type).unwrap_or_else(|e| {
+            Arch::Unknown(format!("Invalid arch: {} ({})", invalid, e))
+        }),
     }
 }
