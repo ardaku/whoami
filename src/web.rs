@@ -118,23 +118,10 @@ pub(crate) fn devicename() -> String {
             } else {
                 "Chrome".to_string()
             }
-        } else if let Some(e) =
-            orig_string.get(s..).unwrap_or_default().find(' ')
-        {
-            if orig_string.contains("AppleWebKit")
-                && orig_string.starts_with("Mozilla")
-            {
-                "GNOME Web".to_string()
-            } else {
-                orig_string
-                    .get(s..)
-                    .unwrap_or("Safari")
-                    .get(..e)
-                    .unwrap_or("Safari")
-                    .replace('/', " ")
-            }
+        } else if orig_string.contains("Linux") {
+            "GNOME Web".to_string()
         } else {
-            "Safari".to_string()
+            string.get(s..).unwrap_or("Safari").replace('/', " ")
         }
     } else if string.contains("Edg ") {
         string.replace("Edg ", "Edge ")
