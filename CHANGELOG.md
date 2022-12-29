@@ -6,16 +6,29 @@ and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/
 
 ## [1.3.0] - Unreleased
 ### Added
- - `arch()` function which returns an `Arch` representing a CPU arch
- - `Arch::width(&self)` function which returns the `Width` of a specific CPU arch
+ - `Arch` enum listing CPU architectures
+ - `Width` enum listing CPU architecture address widths
+ - `arch()` function which returns an `Arch` type representing a CPU
+   architecture
+ - `Arch::width()` method which returns the address width of a CPU architecture
  - *`web`* feature (enabled by default).  Disabling this feature allows you to
    use wasm32-unknown-unknown with whoami outside of the browser with a mock
    implementation.
+ - Officially support compiling to WASI or Daku WebAssembly platforms;
+   functionality not supported yet.
+ - Convenience `Result` type alias.
+
+### Changed
+ - Modernized and cleaned up code style
 
 ### Fixed
  - Handling of `lang()` when `$LANG` environment variable on unix set to "C",
    causing duplicated iterator elements `["C", "C"]`; now produces `["en-US"]`.
- - WhoAmI reporting "Safari" when running in Chrome/Chromium
+ - WhoAmI reporting "Safari" when running in Chrome/Chromium browser
+ - WhoAmI reporting "Edg" when running in Edge browser (now reports "Edge")
+ - WhoAmI reporting "OPR" when running in Opera browser (now reports "Opera")
+ - WhoAmI reporting "Mozilla" when running in GNOME web browser (now reports
+   "GNOME Web")
 
 ## [1.2.3] - 2022-09-12
 ### Fixed

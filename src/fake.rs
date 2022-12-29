@@ -17,65 +17,65 @@ use std::ffi::OsString;
 use crate::{Arch, DesktopEnv, Platform};
 
 #[inline(always)]
-pub fn lang() -> impl Iterator<Item = String> {
+pub(crate) fn lang() -> impl Iterator<Item = String> {
     std::iter::once("en-US".to_string())
 }
 
 #[inline(always)]
-pub fn username_os() -> OsString {
+pub(crate) fn username_os() -> OsString {
     username().into()
 }
 
 #[inline(always)]
-pub fn realname_os() -> OsString {
+pub(crate) fn realname_os() -> OsString {
     realname().into()
 }
 
 #[inline(always)]
-pub fn devicename_os() -> OsString {
+pub(crate) fn devicename_os() -> OsString {
     devicename().into()
 }
 
 #[inline(always)]
-pub fn distro_os() -> Option<OsString> {
+pub(crate) fn distro_os() -> Option<OsString> {
     distro().map(|a| a.into())
 }
 
 #[inline(always)]
-pub fn username() -> String {
+pub(crate) fn username() -> String {
     "anonymous".to_string()
 }
 
 #[inline(always)]
-pub fn realname() -> String {
+pub(crate) fn realname() -> String {
     "Anonymous".to_string()
 }
 
 #[inline(always)]
-pub fn devicename() -> String {
+pub(crate) fn devicename() -> String {
     "Unknown".to_string()
 }
 
 #[inline(always)]
-pub fn hostname() -> String {
+pub(crate) fn hostname() -> String {
     "localhost".to_string()
 }
 
 #[inline(always)]
-pub fn distro() -> Option<String> {
+pub(crate) fn distro() -> Option<String> {
     None
 }
 
 #[inline(always)]
-pub fn desktop_env() -> DesktopEnv {
+pub(crate) fn desktop_env() -> DesktopEnv {
     DesktopEnv::Unknown("WebAssembly".to_string())
 }
 
-pub fn platform() -> Platform {
+pub(crate) fn platform() -> Platform {
     Platform::Unknown("Unknown".to_string())
 }
 
-pub fn arch() -> Arch {
+pub(crate) fn arch() -> Arch {
     if cfg!(target_pointer_width = "64") {
         Arch::Wasm64
     } else {

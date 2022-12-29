@@ -11,13 +11,11 @@
 //!
 //! ## Getting Started
 //! Using the whoami crate is super easy!  All of the public items are simple
-//! functions with no parameters that return [`String`](std::string::String)s or
-//! [`OsString`](std::ffi::OsString)s (with the exception of
-//! [`desktop_env()`](crate::desktop_env), [`platform()`](crate::platform) and
-//! [`arch()`](crate:arch), which return enums, and [`lang()`](crate::lang)
-//! that returns an iterator of [`String`](std::string::String)s).  
-//! The following example shows how to use all of the functions (except
-//! those that return [`OsString`](std::ffi::OsString)):
+//! functions with no parameters that return [`String`]s or [`OsString`]s (with
+//! the exception of [`desktop_env()`], [`platform()`], and [`arch()`], which
+//! return enums, and [`lang()`] that returns an iterator of [`String`]s).  The
+//! following example shows how to use all of the functions (except those that
+//! return [`OsString`]):
 //!
 //! ```rust
 //! fn main() {
@@ -60,15 +58,76 @@
 //! }
 //! ```
 
-#![warn(missing_docs)]
+#![warn(
+    anonymous_parameters,
+    missing_copy_implementations,
+    missing_debug_implementations,
+    missing_docs,
+    nonstandard_style,
+    rust_2018_idioms,
+    single_use_lifetimes,
+    trivial_casts,
+    trivial_numeric_casts,
+    unreachable_pub,
+    unused_extern_crates,
+    unused_qualifications,
+    variant_size_differences,
+    unsafe_code
+)]
 #![doc(
     html_logo_url = "https://raw.githubusercontent.com/ardaku/whoami/stable/res/icon.svg",
     html_favicon_url = "https://raw.githubusercontent.com/ardaku/whoami/stable/res/icon.svg"
 )]
 
-use std::{ffi::OsString, io};
+#[allow(unsafe_code)]
+// Unix
+#[cfg_attr(
+    not(any(target_os = "windows", target_arch = "wasm32")),
+    path = "unix.rs"
+)]
+// Wasm32 (Daku) - FIXME: Currently routes to fake.rs
+#[cfg_attr(all(target_arch = "wasm32", target_os = "daku"), path = "fake.rs")]
+// Wasm32 (Wasi) - FIXME: Currently routes to fake.rs
+#[cfg_attr(all(target_arch = "wasm32", target_os = "wasi"), path = "fake.rs")]
+// Wasm32 (Web)
+#[cfg_attr(
+    all(
+        target_arch = "wasm32",
+        not(target_os = "wasi"),
+        not(target_os = "daku"),
+        feature = "web",
+    ),
+    path = "web.rs"
+)]
+// Wasm32 (Unknown)
+#[cfg_attr(
+    all(
+        target_arch = "wasm32",
+        not(target_os = "wasi"),
+        not(target_os = "daku"),
+        not(feature = "web"),
+    ),
+    path = "fake.rs"
+)]
+// Windows
+#[cfg_attr(
+    all(target_os = "windows", not(target_arch = "wasm32")),
+    path = "windows.rs"
+)]
+mod platform;
 
-/// Which Desktop Environment
+use std::{
+    ffi::OsString,
+    fmt::{self, Display, Formatter},
+    io::{Error, ErrorKind},
+};
+
+/// This crate's convenience type alias for [`Result`](std::result::Result)s
+pub type Result<T = (), E = Error> = std::result::Result<T, E>;
+
+// FIXME: V2: Move `Unknown` variants to the top of the enum.
+
+/// The desktop environment of a system
 #[derive(Debug, PartialEq, Eq, Clone)]
 #[non_exhaustive]
 pub enum DesktopEnv {
@@ -111,40 +170,37 @@ pub enum DesktopEnv {
     Unknown(String),
 }
 
-impl std::fmt::Display for DesktopEnv {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if let DesktopEnv::Unknown(_) = self {
-            write!(f, "Unknown: ")?;
-        }
-
-        write!(
-            f,
-            "{}",
-            match self {
-                DesktopEnv::Gnome => "Gnome",
-                DesktopEnv::Windows => "Windows",
-                DesktopEnv::Lxde => "LXDE",
-                DesktopEnv::Openbox => "Openbox",
-                DesktopEnv::Mate => "Mate",
-                DesktopEnv::Xfce => "XFCE",
-                DesktopEnv::Kde => "KDE",
-                DesktopEnv::Cinnamon => "Cinnamon",
-                DesktopEnv::I3 => "I3",
-                DesktopEnv::Aqua => "Aqua",
-                DesktopEnv::Ios => "IOS",
-                DesktopEnv::Android => "Android",
-                DesktopEnv::WebBrowser => "Web Browser",
-                DesktopEnv::Console => "Console",
-                DesktopEnv::Ubuntu => "Ubuntu",
-                DesktopEnv::Ermine => "Ermine",
-                DesktopEnv::Orbital => "Orbital",
-                DesktopEnv::Unknown(a) => a,
+impl Display for DesktopEnv {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let desktop_env = match self {
+            DesktopEnv::Gnome => "Gnome",
+            DesktopEnv::Windows => "Windows",
+            DesktopEnv::Lxde => "LXDE",
+            DesktopEnv::Openbox => "Openbox",
+            DesktopEnv::Mate => "Mate",
+            DesktopEnv::Xfce => "XFCE",
+            DesktopEnv::Kde => "KDE",
+            DesktopEnv::Cinnamon => "Cinnamon",
+            DesktopEnv::I3 => "I3",
+            DesktopEnv::Aqua => "Aqua",
+            DesktopEnv::Ios => "IOS",
+            DesktopEnv::Android => "Android",
+            DesktopEnv::WebBrowser => "Web Browser",
+            DesktopEnv::Console => "Console",
+            DesktopEnv::Ubuntu => "Ubuntu",
+            DesktopEnv::Ermine => "Ermine",
+            DesktopEnv::Orbital => "Orbital",
+            DesktopEnv::Unknown(a) => {
+                f.write_str("Unknown: ")?;
+                a
             }
-        )
+        };
+
+        f.write_str(desktop_env)
     }
 }
 
-/// Which Platform
+/// The underlying platform for a system
 #[allow(missing_docs)]
 #[derive(Debug, PartialEq, Eq, Clone)]
 #[non_exhaustive]
@@ -165,230 +221,50 @@ pub enum Platform {
     Unknown(String),
 }
 
-impl std::fmt::Display for Platform {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if let Platform::Unknown(_) = self {
-            write!(f, "Unknown: ")?;
-        }
-
-        write!(
-            f,
-            "{}",
-            match self {
-                Platform::Linux => "Linux",
-                Platform::Bsd => "BSD",
-                Platform::Windows => "Windows",
-                Platform::MacOS => "Mac OS",
-                Platform::Ios => "iOS",
-                Platform::Android => "Android",
-                Platform::Nintendo => "Nintendo",
-                Platform::Xbox => "XBox",
-                Platform::PlayStation => "PlayStation",
-                Platform::Fuchsia => "Fuchsia",
-                Platform::Redox => "Redox",
-                Platform::Unknown(a) => a,
+impl Display for Platform {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let platform = match self {
+            Platform::Linux => "Linux",
+            Platform::Bsd => "BSD",
+            Platform::Windows => "Windows",
+            Platform::MacOS => "Mac OS",
+            Platform::Ios => "iOS",
+            Platform::Android => "Android",
+            Platform::Nintendo => "Nintendo",
+            Platform::Xbox => "XBox",
+            Platform::PlayStation => "PlayStation",
+            Platform::Fuchsia => "Fuchsia",
+            Platform::Redox => "Redox",
+            Platform::Unknown(a) => {
+                f.write_str("Unknown: ")?;
+                a
             }
-        )
+        };
+
+        f.write_str(platform)
     }
 }
 
-#[cfg(all(target_os = "windows", not(target_arch = "wasm32")))]
-mod windows;
-
-#[cfg(all(target_os = "windows", not(target_arch = "wasm32")))]
-use self::windows as native;
-
-#[cfg(all(
-    target_arch = "wasm32",
-    not(target_os = "wasi"),
-    not(target_os = "daku"),
-    feature = "web",
-))]
-mod web;
-
-#[cfg(all(
-    target_arch = "wasm32",
-    not(target_os = "wasi"),
-    not(target_os = "daku"),
-    feature = "web",
-))]
-use self::web as native;
-
-#[cfg(all(
-    target_arch = "wasm32",
-    not(target_os = "wasi"),
-    not(target_os = "daku"),
-    not(feature = "web"),
-))]
-mod fake;
-
-#[cfg(all(
-    target_arch = "wasm32",
-    not(target_os = "wasi"),
-    not(target_os = "daku"),
-    not(feature = "web"),
-))]
-use self::fake as native;
-
-// FIXME: WASI
-#[cfg(all(target_arch = "wasm32", target_os = "wasi"))]
-mod fake;
-
-#[cfg(all(target_arch = "wasm32", target_os = "wasi"))]
-use self::fake as native;
-
-// FIXME: Daku
-#[cfg(all(target_arch = "wasm32", target_os = "daku"))]
-mod fake;
-
-#[cfg(all(target_arch = "wasm32", target_os = "daku"))]
-use self::fake as native;
-
-#[cfg(not(any(target_os = "windows", target_arch = "wasm32")))]
-mod unix;
-
-#[cfg(not(any(target_os = "windows", target_arch = "wasm32")))]
-use self::unix as native;
-
-/// Get the user's username.
-///
-/// On unix-systems this differs from `realname()` most notably in that spaces
-/// are not allowed.
-#[inline(always)]
-pub fn username() -> String {
-    native::username()
-}
-
-/// Get the user's username.
-///
-/// On unix-systems this differs from `realname()` most notably in that spaces
-/// are not allowed.
-#[inline(always)]
-pub fn username_os() -> OsString {
-    native::username_os()
-}
-
-/// Get the user's real (full) name.
-#[inline(always)]
-pub fn realname() -> String {
-    native::realname()
-}
-
-/// Get the user's real (full) name.
-#[inline(always)]
-pub fn realname_os() -> OsString {
-    native::realname_os()
-}
-
-/// Get the device name (also known as "Pretty Name").
-///
-/// Often used to identify device for bluetooth pairing.
-#[inline(always)]
-pub fn devicename() -> String {
-    native::devicename()
-}
-
-/// Get the device name (also known as "Pretty Name").
-///
-/// Often used to identify device for bluetooth pairing.
-#[inline(always)]
-pub fn devicename_os() -> OsString {
-    native::devicename_os()
-}
-
-/// Get the host device's hostname.
-///
-/// Limited to a-z (case insensitve), 0-9, and dashes.  This limit also applies
-/// to `devicename()` when targeting Windows.  Since the hostname is
-/// case-insensitive, this method normalizes to lowercase (unlike
-/// `devicename()`).
-#[inline(always)]
-pub fn hostname() -> String {
-    let mut hostname = native::hostname();
-    hostname.make_ascii_lowercase();
-    hostname
-}
-
-/// Get the host device's hostname.
-///
-/// Limited to a-z (case insensitve), 0-9, and dashes.  This limit also applies
-/// to `devicename()` when targeting Windows.  Since the hostname is
-/// case-insensitive, this method normalizes to lowercase (unlike
-/// `devicename()`).
-#[inline(always)]
-pub fn hostname_os() -> OsString {
-    hostname().into()
-}
-
-/// Get the name of the operating system distribution and (possibly) version.
-///
-/// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
-#[inline(always)]
-pub fn distro() -> String {
-    native::distro().unwrap_or_else(|| format!("Unknown {}", platform()))
-}
-
-/// Get the name of the operating system distribution and (possibly) version.
-///
-/// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
-#[inline(always)]
-pub fn distro_os() -> OsString {
-    native::distro_os()
-        .unwrap_or_else(|| format!("Unknown {}", platform()).into())
-}
-
-/// Get the desktop environment.
-///
-/// Example: "gnome" or "windows"
-#[inline(always)]
-pub fn desktop_env() -> DesktopEnv {
-    native::desktop_env()
-}
-
-/// Get the platform.
-#[inline(always)]
-pub fn platform() -> Platform {
-    native::platform()
-}
-
-/// Get the user's preferred language(s).
-///
-/// Returned as iterator of two letter language codes (lowercase), optionally
-/// followed by a dash (-) and a two letter region code (uppercase).  The most
-/// preferred language is returned first, followed by next preferred, and so on.
-#[inline(always)]
-pub fn lang() -> impl Iterator<Item = String> {
-    native::lang()
-}
-
-/// Which CPU Architecture
+/// The architecture of a CPU
 #[non_exhaustive]
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum Arch {
-    /// ARM64
-    Aarch64,
-    /// ARM
-    Arm,
-    /// ARM BE8
-    ArmEb,
-    /// ARMv4T
-    ArmV4T,
-    /// ARMv5TE
-    ArmV5Te,
-    /// ARMv6
+    /// ARMv5
+    ArmV5,
+    /// ARMv6 (Sometimes just referred to as ARM)
     ArmV6,
-    /// ARMv7
+    /// ARMv7 (May or may not support Neon/Thumb)
     ArmV7,
-    /// Qualcomm Hexagon
-    Hexagon,
-    /// i386
+    /// ARM64 (aarch64)
+    Arm64,
+    /// i386 (x86)
     I386,
-    /// i586
+    /// i586 (x86)
     I586,
-    /// i686
+    /// i686 (x86)
     I686,
-    /// Motorola 68000 series
-    M68k,
+    /// X86_64 / Amd64
+    X64,
     /// MIPS
     Mips,
     /// MIPS (LE)
@@ -404,42 +280,33 @@ pub enum Arch {
     /// PowerPC64LE
     PowerPc64Le,
     /// 32-bit RISC-V
-    Riscv32Gc,
+    Riscv32,
     /// 64-bit RISC-V
-    Riscv64Gc,
+    Riscv64,
     /// S390x
     S390x,
     /// SPARC
     Sparc,
     /// SPARC64
     Sparc64,
-    /// Thumbv7neon
-    ThumbV7Neon,
     /// 32-bit Web Assembly
     Wasm32,
     /// 64-bit Web Assembly
     Wasm64,
-    /// X86_64/Amd64
-    X64,
     /// Unknown Architecture
     Unknown(String),
 }
 
-impl std::fmt::Display for Arch {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let arch_str = match self {
-            Arch::Aarch64 => "aarch64",
-            Arch::Arm => "arm",
-            Arch::ArmEb => "armeb",
-            Arch::ArmV4T => "armv4t",
-            Arch::ArmV5Te => "armv5te",
+impl Display for Arch {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let arch = match self {
+            Arch::ArmV5 => "armv5",
             Arch::ArmV6 => "armv6",
             Arch::ArmV7 => "armv7",
-            Arch::Hexagon => "hexagon",
+            Arch::Arm64 => "arm64",
             Arch::I386 => "i386",
             Arch::I586 => "i586",
             Arch::I686 => "i686",
-            Arch::M68k => "m68k",
             Arch::Mips => "mips",
             Arch::MipsEl => "mipsel",
             Arch::Mips64 => "mips64",
@@ -447,34 +314,27 @@ impl std::fmt::Display for Arch {
             Arch::PowerPc => "powerpc",
             Arch::PowerPc64 => "powerpc64",
             Arch::PowerPc64Le => "powerpc64le",
-            Arch::Riscv32Gc => "riscv32gc",
-            Arch::Riscv64Gc => "riscv64gc",
+            Arch::Riscv32 => "riscv32",
+            Arch::Riscv64 => "riscv64",
             Arch::S390x => "s390x",
             Arch::Sparc => "sparc",
             Arch::Sparc64 => "sparc64",
-            Arch::ThumbV7Neon => "thumbv7neon",
             Arch::Wasm32 => "wasm32",
             Arch::Wasm64 => "wasm64",
             Arch::X64 => "x86_64",
-            Arch::Unknown(arch_str) => arch_str,
+            Arch::Unknown(arch) => {
+                f.write_str("Unknown: ")?;
+                arch
+            }
         };
 
-        if let Arch::Unknown(_) = self {
-            write!(f, "Unknown: ")?;
-        }
-
-        write!(f, "{}", arch_str)
+        f.write_str(arch)
     }
 }
 
-/// Get the CPU Architecture.
-#[inline(always)]
-pub fn arch() -> Arch {
-    native::arch()
-}
-
-/// Which Width.
-#[derive(Debug)]
+/// The address width of a CPU architecture
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[non_exhaustive]
 pub enum Width {
     /// 32 bits
     Bits32,
@@ -482,50 +342,45 @@ pub enum Width {
     Bits64,
 }
 
-impl std::fmt::Display for Width {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Display for Width {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let bits = match self {
             Width::Bits32 => "32 bits",
             Width::Bits64 => "64 bits",
         };
-        write!(f, "{}", bits)
+
+        f.write_str(bits)
     }
 }
 
 impl Arch {
     /// Get the width of this architecture.
-    pub fn width(&self) -> io::Result<Width> {
+    pub fn width(&self) -> Result<Width> {
         match self {
-            Arch::Arm
-            | Arch::ArmEb
-            | Arch::ArmV4T
-            | Arch::ArmV5Te
+            Arch::ArmV5
             | Arch::ArmV6
             | Arch::ArmV7
-            | Arch::Hexagon
             | Arch::I386
             | Arch::I586
             | Arch::I686
-            | Arch::M68k
             | Arch::Mips
             | Arch::MipsEl
             | Arch::PowerPc
-            | Arch::Riscv32Gc
+            | Arch::Riscv32
             | Arch::Sparc
-            | Arch::ThumbV7Neon
             | Arch::Wasm32 => Ok(Width::Bits32),
-            Arch::Aarch64
+            Arch::Arm64
             | Arch::Mips64
             | Arch::Mips64El
             | Arch::PowerPc64
             | Arch::PowerPc64Le
-            | Arch::Riscv64Gc
+            | Arch::Riscv64
             | Arch::S390x
             | Arch::Sparc64
             | Arch::Wasm64
             | Arch::X64 => Ok(Width::Bits64),
-            Arch::Unknown(unknown_arch) => Err(io::Error::new(
-                io::ErrorKind::InvalidData,
+            Arch::Unknown(unknown_arch) => Err(Error::new(
+                ErrorKind::InvalidData,
                 format!(
                     "Tried getting width of unknown arch ({})",
                     unknown_arch
@@ -533,4 +388,121 @@ impl Arch {
             )),
         }
     }
+}
+
+/// Get the CPU Architecture.
+#[inline(always)]
+pub fn arch() -> Arch {
+    platform::arch()
+}
+
+/// Get the user's username.
+///
+/// On unix-systems this differs from [`realname()`] most notably in that spaces
+/// are not allowed.
+#[inline(always)]
+pub fn username() -> String {
+    platform::username()
+}
+
+/// Get the user's username.
+///
+/// On unix-systems this differs from [`realname()`] most notably in that spaces
+/// are not allowed.
+#[inline(always)]
+pub fn username_os() -> OsString {
+    platform::username_os()
+}
+
+/// Get the user's real (full) name.
+#[inline(always)]
+pub fn realname() -> String {
+    platform::realname()
+}
+
+/// Get the user's real (full) name.
+#[inline(always)]
+pub fn realname_os() -> OsString {
+    platform::realname_os()
+}
+
+/// Get the device name (also known as "Pretty Name").
+///
+/// Often used to identify device for bluetooth pairing.
+#[inline(always)]
+pub fn devicename() -> String {
+    platform::devicename()
+}
+
+/// Get the device name (also known as "Pretty Name").
+///
+/// Often used to identify device for bluetooth pairing.
+#[inline(always)]
+pub fn devicename_os() -> OsString {
+    platform::devicename_os()
+}
+
+/// Get the host device's hostname.
+///
+/// Limited to a-z (case insensitve), 0-9, and dashes.  This limit also applies
+/// to `devicename()` when targeting Windows.  Since the hostname is
+/// case-insensitive, this method normalizes to lowercase (unlike
+/// [`devicename()`]).
+#[inline(always)]
+pub fn hostname() -> String {
+    let mut hostname = platform::hostname();
+    hostname.make_ascii_lowercase();
+    hostname
+}
+
+/// Get the host device's hostname.
+///
+/// Limited to a-z (case insensitve), 0-9, and dashes.  This limit also applies
+/// to `devicename()` when targeting Windows.  Since the hostname is
+/// case-insensitive, this method normalizes to lowercase (unlike
+/// [`devicename()`]).
+#[inline(always)]
+pub fn hostname_os() -> OsString {
+    hostname().into()
+}
+
+/// Get the name of the operating system distribution and (possibly) version.
+///
+/// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
+#[inline(always)]
+pub fn distro() -> String {
+    platform::distro().unwrap_or_else(|| format!("Unknown {}", platform()))
+}
+
+/// Get the name of the operating system distribution and (possibly) version.
+///
+/// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
+#[inline(always)]
+pub fn distro_os() -> OsString {
+    platform::distro_os()
+        .unwrap_or_else(|| format!("Unknown {}", platform()).into())
+}
+
+/// Get the desktop environment.
+///
+/// Example: "gnome" or "windows"
+#[inline(always)]
+pub fn desktop_env() -> DesktopEnv {
+    platform::desktop_env()
+}
+
+/// Get the platform.
+#[inline(always)]
+pub fn platform() -> Platform {
+    platform::platform()
+}
+
+/// Get the user's preferred language(s).
+///
+/// Returned as iterator of two letter language codes (lowercase), optionally
+/// followed by a dash (-) and a two letter region code (uppercase).  The most
+/// preferred language is returned first, followed by next preferred, and so on.
+#[inline(always)]
+pub fn lang() -> impl Iterator<Item = String> {
+    platform::lang()
 }
