@@ -307,7 +307,7 @@ pub(crate) fn devicename_os() -> OsString {
     devicename().into()
 }
 
-#[cfg(not(target_os = "macos"))]
+#[cfg(not(any(target_os = "macos", target_os = "illumos")))]
 pub(crate) fn devicename() -> String {
     let mut distro = String::new();
 
@@ -346,6 +346,18 @@ pub(crate) fn devicename_os() -> OsString {
         Ok(out)
     };
     fancy_fallback_os(computer)
+}
+
+#[cfg(target_os = "illumos")]
+pub(crate) fn devicename() -> String {
+    let mut nodename = String::new();
+
+    if let Ok(program) = std::fs::read_to_string("/etc/nodename") {
+        let program = program.into_bytes();
+        nodename.push_str(&String::from_utf8_lossy(&program));
+        nodename.pop();  // Remove the trailing newline
+    }
+    fancy_fallback(Err(hostname()))
 }
 
 pub(crate) fn hostname() -> String {
@@ -514,7 +526,8 @@ pub(crate) const fn platform() -> Platform {
     target_os = "dragonfly",
     target_os = "bitrig",
     target_os = "openbsd",
-    target_os = "netbsd"
+    target_os = "netbsd",
+    target_os = "illumos"
 )))]
 #[inline(always)]
 pub(crate) const fn platform() -> Platform {
@@ -531,6 +544,12 @@ pub(crate) const fn platform() -> Platform {
 #[inline(always)]
 pub(crate) const fn platform() -> Platform {
     Platform::Bsd
+}
+
+#[cfg(target_os = "illumos")]
+#[inline(always)]
+pub(crate) const fn platform() -> Platform {
+    Platform::Illumos
 }
 
 struct LangIter {
@@ -585,7 +604,8 @@ pub(crate) fn lang() -> impl Iterator<Item = String> {
     target_os = "freebsd",
     target_os = "dragonfly",
     target_os = "netbsd",
-    target_os = "openbsd"
+    target_os = "openbsd",
+    target_os = "illumos"
 ))]
 struct UtsName {
     #[cfg(not(target_os = "dragonfly"))]
