@@ -355,7 +355,7 @@ pub(crate) fn devicename() -> String {
     if let Ok(program) = std::fs::read_to_string("/etc/nodename") {
         let program = program.into_bytes();
         nodename.push_str(&String::from_utf8_lossy(&program));
-        nodename.pop();  // Remove the trailing newline
+        nodename.pop(); // Remove the trailing newline
     }
     fancy_fallback(Err(hostname()))
 }
