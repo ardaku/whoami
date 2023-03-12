@@ -106,7 +106,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        tc: [1.40.0, stable, beta, nightly]
+        tc: [stable, beta, nightly]
     steps:
     - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
@@ -147,6 +147,23 @@ jobs:
         os: [macos-latest]
         tc: [1.40.0, stable, beta, nightly]
         cc: [aarch64-apple-ios]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ matrix.tc }}
+        target: ${{ matrix.cc }}
+        override: true
+    - uses: actions-rs/cargo@v1
+    - run: cargo build --all-features --target=${{ matrix.cc }}
+  cross-compile-m1:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest]
+        tc: [stable, beta, nightly]
+        cc: [aarch64-apple-darwin]
     steps:
     - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
