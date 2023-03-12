@@ -31,12 +31,12 @@ WhoAmI targets all platforms that can run Rust, including:
  - Linux
  - Windows
  - Mac OS
- - FreeBSD, other BSD variants
- - Web Assembly
+ - BSD variants (FreeBSD, others)
+ - [Web Assembly](https://github.com/ardaku/whoami/blob/stable/WASM.md)
    - Mock implementation
    - Web Browser - DOM
-   - WASI - Wasite/Quantii, others **mock implementation, full implementation planned later**
-   - Daku - Ardaku/Quantii, others **mock implementation, full implementation planned later**
+   - WASI (Wasite/Quantii, others) **mock implementation, full implementation planned later**
+   - Daku (Ardaku/Quantii, others) **mock implementation, full implementation planned later**
  - Illumos variants (SmartOS, OmniOS, others) **may partially or fully work - but untested**
  - Android **may partially or fully work - but untested, planned later**
  - iOS **planned later**
