@@ -91,7 +91,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest]
         tc: [1.40.0, stable, beta, nightly]
     steps:
     - uses: actions/checkout@v2
@@ -102,6 +102,20 @@ jobs:
         override: true
     - uses: actions-rs/cargo@v1
     - run: cargo test --all --all-features
+  test-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        tc: [stable, beta, nightly]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ matrix.tc }}
+        override: true
+    - uses: actions-rs/cargo@v1
+    - run: cargo test --all --all-features --target=x86_64-apple-darwin
   cross-compile:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -133,6 +147,23 @@ jobs:
         os: [macos-latest]
         tc: [1.40.0, stable, beta, nightly]
         cc: [aarch64-apple-ios]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ matrix.tc }}
+        target: ${{ matrix.cc }}
+        override: true
+    - uses: actions-rs/cargo@v1
+    - run: cargo build --all-features --target=${{ matrix.cc }}
+  cross-compile-m1:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest]
+        tc: [stable, beta, nightly]
+        cc: [aarch64-apple-darwin]
     steps:
     - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
