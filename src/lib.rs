@@ -211,6 +211,7 @@ pub enum Platform {
     // FIXME: Non-standard casing; Rename to 'Mac' rather than 'MacOs' in
     // whoami 2.0.0
     MacOS,
+    Illumos,
     Ios,
     Android,
     Nintendo,
@@ -228,6 +229,7 @@ impl Display for Platform {
             Platform::Bsd => "BSD",
             Platform::Windows => "Windows",
             Platform::MacOS => "Mac OS",
+            Platform::Illumos => "Illumos",
             Platform::Ios => "iOS",
             Platform::Android => "Android",
             Platform::Nintendo => "Nintendo",
