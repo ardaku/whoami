@@ -80,6 +80,7 @@ jobs:
     - run: cargo update -p web-sys --precise 0.3.55
     - run: cargo update -p js-sys --precise 0.3.55
     - run: cargo update -p wasm-bindgen --precise 0.2.78
+    - run: cargo update -p log --precise 0.4.17
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
     - run: cargo clippy --no-default-features --target=${{ matrix.cc }} -- -D warnings
     - run: RUSTFLAGS="--cfg target_os=\"daku\"" cargo clippy --target=${{ matrix.cc }} -- -D warnings
