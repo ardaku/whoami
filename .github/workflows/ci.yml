@@ -17,7 +17,6 @@ jobs:
         toolchain: ${{ matrix.tc }}
         components: rustfmt, clippy
         override: true
-    - uses: actions-rs/cargo@v1
     - run: cargo fmt --check
     - run: cargo clippy -- -D warnings
   checks-cross-compile:
@@ -43,7 +42,6 @@ jobs:
         target: ${{ matrix.cc }}
         components: clippy
         override: true
-    - uses: actions-rs/cargo@v1
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
   checks-cross-compile-ios:
     runs-on: ${{ matrix.os }}
@@ -61,7 +59,6 @@ jobs:
         target: ${{ matrix.cc }}
         components: clippy
         override: true
-    - uses: actions-rs/cargo@v1
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
   checks-cross-compile-wasm:
     runs-on: ${{ matrix.os }}
@@ -79,7 +76,6 @@ jobs:
         target: ${{ matrix.cc }}
         components: clippy
         override: true
-    - uses: actions-rs/cargo@v1
     - run: cargo update -p bumpalo --precise 3.4.0
     - run: cargo update -p web-sys --precise 0.3.55
     - run: cargo update -p js-sys --precise 0.3.55
@@ -100,7 +96,6 @@ jobs:
         profile: minimal
         toolchain: ${{ matrix.tc }}
         override: true
-    - uses: actions-rs/cargo@v1
     - run: cargo test --all --all-features
   test-macos:
     runs-on: macos-latest
@@ -114,7 +109,6 @@ jobs:
         profile: minimal
         toolchain: ${{ matrix.tc }}
         override: true
-    - uses: actions-rs/cargo@v1
     - run: cargo test --all --all-features --target=x86_64-apple-darwin
   cross-compile:
     runs-on: ${{ matrix.os }}
@@ -138,7 +132,6 @@ jobs:
         toolchain: ${{ matrix.tc }}
         target: ${{ matrix.cc }}
         override: true
-    - uses: actions-rs/cargo@v1
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile-ios:
     runs-on: ${{ matrix.os }}
@@ -155,7 +148,6 @@ jobs:
         toolchain: ${{ matrix.tc }}
         target: ${{ matrix.cc }}
         override: true
-    - uses: actions-rs/cargo@v1
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile-m1:
     runs-on: ${{ matrix.os }}
@@ -172,7 +164,6 @@ jobs:
         toolchain: ${{ matrix.tc }}
         target: ${{ matrix.cc }}
         override: true
-    - uses: actions-rs/cargo@v1
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile-wasm:
     runs-on: ${{ matrix.os }}
@@ -189,7 +180,6 @@ jobs:
         toolchain: ${{ matrix.tc }}
         target: ${{ matrix.cc }}
         override: true
-    - uses: actions-rs/cargo@v1
     - run: cargo update -p bumpalo --precise 3.4.0
     - run: cargo update -p web-sys --precise 0.3.55
     - run: cargo update -p js-sys --precise 0.3.55
