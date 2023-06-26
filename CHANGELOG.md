@@ -1,8 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://github.com/AldaronLau/semver).
+The format is based on [Keep a Changelog], and this project adheres to
+[Semantic Versioning].
+
+## [1.4.1] - 2023-06-25
+### Fixed
+ - License files not being included in package on crates.io
 
 ## [1.4.0] - 2023-03-12
 ### Added
@@ -263,3 +267,6 @@ Thanks to everyone who contributed to make this version of whoami possible!
 ## [0.1.0] - 2017-08-04
 ### Added
  - Published to crates.io.
+
+[Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
+[Semantic Versioning]: https://github.com/AldaronLau/semver/
