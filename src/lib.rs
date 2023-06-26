@@ -1,12 +1,3 @@
-// Copyright © 2017-2022 The WhoAmI Contributors.
-//
-// Licensed under any of:
-// - Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
-// - Boost Software License, Version 1.0 (https://www.boost.org/LICENSE_1_0.txt)
-// - MIT License (https://mit-license.org/)
-// At your choosing (See accompanying files LICENSE_APACHE,
-// LICENSE_MIT and LICENSE_BOOST).
-//
 //! Crate for getting the user's username, realname and environment.
 //!
 //! ## Getting Started
