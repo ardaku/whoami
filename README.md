@@ -57,6 +57,8 @@ target Rust 1.65.0 and later to make use of the `let else` syntax.
 Rust) that depends on this crate.
 
 ## License
+Copyright © 2017-2023 The WhoAmI Contributors.
+
 Licensed under any of
  - Apache License, Version 2.0, ([LICENSE_APACHE][7]
    or [https://www.apache.org/licenses/LICENSE-2.0][8])
