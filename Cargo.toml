@@ -9,7 +9,7 @@
 
 [package]
 name = "whoami"
-version = "1.4.0"
+version = "1.4.1"
 edition = "2018"
 license = "Apache-2.0 OR BSL-1.0 OR MIT"
 documentation = "https://docs.rs/whoami"
@@ -18,8 +18,20 @@ repository = "https://github.com/ardaku/whoami"
 readme = "README.md"
 description = "Retrieve the current user and environment."
 keywords = ["user", "username", "whoami", "platform", "detect"]
-categories = ["os", "wasm", "internationalization", "localization", "value-formatting"]
-include = ["LICENSE_APACHE", "LICENSE_BOOST", "LICENSE_MIT", "README.md", "src/*"]
+categories = [
+    "os",
+    "wasm",
+    "internationalization",
+    "localization",
+    "value-formatting",
+]
+include = [
+    "LICENSE_APACHE",
+    "LICENSE_BOOST",
+    "LICENSE_MIT",
+    "README.md",
+    "src/*",
+]
 rust-version = "1.40"
 
 # Target-specific dependency required to work with wasm-bindgen
