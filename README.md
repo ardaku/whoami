@@ -58,11 +58,11 @@ Rust) that depends on this crate.
 
 ## License
 Licensed under any of
- - Apache License, Version 2.0, ([LICENSE_APACHE_2_0.txt][7]
+ - Apache License, Version 2.0, ([LICENSE_APACHE][7]
    or [https://www.apache.org/licenses/LICENSE-2.0][8])
- - Boost Software License, Version 1.0, ([LICENSE_BOOST_1_0.txt][11]
+ - Boost Software License, Version 1.0, ([LICENSE_BOOST][11]
    or [https://www.boost.org/LICENSE_1_0.txt][12])
- - MIT License, ([LICENSE_MIT.txt][9] or [https://mit-license.org/][10])
+ - MIT License, ([LICENSE_MIT][9] or [https://mit-license.org/][10])
 
 at your option.
 
@@ -82,10 +82,10 @@ email at [aldaronlau@gmail.com][13].
 [4]: https://github.com/ardaku/whoami/
 [5]: https://docs.rs/whoami#getting-started
 [6]: https://aldaronlau.com/
-[7]: https://github.com/ardaku/whoami/blob/stable/LICENSE_APACHE_2_0.txt
+[7]: https://github.com/ardaku/whoami/blob/stable/LICENSE_APACHE
 [8]: https://www.apache.org/licenses/LICENSE-2.0
-[9]: https://github.com/ardaku/whoami/blob/stable/LICENSE_MIT.txt
+[9]: https://github.com/ardaku/whoami/blob/stable/LICENSE_MIT
 [10]: https://mit-license.org/
-[11]: https://github.com/ardaku/whoami/blob/stable/LICENSE_BOOST_1_0.txt
+[11]: https://github.com/ardaku/whoami/blob/stable/LICENSE_BOOST
 [12]: https://www.boost.org/LICENSE_1_0.txt
 [13]: mailto:aldaronlau@gmail.com
