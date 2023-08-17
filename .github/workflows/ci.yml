@@ -33,6 +33,7 @@ jobs:
         - wasm32-wasi
         - x86_64-apple-darwin
         - x86_64-unknown-redox
+        - x86_64-unknown-illumos
     steps:
     - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
@@ -186,6 +187,25 @@ jobs:
     - run: cargo update -p js-sys --precise 0.3.55
     - run: cargo update -p wasm-bindgen --precise 0.2.78
     - run: cargo update -p log --precise 0.4.17
+    - run: cargo update -p quote --precise 1.0.30
+    - run: cargo update -p proc-macro2 --precise 1.0.63
     - run: cargo build --all-features --target=${{ matrix.cc }}
     - run: cargo build --no-default-features --target=${{ matrix.cc }}
     - run: RUSTFLAGS="--cfg target_os=\"daku\"" cargo build --target=${{ matrix.cc }}
+  cross-compile-illumos:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        tc: [1.65.0, stable, beta, nightly]
+        cc:
+        - x86_64-unknown-illumos
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ matrix.tc }}
+        target: ${{ matrix.cc }}
+        override: true
+    - run: cargo build --all-features --target=${{ matrix.cc }}

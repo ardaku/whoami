@@ -300,12 +300,9 @@ pub(crate) fn devicename_os() -> OsString {
 
 #[cfg(not(any(target_os = "macos", target_os = "illumos")))]
 pub(crate) fn devicename() -> String {
-    let mut distro = String::new();
-
     if let Ok(program) = std::fs::read_to_string("/etc/machine-info") {
         let program = program.into_bytes();
-
-        distro.push_str(&String::from_utf8_lossy(&program));
+        let distro = String::from_utf8_lossy(&program);
 
         for i in distro.split('\n') {
             let mut j = i.split('=');
@@ -330,24 +327,27 @@ pub(crate) fn devicename_os() -> OsString {
     let out = os_from_cfstring(unsafe {
         SCDynamicStoreCopyComputerName(null_mut(), null_mut())
     });
-
     let computer = if out.as_bytes().is_empty() {
         Err(hostname_os())
     } else {
         Ok(out)
     };
+
     fancy_fallback_os(computer)
 }
 
 #[cfg(target_os = "illumos")]
 pub(crate) fn devicename() -> String {
-    let mut nodename = String::new();
-
     if let Ok(program) = std::fs::read_to_string("/etc/nodename") {
         let program = program.into_bytes();
-        nodename.push_str(&String::from_utf8_lossy(&program));
-        nodename.pop(); // Remove the trailing newline
+        let mut nodename = String::from_utf8_lossy(&program).to_string();
+
+        // Remove the trailing newline
+        nodename.pop();
+
+        return nodename;
     }
+
     fancy_fallback(Err(hostname()))
 }
 
@@ -444,14 +444,10 @@ pub(crate) fn distro_os() -> Option<OsString> {
 
 #[cfg(not(target_os = "macos"))]
 pub(crate) fn distro() -> Option<String> {
-    let mut distro = String::new();
-
     let program = std::fs::read_to_string("/etc/os-release")
         .ok()?
         .into_bytes();
-
-    distro.push_str(&String::from_utf8_lossy(&program));
-
+    let distro = String::from_utf8_lossy(&program);
     let mut fallback = None;
 
     for i in distro.split('\n') {
