@@ -5,7 +5,7 @@ compile_error!("Unexpected pointer width for target platform");
 
 use std::ffi::OsString;
 
-use crate::{Arch, DesktopEnv, Platform};
+use crate::{Arch, DesktopEnv, Platform, Result};
 
 #[inline(always)]
 pub(crate) fn lang() -> impl Iterator<Item = String> {
@@ -39,7 +39,7 @@ pub(crate) fn username() -> Result<String> {
 
 #[inline(always)]
 pub(crate) fn realname() -> Result<String> {
-    "Anonymous".to_string()
+    Ok("Anonymous".to_string())
 }
 
 #[inline(always)]

@@ -6,7 +6,7 @@ use std::ffi::OsString;
 use wasm_bindgen::JsValue;
 use web_sys::window;
 
-use crate::{Arch, DesktopEnv, Platform};
+use crate::{Arch, DesktopEnv, Platform, Result};
 
 // Get the user agent
 fn user_agent() -> Option<String> {

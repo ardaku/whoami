@@ -11,7 +11,7 @@ use crate::{platform, Result};
 /// Get the user's username.
 ///
 /// On unix-systems this differs from [`realname()`] most notably in that spaces
-/// are not allowed.
+/// are not allowed in the username.
 #[inline(always)]
 pub fn username() -> Result<String> {
     platform::username()
@@ -19,8 +19,8 @@ pub fn username() -> Result<String> {
 
 /// Get the user's username.
 ///
-/// On unix-systems this differs from [`realname()`] most notably in that spaces
-/// are not allowed.
+/// On unix-systems this differs from [`realname_os()`] most notably in that
+/// spaces are not allowed in the username.
 #[inline(always)]
 pub fn username_os() -> Result<OsString> {
     platform::username_os()

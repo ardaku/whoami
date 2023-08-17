@@ -396,7 +396,7 @@ pub fn arch() -> Arch {
 /// Get the user's username.
 ///
 /// On unix-systems this differs from [`realname()`] most notably in that spaces
-/// are not allowed.
+/// are not allowed in the username.
 #[inline(always)]
 pub fn username() -> String {
     fallible::username().unwrap_or_else(|_| DEFAULT_USERNAME.to_owned())
@@ -404,8 +404,8 @@ pub fn username() -> String {
 
 /// Get the user's username.
 ///
-/// On unix-systems this differs from [`realname()`] most notably in that spaces
-/// are not allowed.
+/// On unix-systems this differs from [`realname_os()`] most notably in that
+/// spaces are not allowed in the username.
 #[inline(always)]
 pub fn username_os() -> OsString {
     fallible::username_os()
