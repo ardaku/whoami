@@ -300,8 +300,7 @@ pub(crate) fn devicename_os() -> OsString {
 
 #[cfg(not(any(target_os = "macos", target_os = "illumos")))]
 pub(crate) fn devicename() -> String {
-    if let Ok(program) = std::fs::read_to_string("/etc/machine-info") {
-        let program = program.into_bytes();
+    if let Ok(program) = std::fs::read("/etc/machine-info") {
         let distro = String::from_utf8_lossy(&program);
 
         for i in distro.split('\n') {
@@ -338,8 +337,7 @@ pub(crate) fn devicename_os() -> OsString {
 
 #[cfg(target_os = "illumos")]
 pub(crate) fn devicename() -> String {
-    if let Ok(program) = std::fs::read_to_string("/etc/nodename") {
-        let program = program.into_bytes();
+    if let Ok(program) = std::fs::read("/etc/nodename") {
         let mut nodename = String::from_utf8_lossy(&program).to_string();
 
         // Remove the trailing newline
@@ -444,9 +442,7 @@ pub(crate) fn distro_os() -> Option<OsString> {
 
 #[cfg(not(target_os = "macos"))]
 pub(crate) fn distro() -> Option<String> {
-    let program = std::fs::read_to_string("/etc/os-release")
-        .ok()?
-        .into_bytes();
+    let program = std::fs::read("/etc/os-release").ok()?;
     let distro = String::from_utf8_lossy(&program);
     let mut fallback = None;
 
