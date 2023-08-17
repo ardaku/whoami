@@ -195,7 +195,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        tc: [nightly]
+        tc: [1.65.0, stable, beta, nightly]
         cc:
         - x86_64-unknown-illumos
     steps:
