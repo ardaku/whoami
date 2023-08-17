@@ -1,6 +1,7 @@
 use std::{
     borrow::Cow,
     ffi::{c_void, CStr, OsString},
+    io::{Error, ErrorKind},
     mem,
     os::{
         raw::{c_char, c_int},
@@ -16,7 +17,7 @@ use std::{
     ptr::null_mut,
 };
 
-use crate::{Arch, DesktopEnv, Platform};
+use crate::{Arch, DesktopEnv, Platform, Result};
 
 #[repr(C)]
 struct PassWd {
@@ -192,7 +193,7 @@ fn os_from_cfstring(string: *mut c_void) -> OsString {
 // This function must allocate, because a slice or Cow<OsStr> would still
 // reference `passwd` which is dropped when this function returns.
 #[inline(always)]
-fn getpwuid(real: bool) -> OsString {
+fn getpwuid(real: bool) -> Result<OsString> {
     const BUF_SIZE: usize = 16_384; // size from the man page
     let mut buffer = mem::MaybeUninit::<[u8; BUF_SIZE]>::uninit();
     let mut passwd = mem::MaybeUninit::<PassWd>::uninit();
@@ -209,20 +210,20 @@ fn getpwuid(real: bool) -> OsString {
         );
 
         if ret != 0 {
-            return "Unknown".to_string().into();
+            return Err(Error::last_os_error());
         }
 
         let _passwd = _passwd.assume_init();
 
         if _passwd.is_null() {
-            return "Unknown".to_string().into();
+            return Err(Error::new(ErrorKind::NotFound, "Missing record"));
         }
 
         passwd.assume_init()
     };
 
     // Extract names.
-    if real {
+    Ok(if real {
         let string = os_from_cstring_gecos(passwd.pw_gecos);
         let result = if let Some(string) = string {
             Ok(string)
@@ -232,14 +233,14 @@ fn getpwuid(real: bool) -> OsString {
         fancy_fallback_os(result)
     } else {
         os_from_cstring(passwd.pw_name)
-    }
+    })
 }
 
-pub(crate) fn username() -> String {
-    string_from_os(username_os())
+pub(crate) fn username() -> Result<String> {
+    Ok(string_from_os(username_os()?))
 }
 
-pub(crate) fn username_os() -> OsString {
+pub(crate) fn username_os() -> Result<OsString> {
     getpwuid(false)
 }
 
@@ -285,11 +286,11 @@ fn fancy_fallback_os(result: Result<OsString, OsString>) -> OsString {
     }
 }
 
-pub(crate) fn realname() -> String {
-    string_from_os(realname_os())
+pub(crate) fn realname() -> Result<String> {
+    Ok(string_from_os(realname_os()?))
 }
 
-pub(crate) fn realname_os() -> OsString {
+pub(crate) fn realname_os() -> Result<OsString> {
     getpwuid(true)
 }
 

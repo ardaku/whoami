@@ -1,6 +1,7 @@
 use std::{
     convert::TryInto,
     ffi::OsString,
+    io::Error,
     mem::MaybeUninit,
     os::{
         raw::{c_char, c_int, c_uchar, c_ulong, c_ushort, c_void},
@@ -9,7 +10,7 @@ use std::{
     ptr,
 };
 
-use crate::{Arch, DesktopEnv, Platform};
+use crate::{Arch, DesktopEnv, Platform, Result};
 
 #[repr(C)]
 struct OsVersionInfoEx {
@@ -109,11 +110,11 @@ fn string_from_os(string: OsString) -> String {
     }
 }
 
-pub(crate) fn username() -> String {
-    string_from_os(username_os())
+pub(crate) fn username() -> Result<String> {
+    Ok(string_from_os(username_os()?))
 }
 
-pub(crate) fn username_os() -> OsString {
+pub(crate) fn username_os() -> Result<OsString> {
     // Step 1. Retreive the entire length of the username
     let mut size = 0;
     let success = unsafe {
@@ -130,7 +131,7 @@ pub(crate) fn username_os() -> OsString {
     let fail =
         unsafe { GetUserNameW(name.as_mut_ptr().cast(), &mut size) == 0 };
     if fail {
-        return "unknown".to_string().into();
+        return Err(Error::last_os_error());
     }
     debug_assert_eq!(orig_size, size);
     unsafe {
@@ -140,16 +141,16 @@ pub(crate) fn username_os() -> OsString {
     debug_assert_eq!(terminator, Some(0u16));
 
     // Step 3. Convert to Rust String
-    OsString::from_wide(&name)
+    Ok(OsString::from_wide(&name))
 }
 
 #[inline(always)]
-pub(crate) fn realname() -> String {
-    string_from_os(realname_os())
+pub(crate) fn realname() -> Result<String> {
+    Ok(string_from_os(realname_os()?))
 }
 
 #[inline(always)]
-pub(crate) fn realname_os() -> OsString {
+pub(crate) fn realname_os() -> Result<OsString> {
     // Step 1. Retrieve the entire length of the username
     let mut buf_size = 0;
     let success = unsafe {
@@ -180,7 +181,7 @@ pub(crate) fn realname_os() -> OsString {
         ) == 0
     };
     if fail {
-        return "Unknown".to_string().into();
+        return Err(Error::last_os_error());
     }
     debug_assert_eq!(buf_size, name_len + 1);
     unsafe {
@@ -188,7 +189,7 @@ pub(crate) fn realname_os() -> OsString {
     }
 
     // Step 3. Convert to Rust String
-    OsString::from_wide(&name)
+    Ok(OsString::from_wide(&name))
 }
 
 #[inline(always)]

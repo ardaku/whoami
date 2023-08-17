@@ -70,6 +70,10 @@
     html_favicon_url = "https://raw.githubusercontent.com/ardaku/whoami/stable/res/icon.svg"
 )]
 
+const DEFAULT_USERNAME: &str = "Unknown";
+
+pub mod fallible;
+
 #[allow(unsafe_code)]
 // Unix
 #[cfg_attr(
@@ -395,7 +399,7 @@ pub fn arch() -> Arch {
 /// are not allowed.
 #[inline(always)]
 pub fn username() -> String {
-    platform::username()
+    fallible::username().unwrap_or_else(|_| DEFAULT_USERNAME.to_owned())
 }
 
 /// Get the user's username.
@@ -404,19 +408,21 @@ pub fn username() -> String {
 /// are not allowed.
 #[inline(always)]
 pub fn username_os() -> OsString {
-    platform::username_os()
+    fallible::username_os()
+        .unwrap_or_else(|_| DEFAULT_USERNAME.to_owned().into())
 }
 
 /// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname() -> String {
-    platform::realname()
+    fallible::realname().unwrap_or_else(|_| DEFAULT_USERNAME.to_owned())
 }
 
 /// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname_os() -> OsString {
-    platform::realname_os()
+    fallible::realname_os()
+        .unwrap_or_else(|_| DEFAULT_USERNAME.to_owned().into())
 }
 
 /// Get the device name (also known as "Pretty Name").

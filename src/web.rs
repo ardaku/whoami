@@ -53,13 +53,13 @@ pub(crate) fn lang() -> impl Iterator<Item = String> {
 }
 
 #[inline(always)]
-pub(crate) fn username_os() -> OsString {
-    username().into()
+pub(crate) fn username_os() -> Result<OsString> {
+    Ok(username()?.into())
 }
 
 #[inline(always)]
-pub(crate) fn realname_os() -> OsString {
-    realname().into()
+pub(crate) fn realname_os() -> Result<OsString> {
+    Ok(realname()?.into())
 }
 
 #[inline(always)]
@@ -73,13 +73,13 @@ pub(crate) fn distro_os() -> Option<OsString> {
 }
 
 #[inline(always)]
-pub(crate) fn username() -> String {
-    "anonymous".to_string()
+pub(crate) fn username() -> Result<String> {
+    Ok("anonymous".to_string())
 }
 
 #[inline(always)]
-pub(crate) fn realname() -> String {
-    "Anonymous".to_string()
+pub(crate) fn realname() -> Result<String> {
+    Ok("Anonymous".to_string())
 }
 
 pub(crate) fn devicename() -> String {
