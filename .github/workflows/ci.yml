@@ -187,6 +187,8 @@ jobs:
     - run: cargo update -p js-sys --precise 0.3.55
     - run: cargo update -p wasm-bindgen --precise 0.2.78
     - run: cargo update -p log --precise 0.4.17
+    - run: cargo update -p quote --precise 1.0.30
+    - run: cargo update -p proc-macro2 --precise 1.0.63
     - run: cargo build --all-features --target=${{ matrix.cc }}
     - run: cargo build --no-default-features --target=${{ matrix.cc }}
     - run: RUSTFLAGS="--cfg target_os=\"daku\"" cargo build --target=${{ matrix.cc }}
