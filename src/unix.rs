@@ -345,7 +345,7 @@ pub(crate) fn devicename() -> Result<String> {
         // Remove the trailing newline
         nodename.pop();
 
-        return nodename;
+        return Ok(nodename);
     }
 
     Ok(fancy_fallback(Err(hostname()?)))

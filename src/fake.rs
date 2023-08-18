@@ -26,13 +26,13 @@ pub(crate) fn realname_os() -> Result<OsString> {
 }
 
 #[inline(always)]
-pub(crate) fn devicename_os() -> OsString {
-    devicename().into()
+pub(crate) fn devicename_os() -> Result<OsString> {
+    Ok(devicename()?.into())
 }
 
 #[inline(always)]
 pub(crate) fn distro_os() -> Result<OsString> {
-    distro().map(|a| a.into())
+    Ok(distro()?.into())
 }
 
 #[inline(always)]
@@ -57,7 +57,7 @@ pub(crate) fn hostname() -> Result<String> {
 
 #[inline(always)]
 pub(crate) fn distro() -> Result<String> {
-    Err(Error::from(ErrorKind::Unsupported))
+    Ok("Emulated".to_string())
 }
 
 #[inline(always)]
