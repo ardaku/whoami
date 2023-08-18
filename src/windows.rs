@@ -181,7 +181,8 @@ pub(crate) fn realname_os() -> Result<OsString> {
         ) == 0
     };
     if fail {
-        return Err(Error::last_os_error());
+        // Fallback to username
+        return username_os();
     }
     debug_assert_eq!(buf_size, name_len + 1);
     unsafe {
@@ -193,12 +194,12 @@ pub(crate) fn realname_os() -> Result<OsString> {
 }
 
 #[inline(always)]
-pub(crate) fn devicename() -> String {
-    string_from_os(devicename_os())
+pub(crate) fn devicename() -> Result<String> {
+    Ok(string_from_os(devicename_os()?))
 }
 
 #[inline(always)]
-pub(crate) fn devicename_os() -> OsString {
+pub(crate) fn devicename_os() -> Result<OsString> {
     // Step 1. Retreive the entire length of the device name
     let mut size = 0;
     let success = unsafe {
@@ -223,21 +224,22 @@ pub(crate) fn devicename_os() -> OsString {
         ) == 0
     };
     if fail {
-        return "Unknown".to_string().into();
+        // Fallback to hostname
+        return hostname_os();
     }
     unsafe {
         name.set_len(size.try_into().unwrap_or(std::usize::MAX));
     }
 
     // Step 3. Convert to Rust String
-    OsString::from_wide(&name)
+    Ok(OsString::from_wide(&name))
 }
 
-pub(crate) fn hostname() -> String {
-    string_from_os(hostname_os())
+pub(crate) fn hostname() -> Result<String> {
+    Ok(string_from_os(hostname_os()?))
 }
 
-fn hostname_os() -> OsString {
+fn hostname_os() -> Result<OsString> {
     // Step 1. Retreive the entire length of the username
     let mut size = 0;
     let fail = unsafe {
@@ -262,21 +264,21 @@ fn hostname_os() -> OsString {
         ) == 0
     };
     if fail {
-        return "localhost".to_string().into();
+        return Err(Error::last_os_error());
     }
     unsafe {
         name.set_len(size.try_into().unwrap_or(std::usize::MAX));
     }
 
     // Step 3. Convert to Rust String
-    OsString::from_wide(&name)
+    Ok(OsString::from_wide(&name))
 }
 
-pub(crate) fn distro_os() -> Option<OsString> {
+pub(crate) fn distro_os() -> Result<OsString> {
     distro().map(|a| a.into())
 }
 
-pub(crate) fn distro() -> Option<String> {
+pub(crate) fn distro() -> Result<String> {
     // Due to MingW Limitations, we must dynamically load ntdll.dll
     extern "system" {
         fn LoadLibraryExW(
@@ -298,7 +300,7 @@ pub(crate) fn distro() -> Option<String> {
     let func = unsafe { GetProcAddress(inst, path) };
 
     if func.is_null() {
-        return Some("Windows (Unknown)".to_string());
+        return Ok("Windows (Unknown)".to_string());
     }
 
     let get_version: unsafe extern "system" fn(a: *mut OsVersionInfoEx) -> u32 =
@@ -329,7 +331,7 @@ pub(crate) fn distro() -> Option<String> {
         product
     );
 
-    Some(out)
+    Ok(out)
 }
 
 #[inline(always)]

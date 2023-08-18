@@ -295,49 +295,50 @@ pub(crate) fn realname_os() -> Result<OsString> {
 }
 
 #[cfg(not(target_os = "macos"))]
-pub(crate) fn devicename_os() -> OsString {
-    devicename().into()
+pub(crate) fn devicename_os() -> Result<OsString> {
+    Ok(devicename()?.into())
 }
 
 #[cfg(not(any(target_os = "macos", target_os = "illumos")))]
-pub(crate) fn devicename() -> String {
-    if let Ok(program) = std::fs::read("/etc/machine-info") {
-        let distro = String::from_utf8_lossy(&program);
+pub(crate) fn devicename() -> Result<String> {
+    if let Ok(machine_info) = std::fs::read("/etc/machine-info") {
+        let machine_info = String::from_utf8_lossy(&machine_info);
 
-        for i in distro.split('\n') {
+        for i in machine_info.split('\n') {
             let mut j = i.split('=');
 
             if j.next() == Some("PRETTY_HOSTNAME") {
                 if let Some(value) = j.next() {
-                    return value.trim_matches('"').to_string();
+                    return Ok(value.trim_matches('"').to_string());
                 }
             }
         }
     }
-    fancy_fallback(Err(hostname()))
+
+    Ok(fancy_fallback(Err(hostname()?)))
 }
 
 #[cfg(target_os = "macos")]
-pub(crate) fn devicename() -> String {
-    string_from_os(devicename_os())
+pub(crate) fn devicename() -> Result<String> {
+    Ok(string_from_os(devicename_os()?))
 }
 
 #[cfg(target_os = "macos")]
-pub(crate) fn devicename_os() -> OsString {
+pub(crate) fn devicename_os() -> Result<OsString> {
     let out = os_from_cfstring(unsafe {
         SCDynamicStoreCopyComputerName(null_mut(), null_mut())
     });
     let computer = if out.as_bytes().is_empty() {
-        Err(hostname_os())
+        Err(hostname_os()?)
     } else {
         Ok(out)
     };
 
-    fancy_fallback_os(computer)
+    Ok(fancy_fallback_os(computer))
 }
 
 #[cfg(target_os = "illumos")]
-pub(crate) fn devicename() -> String {
+pub(crate) fn devicename() -> Result<String> {
     if let Ok(program) = std::fs::read("/etc/nodename") {
         let mut nodename = String::from_utf8_lossy(&program).to_string();
 
@@ -347,25 +348,30 @@ pub(crate) fn devicename() -> String {
         return nodename;
     }
 
-    fancy_fallback(Err(hostname()))
+    Ok(fancy_fallback(Err(hostname()?)))
 }
 
-pub(crate) fn hostname() -> String {
-    string_from_os(hostname_os())
+pub(crate) fn hostname() -> Result<String> {
+    Ok(string_from_os(hostname_os()?))
 }
 
-fn hostname_os() -> OsString {
+fn hostname_os() -> Result<OsString> {
     // Maximum hostname length = 255, plus a NULL byte.
     let mut string = Vec::<u8>::with_capacity(256);
+
     unsafe {
-        gethostname(string.as_mut_ptr() as *mut c_void, 255);
+        if gethostname(string.as_mut_ptr() as *mut c_void, 255) == -1 {
+            return Err(Error::last_os_error());
+        }
+
         string.set_len(strlen(string.as_ptr() as *const c_void));
     };
-    OsString::from_vec(string)
+
+    Ok(OsString::from_vec(string))
 }
 
 #[cfg(target_os = "macos")]
-fn distro_xml(data: String) -> Option<String> {
+fn distro_xml(data: String) -> Result<String> {
     let mut product_name = None;
     let mut user_visible_version = None;
     if let Some(start) = data.find("<dict>") {
@@ -405,24 +411,29 @@ fn distro_xml(data: String) -> Option<String> {
             }
         }
     }
-    if let Some(product_name) = product_name {
+
+    Ok(if let Some(product_name) = product_name {
         if let Some(user_visible_version) = user_visible_version {
-            Some(format!("{} {}", product_name, user_visible_version))
+            format!("{} {}", product_name, user_visible_version)
         } else {
-            Some(product_name.to_string())
+            product_name.to_string()
         }
     } else {
-        user_visible_version.map(|v| format!("Mac OS (Unknown) {}", v))
-    }
+        user_visible_version
+            .map(|v| format!("Mac OS (Unknown) {}", v))
+            .ok_or_else(|| {
+                Error::new(ErrorKind::InvalidData, "Parsing failed")
+            })?
+    })
 }
 
 #[cfg(target_os = "macos")]
-pub(crate) fn distro_os() -> Option<OsString> {
+pub(crate) fn distro_os() -> Result<OsString> {
     distro().map(|a| a.into())
 }
 
 #[cfg(target_os = "macos")]
-pub(crate) fn distro() -> Option<String> {
+pub(crate) fn distro() -> Result<String> {
     if let Ok(data) = std::fs::read_to_string(
         "/System/Library/CoreServices/ServerVersion.plist",
     ) {
@@ -432,34 +443,43 @@ pub(crate) fn distro() -> Option<String> {
     ) {
         distro_xml(data)
     } else {
-        None
+        Err(Error::new(ErrorKind::NotFound, "Missing record"))
     }
 }
 
 #[cfg(not(target_os = "macos"))]
-pub(crate) fn distro_os() -> Option<OsString> {
+pub(crate) fn distro_os() -> Result<OsString> {
     distro().map(|a| a.into())
 }
 
 #[cfg(not(target_os = "macos"))]
-pub(crate) fn distro() -> Option<String> {
-    let program = std::fs::read("/etc/os-release").ok()?;
+pub(crate) fn distro() -> Result<String> {
+    let program = std::fs::read("/etc/os-release")?;
     let distro = String::from_utf8_lossy(&program);
+    let err = || Error::new(ErrorKind::InvalidData, "Parsing failed");
     let mut fallback = None;
 
     for i in distro.split('\n') {
         let mut j = i.split('=');
 
-        match j.next()? {
+        match j.next().ok_or_else(err)? {
             "PRETTY_NAME" => {
-                return Some(j.next()?.trim_matches('"').to_string());
+                return Ok(j
+                    .next()
+                    .ok_or_else(err)?
+                    .trim_matches('"')
+                    .to_string());
             }
-            "NAME" => fallback = Some(j.next()?.trim_matches('"').to_string()),
+            "NAME" => {
+                fallback = Some(
+                    j.next().ok_or_else(err)?.trim_matches('"').to_string(),
+                )
+            }
             _ => {}
         }
     }
 
-    fallback
+    fallback.ok_or_else(err)
 }
 
 #[cfg(target_os = "macos")]

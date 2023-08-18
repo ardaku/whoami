@@ -71,6 +71,7 @@
 )]
 
 const DEFAULT_USERNAME: &str = "Unknown";
+const DEFAULT_HOSTNAME: &str = "localhost";
 
 pub mod fallible;
 
@@ -430,7 +431,7 @@ pub fn realname_os() -> OsString {
 /// Often used to identify device for bluetooth pairing.
 #[inline(always)]
 pub fn devicename() -> String {
-    platform::devicename()
+    fallible::devicename().unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string())
 }
 
 /// Get the device name (also known as "Pretty Name").
@@ -438,7 +439,8 @@ pub fn devicename() -> String {
 /// Often used to identify device for bluetooth pairing.
 #[inline(always)]
 pub fn devicename_os() -> OsString {
-    platform::devicename_os()
+    fallible::devicename_os()
+        .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string().into())
 }
 
 /// Get the host device's hostname.
@@ -449,9 +451,7 @@ pub fn devicename_os() -> OsString {
 /// [`devicename()`]).
 #[inline(always)]
 pub fn hostname() -> String {
-    let mut hostname = platform::hostname();
-    hostname.make_ascii_lowercase();
-    hostname
+    fallible::hostname().unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string())
 }
 
 /// Get the host device's hostname.
@@ -462,7 +462,8 @@ pub fn hostname() -> String {
 /// [`devicename()`]).
 #[inline(always)]
 pub fn hostname_os() -> OsString {
-    hostname().into()
+    fallible::hostname_os()
+        .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string().into())
 }
 
 /// Get the name of the operating system distribution and (possibly) version.
@@ -470,7 +471,7 @@ pub fn hostname_os() -> OsString {
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn distro() -> String {
-    platform::distro().unwrap_or_else(|| format!("Unknown {}", platform()))
+    fallible::distro().unwrap_or_else(|_| format!("Unknown {}", platform()))
 }
 
 /// Get the name of the operating system distribution and (possibly) version.
@@ -478,8 +479,8 @@ pub fn distro() -> String {
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn distro_os() -> OsString {
-    platform::distro_os()
-        .unwrap_or_else(|| format!("Unknown {}", platform()).into())
+    fallible::distro_os()
+        .unwrap_or_else(|_| format!("Unknown {}", platform()).into())
 }
 
 /// Get the desktop environment.

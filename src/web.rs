@@ -1,7 +1,10 @@
 #[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
 compile_error!("Unexpected pointer width for target platform");
 
-use std::ffi::OsString;
+use std::{
+    ffi::OsString,
+    io::{Error, ErrorKind},
+};
 
 use wasm_bindgen::JsValue;
 use web_sys::window;
@@ -63,12 +66,12 @@ pub(crate) fn realname_os() -> Result<OsString> {
 }
 
 #[inline(always)]
-pub(crate) fn devicename_os() -> OsString {
-    devicename().into()
+pub(crate) fn devicename_os() -> Result<OsString> {
+    Ok(devicename()?.into())
 }
 
 #[inline(always)]
-pub(crate) fn distro_os() -> Option<OsString> {
+pub(crate) fn distro_os() -> Result<OsString> {
     distro().map(|a| a.into())
 }
 
@@ -82,13 +85,13 @@ pub(crate) fn realname() -> Result<String> {
     Ok("Anonymous".to_string())
 }
 
-pub(crate) fn devicename() -> String {
+pub(crate) fn devicename() -> Result<String> {
     let orig_string = user_agent().unwrap_or_default();
 
     let start = if let Some(s) = orig_string.rfind(' ') {
         s
     } else {
-        return "Unknown Browser".to_string();
+        return Ok("Unknown Browser".to_string());
     };
 
     let string = orig_string
@@ -96,7 +99,7 @@ pub(crate) fn devicename() -> String {
         .unwrap_or("Unknown Browser")
         .replace('/', " ");
 
-    if let Some(s) = string.rfind("Safari") {
+    Ok(if let Some(s) = string.rfind("Safari") {
         if let Some(s) = orig_string.rfind("Chrome") {
             if let Some(e) = orig_string.get(s..).unwrap_or_default().find(' ')
             {
@@ -120,43 +123,44 @@ pub(crate) fn devicename() -> String {
         string.replace("OPR ", "Opera ")
     } else {
         string
-    }
+    })
 }
 
 #[inline(always)]
-pub(crate) fn hostname() -> String {
-    document_domain()
+pub(crate) fn hostname() -> Result<String> {
+    Ok(document_domain()
         .filter(|x| !x.is_empty())
-        .unwrap_or_else(|| "localhost".to_string())
+        .unwrap_or_else(|| "localhost".to_string()))
 }
 
-pub(crate) fn distro() -> Option<String> {
-    let string = user_agent()?;
-
-    let begin = string.find('(')?;
-    let end = string.find(')')?;
+pub(crate) fn distro() -> Result<String> {
+    let string =
+        user_agent().ok_or_else(|| Error::from(ErrorKind::PermissionDenied))?;
+    let err = || Error::new(ErrorKind::InvalidData, "Parsing failed");
+    let begin = string.find('(').ok_or_else(err)?;
+    let end = string.find(')').ok_or_else(err)?;
     let string = &string[begin + 1..end];
 
-    if string.contains("Win32") || string.contains("Win64") {
+    Ok(if string.contains("Win32") || string.contains("Win64") {
         let begin = if let Some(b) = string.find("NT") {
             b
         } else {
-            return Some("Windows".to_string());
+            return Ok("Windows".to_string());
         };
         let end = if let Some(e) = string.find('.') {
             e
         } else {
-            return Some("Windows".to_string());
+            return Ok("Windows".to_string());
         };
         let string = &string[begin + 3..end];
 
-        Some(format!("Windows {}", string))
+        format!("Windows {}", string)
     } else if string.contains("Linux") {
         let string = if string.contains("X11") || string.contains("Wayland") {
             let begin = if let Some(b) = string.find(';') {
                 b
             } else {
-                return Some("Unknown Linux".to_string());
+                return Ok("Unknown Linux".to_string());
             };
             &string[begin + 2..]
         } else {
@@ -164,21 +168,21 @@ pub(crate) fn distro() -> Option<String> {
         };
 
         if string.starts_with("Linux") {
-            Some("Unknown Linux".to_string())
+            "Unknown Linux".to_string()
         } else {
             let end = if let Some(e) = string.find(';') {
                 e
             } else {
-                return Some("Unknown Linux".to_string());
+                return Ok("Unknown Linux".to_string());
             };
-            Some(string[..end].to_string())
+            string[..end].to_string()
         }
     } else if let Some(begin) = string.find("Mac OS X") {
-        Some(if let Some(end) = string[begin..].find(';') {
+        if let Some(end) = string[begin..].find(';') {
             string[begin..begin + end].to_string()
         } else {
             string[begin..].to_string().replace('_', ".")
-        })
+        }
     } else {
         // TODO:
         // Platform::FreeBsd,
@@ -190,8 +194,8 @@ pub(crate) fn distro() -> Option<String> {
         // Platform::Dive,
         // Platform::Fuchsia,
         // Platform::Redox
-        Some(string.to_string())
-    }
+        string.to_string()
+    })
 }
 
 pub(crate) const fn desktop_env() -> DesktopEnv {

@@ -3,7 +3,10 @@
 #[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
 compile_error!("Unexpected pointer width for target platform");
 
-use std::ffi::OsString;
+use std::{
+    ffi::OsString,
+    io::{Error, ErrorKind},
+};
 
 use crate::{Arch, DesktopEnv, Platform, Result};
 
@@ -28,7 +31,7 @@ pub(crate) fn devicename_os() -> OsString {
 }
 
 #[inline(always)]
-pub(crate) fn distro_os() -> Option<OsString> {
+pub(crate) fn distro_os() -> Result<OsString> {
     distro().map(|a| a.into())
 }
 
@@ -43,18 +46,18 @@ pub(crate) fn realname() -> Result<String> {
 }
 
 #[inline(always)]
-pub(crate) fn devicename() -> String {
-    "Unknown".to_string()
+pub(crate) fn devicename() -> Result<String> {
+    Ok("Unknown".to_string())
 }
 
 #[inline(always)]
-pub(crate) fn hostname() -> String {
-    "localhost".to_string()
+pub(crate) fn hostname() -> Result<String> {
+    Ok("localhost".to_string())
 }
 
 #[inline(always)]
-pub(crate) fn distro() -> Option<String> {
-    None
+pub(crate) fn distro() -> Result<String> {
+    Err(Error::from(ErrorKind::Unsupported))
 }
 
 #[inline(always)]
