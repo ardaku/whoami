@@ -3,10 +3,7 @@
 #[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
 compile_error!("Unexpected pointer width for target platform");
 
-use std::{
-    ffi::OsString,
-    io::{Error, ErrorKind},
-};
+use std::ffi::OsString;
 
 use crate::{Arch, DesktopEnv, Platform, Result};
 
