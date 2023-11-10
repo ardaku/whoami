@@ -295,12 +295,20 @@ pub(crate) fn distro() -> Result<String> {
 
     let inst = unsafe { LoadLibraryExW(path, 0, 0x0000_0800) };
 
+    if inst.is_null() {
+        return Err(Error::last_os_error());
+    }
+
     let mut path = "RtlGetVersion\0".bytes().collect::<Vec<u8>>();
     let path = path.as_mut_ptr();
     let func = unsafe { GetProcAddress(inst, path) };
 
     if func.is_null() {
-        return Ok("Windows (Unknown)".to_string());
+        if unsafe { FreeLibrary(inst) } == 0 {
+            return Err(Error::last_os_error());
+        }
+
+        return Err(Error::last_os_error());
     }
 
     let get_version: unsafe extern "system" fn(a: *mut OsVersionInfoEx) -> u32 =
@@ -312,7 +320,11 @@ pub(crate) fn distro() -> Result<String> {
         (*version.as_mut_ptr()).os_version_info_size =
             std::mem::size_of::<OsVersionInfoEx>() as u32;
         get_version(version.as_mut_ptr());
-        FreeLibrary(inst);
+
+        if FreeLibrary(inst) == 0 {
+            return Err(Error::last_os_error());
+        }
+
         version.assume_init()
     };
 
@@ -323,15 +335,13 @@ pub(crate) fn distro() -> Result<String> {
         _ => "Unknown",
     };
 
-    let out = format!(
+    Ok(format!(
         "Windows {}.{}.{} ({})",
         version.major_version,
         version.minor_version,
         version.build_number,
-        product
-    );
-
-    Ok(out)
+        product,
+    ))
 }
 
 #[inline(always)]
