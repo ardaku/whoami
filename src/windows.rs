@@ -282,25 +282,28 @@ pub(crate) fn distro() -> Result<String> {
     // Due to MingW Limitations, we must dynamically load ntdll.dll
     extern "system" {
         fn LoadLibraryExW(
-            filename: *mut u16,
-            hfile: isize,
-            dwflags: u32,
-        ) -> isize;
-        fn FreeLibrary(hmodule: isize) -> i32;
-        fn GetProcAddress(hmodule: isize, procname: *mut u8) -> *mut c_void;
+            filename: *const u16,
+            hfile: *mut c_void,
+            dwflags: c_ulong,
+        ) -> *mut c_void;
+        fn FreeLibrary(hmodule: *mut c_void) -> i32;
+        fn GetProcAddress(
+            hmodule: *mut c_void,
+            procname: *const c_char,
+        ) -> *mut c_void;
     }
 
     let mut path = "ntdll.dll\0".encode_utf16().collect::<Vec<u16>>();
     let path = path.as_mut_ptr();
 
-    let inst = unsafe { LoadLibraryExW(path, 0, 0x0000_0800) };
+    let inst = unsafe { LoadLibraryExW(path, ptr::null_mut(), 0x0000_0800) };
 
     if inst.is_null() {
         return Err(Error::last_os_error());
     }
 
     let mut path = "RtlGetVersion\0".bytes().collect::<Vec<u8>>();
-    let path = path.as_mut_ptr();
+    let path = path.as_mut_ptr().cast();
     let func = unsafe { GetProcAddress(inst, path) };
 
     if func.is_null() {
@@ -383,7 +386,7 @@ pub(crate) fn lang() -> impl Iterator<Item = String> {
             GetUserPreferredUILanguages(
                 0x08, /* MUI_LANGUAGE_NAME */
                 &mut num_languages,
-                std::ptr::null_mut(), // List of languages.
+                ptr::null_mut(), // List of languages.
                 &mut buffer_size,
             ),
             0
