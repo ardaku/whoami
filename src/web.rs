@@ -72,7 +72,7 @@ pub(crate) fn devicename_os() -> Result<OsString> {
 
 #[inline(always)]
 pub(crate) fn distro_os() -> Result<OsString> {
-    distro().map(|a| a.into())
+    Ok(distro()?.into())
 }
 
 #[inline(always)]

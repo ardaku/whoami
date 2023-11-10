@@ -342,12 +342,10 @@ pub enum Width {
 
 impl Display for Width {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let bits = match self {
+        f.write_str(match self {
             Width::Bits32 => "32 bits",
             Width::Bits64 => "64 bits",
-        };
-
-        f.write_str(bits)
+        })
     }
 }
 
@@ -381,7 +379,7 @@ impl Arch {
                 ErrorKind::InvalidData,
                 format!(
                     "Tried getting width of unknown arch ({})",
-                    unknown_arch
+                    unknown_arch,
                 ),
             )),
         }
@@ -400,7 +398,7 @@ pub fn arch() -> Arch {
 /// are not allowed in the username.
 #[inline(always)]
 pub fn username() -> String {
-    fallible::username().unwrap_or_else(|_| DEFAULT_USERNAME.to_owned())
+    fallible::username().unwrap_or_else(|_| DEFAULT_USERNAME.to_lowercase())
 }
 
 /// Get the user's username.
@@ -410,7 +408,7 @@ pub fn username() -> String {
 #[inline(always)]
 pub fn username_os() -> OsString {
     fallible::username_os()
-        .unwrap_or_else(|_| DEFAULT_USERNAME.to_owned().into())
+        .unwrap_or_else(|_| DEFAULT_USERNAME.to_lowercase().into())
 }
 
 /// Get the user's real (full) name.
