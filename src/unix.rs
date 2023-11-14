@@ -306,7 +306,7 @@ pub(crate) fn devicename() -> Result<String> {
         return Err(Error::new(ErrorKind::InvalidData, "Empty record"));
     }
 
-    return Ok(nodename);
+    Ok(nodename)
 }
 
 pub(crate) fn hostname() -> Result<String> {

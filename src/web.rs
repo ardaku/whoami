@@ -130,7 +130,7 @@ pub(crate) fn devicename() -> Result<String> {
 pub(crate) fn hostname() -> Result<String> {
     Ok(document_domain()
         .filter(|x| !x.is_empty())
-        .unwrap_or_else(|| "localhost".to_string()))
+        .ok_or_else(|| Error::new(ErrorKind::NotFound, "Domain missing")))
 }
 
 pub(crate) fn distro() -> Result<String> {
