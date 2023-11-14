@@ -128,9 +128,9 @@ pub(crate) fn devicename() -> Result<String> {
 
 #[inline(always)]
 pub(crate) fn hostname() -> Result<String> {
-    Ok(document_domain()
+    document_domain()
         .filter(|x| !x.is_empty())
-        .ok_or_else(|| Error::new(ErrorKind::NotFound, "Domain missing")))
+        .ok_or_else(|| Error::new(ErrorKind::NotFound, "Domain missing"))
 }
 
 pub(crate) fn distro() -> Result<String> {
