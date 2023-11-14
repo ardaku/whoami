@@ -9,44 +9,42 @@
 //! return [`OsString`]):
 //!
 //! ```rust
-//! fn main() {
-//!     println!(
-//!         "User's Name            whoami::realname():    {}",
-//!         whoami::realname(),
-//!     );
-//!     println!(
-//!         "User's Username        whoami::username():    {}",
-//!         whoami::username(),
-//!     );
-//!     println!(
-//!         "User's Language        whoami::lang():        {:?}",
-//!         whoami::lang().collect::<Vec<String>>(),
-//!     );
-//!     println!(
-//!         "Device's Pretty Name   whoami::devicename():  {}",
-//!         whoami::devicename(),
-//!     );
-//!     println!(
-//!         "Device's Hostname      whoami::hostname():    {}",
-//!         whoami::hostname(),
-//!     );
-//!     println!(
-//!         "Device's Platform      whoami::platform():    {}",
-//!         whoami::platform(),
-//!     );
-//!     println!(
-//!         "Device's OS Distro     whoami::distro():      {}",
-//!         whoami::distro(),
-//!     );
-//!     println!(
-//!         "Device's Desktop Env.  whoami::desktop_env(): {}",
-//!         whoami::desktop_env(),
-//!     );
-//!     println!(
-//!         "Device's CPU Arch      whoami::arch():        {}",
-//!         whoami::arch(),
-//!     );
-//! }
+//! println!(
+//!     "User's Name            whoami::realname():    {}",
+//!     whoami::realname(),
+//! );
+//! println!(
+//!     "User's Username        whoami::username():    {}",
+//!     whoami::username(),
+//! );
+//! println!(
+//!     "User's Language        whoami::lang():        {:?}",
+//!     whoami::lang().collect::<Vec<String>>(),
+//! );
+//! println!(
+//!     "Device's Pretty Name   whoami::devicename():  {}",
+//!     whoami::devicename(),
+//! );
+//! println!(
+//!     "Device's Hostname      whoami::hostname():    {}",
+//!     whoami::hostname(),
+//! );
+//! println!(
+//!     "Device's Platform      whoami::platform():    {}",
+//!     whoami::platform(),
+//! );
+//! println!(
+//!     "Device's OS Distro     whoami::distro():      {}",
+//!     whoami::distro(),
+//! );
+//! println!(
+//!     "Device's Desktop Env.  whoami::desktop_env(): {}",
+//!     whoami::desktop_env(),
+//! );
+//! println!(
+//!     "Device's CPU Arch      whoami::arch():        {}",
+//!     whoami::arch(),
+//! );
 //! ```
 
 #![warn(
@@ -69,6 +67,11 @@
     html_logo_url = "https://raw.githubusercontent.com/ardaku/whoami/stable/res/icon.svg",
     html_favicon_url = "https://raw.githubusercontent.com/ardaku/whoami/stable/res/icon.svg"
 )]
+
+const DEFAULT_USERNAME: &str = "Unknown";
+const DEFAULT_HOSTNAME: &str = "Localhost";
+
+pub mod fallible;
 
 #[allow(unsafe_code)]
 // Unix
@@ -337,12 +340,10 @@ pub enum Width {
 
 impl Display for Width {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let bits = match self {
+        f.write_str(match self {
             Width::Bits32 => "32 bits",
             Width::Bits64 => "64 bits",
-        };
-
-        f.write_str(bits)
+        })
     }
 }
 
@@ -376,7 +377,7 @@ impl Arch {
                 ErrorKind::InvalidData,
                 format!(
                     "Tried getting width of unknown arch ({})",
-                    unknown_arch
+                    unknown_arch,
                 ),
             )),
         }
@@ -392,31 +393,36 @@ pub fn arch() -> Arch {
 /// Get the user's username.
 ///
 /// On unix-systems this differs from [`realname()`] most notably in that spaces
-/// are not allowed.
+/// are not allowed in the username.
 #[inline(always)]
 pub fn username() -> String {
-    platform::username()
+    fallible::username().unwrap_or_else(|_| DEFAULT_USERNAME.to_lowercase())
 }
 
 /// Get the user's username.
 ///
-/// On unix-systems this differs from [`realname()`] most notably in that spaces
-/// are not allowed.
+/// On unix-systems this differs from [`realname_os()`] most notably in that
+/// spaces are not allowed in the username.
 #[inline(always)]
 pub fn username_os() -> OsString {
-    platform::username_os()
+    fallible::username_os()
+        .unwrap_or_else(|_| DEFAULT_USERNAME.to_lowercase().into())
 }
 
 /// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname() -> String {
-    platform::realname()
+    fallible::realname()
+        .or_else(|_| fallible::username())
+        .unwrap_or_else(|_| DEFAULT_USERNAME.to_owned())
 }
 
 /// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname_os() -> OsString {
-    platform::realname_os()
+    fallible::realname_os()
+        .or_else(|_| fallible::username_os())
+        .unwrap_or_else(|_| DEFAULT_USERNAME.to_owned().into())
 }
 
 /// Get the device name (also known as "Pretty Name").
@@ -424,7 +430,9 @@ pub fn realname_os() -> OsString {
 /// Often used to identify device for bluetooth pairing.
 #[inline(always)]
 pub fn devicename() -> String {
-    platform::devicename()
+    fallible::devicename()
+        .or_else(|_| fallible::hostname())
+        .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string())
 }
 
 /// Get the device name (also known as "Pretty Name").
@@ -432,7 +440,9 @@ pub fn devicename() -> String {
 /// Often used to identify device for bluetooth pairing.
 #[inline(always)]
 pub fn devicename_os() -> OsString {
-    platform::devicename_os()
+    fallible::devicename_os()
+        .or_else(|_| fallible::hostname_os())
+        .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string().into())
 }
 
 /// Get the host device's hostname.
@@ -443,9 +453,7 @@ pub fn devicename_os() -> OsString {
 /// [`devicename()`]).
 #[inline(always)]
 pub fn hostname() -> String {
-    let mut hostname = platform::hostname();
-    hostname.make_ascii_lowercase();
-    hostname
+    fallible::hostname().unwrap_or_else(|_| DEFAULT_HOSTNAME.to_lowercase())
 }
 
 /// Get the host device's hostname.
@@ -456,7 +464,8 @@ pub fn hostname() -> String {
 /// [`devicename()`]).
 #[inline(always)]
 pub fn hostname_os() -> OsString {
-    hostname().into()
+    fallible::hostname_os()
+        .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_lowercase().into())
 }
 
 /// Get the name of the operating system distribution and (possibly) version.
@@ -464,7 +473,7 @@ pub fn hostname_os() -> OsString {
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn distro() -> String {
-    platform::distro().unwrap_or_else(|| format!("Unknown {}", platform()))
+    fallible::distro().unwrap_or_else(|_| format!("Unknown {}", platform()))
 }
 
 /// Get the name of the operating system distribution and (possibly) version.
@@ -472,8 +481,8 @@ pub fn distro() -> String {
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn distro_os() -> OsString {
-    platform::distro_os()
-        .unwrap_or_else(|| format!("Unknown {}", platform()).into())
+    fallible::distro_os()
+        .unwrap_or_else(|_| format!("Unknown {}", platform()).into())
 }
 
 /// Get the desktop environment.

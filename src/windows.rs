@@ -1,6 +1,7 @@
 use std::{
     convert::TryInto,
     ffi::OsString,
+    io::Error,
     mem::MaybeUninit,
     os::{
         raw::{c_char, c_int, c_uchar, c_ulong, c_ushort, c_void},
@@ -9,7 +10,7 @@ use std::{
     ptr,
 };
 
-use crate::{Arch, DesktopEnv, Platform};
+use crate::{Arch, DesktopEnv, Platform, Result};
 
 #[repr(C)]
 struct OsVersionInfoEx {
@@ -74,9 +75,11 @@ enum ComputerNameFormat {
     Max,
 }
 
+const ERR_MORE_DATA: i32 = 0xEA;
+const ERR_INSUFFICIENT_BUFFER: i32 = 0x7A;
+
 #[link(name = "secur32")]
 extern "system" {
-    fn GetLastError() -> c_ulong;
     fn GetUserNameExW(
         a: ExtendedNameFormat,
         b: *mut c_char,
@@ -109,18 +112,22 @@ fn string_from_os(string: OsString) -> String {
     }
 }
 
-pub(crate) fn username() -> String {
-    string_from_os(username_os())
+pub(crate) fn username() -> Result<String> {
+    Ok(string_from_os(username_os()?))
 }
 
-pub(crate) fn username_os() -> OsString {
+pub(crate) fn username_os() -> Result<OsString> {
     // Step 1. Retreive the entire length of the username
     let mut size = 0;
-    let success = unsafe {
+    let fail = unsafe {
         // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
         GetUserNameW(ptr::null_mut(), &mut size) == 0
     };
-    assert!(success);
+    assert!(fail);
+
+    if Error::last_os_error().raw_os_error() != Some(ERR_INSUFFICIENT_BUFFER) {
+        return Err(Error::last_os_error());
+    }
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
     let mut name: Vec<u16> =
@@ -130,7 +137,7 @@ pub(crate) fn username_os() -> OsString {
     let fail =
         unsafe { GetUserNameW(name.as_mut_ptr().cast(), &mut size) == 0 };
     if fail {
-        return "unknown".to_string().into();
+        return Err(Error::last_os_error());
     }
     debug_assert_eq!(orig_size, size);
     unsafe {
@@ -140,32 +147,30 @@ pub(crate) fn username_os() -> OsString {
     debug_assert_eq!(terminator, Some(0u16));
 
     // Step 3. Convert to Rust String
-    OsString::from_wide(&name)
+    Ok(OsString::from_wide(&name))
 }
 
 #[inline(always)]
-pub(crate) fn realname() -> String {
-    string_from_os(realname_os())
+pub(crate) fn realname() -> Result<String> {
+    Ok(string_from_os(realname_os()?))
 }
 
 #[inline(always)]
-pub(crate) fn realname_os() -> OsString {
+pub(crate) fn realname_os() -> Result<OsString> {
     // Step 1. Retrieve the entire length of the username
     let mut buf_size = 0;
-    let success = unsafe {
+    let fail = unsafe {
         GetUserNameExW(
             ExtendedNameFormat::Display,
             ptr::null_mut(),
             &mut buf_size,
         ) == 0
     };
-    assert!(success);
-    match unsafe { GetLastError() } {
-        0x00EA /* more data */ => { /* Success, continue */ }
-        _ /* network error or none mapped */ => {
-            // Fallback to username
-            return username_os();
-        }
+
+    assert!(fail);
+
+    if Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
+        return Err(Error::last_os_error());
     }
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
@@ -180,27 +185,29 @@ pub(crate) fn realname_os() -> OsString {
         ) == 0
     };
     if fail {
-        return "Unknown".to_string().into();
+        return Err(Error::last_os_error());
     }
-    debug_assert_eq!(buf_size, name_len + 1);
+
+    assert_eq!(buf_size, name_len + 1);
+
     unsafe {
         name.set_len(name_len.try_into().unwrap_or(std::usize::MAX));
     }
 
     // Step 3. Convert to Rust String
-    OsString::from_wide(&name)
+    Ok(OsString::from_wide(&name))
 }
 
 #[inline(always)]
-pub(crate) fn devicename() -> String {
-    string_from_os(devicename_os())
+pub(crate) fn devicename() -> Result<String> {
+    Ok(string_from_os(devicename_os()?))
 }
 
 #[inline(always)]
-pub(crate) fn devicename_os() -> OsString {
+pub(crate) fn devicename_os() -> Result<OsString> {
     // Step 1. Retreive the entire length of the device name
     let mut size = 0;
-    let success = unsafe {
+    let fail = unsafe {
         // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
         GetComputerNameExW(
             ComputerNameFormat::DnsHostname,
@@ -208,35 +215,41 @@ pub(crate) fn devicename_os() -> OsString {
             &mut size,
         ) == 0
     };
-    assert!(success);
+
+    assert!(fail);
+
+    if Error::last_os_error().raw_os_error() != Some(ERR_INSUFFICIENT_BUFFER) {
+        return Err(Error::last_os_error());
+    }
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
     let mut name: Vec<u16> =
         Vec::with_capacity(size.try_into().unwrap_or(std::usize::MAX));
-    size = name.capacity().try_into().unwrap_or(std::u32::MAX);
-    let fail = unsafe {
+    let mut size = name.capacity().try_into().unwrap_or(std::u32::MAX);
+
+    if unsafe {
         GetComputerNameExW(
             ComputerNameFormat::DnsHostname,
             name.as_mut_ptr().cast(),
             &mut size,
         ) == 0
-    };
-    if fail {
-        return "Unknown".to_string().into();
+    } {
+        return Err(Error::last_os_error());
     }
+
     unsafe {
         name.set_len(size.try_into().unwrap_or(std::usize::MAX));
     }
 
     // Step 3. Convert to Rust String
-    OsString::from_wide(&name)
+    Ok(OsString::from_wide(&name))
 }
 
-pub(crate) fn hostname() -> String {
-    string_from_os(hostname_os())
+pub(crate) fn hostname() -> Result<String> {
+    Ok(string_from_os(hostname_os()?))
 }
 
-fn hostname_os() -> OsString {
+fn hostname_os() -> Result<OsString> {
     // Step 1. Retreive the entire length of the username
     let mut size = 0;
     let fail = unsafe {
@@ -247,57 +260,74 @@ fn hostname_os() -> OsString {
             &mut size,
         ) == 0
     };
-    debug_assert!(fail);
+
+    assert!(fail);
+
+    if Error::last_os_error().raw_os_error() != Some(ERR_INSUFFICIENT_BUFFER) {
+        return Err(Error::last_os_error());
+    }
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
     let mut name: Vec<u16> =
         Vec::with_capacity(size.try_into().unwrap_or(std::usize::MAX));
-    size = name.capacity().try_into().unwrap_or(std::u32::MAX);
-    let fail = unsafe {
+    let mut size = name.capacity().try_into().unwrap_or(std::u32::MAX);
+
+    if unsafe {
         GetComputerNameExW(
             ComputerNameFormat::NetBIOS,
             name.as_mut_ptr().cast(),
             &mut size,
         ) == 0
-    };
-    if fail {
-        return "localhost".to_string().into();
+    } {
+        return Err(Error::last_os_error());
     }
+
     unsafe {
         name.set_len(size.try_into().unwrap_or(std::usize::MAX));
     }
 
     // Step 3. Convert to Rust String
-    OsString::from_wide(&name)
+    Ok(OsString::from_wide(&name))
 }
 
-pub(crate) fn distro_os() -> Option<OsString> {
+pub(crate) fn distro_os() -> Result<OsString> {
     distro().map(|a| a.into())
 }
 
-pub(crate) fn distro() -> Option<String> {
+pub(crate) fn distro() -> Result<String> {
     // Due to MingW Limitations, we must dynamically load ntdll.dll
     extern "system" {
         fn LoadLibraryExW(
-            filename: *mut u16,
-            hfile: isize,
-            dwflags: u32,
-        ) -> isize;
-        fn FreeLibrary(hmodule: isize) -> i32;
-        fn GetProcAddress(hmodule: isize, procname: *mut u8) -> *mut c_void;
+            filename: *const u16,
+            hfile: *mut c_void,
+            dwflags: c_ulong,
+        ) -> *mut c_void;
+        fn FreeLibrary(hmodule: *mut c_void) -> i32;
+        fn GetProcAddress(
+            hmodule: *mut c_void,
+            procname: *const c_char,
+        ) -> *mut c_void;
     }
 
     let mut path = "ntdll.dll\0".encode_utf16().collect::<Vec<u16>>();
     let path = path.as_mut_ptr();
 
-    let inst = unsafe { LoadLibraryExW(path, 0, 0x0000_0800) };
+    let inst = unsafe { LoadLibraryExW(path, ptr::null_mut(), 0x0000_0800) };
+
+    if inst.is_null() {
+        return Err(Error::last_os_error());
+    }
 
     let mut path = "RtlGetVersion\0".bytes().collect::<Vec<u8>>();
-    let path = path.as_mut_ptr();
+    let path = path.as_mut_ptr().cast();
     let func = unsafe { GetProcAddress(inst, path) };
 
     if func.is_null() {
-        return Some("Windows (Unknown)".to_string());
+        if unsafe { FreeLibrary(inst) } == 0 {
+            return Err(Error::last_os_error());
+        }
+
+        return Err(Error::last_os_error());
     }
 
     let get_version: unsafe extern "system" fn(a: *mut OsVersionInfoEx) -> u32 =
@@ -309,7 +339,11 @@ pub(crate) fn distro() -> Option<String> {
         (*version.as_mut_ptr()).os_version_info_size =
             std::mem::size_of::<OsVersionInfoEx>() as u32;
         get_version(version.as_mut_ptr());
-        FreeLibrary(inst);
+
+        if FreeLibrary(inst) == 0 {
+            return Err(Error::last_os_error());
+        }
+
         version.assume_init()
     };
 
@@ -320,15 +354,13 @@ pub(crate) fn distro() -> Option<String> {
         _ => "Unknown",
     };
 
-    let out = format!(
+    Ok(format!(
         "Windows {}.{}.{} ({})",
         version.major_version,
         version.minor_version,
         version.build_number,
-        product
-    );
-
-    Some(out)
+        product,
+    ))
 }
 
 #[inline(always)]
@@ -352,6 +384,7 @@ impl Iterator for LangIter {
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(value) = self.array.get(self.index) {
             self.index += 1;
+
             Some(value.to_string())
         } else {
             None
@@ -370,7 +403,7 @@ pub(crate) fn lang() -> impl Iterator<Item = String> {
             GetUserPreferredUILanguages(
                 0x08, /* MUI_LANGUAGE_NAME */
                 &mut num_languages,
-                std::ptr::null_mut(), // List of languages.
+                ptr::null_mut(), // List of languages.
                 &mut buffer_size,
             ),
             0

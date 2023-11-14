@@ -5,7 +5,7 @@ compile_error!("Unexpected pointer width for target platform");
 
 use std::ffi::OsString;
 
-use crate::{Arch, DesktopEnv, Platform};
+use crate::{Arch, DesktopEnv, Platform, Result};
 
 #[inline(always)]
 pub(crate) fn lang() -> impl Iterator<Item = String> {
@@ -13,48 +13,48 @@ pub(crate) fn lang() -> impl Iterator<Item = String> {
 }
 
 #[inline(always)]
-pub(crate) fn username_os() -> OsString {
-    username().into()
+pub(crate) fn username_os() -> Result<OsString> {
+    Ok(username()?.into())
 }
 
 #[inline(always)]
-pub(crate) fn realname_os() -> OsString {
-    realname().into()
+pub(crate) fn realname_os() -> Result<OsString> {
+    Ok(realname()?.into())
 }
 
 #[inline(always)]
-pub(crate) fn devicename_os() -> OsString {
-    devicename().into()
+pub(crate) fn devicename_os() -> Result<OsString> {
+    Ok(devicename()?.into())
 }
 
 #[inline(always)]
-pub(crate) fn distro_os() -> Option<OsString> {
-    distro().map(|a| a.into())
+pub(crate) fn distro_os() -> Result<OsString> {
+    Ok(distro()?.into())
 }
 
 #[inline(always)]
-pub(crate) fn username() -> String {
-    "anonymous".to_string()
+pub(crate) fn username() -> Result<String> {
+    Ok("anonymous".to_string())
 }
 
 #[inline(always)]
-pub(crate) fn realname() -> String {
-    "Anonymous".to_string()
+pub(crate) fn realname() -> Result<String> {
+    Ok("Anonymous".to_string())
 }
 
 #[inline(always)]
-pub(crate) fn devicename() -> String {
-    "Unknown".to_string()
+pub(crate) fn devicename() -> Result<String> {
+    Ok("Unknown".to_string())
 }
 
 #[inline(always)]
-pub(crate) fn hostname() -> String {
-    "localhost".to_string()
+pub(crate) fn hostname() -> Result<String> {
+    Ok("localhost".to_string())
 }
 
 #[inline(always)]
-pub(crate) fn distro() -> Option<String> {
-    None
+pub(crate) fn distro() -> Result<String> {
+    Ok("Emulated".to_string())
 }
 
 #[inline(always)]
