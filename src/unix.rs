@@ -128,37 +128,44 @@ fn string_from_os(string: OsString) -> String {
     }
 }
 
-fn os_from_cstring_gecos(string: *const c_void) -> Option<OsString> {
+fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
     if string.is_null() {
-        return None;
+        return Err(Error::new(ErrorKind::NotFound, "Null record"));
     }
 
     // Get a byte slice of the c string.
     let slice = unsafe {
         let length = strlen_gecos(string);
+
         if length == 0 {
-            return None;
+            return Err(Error::new(ErrorKind::InvalidData, "Empty record"));
         }
-        std::slice::from_raw_parts(string as *const u8, length)
+
+        std::slice::from_raw_parts(string.cast(), length)
     };
 
     // Turn byte slice into Rust String.
-    Some(OsString::from_vec(slice.to_vec()))
+    Ok(OsString::from_vec(slice.to_vec()))
 }
 
-fn os_from_cstring(string: *const c_void) -> OsString {
+fn os_from_cstring(string: *const c_void) -> Result<OsString> {
     if string.is_null() {
-        return "".to_string().into();
+        return Err(Error::new(ErrorKind::NotFound, "Null record"));
     }
 
     // Get a byte slice of the c string.
     let slice = unsafe {
         let length = strlen(string);
-        std::slice::from_raw_parts(string as *const u8, length)
+
+        if length == 0 {
+            return Err(Error::new(ErrorKind::InvalidData, "Empty record"));
+        }
+
+        std::slice::from_raw_parts(string.cast(), length)
     };
 
     // Turn byte slice into Rust String.
-    OsString::from_vec(slice.to_vec())
+    Ok(OsString::from_vec(slice.to_vec()))
 }
 
 #[cfg(target_os = "macos")]
@@ -216,24 +223,18 @@ fn getpwuid(real: bool) -> Result<OsString> {
         let _passwd = _passwd.assume_init();
 
         if _passwd.is_null() {
-            return Err(Error::new(ErrorKind::NotFound, "Missing record"));
+            return Err(Error::new(ErrorKind::NotFound, "Null record"));
         }
 
         passwd.assume_init()
     };
 
     // Extract names.
-    Ok(if real {
-        let string = os_from_cstring_gecos(passwd.pw_gecos);
-        let result = if let Some(string) = string {
-            Ok(string)
-        } else {
-            Err(os_from_cstring(passwd.pw_name))
-        };
-        fancy_fallback_os(result)
+    if real {
+        os_from_cstring_gecos(passwd.pw_gecos)
     } else {
         os_from_cstring(passwd.pw_name)
-    })
+    }
 }
 
 pub(crate) fn username() -> Result<String> {
@@ -242,48 +243,6 @@ pub(crate) fn username() -> Result<String> {
 
 pub(crate) fn username_os() -> Result<OsString> {
     getpwuid(false)
-}
-
-fn fancy_fallback(result: Result<&str, String>) -> String {
-    let mut cap = true;
-    let iter = match result {
-        Ok(a) => a.chars(),
-        Err(ref b) => b.chars(),
-    };
-    let mut new = String::new();
-    for c in iter {
-        match c {
-            '.' | '-' | '_' => {
-                new.push(' ');
-                cap = true;
-            }
-            a => {
-                if cap {
-                    cap = false;
-                    for i in a.to_uppercase() {
-                        new.push(i);
-                    }
-                } else {
-                    new.push(a);
-                }
-            }
-        }
-    }
-    new
-}
-
-fn fancy_fallback_os(result: Result<OsString, OsString>) -> OsString {
-    match result {
-        Ok(success) => success,
-        Err(fallback) => {
-            let cs = match fallback.to_str() {
-                Some(a) => Ok(a),
-                None => Err(fallback.to_string_lossy().to_string()),
-            };
-
-            fancy_fallback(cs).into()
-        }
-    }
 }
 
 pub(crate) fn realname() -> Result<String> {
@@ -301,21 +260,21 @@ pub(crate) fn devicename_os() -> Result<OsString> {
 
 #[cfg(not(any(target_os = "macos", target_os = "illumos")))]
 pub(crate) fn devicename() -> Result<String> {
-    if let Ok(machine_info) = std::fs::read("/etc/machine-info") {
-        let machine_info = String::from_utf8_lossy(&machine_info);
+    let machine_info = std::fs::read("/etc/machine-info")?;
+    let machine_info = String::from_utf8_lossy(&machine_info);
 
-        for i in machine_info.split('\n') {
-            let mut j = i.split('=');
+    for i in machine_info.split('\n') {
+        let mut j = i.split('=');
 
-            if j.next() == Some("PRETTY_HOSTNAME") {
-                if let Some(value) = j.next() {
-                    return Ok(value.trim_matches('"').to_string());
-                }
+        if j.next() == Some("PRETTY_HOSTNAME") {
+            if let Some(value) = j.next() {
+                // FIXME: Can " be escaped in pretty name?
+                return Ok(value.trim_matches('"').to_string());
             }
         }
     }
 
-    Ok(fancy_fallback(Err(hostname()?)))
+    Err(Error::new(ErrorKind::NotFound, "Missing record"))
 }
 
 #[cfg(target_os = "macos")]
@@ -328,27 +287,26 @@ pub(crate) fn devicename_os() -> Result<OsString> {
     let out = os_from_cfstring(unsafe {
         SCDynamicStoreCopyComputerName(null_mut(), null_mut())
     });
-    let computer = if out.as_bytes().is_empty() {
-        Err(hostname_os()?)
-    } else {
-        Ok(out)
-    };
 
-    Ok(fancy_fallback_os(computer))
+    if out.as_bytes().is_empty() {
+        return Err(Error::new(ErrorKind::InvalidData, "Empty record"));
+    }
+
+    Ok(out)
 }
 
 #[cfg(target_os = "illumos")]
 pub(crate) fn devicename() -> Result<String> {
-    if let Ok(program) = std::fs::read("/etc/nodename") {
-        let mut nodename = String::from_utf8_lossy(&program).to_string();
+    let program = std::fs::read("/etc/nodename")?;
+    let mut nodename = String::from_utf8_lossy(&program).to_string();
+    // Remove the trailing newline
+    let _ = nodename.pop();
 
-        // Remove the trailing newline
-        nodename.pop();
-
-        return Ok(nodename);
+    if nodename.is_empty() {
+        return Err(Error::new(ErrorKind::InvalidData, "Empty record"));
     }
 
-    Ok(fancy_fallback(Err(hostname()?)))
+    return Ok(nodename);
 }
 
 pub(crate) fn hostname() -> Result<String> {
@@ -374,12 +332,15 @@ fn hostname_os() -> Result<OsString> {
 fn distro_xml(data: String) -> Result<String> {
     let mut product_name = None;
     let mut user_visible_version = None;
+
     if let Some(start) = data.find("<dict>") {
         if let Some(end) = data.find("</dict>") {
             let mut set_product_name = false;
             let mut set_user_visible_version = false;
+
             for line in data[start + "<dict>".len()..end].lines() {
                 let line = line.trim();
+
                 if line.starts_with("<key>") {
                     match line["<key>".len()..].trim_end_matches("</key>") {
                         "ProductName" => set_product_name = true,

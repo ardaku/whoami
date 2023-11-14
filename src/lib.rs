@@ -69,7 +69,7 @@
 )]
 
 const DEFAULT_USERNAME: &str = "Unknown";
-const DEFAULT_HOSTNAME: &str = "localhost";
+const DEFAULT_HOSTNAME: &str = "Localhost";
 
 pub mod fallible;
 
@@ -412,13 +412,16 @@ pub fn username_os() -> OsString {
 /// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname() -> String {
-    fallible::realname().unwrap_or_else(|_| DEFAULT_USERNAME.to_owned())
+    fallible::realname()
+        .or_else(|_| fallible::username())
+        .unwrap_or_else(|_| DEFAULT_USERNAME.to_owned())
 }
 
 /// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname_os() -> OsString {
     fallible::realname_os()
+        .or_else(|_| fallible::username_os())
         .unwrap_or_else(|_| DEFAULT_USERNAME.to_owned().into())
 }
 
@@ -427,7 +430,9 @@ pub fn realname_os() -> OsString {
 /// Often used to identify device for bluetooth pairing.
 #[inline(always)]
 pub fn devicename() -> String {
-    fallible::devicename().unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string())
+    fallible::devicename()
+        .or_else(|_| fallible::hostname())
+        .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string())
 }
 
 /// Get the device name (also known as "Pretty Name").
@@ -436,6 +441,7 @@ pub fn devicename() -> String {
 #[inline(always)]
 pub fn devicename_os() -> OsString {
     fallible::devicename_os()
+        .or_else(|_| fallible::hostname_os())
         .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string().into())
 }
 
@@ -447,7 +453,7 @@ pub fn devicename_os() -> OsString {
 /// [`devicename()`]).
 #[inline(always)]
 pub fn hostname() -> String {
-    fallible::hostname().unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string())
+    fallible::hostname().unwrap_or_else(|_| DEFAULT_HOSTNAME.to_lowercase())
 }
 
 /// Get the host device's hostname.
@@ -459,7 +465,7 @@ pub fn hostname() -> String {
 #[inline(always)]
 pub fn hostname_os() -> OsString {
     fallible::hostname_os()
-        .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string().into())
+        .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_lowercase().into())
 }
 
 /// Get the name of the operating system distribution and (possibly) version.

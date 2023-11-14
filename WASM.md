@@ -24,7 +24,7 @@ web-sys, and will instead return these mock values:
  - `devicename()`: "Unknown"
  - `hostname()`: "localhost"
  - `platform()`: "Unknown"
- - `distro()`: "Unknown Unknown"
+ - `distro()`: "Emulated"
  - `desktop_env()`: "Unknown WebAssembly"
  - `arch()`: "wasm32"
 

@@ -75,9 +75,11 @@ enum ComputerNameFormat {
     Max,
 }
 
+const ERR_MORE_DATA: i32 = 0xEA;
+const ERR_INSUFFICIENT_BUFFER: i32 = 0x7A;
+
 #[link(name = "secur32")]
 extern "system" {
-    fn GetLastError() -> c_ulong;
     fn GetUserNameExW(
         a: ExtendedNameFormat,
         b: *mut c_char,
@@ -117,11 +119,15 @@ pub(crate) fn username() -> Result<String> {
 pub(crate) fn username_os() -> Result<OsString> {
     // Step 1. Retreive the entire length of the username
     let mut size = 0;
-    let success = unsafe {
+    let fail = unsafe {
         // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
         GetUserNameW(ptr::null_mut(), &mut size) == 0
     };
-    assert!(success);
+    assert!(fail);
+
+    if Error::last_os_error().raw_os_error() != Some(ERR_INSUFFICIENT_BUFFER) {
+        return Err(Error::last_os_error());
+    }
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
     let mut name: Vec<u16> =
@@ -153,20 +159,18 @@ pub(crate) fn realname() -> Result<String> {
 pub(crate) fn realname_os() -> Result<OsString> {
     // Step 1. Retrieve the entire length of the username
     let mut buf_size = 0;
-    let success = unsafe {
+    let fail = unsafe {
         GetUserNameExW(
             ExtendedNameFormat::Display,
             ptr::null_mut(),
             &mut buf_size,
         ) == 0
     };
-    assert!(success);
-    match unsafe { GetLastError() } {
-        0x00EA /* more data */ => { /* Success, continue */ }
-        _ /* network error or none mapped */ => {
-            // Fallback to username
-            return username_os();
-        }
+
+    assert!(fail);
+
+    if Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
+        return Err(Error::last_os_error());
     }
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
@@ -181,10 +185,11 @@ pub(crate) fn realname_os() -> Result<OsString> {
         ) == 0
     };
     if fail {
-        // Fallback to username
-        return username_os();
+        return Err(Error::last_os_error());
     }
-    debug_assert_eq!(buf_size, name_len + 1);
+
+    assert_eq!(buf_size, name_len + 1);
+
     unsafe {
         name.set_len(name_len.try_into().unwrap_or(std::usize::MAX));
     }
@@ -202,7 +207,7 @@ pub(crate) fn devicename() -> Result<String> {
 pub(crate) fn devicename_os() -> Result<OsString> {
     // Step 1. Retreive the entire length of the device name
     let mut size = 0;
-    let success = unsafe {
+    let fail = unsafe {
         // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
         GetComputerNameExW(
             ComputerNameFormat::DnsHostname,
@@ -210,23 +215,28 @@ pub(crate) fn devicename_os() -> Result<OsString> {
             &mut size,
         ) == 0
     };
-    assert!(success);
+
+    assert!(fail);
+
+    if Error::last_os_error().raw_os_error() != Some(ERR_INSUFFICIENT_BUFFER) {
+        return Err(Error::last_os_error());
+    }
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
     let mut name: Vec<u16> =
         Vec::with_capacity(size.try_into().unwrap_or(std::usize::MAX));
-    size = name.capacity().try_into().unwrap_or(std::u32::MAX);
-    let fail = unsafe {
+    let mut size = name.capacity().try_into().unwrap_or(std::u32::MAX);
+
+    if unsafe {
         GetComputerNameExW(
             ComputerNameFormat::DnsHostname,
             name.as_mut_ptr().cast(),
             &mut size,
         ) == 0
-    };
-    if fail {
-        // Fallback to hostname
-        return hostname_os();
+    } {
+        return Err(Error::last_os_error());
     }
+
     unsafe {
         name.set_len(size.try_into().unwrap_or(std::usize::MAX));
     }
@@ -250,22 +260,28 @@ fn hostname_os() -> Result<OsString> {
             &mut size,
         ) == 0
     };
-    debug_assert!(fail);
+
+    assert!(fail);
+
+    if Error::last_os_error().raw_os_error() != Some(ERR_INSUFFICIENT_BUFFER) {
+        return Err(Error::last_os_error());
+    }
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
     let mut name: Vec<u16> =
         Vec::with_capacity(size.try_into().unwrap_or(std::usize::MAX));
-    size = name.capacity().try_into().unwrap_or(std::u32::MAX);
-    let fail = unsafe {
+    let mut size = name.capacity().try_into().unwrap_or(std::u32::MAX);
+
+    if unsafe {
         GetComputerNameExW(
             ComputerNameFormat::NetBIOS,
             name.as_mut_ptr().cast(),
             &mut size,
         ) == 0
-    };
-    if fail {
+    } {
         return Err(Error::last_os_error());
     }
+
     unsafe {
         name.set_len(size.try_into().unwrap_or(std::usize::MAX));
     }
@@ -368,6 +384,7 @@ impl Iterator for LangIter {
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(value) = self.array.get(self.index) {
             self.index += 1;
+
             Some(value.to_string())
         } else {
             None
