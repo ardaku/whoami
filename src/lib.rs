@@ -148,9 +148,7 @@ impl Display for Region {
 ///
 /// Use [`ToString::to_string()`] to convert to string of two letter lowercase
 /// language code followed and underscore and uppercase region code (example:
-/// `en_US`).  Currently, unknown codes will return in an unknown format; This
-/// may change to panic in the future.  To avoid panicking, use
-/// [`Write::write_fmt`](fmt::Write::write_fmt).
+/// `en_US`).
 ///
 /// Uses <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>
 #[non_exhaustive]
