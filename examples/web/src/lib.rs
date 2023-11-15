@@ -18,11 +18,11 @@ pub fn main() {
     // Print out code from regular example.
     log(format!(
         "User's Name            whoami::realname():    {}",
-        whoami::realname()
+        whoami::realname(),
     ));
     log(format!(
         "User's Username        whoami::username():    {}",
-        whoami::username()
+        whoami::username(),
     ));
     log(format!(
         "User's Languages       whoami::lang():        {:?}",
@@ -32,26 +32,26 @@ pub fn main() {
     ));
     log(format!(
         "Device's Pretty Name   whoami::devicename():  {}",
-        whoami::devicename()
+        whoami::devicename(),
     ));
     log(format!(
         "Device's Hostname      whoami::hostname():    {}",
-        whoami::hostname()
+        whoami::hostname(),
     ));
     log(format!(
         "Device's Platform      whoami::platform():    {}",
-        whoami::platform()
+        whoami::platform(),
     ));
     log(format!(
         "Device's OS Distro     whoami::distro():      {}",
-        whoami::distro()
+        whoami::distro(),
     ));
     log(format!(
         "Device's Desktop Env.  whoami::desktop_env(): {}",
-        whoami::desktop_env()
+        whoami::desktop_env(),
     ));
     log(format!(
         "Device's CPU Arch      whoami::arch():        {}",
-        whoami::arch()
+        whoami::arch(),
     ));
 }
