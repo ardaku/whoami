@@ -69,7 +69,7 @@
 )]
 
 const DEFAULT_USERNAME: &str = "Unknown";
-const DEFAULT_HOSTNAME: &str = "Localhost";
+const DEFAULT_HOSTNAME: &str = "LocalHost";
 
 pub mod fallible;
 
@@ -119,6 +119,86 @@ use std::{
 /// This crate's convenience type alias for [`Result`](std::result::Result)s
 pub type Result<T = (), E = Error> = std::result::Result<T, E>;
 
+/// Region code for a [`Language`] dialect
+///
+/// Uses <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>
+#[non_exhaustive]
+#[repr(u32)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+pub enum Region {
+    // FIXME: V2: u32::from_ne_bytes for region codes, with `\0` for unused
+    // FIXME: Add aliases up to 3-4 letters, but hidden
+    /// Any dialect
+    Any,
+    /// `US`: United States of America
+    #[doc(hidden)]
+    Us,
+}
+
+impl Display for Region {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        f.write_str(match self {
+            Self::Any => "**",
+            Self::Us => "US",
+        })
+    }
+}
+
+/// A spoken language
+///
+/// Use [`ToString::to_string()`] to convert to string of two letter lowercase
+/// language code followed and underscore and uppercase region code (example:
+/// `en_US`).
+///
+/// Uses <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>
+#[non_exhaustive]
+#[derive(Clone, Eq, PartialEq, Debug)]
+// #[allow(variant_size_differences)]
+pub enum Language {
+    #[doc(hidden)]
+    __(Box<String>),
+    /// `en`: English
+    #[doc(hidden)]
+    En(Region),
+    /// `es`: Spanish
+    #[doc(hidden)]
+    Es(Region),
+}
+
+impl Language {
+    /// Retrieve the region code for this language dialect.
+    pub fn region(&self) -> Region {
+        match self {
+            Self::__(_) => Region::Any,
+            Self::En(region) | Self::Es(region) => *region,
+        }
+    }
+}
+
+impl Display for Language {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::__(code) => f.write_str(code.as_str()),
+            Self::En(region) => {
+                if *region != Region::Any {
+                    f.write_str("en_")?;
+                    <Region as Display>::fmt(region, f)
+                } else {
+                    f.write_str("en")
+                }
+            }
+            Self::Es(region) => {
+                if *region != Region::Any {
+                    f.write_str("es_")?;
+                    <Region as Display>::fmt(region, f)
+                } else {
+                    f.write_str("es")
+                }
+            }
+        }
+    }
+}
+
 // FIXME: V2: Move `Unknown` variants to the top of the enum.
 
 /// The desktop environment of a system
@@ -166,31 +246,30 @@ pub enum DesktopEnv {
 
 impl Display for DesktopEnv {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let desktop_env = match self {
-            DesktopEnv::Gnome => "Gnome",
-            DesktopEnv::Windows => "Windows",
-            DesktopEnv::Lxde => "LXDE",
-            DesktopEnv::Openbox => "Openbox",
-            DesktopEnv::Mate => "Mate",
-            DesktopEnv::Xfce => "XFCE",
-            DesktopEnv::Kde => "KDE",
-            DesktopEnv::Cinnamon => "Cinnamon",
-            DesktopEnv::I3 => "I3",
-            DesktopEnv::Aqua => "Aqua",
-            DesktopEnv::Ios => "IOS",
-            DesktopEnv::Android => "Android",
-            DesktopEnv::WebBrowser => "Web Browser",
-            DesktopEnv::Console => "Console",
-            DesktopEnv::Ubuntu => "Ubuntu",
-            DesktopEnv::Ermine => "Ermine",
-            DesktopEnv::Orbital => "Orbital",
-            DesktopEnv::Unknown(a) => {
-                f.write_str("Unknown: ")?;
-                a
-            }
-        };
+        if let Self::Unknown(_) = self {
+            f.write_str("Unknown: ")?;
+        }
 
-        f.write_str(desktop_env)
+        f.write_str(match self {
+            Self::Gnome => "Gnome",
+            Self::Windows => "Windows",
+            Self::Lxde => "LXDE",
+            Self::Openbox => "Openbox",
+            Self::Mate => "Mate",
+            Self::Xfce => "XFCE",
+            Self::Kde => "KDE",
+            Self::Cinnamon => "Cinnamon",
+            Self::I3 => "I3",
+            Self::Aqua => "Aqua",
+            Self::Ios => "IOS",
+            Self::Android => "Android",
+            Self::WebBrowser => "Web Browser",
+            Self::Console => "Console",
+            Self::Ubuntu => "Ubuntu",
+            Self::Ermine => "Ermine",
+            Self::Orbital => "Orbital",
+            Self::Unknown(a) => a,
+        })
     }
 }
 
@@ -218,26 +297,25 @@ pub enum Platform {
 
 impl Display for Platform {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let platform = match self {
-            Platform::Linux => "Linux",
-            Platform::Bsd => "BSD",
-            Platform::Windows => "Windows",
-            Platform::MacOS => "Mac OS",
-            Platform::Illumos => "Illumos",
-            Platform::Ios => "iOS",
-            Platform::Android => "Android",
-            Platform::Nintendo => "Nintendo",
-            Platform::Xbox => "XBox",
-            Platform::PlayStation => "PlayStation",
-            Platform::Fuchsia => "Fuchsia",
-            Platform::Redox => "Redox",
-            Platform::Unknown(a) => {
-                f.write_str("Unknown: ")?;
-                a
-            }
-        };
+        if let Self::Unknown(_) = self {
+            f.write_str("Unknown: ")?;
+        }
 
-        f.write_str(platform)
+        f.write_str(match self {
+            Self::Linux => "Linux",
+            Self::Bsd => "BSD",
+            Self::Windows => "Windows",
+            Self::MacOS => "Mac OS",
+            Self::Illumos => "Illumos",
+            Self::Ios => "iOS",
+            Self::Android => "Android",
+            Self::Nintendo => "Nintendo",
+            Self::Xbox => "XBox",
+            Self::PlayStation => "PlayStation",
+            Self::Fuchsia => "Fuchsia",
+            Self::Redox => "Redox",
+            Self::Unknown(a) => a,
+        })
     }
 }
 
@@ -295,36 +373,35 @@ pub enum Arch {
 
 impl Display for Arch {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let arch = match self {
-            Arch::ArmV5 => "armv5",
-            Arch::ArmV6 => "armv6",
-            Arch::ArmV7 => "armv7",
-            Arch::Arm64 => "arm64",
-            Arch::I386 => "i386",
-            Arch::I586 => "i586",
-            Arch::I686 => "i686",
-            Arch::Mips => "mips",
-            Arch::MipsEl => "mipsel",
-            Arch::Mips64 => "mips64",
-            Arch::Mips64El => "mips64el",
-            Arch::PowerPc => "powerpc",
-            Arch::PowerPc64 => "powerpc64",
-            Arch::PowerPc64Le => "powerpc64le",
-            Arch::Riscv32 => "riscv32",
-            Arch::Riscv64 => "riscv64",
-            Arch::S390x => "s390x",
-            Arch::Sparc => "sparc",
-            Arch::Sparc64 => "sparc64",
-            Arch::Wasm32 => "wasm32",
-            Arch::Wasm64 => "wasm64",
-            Arch::X64 => "x86_64",
-            Arch::Unknown(arch) => {
-                f.write_str("Unknown: ")?;
-                arch
-            }
-        };
+        if let Self::Unknown(_) = self {
+            f.write_str("Unknown: ")?;
+        }
 
-        f.write_str(arch)
+        f.write_str(match self {
+            Self::ArmV5 => "armv5",
+            Self::ArmV6 => "armv6",
+            Self::ArmV7 => "armv7",
+            Self::Arm64 => "arm64",
+            Self::I386 => "i386",
+            Self::I586 => "i586",
+            Self::I686 => "i686",
+            Self::Mips => "mips",
+            Self::MipsEl => "mipsel",
+            Self::Mips64 => "mips64",
+            Self::Mips64El => "mips64el",
+            Self::PowerPc => "powerpc",
+            Self::PowerPc64 => "powerpc64",
+            Self::PowerPc64Le => "powerpc64le",
+            Self::Riscv32 => "riscv32",
+            Self::Riscv64 => "riscv64",
+            Self::S390x => "s390x",
+            Self::Sparc => "sparc",
+            Self::Sparc64 => "sparc64",
+            Self::Wasm32 => "wasm32",
+            Self::Wasm64 => "wasm64",
+            Self::X64 => "x86_64",
+            Self::Unknown(arch) => arch,
+        })
     }
 }
 
@@ -505,6 +582,18 @@ pub fn platform() -> Platform {
 /// followed by a dash (-) and a two letter region code (uppercase).  The most
 /// preferred language is returned first, followed by next preferred, and so on.
 #[inline(always)]
+#[deprecated(note = "use `langs()` instead", since = "1.5.0")]
 pub fn lang() -> impl Iterator<Item = String> {
     platform::lang()
+}
+
+/// Get the user's preferred language(s).
+///
+/// Returned as iterator of [`Language`]s wrapped in [`Result`]s.  The most
+/// preferred language is returned first, followed by next preferred, and so on.
+/// Unrecognized languages may return an error.
+#[inline(always)]
+pub fn langs() -> impl Iterator<Item = Result<Language>> {
+    #[allow(deprecated)]
+    lang().map(|string| Ok(Language::__(Box::new(string))))
 }

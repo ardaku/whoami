@@ -11,7 +11,9 @@ fn main() {
     );
     println!(
         "User's Language        whoami::lang():            {:?}",
-        whoami::lang().collect::<Vec<String>>(),
+        whoami::langs()
+            .map(|l| l.map(|l| l.to_string()).unwrap_or("??".to_string()))
+            .collect::<Vec<String>>(),
     );
     println!(
         "Device's Pretty Name   whoami::devicename_os():   {:?}",
