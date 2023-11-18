@@ -6,7 +6,7 @@
 
 use std::ffi::OsString;
 
-use crate::{platform, Result};
+use crate::{os, Result};
 
 /// Get the user's username.
 ///
@@ -14,7 +14,7 @@ use crate::{platform, Result};
 /// are not allowed in the username.
 #[inline(always)]
 pub fn username() -> Result<String> {
-    platform::username()
+    os::username()
 }
 
 /// Get the user's username.
@@ -23,19 +23,19 @@ pub fn username() -> Result<String> {
 /// spaces are not allowed in the username.
 #[inline(always)]
 pub fn username_os() -> Result<OsString> {
-    platform::username_os()
+    os::username_os()
 }
 
 /// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname() -> Result<String> {
-    platform::realname()
+    os::realname()
 }
 
 /// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname_os() -> Result<OsString> {
-    platform::realname_os()
+    os::realname_os()
 }
 
 /// Get the name of the operating system distribution and (possibly) version.
@@ -43,7 +43,7 @@ pub fn realname_os() -> Result<OsString> {
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn distro() -> Result<String> {
-    platform::distro()
+    os::distro()
 }
 
 /// Get the name of the operating system distribution and (possibly) version.
@@ -51,7 +51,7 @@ pub fn distro() -> Result<String> {
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn distro_os() -> Result<OsString> {
-    platform::distro_os()
+    os::distro_os()
 }
 
 /// Get the device name (also known as "Pretty Name").
@@ -59,7 +59,7 @@ pub fn distro_os() -> Result<OsString> {
 /// Often used to identify device for bluetooth pairing.
 #[inline(always)]
 pub fn devicename() -> Result<String> {
-    platform::devicename()
+    os::devicename()
 }
 
 /// Get the device name (also known as "Pretty Name").
@@ -67,7 +67,7 @@ pub fn devicename() -> Result<String> {
 /// Often used to identify device for bluetooth pairing.
 #[inline(always)]
 pub fn devicename_os() -> Result<OsString> {
-    platform::devicename_os()
+    os::devicename_os()
 }
 
 /// Get the host device's hostname.
@@ -78,7 +78,7 @@ pub fn devicename_os() -> Result<OsString> {
 /// [`devicename()`]).
 #[inline(always)]
 pub fn hostname() -> Result<String> {
-    let mut hostname = platform::hostname()?;
+    let mut hostname = os::hostname()?;
 
     hostname.make_ascii_lowercase();
 

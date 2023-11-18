@@ -68,53 +68,25 @@
     html_favicon_url = "https://raw.githubusercontent.com/ardaku/whoami/stable/res/icon.svg"
 )]
 
-const DEFAULT_USERNAME: &str = "Unknown";
-const DEFAULT_HOSTNAME: &str = "LocalHost";
-
 pub mod fallible;
-
-#[allow(unsafe_code)]
-// Unix
-#[cfg_attr(
-    not(any(target_os = "windows", target_arch = "wasm32")),
-    path = "unix.rs"
-)]
-// Wasm32 (Daku) - FIXME: Currently routes to fake.rs
-#[cfg_attr(all(target_arch = "wasm32", target_os = "daku"), path = "fake.rs")]
-// Wasm32 (Wasi) - FIXME: Currently routes to fake.rs
-#[cfg_attr(all(target_arch = "wasm32", target_os = "wasi"), path = "fake.rs")]
-// Wasm32 (Web)
-#[cfg_attr(
-    all(
-        target_arch = "wasm32",
-        not(target_os = "wasi"),
-        not(target_os = "daku"),
-        feature = "web",
-    ),
-    path = "web.rs"
-)]
-// Wasm32 (Unknown)
-#[cfg_attr(
-    all(
-        target_arch = "wasm32",
-        not(target_os = "wasi"),
-        not(target_os = "daku"),
-        not(feature = "web"),
-    ),
-    path = "fake.rs"
-)]
-// Windows
-#[cfg_attr(
-    all(target_os = "windows", not(target_arch = "wasm32")),
-    path = "windows.rs"
-)]
-mod platform;
+mod os;
 
 use std::{
     ffi::OsString,
     fmt::{self, Display, Formatter},
     io::{Error, ErrorKind},
 };
+
+use crate::os::{Os, Target};
+
+macro_rules! report_message {
+    () => {
+        "Please report this issue at https://github.com/ardaku/whoami/issues"
+    };
+}
+
+const DEFAULT_USERNAME: &str = "Unknown";
+const DEFAULT_HOSTNAME: &str = "LocalHost";
 
 /// This crate's convenience type alias for [`Result`](std::result::Result)s
 pub type Result<T = (), E = Error> = std::result::Result<T, E>;
@@ -464,7 +436,7 @@ impl Arch {
 /// Get the CPU Architecture.
 #[inline(always)]
 pub fn arch() -> Arch {
-    platform::arch()
+    Target::arch(Os).expect(concat!("arch() failed.  ", report_message!()))
 }
 
 /// Get the user's username.
@@ -567,13 +539,13 @@ pub fn distro_os() -> OsString {
 /// Example: "gnome" or "windows"
 #[inline(always)]
 pub fn desktop_env() -> DesktopEnv {
-    platform::desktop_env()
+    Target::desktop_env(Os)
 }
 
 /// Get the platform.
 #[inline(always)]
 pub fn platform() -> Platform {
-    platform::platform()
+    Target::platform(Os)
 }
 
 /// Get the user's preferred language(s).
@@ -584,7 +556,7 @@ pub fn platform() -> Platform {
 #[inline(always)]
 #[deprecated(note = "use `langs()` instead", since = "1.5.0")]
 pub fn lang() -> impl Iterator<Item = String> {
-    platform::lang()
+    os::lang()
 }
 
 /// Get the user's preferred language(s).
