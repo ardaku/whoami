@@ -490,7 +490,7 @@ pub fn devicename() -> String {
 #[inline(always)]
 pub fn devicename_os() -> OsString {
     fallible::devicename_os()
-        .or_else(|_| fallible::hostname_os())
+        .or_else(|_| fallible::hostname().map(OsString::from))
         .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string().into())
 }
 
@@ -512,8 +512,10 @@ pub fn hostname() -> String {
 /// case-insensitive, this method normalizes to lowercase (unlike
 /// [`devicename()`]).
 #[inline(always)]
+#[deprecated(note = "use `hostname()` instead", since = "1.5.0")]
 pub fn hostname_os() -> OsString {
-    fallible::hostname_os()
+    fallible::hostname()
+        .map(OsString::from)
         .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_lowercase().into())
 }
 

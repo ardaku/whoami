@@ -1,7 +1,7 @@
 use std::{
+    env,
     ffi::{c_void, CStr, OsString},
     io::{Error, ErrorKind},
-    env,
     mem,
     os::{
         raw::{c_char, c_int},
@@ -307,13 +307,6 @@ pub(crate) fn devicename() -> Result<String> {
     Ok(nodename)
 }
 
-pub(crate) fn hostname() -> Result<String> {
-    Ok(string_from_os(hostname_os()?))
-}
-
-fn hostname_os() -> Result<OsString> {
-}
-
 #[cfg(target_os = "macos")]
 fn distro_xml(data: String) -> Result<String> {
     let mut product_name = None;
@@ -565,14 +558,16 @@ impl Target for Os {
         let mut string = Vec::<u8>::with_capacity(256);
 
         unsafe {
-            if gethostname(string.as_mut_ptr() as *mut c_void, 255) == -1 {
+            if gethostname(string.as_mut_ptr().cast(), 255) == -1 {
                 return Err(Error::last_os_error());
             }
 
-            string.set_len(strlen(string.as_ptr() as *const c_void));
+            string.set_len(strlen(string.as_ptr().cast()));
         };
 
-        Ok(OsString::from_vec(string))
+        String::from_utf8(string).map_err(|_| {
+            Error::new(ErrorKind::InvalidData, "Hostname not valid UTF-8")
+        })
     }
 
     fn desktop_env(self) -> DesktopEnv {
