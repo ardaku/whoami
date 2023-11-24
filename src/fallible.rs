@@ -7,7 +7,8 @@
 use std::ffi::OsString;
 
 use crate::{
-    os::{self, Os, Target},
+    conversions,
+    os::{Os, Target},
     Result,
 };
 
@@ -17,7 +18,7 @@ use crate::{
 /// are not allowed in the username.
 #[inline(always)]
 pub fn username() -> Result<String> {
-    os::username()
+    username_os().and_then(conversions::string_from_os)
 }
 
 /// Get the user's username.
@@ -26,19 +27,19 @@ pub fn username() -> Result<String> {
 /// spaces are not allowed in the username.
 #[inline(always)]
 pub fn username_os() -> Result<OsString> {
-    os::username_os()
+    Target::username(Os)
 }
 
 /// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname() -> Result<String> {
-    os::realname()
+    realname_os().and_then(conversions::string_from_os)
 }
 
 /// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname_os() -> Result<OsString> {
-    os::realname_os()
+    Target::realname(Os)
 }
 
 /// Get the name of the operating system distribution and (possibly) version.
@@ -46,15 +47,7 @@ pub fn realname_os() -> Result<OsString> {
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn distro() -> Result<String> {
-    os::distro()
-}
-
-/// Get the name of the operating system distribution and (possibly) version.
-///
-/// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
-#[inline(always)]
-pub fn distro_os() -> Result<OsString> {
-    os::distro_os()
+    Target::distro(Os)
 }
 
 /// Get the device name (also known as "Pretty Name").
@@ -62,7 +55,7 @@ pub fn distro_os() -> Result<OsString> {
 /// Often used to identify device for bluetooth pairing.
 #[inline(always)]
 pub fn devicename() -> Result<String> {
-    os::devicename()
+    devicename_os().and_then(conversions::string_from_os)
 }
 
 /// Get the device name (also known as "Pretty Name").
@@ -70,7 +63,7 @@ pub fn devicename() -> Result<String> {
 /// Often used to identify device for bluetooth pairing.
 #[inline(always)]
 pub fn devicename_os() -> Result<OsString> {
-    os::devicename_os()
+    Target::devicename(Os)
 }
 
 /// Get the host device's hostname.

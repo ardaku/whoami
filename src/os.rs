@@ -54,16 +54,16 @@ pub(crate) struct Os;
 pub(crate) trait Target {
     /// Return a list of languages.
     fn langs(self) -> Vec<Language>;
-    /// Return the user's username.
-    fn username(self) -> Result<OsString>;
     /// Return the user's "real" / "full" name.
     fn realname(self) -> Result<OsString>;
+    /// Return the user's username.
+    fn username(self) -> Result<OsString>;
     /// Return the computer's "fancy" / "pretty" name.
     fn devicename(self) -> Result<OsString>;
-    /// Return the OS distribution's name.
-    fn distro(self) -> Result<OsString>;
     /// Return the computer's hostname.
     fn hostname(self) -> Result<String>;
+    /// Return the OS distribution's name.
+    fn distro(self) -> Result<String>;
     /// Return the desktop environment.
     fn desktop_env(self) -> DesktopEnv;
     /// Return the target platform.

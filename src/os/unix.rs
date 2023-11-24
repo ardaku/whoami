@@ -1,6 +1,7 @@
 use std::{
     env,
     ffi::{c_void, CStr, OsString},
+    fs,
     io::{Error, ErrorKind},
     mem,
     os::{
@@ -98,6 +99,11 @@ extern "system" {
     fn CFRelease(cf: *const c_void);
 }
 
+enum Name {
+    User,
+    Real,
+}
+
 unsafe fn strlen(cs: *const c_void) -> usize {
     let mut len = 0;
     let mut cs: *const u8 = cs.cast();
@@ -116,14 +122,6 @@ unsafe fn strlen_gecos(cs: *const c_void) -> usize {
         cs = cs.offset(1);
     }
     len
-}
-
-// Convert an OsString into a String
-fn string_from_os(string: OsString) -> String {
-    match string.into_string() {
-        Ok(string) => string,
-        Err(string) => string.to_string_lossy().to_string(),
-    }
 }
 
 fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
@@ -195,10 +193,10 @@ fn os_from_cfstring(string: *mut c_void) -> OsString {
     }
 }
 
-// This function must allocate, because a slice or Cow<OsStr> would still
+// This function must allocate, because a slice or `Cow<OsStr>` would still
 // reference `passwd` which is dropped when this function returns.
 #[inline(always)]
-fn getpwuid(real: bool) -> Result<OsString> {
+fn getpwuid(name: Name) -> Result<OsString> {
     const BUF_SIZE: usize = 16_384; // size from the man page
     let mut buffer = mem::MaybeUninit::<[u8; BUF_SIZE]>::uninit();
     let mut passwd = mem::MaybeUninit::<PassWd>::uninit();
@@ -228,83 +226,11 @@ fn getpwuid(real: bool) -> Result<OsString> {
     };
 
     // Extract names.
-    if real {
+    if let Name::Real = name {
         os_from_cstring_gecos(passwd.pw_gecos)
     } else {
         os_from_cstring(passwd.pw_name)
     }
-}
-
-pub(crate) fn username() -> Result<String> {
-    Ok(string_from_os(username_os()?))
-}
-
-pub(crate) fn username_os() -> Result<OsString> {
-    getpwuid(false)
-}
-
-pub(crate) fn realname() -> Result<String> {
-    Ok(string_from_os(realname_os()?))
-}
-
-pub(crate) fn realname_os() -> Result<OsString> {
-    getpwuid(true)
-}
-
-#[cfg(not(target_os = "macos"))]
-pub(crate) fn devicename_os() -> Result<OsString> {
-    Ok(devicename()?.into())
-}
-
-#[cfg(not(any(target_os = "macos", target_os = "illumos")))]
-pub(crate) fn devicename() -> Result<String> {
-    let machine_info = std::fs::read("/etc/machine-info")?;
-    let machine_info = String::from_utf8_lossy(&machine_info);
-
-    for i in machine_info.split('\n') {
-        let mut j = i.split('=');
-
-        if j.next() == Some("PRETTY_HOSTNAME") {
-            if let Some(value) = j.next() {
-                // FIXME: Can " be escaped in pretty name?
-                return Ok(value.trim_matches('"').to_string());
-            }
-        }
-    }
-
-    Err(Error::new(ErrorKind::NotFound, "Missing record"))
-}
-
-#[cfg(target_os = "macos")]
-pub(crate) fn devicename() -> Result<String> {
-    Ok(string_from_os(devicename_os()?))
-}
-
-#[cfg(target_os = "macos")]
-pub(crate) fn devicename_os() -> Result<OsString> {
-    let out = os_from_cfstring(unsafe {
-        SCDynamicStoreCopyComputerName(null_mut(), null_mut())
-    });
-
-    if out.as_bytes().is_empty() {
-        return Err(Error::new(ErrorKind::InvalidData, "Empty record"));
-    }
-
-    Ok(out)
-}
-
-#[cfg(target_os = "illumos")]
-pub(crate) fn devicename() -> Result<String> {
-    let program = std::fs::read("/etc/nodename")?;
-    let mut nodename = String::from_utf8_lossy(&program).to_string();
-    // Remove the trailing newline
-    let _ = nodename.pop();
-
-    if nodename.is_empty() {
-        return Err(Error::new(ErrorKind::InvalidData, "Empty record"));
-    }
-
-    Ok(nodename)
 }
 
 #[cfg(target_os = "macos")]
@@ -365,61 +291,6 @@ fn distro_xml(data: String) -> Result<String> {
                 Error::new(ErrorKind::InvalidData, "Parsing failed")
             })?
     })
-}
-
-#[cfg(target_os = "macos")]
-pub(crate) fn distro_os() -> Result<OsString> {
-    distro().map(|a| a.into())
-}
-
-#[cfg(target_os = "macos")]
-pub(crate) fn distro() -> Result<String> {
-    if let Ok(data) = std::fs::read_to_string(
-        "/System/Library/CoreServices/ServerVersion.plist",
-    ) {
-        distro_xml(data)
-    } else if let Ok(data) = std::fs::read_to_string(
-        "/System/Library/CoreServices/SystemVersion.plist",
-    ) {
-        distro_xml(data)
-    } else {
-        Err(Error::new(ErrorKind::NotFound, "Missing record"))
-    }
-}
-
-#[cfg(not(target_os = "macos"))]
-pub(crate) fn distro_os() -> Result<OsString> {
-    distro().map(|a| a.into())
-}
-
-#[cfg(not(target_os = "macos"))]
-pub(crate) fn distro() -> Result<String> {
-    let program = std::fs::read("/etc/os-release")?;
-    let distro = String::from_utf8_lossy(&program);
-    let err = || Error::new(ErrorKind::InvalidData, "Parsing failed");
-    let mut fallback = None;
-
-    for i in distro.split('\n') {
-        let mut j = i.split('=');
-
-        match j.next().ok_or_else(err)? {
-            "PRETTY_NAME" => {
-                return Ok(j
-                    .next()
-                    .ok_or_else(err)?
-                    .trim_matches('"')
-                    .to_string());
-            }
-            "NAME" => {
-                fallback = Some(
-                    j.next().ok_or_else(err)?.trim_matches('"').to_string(),
-                )
-            }
-            _ => {}
-        }
-    }
-
-    fallback.ok_or_else(err)
 }
 
 struct LangIter {
@@ -537,20 +408,61 @@ impl Target for Os {
         todo!()
     }
 
-    fn username(self) -> Result<OsString> {
-        todo!()
+    fn realname(self) -> Result<OsString> {
+        getpwuid(Name::Real)
     }
 
-    fn realname(self) -> Result<OsString> {
-        todo!()
+    fn username(self) -> Result<OsString> {
+        getpwuid(Name::User)
     }
 
     fn devicename(self) -> Result<OsString> {
-        todo!()
-    }
+        #[cfg(target_os = "macos")]
+        {
+            let out = os_from_cfstring(unsafe {
+                SCDynamicStoreCopyComputerName(null_mut(), null_mut())
+            });
 
-    fn distro(self) -> Result<OsString> {
-        todo!()
+            if out.as_bytes().is_empty() {
+                return Err(Error::new(ErrorKind::InvalidData, "Empty record"));
+            }
+
+            Ok(out)
+        }
+
+        #[cfg(target_os = "illumos")]
+        {
+            let mut nodename = fs::read("/etc/nodename")?;
+
+            // Remove all at and after the first newline (before end of file)
+            if let Some(slice) = nodename.split(b'\n').next() {
+                nodename.drain(slice.len()..);
+            }
+
+            if nodename.is_empty() {
+                return Err(Error::new(ErrorKind::InvalidData, "Empty record"));
+            }
+
+            Ok(OsString::from_vec(nodename))
+        }
+
+        #[cfg(not(any(target_os = "macos", target_os = "illumos")))]
+        {
+            let machine_info = fs::read("/etc/machine-info")?;
+
+            for i in machine_info.split(|b| *b == b'\n') {
+                let mut j = i.split(|b| *b == b'=');
+
+                if j.next() == Some(b"PRETTY_HOSTNAME") {
+                    if let Some(value) = j.next() {
+                        // FIXME: Can " be escaped in pretty name?
+                        return Ok(OsString::from_vec(value.to_vec()));
+                    }
+                }
+            }
+
+            Err(Error::new(ErrorKind::NotFound, "Missing record"))
+        }
     }
 
     fn hostname(self) -> Result<String> {
@@ -568,6 +480,56 @@ impl Target for Os {
         String::from_utf8(string).map_err(|_| {
             Error::new(ErrorKind::InvalidData, "Hostname not valid UTF-8")
         })
+    }
+
+    fn distro(self) -> Result<String> {
+        #[cfg(target_os = "macos")]
+        {
+            if let Ok(data) = fs::read_to_string(
+                "/System/Library/CoreServices/ServerVersion.plist",
+            ) {
+                distro_xml(data)
+            } else if let Ok(data) = fs::read_to_string(
+                "/System/Library/CoreServices/SystemVersion.plist",
+            ) {
+                distro_xml(data)
+            } else {
+                Err(Error::new(ErrorKind::NotFound, "Missing record"))
+            }
+        }
+
+        #[cfg(not(target_os = "macos"))]
+        {
+            let program = fs::read("/etc/os-release")?;
+            let distro = String::from_utf8_lossy(&program);
+            let err = || Error::new(ErrorKind::InvalidData, "Parsing failed");
+            let mut fallback = None;
+
+            for i in distro.split('\n') {
+                let mut j = i.split('=');
+
+                match j.next().ok_or_else(err)? {
+                    "PRETTY_NAME" => {
+                        return Ok(j
+                            .next()
+                            .ok_or_else(err)?
+                            .trim_matches('"')
+                            .to_string());
+                    }
+                    "NAME" => {
+                        fallback = Some(
+                            j.next()
+                                .ok_or_else(err)?
+                                .trim_matches('"')
+                                .to_string(),
+                        )
+                    }
+                    _ => {}
+                }
+            }
+
+            fallback.ok_or_else(err)
+        }
     }
 
     fn desktop_env(self) -> DesktopEnv {

@@ -12,7 +12,9 @@ fn main() {
     println!(
         "User's Language        whoami::lang():        {:?}",
         whoami::langs()
-            .map(|l| l.map(|l| l.to_string()).unwrap_or("??".to_string()))
+            .map(|l| l
+                .map(|l| l.to_string())
+                .unwrap_or_else(|_| "??".to_string()))
             .collect::<Vec<String>>(),
     );
     println!(

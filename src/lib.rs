@@ -68,6 +68,7 @@
     html_favicon_url = "https://raw.githubusercontent.com/ardaku/whoami/stable/res/icon.svg"
 )]
 
+mod conversions;
 pub mod fallible;
 mod os;
 
@@ -119,7 +120,7 @@ impl Display for Region {
 /// A spoken language
 ///
 /// Use [`ToString::to_string()`] to convert to string of two letter lowercase
-/// language code followed and underscore and uppercase region code (example:
+/// language code followed an underscore and uppercase region code (example:
 /// `en_US`).
 ///
 /// Uses <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>
@@ -531,8 +532,10 @@ pub fn distro() -> String {
 ///
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
+#[deprecated(note = "use `distro()` instead", since = "1.5.0")]
 pub fn distro_os() -> OsString {
-    fallible::distro_os()
+    fallible::distro()
+        .map(OsString::from)
         .unwrap_or_else(|_| format!("Unknown {}", platform()).into())
 }
 
