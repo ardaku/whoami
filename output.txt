@@ -1,136 +1,1360 @@
-Self::AB(region) => *region,		// Abkhazian	AB
-Self::AA(region) => *region,		// Afar	AA
-Self::AF(region) => *region,		// Afrikaans	AF
-Self::SQ(region) => *region,		// Albanian	SQ
-Self::AM(region) => *region,		// Amharic	AM
-Self::AR(region) => *region,		// Arabic	AR
-Self::HY(region) => *region,		// Armenian	HY
-Self::AS(region) => *region,		// Assamese	AS
-Self::AY(region) => *region,		// Aymara	AY
-Self::AZ(region) => *region,		// Azerbaijani	AZ
-Self::BA(region) => *region,		// Bashkir	BA
-Self::EU(region) => *region,		// Basque	EU
-Self::BN(region) => *region,		// Bengali, Bangla	BN
-Self::DZ(region) => *region,		// Bhutani	DZ
-Self::BH(region) => *region,		// Bihari	BH
-Self::BI(region) => *region,		// Bislama	BI
-Self::BR(region) => *region,		// Breton	BR
-Self::BG(region) => *region,		// Bulgarian	BG
-Self::MY(region) => *region,		// Burmese	MY
-Self::BE(region) => *region,		// Byelorussian	BE
-Self::KM(region) => *region,		// Cambodian	KM
-Self::CA(region) => *region,		// Catalan	CA
-Self::ZH(region) => *region,		// Chinese	ZH
-Self::CO(region) => *region,		// Corsican	CO
-Self::HR(region) => *region,		// Croatian	HR
-Self::CS(region) => *region,		// Czech	CS
-Self::DA(region) => *region,		// Danish	DA
-Self::NL(region) => *region,		// Dutch	NL
-Self::EN(region) => *region,		// English, American	EN
-Self::EO(region) => *region,		// Esperanto	EO
-Self::ET(region) => *region,		// Estonian	ET
-Self::FO(region) => *region,		// Faeroese	FO
-Self::FJ(region) => *region,		// Fiji	FJ
-Self::FI(region) => *region,		// Finnish	FI
-Self::FR(region) => *region,		// French	FR
-Self::FY(region) => *region,		// Frisian	FY
-Self::GD(region) => *region,		// Gaelic (Scots Gaelic)	GD
-Self::GL(region) => *region,		// Galician	GL
-Self::KA(region) => *region,		// Georgian	KA
-Self::DE(region) => *region,		// German	DE
-Self::EL(region) => *region,		// Greek	EL
-Self::KL(region) => *region,		// Greenlandic	KL
-Self::GN(region) => *region,		// Guarani	GN
-Self::GU(region) => *region,		// Gujarati	GU
-Self::HA(region) => *region,		// Hausa	HA
-Self::IW(region) => *region,		// Hebrew	IW
-Self::HI(region) => *region,		// Hindi	HI
-Self::HU(region) => *region,		// Hungarian	HU
-Self::IS(region) => *region,		// Icelandic	IS
-Self::IN(region) => *region,		// Indonesian	IN
-Self::IA(region) => *region,		// Interlingua	IA
-Self::IE(region) => *region,		// Interlingue	IE
-Self::IK(region) => *region,		// Inupiak	IK
-Self::GA(region) => *region,		// Irish	GA
-Self::IT(region) => *region,		// Italian	IT
-Self::JA(region) => *region,		// Japanese	JA
-Self::JW(region) => *region,		// Javanese	JW
-Self::KN(region) => *region,		// Kannada	KN
-Self::KS(region) => *region,		// Kashmiri	KS
-Self::KK(region) => *region,		// Kazakh	KK
-Self::RW(region) => *region,		// Kinyarwanda	RW
-Self::KY(region) => *region,		// Kirghiz	KY
-Self::RN(region) => *region,		// Kirundi	RN
-Self::KO(region) => *region,		// Korean	KO
-Self::KU(region) => *region,		// Kurdish	KU
-Self::LO(region) => *region,		// Laothian	LO
-Self::LA(region) => *region,		// Latin	LA
-Self::LV(region) => *region,		// Latvian, Lettish	LV
-Self::LN(region) => *region,		// Lingala	LN
-Self::LT(region) => *region,		// Lithuanian	LT
-Self::MK(region) => *region,		// Macedonian	MK
-Self::MG(region) => *region,		// Malagasy	MG
-Self::MS(region) => *region,		// Malay	MS
-Self::ML(region) => *region,		// Malayalam	ML
-Self::MT(region) => *region,		// Maltese	MT
-Self::MI(region) => *region,		// Maori	MI
-Self::MR(region) => *region,		// Marathi	MR
-Self::MO(region) => *region,		// Moldavian	MO
-Self::MN(region) => *region,		// Mongolian	MN
-Self::NA(region) => *region,		// Nauru	NA
-Self::NE(region) => *region,		// Nepali	NE
-Self::NO(region) => *region,		// Norwegian	NO
-Self::OC(region) => *region,		// Occitan	OC
-Self::OR(region) => *region,		// Oriya	OR
-Self::OM(region) => *region,		// Oromo, Afan	OM
-Self::PS(region) => *region,		// Pashto, Pushto	PS
-Self::FA(region) => *region,		// Persian	FA
-Self::PL(region) => *region,		// Polish	PL
-Self::PT(region) => *region,		// Portuguese	PT
-Self::PA(region) => *region,		// Punjabi	PA
-Self::QU(region) => *region,		// Quechua	QU
-Self::RM(region) => *region,		// Rhaeto-Romance	RM
-Self::RO(region) => *region,		// Romanian	RO
-Self::RU(region) => *region,		// Russian	RU
-Self::SM(region) => *region,		// Samoan	SM
-Self::SG(region) => *region,		// Sangro	SG
-Self::SA(region) => *region,		// Sanskrit	SA
-Self::SR(region) => *region,		// Serbian	SR
-Self::SH(region) => *region,		// Serbo-Croatian	SH
-Self::ST(region) => *region,		// Sesotho	ST
-Self::TN(region) => *region,		// Setswana	TN
-Self::SN(region) => *region,		// Shona	SN
-Self::SD(region) => *region,		// Sindhi	SD
-Self::SI(region) => *region,		// Singhalese	SI
-Self::SS(region) => *region,		// Siswati	SS
-Self::SK(region) => *region,		// Slovak	SK
-Self::SL(region) => *region,		// Slovenian	SL
-Self::SO(region) => *region,		// Somali	SO
-Self::ES(region) => *region,		// Spanish	ES
-Self::SU(region) => *region,		// Sudanese	SU
-Self::SW(region) => *region,		// Swahili	SW
-Self::SV(region) => *region,		// Swedish	SV
-Self::TL(region) => *region,		// Tagalog	TL
-Self::TG(region) => *region,		// Tajik	TG
-Self::TA(region) => *region,		// Tamil	TA
-Self::TT(region) => *region,		// Tatar	TT
-Self::TE(region) => *region,		// Tegulu	TE
-Self::TH(region) => *region,		// Thai	TH
-Self::BO(region) => *region,		// Tibetan	BO
-Self::TI(region) => *region,		// Tigrinya	TI
-Self::TO(region) => *region,		// Tonga	TO
-Self::TS(region) => *region,		// Tsonga	TS
-Self::TR(region) => *region,		// Turkish	TR
-Self::TK(region) => *region,		// Turkmen	TK
-Self::TW(region) => *region,		// Twi	TW
-Self::UK(region) => *region,		// Ukrainian	UK
-Self::UR(region) => *region,		// Urdu	UR
-Self::UZ(region) => *region,		// Uzbek	UZ
-Self::VI(region) => *region,		// Vietnamese	VI
-Self::VO(region) => *region,		// Volapuk	VO
-Self::CY(region) => *region,		// Welsh	CY
-Self::WO(region) => *region,		// Wolof	WO
-Self::XH(region) => *region,		// Xhosa	XH
-Self::JI(region) => *region,		// Yiddish	JI
-Self::YO(region) => *region,		// Yoruba	YO
-Self::ZU(region) => *region,		// Zulu	ZU
+// Abkhazian	AB
+Self::AB(region) => {
+	if *region != Region::Any {
+		f.write_str("AB_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("AB")
+	}
+}
+
+// Afar	AA
+Self::AA(region) => {
+	if *region != Region::Any {
+		f.write_str("AA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("AA")
+	}
+}
+
+// Afrikaans	AF
+Self::AF(region) => {
+	if *region != Region::Any {
+		f.write_str("AF_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("AF")
+	}
+}
+
+// Albanian	SQ
+Self::SQ(region) => {
+	if *region != Region::Any {
+		f.write_str("SQ_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SQ")
+	}
+}
+
+// Amharic	AM
+Self::AM(region) => {
+	if *region != Region::Any {
+		f.write_str("AM_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("AM")
+	}
+}
+
+// Arabic	AR
+Self::AR(region) => {
+	if *region != Region::Any {
+		f.write_str("AR_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("AR")
+	}
+}
+
+// Armenian	HY
+Self::HY(region) => {
+	if *region != Region::Any {
+		f.write_str("HY_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("HY")
+	}
+}
+
+// Assamese	AS
+Self::AS(region) => {
+	if *region != Region::Any {
+		f.write_str("AS_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("AS")
+	}
+}
+
+// Aymara	AY
+Self::AY(region) => {
+	if *region != Region::Any {
+		f.write_str("AY_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("AY")
+	}
+}
+
+// Azerbaijani	AZ
+Self::AZ(region) => {
+	if *region != Region::Any {
+		f.write_str("AZ_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("AZ")
+	}
+}
+
+// Bashkir	BA
+Self::BA(region) => {
+	if *region != Region::Any {
+		f.write_str("BA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("BA")
+	}
+}
+
+// Basque	EU
+Self::EU(region) => {
+	if *region != Region::Any {
+		f.write_str("EU_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("EU")
+	}
+}
+
+// Bengali, Bangla	BN
+Self::BN(region) => {
+	if *region != Region::Any {
+		f.write_str("BN_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("BN")
+	}
+}
+
+// Bhutani	DZ
+Self::DZ(region) => {
+	if *region != Region::Any {
+		f.write_str("DZ_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("DZ")
+	}
+}
+
+// Bihari	BH
+Self::BH(region) => {
+	if *region != Region::Any {
+		f.write_str("BH_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("BH")
+	}
+}
+
+// Bislama	BI
+Self::BI(region) => {
+	if *region != Region::Any {
+		f.write_str("BI_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("BI")
+	}
+}
+
+// Breton	BR
+Self::BR(region) => {
+	if *region != Region::Any {
+		f.write_str("BR_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("BR")
+	}
+}
+
+// Bulgarian	BG
+Self::BG(region) => {
+	if *region != Region::Any {
+		f.write_str("BG_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("BG")
+	}
+}
+
+// Burmese	MY
+Self::MY(region) => {
+	if *region != Region::Any {
+		f.write_str("MY_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("MY")
+	}
+}
+
+// Byelorussian	BE
+Self::BE(region) => {
+	if *region != Region::Any {
+		f.write_str("BE_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("BE")
+	}
+}
+
+// Cambodian	KM
+Self::KM(region) => {
+	if *region != Region::Any {
+		f.write_str("KM_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("KM")
+	}
+}
+
+// Catalan	CA
+Self::CA(region) => {
+	if *region != Region::Any {
+		f.write_str("CA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("CA")
+	}
+}
+
+// Chinese	ZH
+Self::ZH(region) => {
+	if *region != Region::Any {
+		f.write_str("ZH_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("ZH")
+	}
+}
+
+// Corsican	CO
+Self::CO(region) => {
+	if *region != Region::Any {
+		f.write_str("CO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("CO")
+	}
+}
+
+// Croatian	HR
+Self::HR(region) => {
+	if *region != Region::Any {
+		f.write_str("HR_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("HR")
+	}
+}
+
+// Czech	CS
+Self::CS(region) => {
+	if *region != Region::Any {
+		f.write_str("CS_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("CS")
+	}
+}
+
+// Danish	DA
+Self::DA(region) => {
+	if *region != Region::Any {
+		f.write_str("DA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("DA")
+	}
+}
+
+// Dutch	NL
+Self::NL(region) => {
+	if *region != Region::Any {
+		f.write_str("NL_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("NL")
+	}
+}
+
+// English, American	EN
+Self::EN(region) => {
+	if *region != Region::Any {
+		f.write_str("EN_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("EN")
+	}
+}
+
+// Esperanto	EO
+Self::EO(region) => {
+	if *region != Region::Any {
+		f.write_str("EO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("EO")
+	}
+}
+
+// Estonian	ET
+Self::ET(region) => {
+	if *region != Region::Any {
+		f.write_str("ET_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("ET")
+	}
+}
+
+// Faeroese	FO
+Self::FO(region) => {
+	if *region != Region::Any {
+		f.write_str("FO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("FO")
+	}
+}
+
+// Fiji	FJ
+Self::FJ(region) => {
+	if *region != Region::Any {
+		f.write_str("FJ_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("FJ")
+	}
+}
+
+// Finnish	FI
+Self::FI(region) => {
+	if *region != Region::Any {
+		f.write_str("FI_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("FI")
+	}
+}
+
+// French	FR
+Self::FR(region) => {
+	if *region != Region::Any {
+		f.write_str("FR_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("FR")
+	}
+}
+
+// Frisian	FY
+Self::FY(region) => {
+	if *region != Region::Any {
+		f.write_str("FY_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("FY")
+	}
+}
+
+// Gaelic (Scots Gaelic)	GD
+Self::GD(region) => {
+	if *region != Region::Any {
+		f.write_str("GD_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("GD")
+	}
+}
+
+// Galician	GL
+Self::GL(region) => {
+	if *region != Region::Any {
+		f.write_str("GL_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("GL")
+	}
+}
+
+// Georgian	KA
+Self::KA(region) => {
+	if *region != Region::Any {
+		f.write_str("KA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("KA")
+	}
+}
+
+// German	DE
+Self::DE(region) => {
+	if *region != Region::Any {
+		f.write_str("DE_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("DE")
+	}
+}
+
+// Greek	EL
+Self::EL(region) => {
+	if *region != Region::Any {
+		f.write_str("EL_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("EL")
+	}
+}
+
+// Greenlandic	KL
+Self::KL(region) => {
+	if *region != Region::Any {
+		f.write_str("KL_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("KL")
+	}
+}
+
+// Guarani	GN
+Self::GN(region) => {
+	if *region != Region::Any {
+		f.write_str("GN_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("GN")
+	}
+}
+
+// Gujarati	GU
+Self::GU(region) => {
+	if *region != Region::Any {
+		f.write_str("GU_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("GU")
+	}
+}
+
+// Hausa	HA
+Self::HA(region) => {
+	if *region != Region::Any {
+		f.write_str("HA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("HA")
+	}
+}
+
+// Hebrew	IW
+Self::IW(region) => {
+	if *region != Region::Any {
+		f.write_str("IW_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("IW")
+	}
+}
+
+// Hindi	HI
+Self::HI(region) => {
+	if *region != Region::Any {
+		f.write_str("HI_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("HI")
+	}
+}
+
+// Hungarian	HU
+Self::HU(region) => {
+	if *region != Region::Any {
+		f.write_str("HU_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("HU")
+	}
+}
+
+// Icelandic	IS
+Self::IS(region) => {
+	if *region != Region::Any {
+		f.write_str("IS_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("IS")
+	}
+}
+
+// Indonesian	IN
+Self::IN(region) => {
+	if *region != Region::Any {
+		f.write_str("IN_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("IN")
+	}
+}
+
+// Interlingua	IA
+Self::IA(region) => {
+	if *region != Region::Any {
+		f.write_str("IA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("IA")
+	}
+}
+
+// Interlingue	IE
+Self::IE(region) => {
+	if *region != Region::Any {
+		f.write_str("IE_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("IE")
+	}
+}
+
+// Inupiak	IK
+Self::IK(region) => {
+	if *region != Region::Any {
+		f.write_str("IK_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("IK")
+	}
+}
+
+// Irish	GA
+Self::GA(region) => {
+	if *region != Region::Any {
+		f.write_str("GA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("GA")
+	}
+}
+
+// Italian	IT
+Self::IT(region) => {
+	if *region != Region::Any {
+		f.write_str("IT_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("IT")
+	}
+}
+
+// Japanese	JA
+Self::JA(region) => {
+	if *region != Region::Any {
+		f.write_str("JA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("JA")
+	}
+}
+
+// Javanese	JW
+Self::JW(region) => {
+	if *region != Region::Any {
+		f.write_str("JW_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("JW")
+	}
+}
+
+// Kannada	KN
+Self::KN(region) => {
+	if *region != Region::Any {
+		f.write_str("KN_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("KN")
+	}
+}
+
+// Kashmiri	KS
+Self::KS(region) => {
+	if *region != Region::Any {
+		f.write_str("KS_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("KS")
+	}
+}
+
+// Kazakh	KK
+Self::KK(region) => {
+	if *region != Region::Any {
+		f.write_str("KK_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("KK")
+	}
+}
+
+// Kinyarwanda	RW
+Self::RW(region) => {
+	if *region != Region::Any {
+		f.write_str("RW_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("RW")
+	}
+}
+
+// Kirghiz	KY
+Self::KY(region) => {
+	if *region != Region::Any {
+		f.write_str("KY_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("KY")
+	}
+}
+
+// Kirundi	RN
+Self::RN(region) => {
+	if *region != Region::Any {
+		f.write_str("RN_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("RN")
+	}
+}
+
+// Korean	KO
+Self::KO(region) => {
+	if *region != Region::Any {
+		f.write_str("KO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("KO")
+	}
+}
+
+// Kurdish	KU
+Self::KU(region) => {
+	if *region != Region::Any {
+		f.write_str("KU_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("KU")
+	}
+}
+
+// Laothian	LO
+Self::LO(region) => {
+	if *region != Region::Any {
+		f.write_str("LO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("LO")
+	}
+}
+
+// Latin	LA
+Self::LA(region) => {
+	if *region != Region::Any {
+		f.write_str("LA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("LA")
+	}
+}
+
+// Latvian, Lettish	LV
+Self::LV(region) => {
+	if *region != Region::Any {
+		f.write_str("LV_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("LV")
+	}
+}
+
+// Lingala	LN
+Self::LN(region) => {
+	if *region != Region::Any {
+		f.write_str("LN_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("LN")
+	}
+}
+
+// Lithuanian	LT
+Self::LT(region) => {
+	if *region != Region::Any {
+		f.write_str("LT_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("LT")
+	}
+}
+
+// Macedonian	MK
+Self::MK(region) => {
+	if *region != Region::Any {
+		f.write_str("MK_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("MK")
+	}
+}
+
+// Malagasy	MG
+Self::MG(region) => {
+	if *region != Region::Any {
+		f.write_str("MG_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("MG")
+	}
+}
+
+// Malay	MS
+Self::MS(region) => {
+	if *region != Region::Any {
+		f.write_str("MS_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("MS")
+	}
+}
+
+// Malayalam	ML
+Self::ML(region) => {
+	if *region != Region::Any {
+		f.write_str("ML_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("ML")
+	}
+}
+
+// Maltese	MT
+Self::MT(region) => {
+	if *region != Region::Any {
+		f.write_str("MT_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("MT")
+	}
+}
+
+// Maori	MI
+Self::MI(region) => {
+	if *region != Region::Any {
+		f.write_str("MI_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("MI")
+	}
+}
+
+// Marathi	MR
+Self::MR(region) => {
+	if *region != Region::Any {
+		f.write_str("MR_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("MR")
+	}
+}
+
+// Moldavian	MO
+Self::MO(region) => {
+	if *region != Region::Any {
+		f.write_str("MO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("MO")
+	}
+}
+
+// Mongolian	MN
+Self::MN(region) => {
+	if *region != Region::Any {
+		f.write_str("MN_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("MN")
+	}
+}
+
+// Nauru	NA
+Self::NA(region) => {
+	if *region != Region::Any {
+		f.write_str("NA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("NA")
+	}
+}
+
+// Nepali	NE
+Self::NE(region) => {
+	if *region != Region::Any {
+		f.write_str("NE_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("NE")
+	}
+}
+
+// Norwegian	NO
+Self::NO(region) => {
+	if *region != Region::Any {
+		f.write_str("NO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("NO")
+	}
+}
+
+// Occitan	OC
+Self::OC(region) => {
+	if *region != Region::Any {
+		f.write_str("OC_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("OC")
+	}
+}
+
+// Oriya	OR
+Self::OR(region) => {
+	if *region != Region::Any {
+		f.write_str("OR_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("OR")
+	}
+}
+
+// Oromo, Afan	OM
+Self::OM(region) => {
+	if *region != Region::Any {
+		f.write_str("OM_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("OM")
+	}
+}
+
+// Pashto, Pushto	PS
+Self::PS(region) => {
+	if *region != Region::Any {
+		f.write_str("PS_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("PS")
+	}
+}
+
+// Persian	FA
+Self::FA(region) => {
+	if *region != Region::Any {
+		f.write_str("FA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("FA")
+	}
+}
+
+// Polish	PL
+Self::PL(region) => {
+	if *region != Region::Any {
+		f.write_str("PL_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("PL")
+	}
+}
+
+// Portuguese	PT
+Self::PT(region) => {
+	if *region != Region::Any {
+		f.write_str("PT_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("PT")
+	}
+}
+
+// Punjabi	PA
+Self::PA(region) => {
+	if *region != Region::Any {
+		f.write_str("PA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("PA")
+	}
+}
+
+// Quechua	QU
+Self::QU(region) => {
+	if *region != Region::Any {
+		f.write_str("QU_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("QU")
+	}
+}
+
+// Rhaeto-Romance	RM
+Self::RM(region) => {
+	if *region != Region::Any {
+		f.write_str("RM_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("RM")
+	}
+}
+
+// Romanian	RO
+Self::RO(region) => {
+	if *region != Region::Any {
+		f.write_str("RO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("RO")
+	}
+}
+
+// Russian	RU
+Self::RU(region) => {
+	if *region != Region::Any {
+		f.write_str("RU_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("RU")
+	}
+}
+
+// Samoan	SM
+Self::SM(region) => {
+	if *region != Region::Any {
+		f.write_str("SM_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SM")
+	}
+}
+
+// Sangro	SG
+Self::SG(region) => {
+	if *region != Region::Any {
+		f.write_str("SG_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SG")
+	}
+}
+
+// Sanskrit	SA
+Self::SA(region) => {
+	if *region != Region::Any {
+		f.write_str("SA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SA")
+	}
+}
+
+// Serbian	SR
+Self::SR(region) => {
+	if *region != Region::Any {
+		f.write_str("SR_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SR")
+	}
+}
+
+// Serbo-Croatian	SH
+Self::SH(region) => {
+	if *region != Region::Any {
+		f.write_str("SH_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SH")
+	}
+}
+
+// Sesotho	ST
+Self::ST(region) => {
+	if *region != Region::Any {
+		f.write_str("ST_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("ST")
+	}
+}
+
+// Setswana	TN
+Self::TN(region) => {
+	if *region != Region::Any {
+		f.write_str("TN_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("TN")
+	}
+}
+
+// Shona	SN
+Self::SN(region) => {
+	if *region != Region::Any {
+		f.write_str("SN_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SN")
+	}
+}
+
+// Sindhi	SD
+Self::SD(region) => {
+	if *region != Region::Any {
+		f.write_str("SD_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SD")
+	}
+}
+
+// Singhalese	SI
+Self::SI(region) => {
+	if *region != Region::Any {
+		f.write_str("SI_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SI")
+	}
+}
+
+// Siswati	SS
+Self::SS(region) => {
+	if *region != Region::Any {
+		f.write_str("SS_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SS")
+	}
+}
+
+// Slovak	SK
+Self::SK(region) => {
+	if *region != Region::Any {
+		f.write_str("SK_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SK")
+	}
+}
+
+// Slovenian	SL
+Self::SL(region) => {
+	if *region != Region::Any {
+		f.write_str("SL_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SL")
+	}
+}
+
+// Somali	SO
+Self::SO(region) => {
+	if *region != Region::Any {
+		f.write_str("SO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SO")
+	}
+}
+
+// Spanish	ES
+Self::ES(region) => {
+	if *region != Region::Any {
+		f.write_str("ES_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("ES")
+	}
+}
+
+// Sudanese	SU
+Self::SU(region) => {
+	if *region != Region::Any {
+		f.write_str("SU_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SU")
+	}
+}
+
+// Swahili	SW
+Self::SW(region) => {
+	if *region != Region::Any {
+		f.write_str("SW_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SW")
+	}
+}
+
+// Swedish	SV
+Self::SV(region) => {
+	if *region != Region::Any {
+		f.write_str("SV_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("SV")
+	}
+}
+
+// Tagalog	TL
+Self::TL(region) => {
+	if *region != Region::Any {
+		f.write_str("TL_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("TL")
+	}
+}
+
+// Tajik	TG
+Self::TG(region) => {
+	if *region != Region::Any {
+		f.write_str("TG_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("TG")
+	}
+}
+
+// Tamil	TA
+Self::TA(region) => {
+	if *region != Region::Any {
+		f.write_str("TA_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("TA")
+	}
+}
+
+// Tatar	TT
+Self::TT(region) => {
+	if *region != Region::Any {
+		f.write_str("TT_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("TT")
+	}
+}
+
+// Tegulu	TE
+Self::TE(region) => {
+	if *region != Region::Any {
+		f.write_str("TE_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("TE")
+	}
+}
+
+// Thai	TH
+Self::TH(region) => {
+	if *region != Region::Any {
+		f.write_str("TH_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("TH")
+	}
+}
+
+// Tibetan	BO
+Self::BO(region) => {
+	if *region != Region::Any {
+		f.write_str("BO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("BO")
+	}
+}
+
+// Tigrinya	TI
+Self::TI(region) => {
+	if *region != Region::Any {
+		f.write_str("TI_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("TI")
+	}
+}
+
+// Tonga	TO
+Self::TO(region) => {
+	if *region != Region::Any {
+		f.write_str("TO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("TO")
+	}
+}
+
+// Tsonga	TS
+Self::TS(region) => {
+	if *region != Region::Any {
+		f.write_str("TS_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("TS")
+	}
+}
+
+// Turkish	TR
+Self::TR(region) => {
+	if *region != Region::Any {
+		f.write_str("TR_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("TR")
+	}
+}
+
+// Turkmen	TK
+Self::TK(region) => {
+	if *region != Region::Any {
+		f.write_str("TK_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("TK")
+	}
+}
+
+// Twi	TW
+Self::TW(region) => {
+	if *region != Region::Any {
+		f.write_str("TW_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("TW")
+	}
+}
+
+// Ukrainian	UK
+Self::UK(region) => {
+	if *region != Region::Any {
+		f.write_str("UK_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("UK")
+	}
+}
+
+// Urdu	UR
+Self::UR(region) => {
+	if *region != Region::Any {
+		f.write_str("UR_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("UR")
+	}
+}
+
+// Uzbek	UZ
+Self::UZ(region) => {
+	if *region != Region::Any {
+		f.write_str("UZ_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("UZ")
+	}
+}
+
+// Vietnamese	VI
+Self::VI(region) => {
+	if *region != Region::Any {
+		f.write_str("VI_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("VI")
+	}
+}
+
+// Volapuk	VO
+Self::VO(region) => {
+	if *region != Region::Any {
+		f.write_str("VO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("VO")
+	}
+}
+
+// Welsh	CY
+Self::CY(region) => {
+	if *region != Region::Any {
+		f.write_str("CY_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("CY")
+	}
+}
+
+// Wolof	WO
+Self::WO(region) => {
+	if *region != Region::Any {
+		f.write_str("WO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("WO")
+	}
+}
+
+// Xhosa	XH
+Self::XH(region) => {
+	if *region != Region::Any {
+		f.write_str("XH_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("XH")
+	}
+}
+
+// Yiddish	JI
+Self::JI(region) => {
+	if *region != Region::Any {
+		f.write_str("JI_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("JI")
+	}
+}
+
+// Yoruba	YO
+Self::YO(region) => {
+	if *region != Region::Any {
+		f.write_str("YO_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("YO")
+	}
+}
+
+// Zulu	ZU
+Self::ZU(region) => {
+	if *region != Region::Any {
+		f.write_str("ZU_")?;
+		<Region as Display>::fmt(region, f)
+	} else {
+		f.write_str("ZU")
+	}
+}
+
