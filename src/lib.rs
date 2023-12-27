@@ -1132,8 +1132,7 @@ pub enum Region {
 
     /// `AX`: Åland Islands
     #[doc(hidden)]
-    Ax,
-
+    Ax
 }
 
 impl Display for Region {
@@ -1665,12 +1664,551 @@ impl Display for Region {
 pub enum Language {
     #[doc(hidden)]
     __(Box<String>),
-    /// `en`: English
+
+    /// `ab`: Abkhazian
+    #[doc(hidden)]
+    Ab(Region),
+
+    /// `aa`: Afar
+    #[doc(hidden)]
+    Aa(Region),
+
+    /// `AF`: Afrikaans
+    #[doc(hidden)]
+    Af(Region),
+
+    /// `SQ`: Albanian
+    #[doc(hidden)]
+    Sq(Region),
+
+    /// `AM`: Amharic
+    #[doc(hidden)]
+    Am(Region),
+
+    /// `AR`: Arabic
+    #[doc(hidden)]
+    Ar(Region),
+
+    /// `HY`: Armenian
+    #[doc(hidden)]
+    Hy(Region),
+
+    /// `AS`: Assamese
+    #[doc(hidden)]
+    As(Region),
+
+    /// `AY`: Aymara
+    #[doc(hidden)]
+    Ay(Region),
+
+    /// `AZ`: Azerbaijani
+    #[doc(hidden)]
+    Az(Region),
+
+    /// `BA`: Bashkir
+    #[doc(hidden)]
+    Ba(Region),
+
+    /// `EU`: Basque
+    #[doc(hidden)]
+    Eu(Region),
+
+    /// `bn`: Bengali, Bangla
+    #[doc(hidden)]
+    Bn(Region),
+
+    /// `dz`: Bhutani
+    #[doc(hidden)]
+    Dz(Region),
+
+    /// `bh`: Bihari
+    #[doc(hidden)]
+    Bh(Region),
+
+    /// `BI`: Bislama
+    #[doc(hidden)]
+    BI(Region),
+
+    /// `br`: Breton
+    #[doc(hidden)]
+    Br(Region),
+
+    /// `bg`: Bulgarian
+    #[doc(hidden)]
+    Bg(Region),
+
+    /// `my`: Burmese
+    #[doc(hidden)]
+    My(Region),
+
+    /// `be`: Byelorussian
+    #[doc(hidden)]
+    Be(Region),
+
+    /// `km`: Cambodian
+    #[doc(hidden)]
+    Km(Region),
+
+    /// `ca`: Catalan
+    #[doc(hidden)]
+    Ca(Region),
+
+    /// `zh`: Chinese
+    #[doc(hidden)]
+    Zh(Region),
+
+    /// `co`: Corsican
+    #[doc(hidden)]
+    Co(Region),
+
+    /// `hr`: Croatian
+    #[doc(hidden)]
+    Hr(Region),
+
+    /// `CS`: Czech
+    #[doc(hidden)]
+    Cs(Region),
+
+    /// `DA`: Danish
+    #[doc(hidden)]
+    Da(Region),
+
+    /// `nl`: Dutch
+    #[doc(hidden)]
+    Nl(Region),
+
+    /// `en`: English, American
     #[doc(hidden)]
     En(Region),
+
+    /// `EO`: Esperanto
+    #[doc(hidden)]
+    Eo(Region),
+
+    /// `Et`: Estonian
+    #[doc(hidden)]
+    Et(Region),
+
+    /// `Fo`: Faeroese
+    #[doc(hidden)]
+    Fo(Region),
+
+    /// `FJ`: Fiji
+    #[doc(hidden)]
+    Fj(Region),
+
+    /// `FI`: Finnish
+    #[doc(hidden)]
+    Fi(Region),
+
+    /// `FR`: French
+    #[doc(hidden)]
+    Fr(Region),
+
+    /// `fy`: Frisian
+    #[doc(hidden)]
+    Fy(Region),
+
+    /// `gd`: Gaelic (Scots Gaelic)
+    #[doc(hidden)]
+    Gd(Region),
+
+    /// `GL`: Galician
+    #[doc(hidden)]
+    Gl(Region),
+
+    /// `KA`: Georgian
+    #[doc(hidden)]
+    Ka(Region),
+
+    /// `DE`: German
+    #[doc(hidden)]
+    De(Region),
+
+    /// `EL`: Greek
+    #[doc(hidden)]
+    El(Region),
+
+    /// `KL`: Greenlandic
+    #[doc(hidden)]
+    Kl(Region),
+
+    /// `GN`: Guarani
+    #[doc(hidden)]
+    Gn(Region),
+
+    /// `GU`: Gujarati
+    #[doc(hidden)]
+    Gu(Region),
+
+    /// `HA`: Hausa
+    #[doc(hidden)]
+    Ha(Region),
+
+    /// `IW`: Hebrew
+    #[doc(hidden)]
+    Iw(Region),
+
+    /// `HI`: Hindi
+    #[doc(hidden)]
+    Hi(Region),
+
+    /// `HU`: Hungarian
+    #[doc(hidden)]
+    Hu(Region),
+
+    /// `IS`: Icelandic
+    #[doc(hidden)]
+    Is(Region),
+
+    /// `IN`: Indonesian
+    #[doc(hidden)]
+    In(Region),
+
+    /// `IA`: Interlingua
+    #[doc(hidden)]
+    Ia(Region),
+
+    /// `IE`: Interlingue
+    #[doc(hidden)]
+    Ie(Region),
+
+    /// `IK`: Inupiak
+    #[doc(hidden)]
+    Ik(Region),
+
+    /// `GA`: Irish
+    #[doc(hidden)]
+    Ga(Region),
+
+    /// `IT`: Italian
+    #[doc(hidden)]
+    It(Region),
+
+    /// `JA`: Japanese
+    #[doc(hidden)]
+    Ja(Region),
+
+    /// `JW`: Javanese
+    #[doc(hidden)]
+    Jw(Region),
+
+    /// `KN`: Kannada
+    #[doc(hidden)]
+    Kn(Region),
+
+    /// `KS`: Kashmiri
+    #[doc(hidden)]
+    Ks(Region),
+
+    /// `KK`: Kazakh
+    #[doc(hidden)]
+    Kk(Region),
+
+    /// `RW`: Kinyarwanda
+    #[doc(hidden)]
+    Rw(Region),
+
+    /// `KY`: Kirghiz
+    #[doc(hidden)]
+    Ky(Region),
+
+    /// `RN`: Kirundi
+    #[doc(hidden)]
+    Rn(Region),
+
+    /// `KO`: Korean
+    #[doc(hidden)]
+    Ko(Region),
+
+    /// `ku`: Kurdish
+    #[doc(hidden)]
+    Ku(Region),
+
+    /// `lo`: Laothian
+    #[doc(hidden)]
+    Lo(Region),
+
+    /// `LA`: Latin
+    #[doc(hidden)]
+    La(Region),
+
+    /// `lv`: Latvian, Lettish
+    #[doc(hidden)]
+    Lv(Region),
+
+    /// `ln`: Lingala
+    #[doc(hidden)]
+    Ln(Region),
+
+    /// `lt`: Lithuanian
+    #[doc(hidden)]
+    Lt(Region),
+
+    /// `mk`: Macedonian
+    #[doc(hidden)]
+    Mk(Region),
+
+    /// `mg`: Malagasy
+    #[doc(hidden)]
+    Mg(Region),
+
+    /// `ms`: Malay
+    #[doc(hidden)]
+    Ms(Region),
+
+    /// `ml`: Malayalam
+    #[doc(hidden)]
+    Ml(Region),
+
+    /// `mt`: Maltese
+    #[doc(hidden)]
+    Mt(Region),
+
+    /// `mi`: Maori
+    #[doc(hidden)]
+    Mi(Region),
+
+    /// `mr`: Marathi
+    #[doc(hidden)]
+    Mr(Region),
+
+    /// `mo`: Moldavian
+    #[doc(hidden)]
+    Mo(Region),
+
+    /// `mn`: Mongolian
+    #[doc(hidden)]
+    Mn(Region),
+
+    /// `na`: Nauru
+    #[doc(hidden)]
+    Na(Region),
+
+    /// `ne`: Nepali
+    #[doc(hidden)]
+    Ne(Region),
+
+    /// `no`: Norwegian
+    #[doc(hidden)]
+    No(Region),
+
+    /// `oc`: Occitan
+    #[doc(hidden)]
+    Oc(Region),
+
+    /// `or`: Oriya
+    #[doc(hidden)]
+    Or(Region),
+
+    /// `om`: Oromo, Afan
+    #[doc(hidden)]
+    Om(Region),
+
+    /// `ps`: Pashto, Pushto
+    #[doc(hidden)]
+    Ps(Region),
+
+    /// `fa`: Persian
+    #[doc(hidden)]
+    Fa(Region),
+
+    /// `pl`: Polish
+    #[doc(hidden)]
+    Pl(Region),
+
+    /// `pt`: Portuguese
+    #[doc(hidden)]
+    Pt(Region),
+
+    /// `pa`: Punjabi
+    #[doc(hidden)]
+    Pa(Region),
+
+    /// `qu`: Quechua
+    #[doc(hidden)]
+    Qu(Region),
+
+    /// `rm`: Rhaeto-Romance
+    #[doc(hidden)]
+    Rm(Region),
+
+    /// `ro`: Romanian
+    #[doc(hidden)]
+    Ro(Region),
+
+    /// `ru`: Russian
+    #[doc(hidden)]
+    Ru(Region),
+
+    /// `sm`: Samoan
+    #[doc(hidden)]
+    Sm(Region),
+
+    /// `SG`: Sangro
+    #[doc(hidden)]
+    SG(Region),
+
+    /// `sa`: Sanskrit
+    #[doc(hidden)]
+    Sa(Region),
+
+    /// `sr`: Serbian
+    #[doc(hidden)]
+    Sr(Region),
+
+    /// `sh`: Serbo-Croatian
+    #[doc(hidden)]
+    Sh(Region),
+
+    /// `st`: Sesotho
+    #[doc(hidden)]
+    St(Region),
+
+    /// `tn`: Setswana
+    #[doc(hidden)]
+    Tn(Region),
+
+    /// `sn`: Shona
+    #[doc(hidden)]
+    Sn(Region),
+
+    /// `sd`: Sindhi
+    #[doc(hidden)]
+    Sd(Region),
+
+    /// `si`: Singhalese
+    #[doc(hidden)]
+    Si(Region),
+
+    /// `ss`: Siswati
+    #[doc(hidden)]
+    Ss(Region),
+
+    /// `sk`: Slovak
+    #[doc(hidden)]
+    Sk(Region),
+
+    /// `sl`: Slovenian
+    #[doc(hidden)]
+    Sl(Region),
+
+    /// `so`: Somali
+    #[doc(hidden)]
+    So(Region),
+
     /// `es`: Spanish
     #[doc(hidden)]
     Es(Region),
+
+    /// `su`: Sudanese
+    #[doc(hidden)]
+    Su(Region),
+
+    /// `sw`: Swahili
+    #[doc(hidden)]
+    Sw(Region),
+
+    /// `sv`: Swedish
+    #[doc(hidden)]
+    Sv(Region),
+
+    /// `tl`: Tagalog
+    #[doc(hidden)]
+    Tl(Region),
+
+    /// `tg`: Tajik
+    #[doc(hidden)]
+    Tg(Region),
+
+    /// `ta`: Tamil
+    #[doc(hidden)]
+    Ta(Region),
+
+    /// `tt`: Tatar
+    #[doc(hidden)]
+    Tt(Region),
+
+    /// `te`: Tegulu
+    #[doc(hidden)]
+    Te(Region),
+
+    /// `th`: Thai
+    #[doc(hidden)]
+    Th(Region),
+
+    /// `bo`: Tibetan
+    #[doc(hidden)]
+    Bo(Region),
+
+    /// `ti`: Tigrinya
+    #[doc(hidden)]
+    Ti(Region),
+
+    /// `to`: Tonga
+    #[doc(hidden)]
+    To(Region),
+
+    /// `ts`: Tsonga
+    #[doc(hidden)]
+    Ts(Region),
+
+    /// `tr`: Turkish
+    #[doc(hidden)]
+    Tr(Region),
+
+    /// `tk`: Turkmen
+    #[doc(hidden)]
+    Tk(Region),
+
+    /// `tw`: Twi
+    #[doc(hidden)]
+    Tw(Region),
+
+    /// `uk`: Ukrainian
+    #[doc(hidden)]
+    Uk(Region),
+
+    /// `ur`: Urdu
+    #[doc(hidden)]
+    Ur(Region),
+
+    /// `uz`: Uzbek
+    #[doc(hidden)]
+    Uz(Region),
+
+    /// `Vi`: Vietnamese
+    #[doc(hidden)]
+    Vi(Region),
+
+    /// `vo`: Volapuk
+    #[doc(hidden)]
+    Vo(Region),
+
+    /// `cy`: Welsh
+    #[doc(hidden)]
+    Cy(Region),
+
+    /// `wo`: Wolof
+    #[doc(hidden)]
+    Wo(Region),
+
+    /// `Xh`: Xhosa
+    #[doc(hidden)]
+    Xh(Region),
+
+    /// `ji`: Yiddish
+    #[doc(hidden)]
+    Ji(Region),
+
+    /// `yo`: Yoruba
+    #[doc(hidden)]
+    Yo(Region),
+
+    /// `zu`: Zulu
+    #[doc(hidden)]
+    Zu(Region),
+
 }
 
 impl Language {
@@ -1678,7 +2216,142 @@ impl Language {
     pub fn region(&self) -> Region {
         match self {
             Self::__(_) => Region::Any,
-            Self::En(region) | Self::Es(region) => *region,
+            Self::Ab(region) => *region,		// Abkhazian	AB
+            Self::Aa(region) => *region,		// Afar	AA
+            Self::Af(region) => *region,		// Afrikaans	AF
+            Self::Sq(region) => *region,		// Albanian	SQ
+            Self::Am(region) => *region,		// Amharic	AM
+            Self::Ar(region) => *region,		// Arabic	AR
+            Self::Hy(region) => *region,		// Armenian	HY
+            Self::As(region) => *region,		// Assamese	AS
+            Self::Ay(region) => *region,		// Aymara	AY
+            Self::Az(region) => *region,		// Azerbaijani	AZ
+            Self::Ba(region) => *region,		// Bashkir	BA
+            Self::Eu(region) => *region,		// Basque	EU
+            Self::Bn(region) => *region,		// Bengali, Bangla	BN
+            Self::Dz(region) => *region,		// Bhutani	DZ
+            Self::Bh(region) => *region,		// Bihari	BH
+            Self::BI(region) => *region,		// Bislama	BI
+            Self::Br(region) => *region,		// Breton	BR
+            Self::Bg(region) => *region,		// Bulgarian	BG
+            Self::My(region) => *region,		// Burmese	MY
+            Self::Be(region) => *region,		// Byelorussian	BE
+            Self::Km(region) => *region,		// Cambodian	KM
+            Self::Ca(region) => *region,		// Catalan	CA
+            Self::Zh(region) => *region,		// Chinese	ZH
+            Self::Co(region) => *region,		// Corsican	CO
+            Self::Hr(region) => *region,		// Croatian	HR
+            Self::Cs(region) => *region,		// Czech	CS
+            Self::Da(region) => *region,		// Danish	DA
+            Self::Nl(region) => *region,		// Dutch	NL
+            Self::En(region) => *region,		// English, American	EN
+            Self::Eo(region) => *region,		// Esperanto	EO
+            Self::Et(region) => *region,		// Estonian	ET
+            Self::Fo(region) => *region,		// Faeroese	FO
+            Self::Fj(region) => *region,		// Fiji	FJ
+            Self::Fi(region) => *region,		// Finnish	FI
+            Self::Fr(region) => *region,		// French	FR
+            Self::Fy(region) => *region,		// Frisian	FY
+            Self::Gd(region) => *region,		// Gaelic (Scots Gaelic)	GD
+            Self::Gl(region) => *region,		// Galician	GL
+            Self::Ka(region) => *region,		// Georgian	KA
+            Self::De(region) => *region,		// German	DE
+            Self::El(region) => *region,		// Greek	EL
+            Self::Kl(region) => *region,		// Greenlandic	KL
+            Self::Gn(region) => *region,		// Guarani	GN
+            Self::Gu(region) => *region,		// Gujarati	GU
+            Self::Ha(region) => *region,		// Hausa	HA
+            Self::Iw(region) => *region,		// Hebrew	IW
+            Self::Hi(region) => *region,		// Hindi	HI
+            Self::Hu(region) => *region,		// Hungarian	HU
+            Self::Is(region) => *region,		// Icelandic	IS
+            Self::In(region) => *region,		// Indonesian	IN
+            Self::Ia(region) => *region,		// Interlingua	IA
+            Self::Ie(region) => *region,		// Interlingue	IE
+            Self::Ik(region) => *region,		// Inupiak	IK
+            Self::Ga(region) => *region,		// Irish	GA
+            Self::It(region) => *region,		// Italian	IT
+            Self::Ja(region) => *region,		// Japanese	JA
+            Self::Jw(region) => *region,		// Javanese	JW
+            Self::Kn(region) => *region,		// Kannada	KN
+            Self::Ks(region) => *region,		// Kashmiri	KS
+            Self::Kk(region) => *region,		// Kazakh	KK
+            Self::Rw(region) => *region,		// Kinyarwanda	RW
+            Self::Ky(region) => *region,		// Kirghiz	KY
+            Self::Rn(region) => *region,		// Kirundi	RN
+            Self::Ko(region) => *region,		// Korean	KO
+            Self::Ku(region) => *region,		// Kurdish	KU
+            Self::Lo(region) => *region,		// Laothian	LO
+            Self::La(region) => *region,		// Latin	LA
+            Self::Lv(region) => *region,		// Latvian, Lettish	LV
+            Self::Ln(region) => *region,		// Lingala	LN
+            Self::Lt(region) => *region,		// Lithuanian	LT
+            Self::Mk(region) => *region,		// Macedonian	MK
+            Self::Mg(region) => *region,		// Malagasy	MG
+            Self::Ms(region) => *region,		// Malay	MS
+            Self::Ml(region) => *region,		// Malayalam	ML
+            Self::Mt(region) => *region,		// Maltese	MT
+            Self::Mi(region) => *region,		// Maori	MI
+            Self::Mr(region) => *region,		// Marathi	MR
+            Self::Mo(region) => *region,		// Moldavian	MO
+            Self::Mn(region) => *region,		// Mongolian	MN
+            Self::Na(region) => *region,		// Nauru	NA
+            Self::Ne(region) => *region,		// Nepali	NE
+            Self::No(region) => *region,		// Norwegian	NO
+            Self::Oc(region) => *region,		// Occitan	OC
+            Self::Or(region) => *region,		// Oriya	OR
+            Self::Om(region) => *region,		// Oromo, Afan	OM
+            Self::Ps(region) => *region,		// Pashto, Pushto	PS
+            Self::Fa(region) => *region,		// Persian	FA
+            Self::Pl(region) => *region,		// Polish	PL
+            Self::Pt(region) => *region,		// Portuguese	PT
+            Self::Pa(region) => *region,		// Punjabi	PA
+            Self::Qu(region) => *region,		// Quechua	QU
+            Self::Rm(region) => *region,		// Rhaeto-Romance	RM
+            Self::Ro(region) => *region,		// Romanian	RO
+            Self::Ru(region) => *region,		// Russian	RU
+            Self::Sm(region) => *region,		// Samoan	SM
+            Self::SG(region) => *region,		// Sangro	SG
+            Self::Sa(region) => *region,		// Sanskrit	SA
+            Self::Sr(region) => *region,		// Serbian	SR
+            Self::Sh(region) => *region,		// Serbo-Croatian	SH
+            Self::St(region) => *region,		// Sesotho	ST
+            Self::Tn(region) => *region,		// Setswana	TN
+            Self::Sn(region) => *region,		// Shona	SN
+            Self::Sd(region) => *region,		// Sindhi	SD
+            Self::Si(region) => *region,		// Singhalese	SI
+            Self::Ss(region) => *region,		// Siswati	SS
+            Self::Sk(region) => *region,		// Slovak	SK
+            Self::Sl(region) => *region,		// Slovenian	SL
+            Self::So(region) => *region,		// Somali	SO
+            Self::Es(region) => *region,		// Spanish	ES
+            Self::Su(region) => *region,		// Sudanese	SU
+            Self::Sw(region) => *region,		// Swahili	SW
+            Self::Sv(region) => *region,		// Swedish	SV
+            Self::Tl(region) => *region,		// Tagalog	TL
+            Self::Tg(region) => *region,		// Tajik	TG
+            Self::Ta(region) => *region,		// Tamil	TA
+            Self::Tt(region) => *region,		// Tatar	TT
+            Self::Te(region) => *region,		// Tegulu	TE
+            Self::Th(region) => *region,		// Thai	TH
+            Self::Bo(region) => *region,		// Tibetan	BO
+            Self::Ti(region) => *region,		// Tigrinya	TI
+            Self::To(region) => *region,		// Tonga	TO
+            Self::Ts(region) => *region,		// Tsonga	TS
+            Self::Tr(region) => *region,		// Turkish	TR
+            Self::Tk(region) => *region,		// Turkmen	TK
+            Self::Tw(region) => *region,		// Twi	TW
+            Self::Uk(region) => *region,		// Ukrainian	UK
+            Self::Ur(region) => *region,		// Urdu	UR
+            Self::Uz(region) => *region,		// Uzbek	UZ
+            Self::Vi(region) => *region,		// Vietnamese	VI
+            Self::Vo(region) => *region,		// Volapuk	VO
+            Self::Cy(region) => *region,		// Welsh	CY
+            Self::Wo(region) => *region,		// Wolof	WO
+            Self::Xh(region) => *region,		// Xhosa	XH
+            Self::Ji(region) => *region,		// Yiddish	JI
+            Self::Yo(region) => *region,		// Yoruba	YO
+            Self::Zu(region) => *region,		// Zulu	ZU
         }
     }
 }
@@ -1702,6 +2375,9 @@ impl Display for Language {
                 } else {
                     f.write_str("es")
                 }
+            }
+            _ => {
+                f.write_str("unknown language")
             }
         }
     }
