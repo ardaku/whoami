@@ -1394,7 +1394,7 @@ impl Display for Region {
                     894 => "ZM",		// Zambia
                     716 => "ZW",		// Zimbabwe
                     248 => "AX",		// Åland Islands
-                    _ => "??", // unknow for other cases
+                    _ => "**", // unknown for other cases
                 }
             }
 
@@ -1648,7 +1648,6 @@ impl Display for Region {
             Self::Zm => "ZM",			// Zambia
             Self::Zw => "ZW",			// Zimbabwe
             Self::Ax => "AX",			// Åland Islands
-            _ => "**",
         })
     }
 }
