@@ -1169,14 +1169,14 @@ impl Display for Region {
                     84  => "BZ",		// Belize
                     204 => "BJ",		// Benin
                     60  => "BM",		// Besrmuda
-                    064 => "BT",		// Bhutan
+                    64  => "BT",		// Bhutan
                     68  => "BO",		// Bolivia (Plurinational State of)
                     535 => "BQ",		// Bonaire, Sint Eustatius and Saba
                     70  => "BA",		// Bosnia and Herzegovina
                     72  => "BW",		// Botswana
-                    074 => "BV",		// Bouvet Island
+                    74  => "BV",		// Bouvet Island
                     76  => "BR",		// Brazil
-                    086 => "IO",		// British Indian Ocean Territory (the)
+                    86  => "IO",		// British Indian Ocean Territory (the)
                     96  => "BN",		// Brunei Darussalam
                     100 => "BG",		// Bulgaria
                     854 => "BF",		// Burkina Faso
@@ -1348,7 +1348,7 @@ impl Display for Region {
                     534 => "SX",		// Sint Maarten (Dutch part)
                     703 => "SK",		// Slovakia
                     705 => "SI",		// Slovenia
-                    090 => "SB",		// Solomon Islands
+                    90  => "SB",		// Solomon Islands
                     706 => "SO",		// Somalia
                     710 => "ZA",		// South Africa
                     239 => "GS",		// South Georgia and the South Sandwich Islands
@@ -1386,7 +1386,7 @@ impl Display for Region {
                     548 => "VU",		// Vanuatu
                     862 => "VE",		// Venezuela (Bolivarian Republic of)
                     704 => "VN",		// Viet Nam
-                    092 => "VG",		// Virgin Islands (British)
+                    92  => "VG",		// Virgin Islands (British)
                     850 => "VI",		// Virgin Islands (U.S.)
                     876 => "WF",		// Wallis and Futuna
                     732 => "EH",		// Western Sahara
