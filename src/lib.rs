@@ -114,7 +114,26 @@ use std::{
     ffi::OsString,
     fmt::{self, Display, Formatter},
     io::{Error, ErrorKind},
+    env,                    // for environment variables (LANG, LC_ALL)
 };
+
+/// output : en_US.UTF-8
+/// en     : language
+/// US     : country
+fn get_language_and_country() -> String {
+    if let Some(language) = env::var("LC_ALL").ok() {
+        // possible output : en_US.UTF-8
+        return language;
+    } else if let Some(language) = env::var("LANG").ok() {
+        // possible output : en_US.UTF-8
+        return language;
+    } else if let Some(language) = env::var("LANGUAGE").ok() {
+        // possible output : en_US.UTF-8
+        return language;
+    }
+    return String::new();
+}
+
 
 /// This crate's convenience type alias for [`Result`](std::result::Result)s
 pub type Result<T = (), E = Error> = std::result::Result<T, E>;
@@ -1135,6 +1154,7 @@ pub enum Region {
     Ax
 }
 
+
 impl Display for Region {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.write_str(match self {
@@ -1651,6 +1671,524 @@ impl Display for Region {
     }
 }
 
+/// the `function get_language_and_country` returns a String
+/// `en_US.UTF-8`       : `language_country.textencoding`
+/// the two uppercase letters between the underscore `_` and `.UTF-8`
+/// represent the `country`
+impl Region {
+    fn get() -> Self {
+        let var_env: String = get_language_and_country();
+        // output : en_US.UTF-8
+        // en     : language
+        // US     : country (region)
+
+        // the country is written in uppercase
+        if var_env.is_empty() {
+            return Region::Any;
+        } else if var_env.contains("AF") {
+            return Region::Af;
+        } else if var_env.contains("AL") {
+            return Region::Al;
+        } else if var_env.contains("DZ") {
+            return Region::Dz;
+        } else if var_env.contains("AS") {
+            return Region::As;
+        } else if var_env.contains("AD") {
+            return Region::Ad;
+        } else if var_env.contains("AO") {
+            return Region::Ao;
+        } else if var_env.contains("AI") {
+            return Region::Ai;
+        } else if var_env.contains("AQ") {
+            return Region::Aq;
+        } else if var_env.contains("AG") {
+            return Region::Ag;
+        } else if var_env.contains("AR") {
+            return Region::Ar;
+        } else if var_env.contains("AM") {
+            return Region::Am;
+        } else if var_env.contains("AW") {
+            return Region::Aw;
+        } else if var_env.contains("AU") {
+            return Region::Au;
+        } else if var_env.contains("AT") {
+            return Region::At;
+        } else if var_env.contains("AZ") {
+            return Region::Az;
+        } else if var_env.contains("BS") {
+            return Region::Bs;
+        } else if var_env.contains("BH") {
+            return Region::Bh;
+        } else if var_env.contains("BD") {
+            return Region::Bd;
+        } else if var_env.contains("BB") {
+            return Region::Bb;
+        } else if var_env.contains("BY") {
+            return Region::By;
+        } else if var_env.contains("BE") {
+            return Region::Be;
+        } else if var_env.contains("BZ") {
+            return Region::Bz;
+        } else if var_env.contains("BJ") {
+            return Region::Bj;
+        } else if var_env.contains("BM") {
+            return Region::Bm;
+        } else if var_env.contains("BT") {
+            return Region::Bt;
+        } else if var_env.contains("BO") {
+            return Region::Bo;
+        } else if var_env.contains("BQ") {
+            return Region::Bq;
+        } else if var_env.contains("BA") {
+            return Region::Ba;
+        } else if var_env.contains("BW") {
+            return Region::Bw;
+        } else if var_env.contains("BV") {
+            return Region::Bv;
+        } else if var_env.contains("BR") {
+            return Region::Br;
+        } else if var_env.contains("IO") {
+            return Region::Io;
+        } else if var_env.contains("BN") {
+            return Region::Bn;
+        } else if var_env.contains("BG") {
+            return Region::Bg;
+        } else if var_env.contains("BF") {
+            return Region::Bf;
+        } else if var_env.contains("BI") {
+            return Region::Bi;
+        } else if var_env.contains("CV") {
+            return Region::Cv;
+        } else if var_env.contains("KH") {
+            return Region::Kh;
+        } else if var_env.contains("CM") {
+            return Region::Cm;
+        } else if var_env.contains("CA") {
+            return Region::Ca;
+        } else if var_env.contains("KY") {
+            return Region::Ky;
+        } else if var_env.contains("CF") {
+            return Region::Cf;
+        } else if var_env.contains("TD") {
+            return Region::Td;
+        } else if var_env.contains("CL") {
+            return Region::Cl;
+        } else if var_env.contains("CN") {
+            return Region::Cn;
+        } else if var_env.contains("CX") {
+            return Region::Cx;
+        } else if var_env.contains("CC") {
+            return Region::Cc;
+        } else if var_env.contains("CO") {
+            return Region::Cd;
+        } else if var_env.contains("KM") {
+            return Region::Km;
+        } else if var_env.contains("CD") {
+            return Region::Cd;
+        } else if var_env.contains("CG") {
+            return Region::Cg;
+        } else if var_env.contains("CK") {
+            return Region::Ck;
+        } else if var_env.contains("CR") {
+            return Region::Cr;
+        } else if var_env.contains("HR") {
+            return Region::Hr;
+        } else if var_env.contains("CU") {
+            return Region::Cu;
+        } else if var_env.contains("CW") {
+            return Region::Cw;
+        } else if var_env.contains("CY") {
+            return Region::Cy;
+        } else if var_env.contains("CZ") {
+            return Region::Cz;
+        } else if var_env.contains("CI") {
+            return Region::Ci;
+        } else if var_env.contains("DK") {
+            return Region::Dk;
+        } else if var_env.contains("DJ") {
+            return Region::Dj;
+        } else if var_env.contains("DM") {
+            return Region::Dm;
+        } else if var_env.contains("DO") {
+            return Region::Do;
+        } else if var_env.contains("EC") {
+            return Region::Ec;
+        } else if var_env.contains("EG") {
+            return Region::Eg;
+        } else if var_env.contains("SV") {
+            return Region::Sv;
+        } else if var_env.contains("GQ") {
+            return Region::Gq;
+        } else if var_env.contains("ER") {
+            return Region::Er;
+        } else if var_env.contains("EE") {
+            return Region::Ee;
+        } else if var_env.contains("SZ") {
+            return Region::Sz;
+        } else if var_env.contains("ET") {
+            return Region::Et;
+        } else if var_env.contains("FK") {
+            return Region::Fk;
+        } else if var_env.contains("FO") {
+            return Region::Fo;
+        } else if var_env.contains("FJ") {
+            return Region::Fj;
+        } else if var_env.contains("FI") {
+            return Region::Fi;
+        } else if var_env.contains("FR") {
+            return Region::Fr;
+        } else if var_env.contains("GF") {
+            return Region::Gf;
+        } else if var_env.contains("PF") {
+            return Region::Pf;
+        } else if var_env.contains("TF") {
+            return Region::Tf;
+        } else if var_env.contains("GA") {
+            return Region::Ga;
+        } else if var_env.contains("GM") {
+            return Region::Gm;
+        } else if var_env.contains("GE") {
+            return Region::Ge;
+        } else if var_env.contains("DE") {
+            return Region::De;
+        } else if var_env.contains("GH") {
+            return Region::Gh;
+        } else if var_env.contains("GI") {
+            return Region::Gi;
+        } else if var_env.contains("GR") {
+            return Region::Gr;
+        } else if var_env.contains("GL") {
+            return Region::Gl;
+        } else if var_env.contains("GD") {
+            return Region::Gd;
+        } else if var_env.contains("GP") {
+            return Region::Gp;
+        } else if var_env.contains("GU") {
+            return Region::Gu;
+        } else if var_env.contains("GT") {
+            return Region::Gt;
+        } else if var_env.contains("GG") {
+            return Region::Gg;
+        } else if var_env.contains("GN") {
+            return Region::Gn;
+        } else if var_env.contains("GW") {
+            return Region::Gw;
+        } else if var_env.contains("GY") {
+            return Region::Gy;
+        } else if var_env.contains("HT") {
+            return Region::Ht;
+        } else if var_env.contains("HM") {
+            return Region::Hm;
+        } else if var_env.contains("VA") {
+            return Region::Va;
+        } else if var_env.contains("HN") {
+            return Region::Hn;
+        } else if var_env.contains("HK") {
+            return Region::Hk;
+        } else if var_env.contains("HU") {
+            return Region::Hu;
+        } else if var_env.contains("IS") {
+            return Region::Is;
+        } else if var_env.contains("IN") {
+            return Region::In;
+        } else if var_env.contains("ID") {
+            return Region::Id;
+        } else if var_env.contains("IR") {
+            return Region::Ir;
+        } else if var_env.contains("IQ") {
+            return Region::Iq;
+        } else if var_env.contains("IE") {
+            return Region::Ie;
+        } else if var_env.contains("IM") {
+            return Region::Im;
+        } else if var_env.contains("IL") {
+            return Region::Il;
+        } else if var_env.contains("IT") {
+            return Region::It;
+        } else if var_env.contains("JM") {
+            return Region::Jm;
+        } else if var_env.contains("JP") {
+            return Region::Jp;
+        } else if var_env.contains("JE") {
+            return Region::Je;
+        } else if var_env.contains("JO") {
+            return Region::Jo;
+        } else if var_env.contains("KZ") {
+            return Region::Kz;
+        } else if var_env.contains("KE") {
+            return Region::Ke;
+        } else if var_env.contains("KI") {
+            return Region::Ki;
+        } else if var_env.contains("KP") {
+            return Region::Kp;
+        } else if var_env.contains("KR") {
+            return Region::Kr;
+        } else if var_env.contains("KW") {
+            return Region::Kw;
+        } else if var_env.contains("KG") {
+            return Region::Kg;
+        } else if var_env.contains("LA") {
+            return Region::La;
+        } else if var_env.contains("LV") {
+            return Region::Lv;
+        } else if var_env.contains("LB") {
+            return Region::Lb;
+        } else if var_env.contains("LS") {
+            return Region::Ls;
+        } else if var_env.contains("LR") {
+            return Region::Lr;
+        } else if var_env.contains("LY") {
+            return Region::Ly;
+        } else if var_env.contains("LI") {
+            return Region::Li;
+        } else if var_env.contains("LT") {
+            return Region::Lt;
+        } else if var_env.contains("LU") {
+            return Region::Lu;
+        } else if var_env.contains("MO") {
+            return Region::Mo;
+        } else if var_env.contains("MG") {
+            return Region::Mg;
+        } else if var_env.contains("MW") {
+            return Region::Mw;
+        } else if var_env.contains("MY") {
+            return Region::My;
+        } else if var_env.contains("MV") {
+            return Region::Mv;
+        } else if var_env.contains("ML") {
+            return Region::Ml;
+        } else if var_env.contains("MT") {
+            return Region::Mt;
+        } else if var_env.contains("MH") {
+            return Region::Mh;
+        } else if var_env.contains("MQ") {
+            return Region::Mq;
+        } else if var_env.contains("MR") {
+            return Region::Mr;
+        } else if var_env.contains("MU") {
+            return Region::Mu;
+        } else if var_env.contains("YT") {
+            return Region::Yt;
+        } else if var_env.contains("MX") {
+            return Region::Mx;
+        } else if var_env.contains("FM") {
+            return Region::Fm;
+        } else if var_env.contains("MD") {
+            return Region::Md;
+        } else if var_env.contains("MC") {
+            return Region::Mc;
+        } else if var_env.contains("MN") {
+            return Region::Mn;
+        } else if var_env.contains("ME") {
+            return Region::Me;
+        } else if var_env.contains("MS") {
+            return Region::Ms;
+        } else if var_env.contains("MA") {
+            return Region::Ma;
+        } else if var_env.contains("MZ") {
+            return Region::Mz;
+        } else if var_env.contains("MM") {
+            return Region::Mm;
+        } else if var_env.contains("NA") {
+            return Region::Na;
+        } else if var_env.contains("NR") {
+            return Region::Nr;
+        } else if var_env.contains("NP") {
+            return Region::Np;
+        } else if var_env.contains("NL") {
+            return Region::Nl;
+        } else if var_env.contains("NC") {
+            return Region::Nc;
+        } else if var_env.contains("NZ") {
+            return Region::Nz;
+        } else if var_env.contains("NI") {
+            return Region::Ni;
+        } else if var_env.contains("NE") {
+            return Region::Ne;
+        } else if var_env.contains("NG") {
+            return Region::Ng;
+        } else if var_env.contains("NU") {
+            return Region::Nu;
+        } else if var_env.contains("NF") {
+            return Region::Nf;
+        } else if var_env.contains("MP") {
+            return Region::Mp;
+        } else if var_env.contains("NO") {
+            return Region::No;
+        } else if var_env.contains("OM") {
+            return Region::Om;
+        } else if var_env.contains("PK") {
+            return Region::Pk;
+        } else if var_env.contains("PW") {
+            return Region::Pw;
+        } else if var_env.contains("PS") {
+            return Region::Ps;
+        } else if var_env.contains("PA") {
+            return Region::Pa;
+        } else if var_env.contains("PG") {
+            return Region::Pg;
+        } else if var_env.contains("PY") {
+            return Region::Py;
+        } else if var_env.contains("PE") {
+            return Region::Pe;
+        } else if var_env.contains("PH") {
+            return Region::Ph;
+        } else if var_env.contains("PN") {
+            return Region::Pn;
+        } else if var_env.contains("PL") {
+            return Region::Pl;
+        } else if var_env.contains("PT") {
+            return Region::Pt;
+        } else if var_env.contains("PR") {
+            return Region::Pr;
+        } else if var_env.contains("QA") {
+            return Region::Qa;
+        } else if var_env.contains("MK") {
+            return Region::Mk;
+        } else if var_env.contains("RO") {
+            return Region::Ro;
+        } else if var_env.contains("RU") {
+            return Region::Ru;
+        } else if var_env.contains("RW") {
+            return Region::Rw;
+        } else if var_env.contains("RE") {
+            return Region::Re;
+        } else if var_env.contains("BL") {
+            return Region::Bl;
+        } else if var_env.contains("SH") {
+            return Region::Sh;
+        } else if var_env.contains("KN") {
+            return Region::Kn;
+        } else if var_env.contains("LC") {
+            return Region::Lc;
+        } else if var_env.contains("MF") {
+            return Region::Mf;
+        } else if var_env.contains("PM") {
+            return Region::Pm;
+        } else if var_env.contains("VC") {
+            return Region::Vc;
+        } else if var_env.contains("WS") {
+            return Region::Ws;
+        } else if var_env.contains("SM") {
+            return Region::Sm;
+        } else if var_env.contains("ST") {
+            return Region::St;
+        } else if var_env.contains("SA") {
+            return Region::Sa;
+        } else if var_env.contains("SN") {
+            return Region::Sn;
+        } else if var_env.contains("RS") {
+            return Region::Rs;
+        } else if var_env.contains("SC") {
+            return Region::Sc;
+        } else if var_env.contains("SL") {
+            return Region::Sl;
+        } else if var_env.contains("SG") {
+            return Region::Sg;
+        } else if var_env.contains("SX") {
+            return Region::Sx;
+        } else if var_env.contains("SK") {
+            return Region::Sk;
+        } else if var_env.contains("SI") {
+            return Region::Si;
+        } else if var_env.contains("SB") {
+            return Region::Sb;
+        } else if var_env.contains("SO") {
+            return Region::So;
+        } else if var_env.contains("ZA") {
+            return Region::Za;
+        } else if var_env.contains("GS") {
+            return Region::Gs;
+        } else if var_env.contains("SS") {
+            return Region::Ss;
+        } else if var_env.contains("ES") {
+            return Region::Es;
+        } else if var_env.contains("LK") {
+            return Region::Lk;
+        } else if var_env.contains("SD") {
+            return Region::Sd;
+        } else if var_env.contains("SR") {
+            return Region::Sr;
+        } else if var_env.contains("SJ") {
+            return Region::Sj;
+        } else if var_env.contains("SE") {
+            return Region::Se;
+        } else if var_env.contains("CH") {
+            return Region::Ch;
+        } else if var_env.contains("SY") {
+            return Region::Sy;
+        } else if var_env.contains("TW") {
+            return Region::Tw;
+        } else if var_env.contains("TJ") {
+            return Region::Tj;
+        } else if var_env.contains("TZ") {
+            return Region::Tz;
+        } else if var_env.contains("TH") {
+            return Region::Th;
+        } else if var_env.contains("TL") {
+            return Region::Tl;
+        } else if var_env.contains("TG") {
+            return Region::Tg;
+        } else if var_env.contains("TK") {
+            return Region::Tk;
+        } else if var_env.contains("TO") {
+            return Region::To;
+        } else if var_env.contains("TT") {
+            return Region::Tt;
+        } else if var_env.contains("TN") {
+            return Region::Tn;
+        } else if var_env.contains("TR") {
+            return Region::Tr;
+        } else if var_env.contains("TM") {
+            return Region::Tm;
+        } else if var_env.contains("TC") {
+            return Region::Tc;
+        } else if var_env.contains("TV") {
+            return Region::Tv;
+        } else if var_env.contains("UG") {
+            return Region::Ug;
+        } else if var_env.contains("UA") {
+            return Region::Ua;
+        } else if var_env.contains("AE") {
+            return Region::Ae;
+        } else if var_env.contains("GB") {
+            return Region::Gb;
+        } else if var_env.contains("UM") {
+            return Region::Um;
+        } else if var_env.contains("US") {
+            return Region::Us;
+        } else if var_env.contains("UY") {
+            return Region::Uy;
+        } else if var_env.contains("UZ") {
+            return Region::Uz;
+        } else if var_env.contains("VU") {
+            return Region::Vu;
+        } else if var_env.contains("VE") {
+            return Region::Ve;
+        } else if var_env.contains("VN") {
+            return Region::Vn;
+        } else if var_env.contains("VG") {
+            return Region::Vg;
+        } else if var_env.contains("VI") {
+            return Region::Vi;
+        } else if var_env.contains("WF") {
+            return Region::Wf;
+        } else if var_env.contains("EH") {
+            return Region::Eh;
+        } else if var_env.contains("YE") {
+            return Region::Ye;
+        } else if var_env.contains("ZM") {
+            return Region::Zm;
+        } else if var_env.contains("ZW") {
+            return Region::Zw;
+        } else if var_env.contains("AX") {
+            return Region::Ax;
+        }
+
+        return Region::Any;
+    }
+}
+
 /// A spoken language
 ///
 /// Use [`ToString::to_string()`] to convert to string of two letter lowercase
@@ -1725,9 +2263,9 @@ pub enum Language {
     #[doc(hidden)]
     Bh(Region),
 
-    /// `BI`: Bislama
+    /// `bi`: Bislama
     #[doc(hidden)]
-    BI(Region),
+    Bi(Region),
 
     /// `br`: Breton
     #[doc(hidden)]
@@ -2211,6 +2749,7 @@ pub enum Language {
 
 }
 
+
 impl Language {
     /// Retrieve the region code for this language dialect.
     pub fn region(&self) -> Region {
@@ -2231,7 +2770,7 @@ impl Language {
             Self::Bn(region) => *region,		// Bengali, Bangla	BN
             Self::Dz(region) => *region,		// Bhutani	DZ
             Self::Bh(region) => *region,		// Bihari	BH
-            Self::BI(region) => *region,		// Bislama	BI
+            Self::Bi(region) => *region,		// Bislama	BI
             Self::Br(region) => *region,		// Breton	BR
             Self::Bg(region) => *region,		// Bulgarian	BG
             Self::My(region) => *region,		// Burmese	MY
@@ -2512,7 +3051,7 @@ impl Display for Language {
             }
 
             // Bislama	BI
-            Self::BI(region) => {
+            Self::Bi(region) => {
                 if *region != Region::Any {
                     f.write_str("bi_")?;
                     <Region as Display>::fmt(region, f)
@@ -3724,12 +4263,311 @@ impl Display for Language {
     }
 }
 
+
+
+/// the `function get_language_and_country` returns a String
+/// `en_US.UTF-8`       : `language_country.textencoding`
+/// the two lowercase letters before the underscore `_`
+/// represents the `language`
+impl Language {
+    fn get() -> Self {
+        let var_env: String = get_language_and_country();
+        // output : en_US.UTF-8
+        // en     : language
+        // US     : country (region)
+
+        let region: Region = Region::get();
+
+        // the language is written with two lowercase characters
+        if var_env.contains("ab") {
+            return Language::Ab(region);
+        } else if var_env.contains("aa") {
+            return Language::Aa(region);
+        } else if var_env.contains("af") {
+            return Language::Af(region);
+        } else if var_env.contains("sq") {
+            return Language::Sq(region);
+        } else if var_env.contains("am") {
+            return Language::Am(region);
+        } else if var_env.contains("ar") {
+            return Language::Ar(region);
+        } else if var_env.contains("hy") {
+            return Language::Hy(region);
+        } else if var_env.contains("as") {
+            return Language::As(region);
+        } else if var_env.contains("ay") {
+            return Language::Ay(region);
+        } else if var_env.contains("az") {
+            return Language::Az(region);
+        } else if var_env.contains("ba") {
+            return Language::Ba(region);
+        } else if var_env.contains("eu") {
+            return Language::Eu(region);
+        } else if var_env.contains("bn") {
+            return Language::Bn(region);
+        } else if var_env.contains("dz") {
+            return Language::Dz(region);
+        } else if var_env.contains("bh") {
+            return Language::Bh(region);
+        } else if var_env.contains("bi") {
+            return Language::Bi(region);
+        } else if var_env.contains("br") {
+            return Language::Br(region);
+        } else if var_env.contains("bg") {
+            return Language::Bg(region);
+        } else if var_env.contains("my") {
+            return Language::My(region);
+        } else if var_env.contains("be") {
+            return Language::Be(region);
+        } else if var_env.contains("km") {
+            return Language::Km(region);
+        } else if var_env.contains("ca") {
+            return Language::Ca(region);
+        } else if var_env.contains("zh") {
+            return Language::Zh(region);
+        } else if var_env.contains("co") {
+            return Language::Co(region);
+        } else if var_env.contains("hr") {
+            return Language::Hr(region);
+        } else if var_env.contains("cs") {
+            return Language::Cs(region);
+        } else if var_env.contains("da") {
+            return Language::Da(region);
+        } else if var_env.contains("nl") {
+            return Language::Nl(region);
+        } else if var_env.contains("en") {
+            return Language::En(region);
+        } else if var_env.contains("eo") {
+            return Language::Eo(region);
+        } else if var_env.contains("et") {
+            return Language::Et(region);
+        } else if var_env.contains("fo") {
+            return Language::Fo(region);
+        } else if var_env.contains("fj") {
+            return Language::Fj(region);
+        } else if var_env.contains("fi") {
+            return Language::Fi(region);
+        } else if var_env.contains("fr") {
+            return Language::Fr(region);
+        } else if var_env.contains("fy") {
+            return Language::Fy(region);
+        } else if var_env.contains("gd") {
+            return Language::Gd(region);
+        } else if var_env.contains("gl") {
+            return Language::Gl(region);
+        } else if var_env.contains("ka") {
+            return Language::Ka(region);
+        } else if var_env.contains("de") {
+            return Language::De(region);
+        } else if var_env.contains("el") {
+            return Language::El(region);
+        } else if var_env.contains("kl") {
+            return Language::Kl(region);
+        } else if var_env.contains("gn") {
+            return Language::Gn(region);
+        } else if var_env.contains("gu") {
+            return Language::Gu(region);
+        } else if var_env.contains("ha") {
+            return Language::Ha(region);
+        } else if var_env.contains("iw") {
+            return Language::Iw(region);
+        } else if var_env.contains("hi") {
+            return Language::Hi(region);
+        } else if var_env.contains("hu") {
+            return Language::Hu(region);
+        } else if var_env.contains("is") {
+            return Language::Is(region);
+        } else if var_env.contains("in") {
+            return Language::In(region);
+        } else if var_env.contains("ia") {
+            return Language::Ia(region);
+        } else if var_env.contains("ie") {
+            return Language::Ie(region);
+        } else if var_env.contains("ik") {
+            return Language::Ik(region);
+        } else if var_env.contains("ga") {
+            return Language::Ga(region);
+        } else if var_env.contains("it") {
+            return Language::It(region);
+        } else if var_env.contains("ja") {
+            return Language::Ja(region);
+        } else if var_env.contains("jw") {
+            return Language::Jw(region);
+        } else if var_env.contains("kn") {
+            return Language::Kn(region);
+        } else if var_env.contains("ks") {
+            return Language::Ks(region);
+        } else if var_env.contains("kk") {
+            return Language::Kk(region);
+        } else if var_env.contains("rw") {
+            return Language::Rw(region);
+        } else if var_env.contains("ky") {
+            return Language::Ky(region);
+        } else if var_env.contains("rn") {
+            return Language::Rn(region);
+        } else if var_env.contains("ko") {
+            return Language::Ko(region);
+        } else if var_env.contains("ku") {
+            return Language::Ku(region);
+        } else if var_env.contains("lo") {
+            return Language::Lo(region);
+        } else if var_env.contains("la") {
+            return Language::La(region);
+        } else if var_env.contains("lv") {
+            return Language::Lv(region);
+        } else if var_env.contains("ln") {
+            return Language::Ln(region);
+        } else if var_env.contains("lt") {
+            return Language::Lt(region);
+        } else if var_env.contains("mk") {
+            return Language::Mk(region);
+        } else if var_env.contains("mg") {
+            return Language::Mg(region);
+        } else if var_env.contains("ms") {
+            return Language::Ms(region);
+        } else if var_env.contains("ml") {
+            return Language::Ml(region);
+        } else if var_env.contains("mt") {
+            return Language::Mt(region);
+        } else if var_env.contains("mi") {
+            return Language::Mi(region);
+        } else if var_env.contains("mr") {
+            return Language::Mr(region);
+        } else if var_env.contains("mo") {
+            return Language::Mo(region);
+        } else if var_env.contains("mn") {
+            return Language::Mn(region);
+        } else if var_env.contains("na") {
+            return Language::Na(region);
+        } else if var_env.contains("ne") {
+            return Language::Ne(region);
+        } else if var_env.contains("no") {
+            return Language::No(region);
+        } else if var_env.contains("oc") {
+            return Language::Oc(region);
+        } else if var_env.contains("or") {
+            return Language::Or(region);
+        } else if var_env.contains("om") {
+            return Language::Om(region);
+        } else if var_env.contains("ps") {
+            return Language::Ps(region);
+        } else if var_env.contains("fa") {
+            return Language::Fa(region);
+        } else if var_env.contains("pl") {
+            return Language::Pl(region);
+        } else if var_env.contains("pt") {
+            return Language::Pt(region);
+        } else if var_env.contains("pa") {
+            return Language::Pa(region);
+        } else if var_env.contains("qu") {
+            return Language::Qu(region);
+        } else if var_env.contains("rm") {
+            return Language::Rm(region);
+        } else if var_env.contains("ro") {
+            return Language::Ro(region);
+        } else if var_env.contains("ru") {
+            return Language::Ru(region);
+        } else if var_env.contains("sm") {
+            return Language::Sm(region);
+        } else if var_env.contains("sg") {
+            return Language::Sg(region);
+        } else if var_env.contains("sa") {
+            return Language::Sa(region);
+        } else if var_env.contains("sr") {
+            return Language::Sr(region);
+        } else if var_env.contains("sh") {
+            return Language::Sh(region);
+        } else if var_env.contains("st") {
+            return Language::St(region);
+        } else if var_env.contains("tn") {
+            return Language::Tn(region);
+        } else if var_env.contains("sn") {
+            return Language::Sn(region);
+        } else if var_env.contains("sd") {
+            return Language::Sd(region);
+        } else if var_env.contains("si") {
+            return Language::Si(region);
+        } else if var_env.contains("ss") {
+            return Language::Ss(region);
+        } else if var_env.contains("sk") {
+            return Language::Sk(region);
+        } else if var_env.contains("sl") {
+            return Language::Sl(region);
+        } else if var_env.contains("so") {
+            return Language::So(region);
+        } else if var_env.contains("es") {
+            return Language::Es(region);
+        } else if var_env.contains("su") {
+            return Language::Su(region);
+        } else if var_env.contains("sw") {
+            return Language::Sw(region);
+        } else if var_env.contains("sv") {
+            return Language::Sv(region);
+        } else if var_env.contains("tl") {
+            return Language::Tl(region);
+        } else if var_env.contains("tg") {
+            return Language::Tg(region);
+        } else if var_env.contains("ta") {
+            return Language::Ta(region);
+        } else if var_env.contains("tt") {
+            return Language::Tt(region);
+        } else if var_env.contains("te") {
+            return Language::Te(region);
+        } else if var_env.contains("th") {
+            return Language::Th(region);
+        } else if var_env.contains("bo") {
+            return Language::Bo(region);
+        } else if var_env.contains("ti") {
+            return Language::Ti(region);
+        } else if var_env.contains("to") {
+            return Language::To(region);
+        } else if var_env.contains("ts") {
+            return Language::Ts(region);
+        } else if var_env.contains("tr") {
+            return Language::Tr(region);
+        } else if var_env.contains("tk") {
+            return Language::Tk(region);
+        } else if var_env.contains("tw") {
+            return Language::Tw(region);
+        } else if var_env.contains("uk") {
+            return Language::Uk(region);
+        } else if var_env.contains("ur") {
+            return Language::Ur(region);
+        } else if var_env.contains("uz") {
+            return Language::Uz(region);
+        } else if var_env.contains("vi") {
+            return Language::Vi(region);
+        } else if var_env.contains("vo") {
+            return Language::Vo(region);
+        } else if var_env.contains("cy") {
+            return Language::Cy(region);
+        } else if var_env.contains("wo") {
+            return Language::Wo(region);
+        } else if var_env.contains("xh") {
+            return Language::Xh(region);
+        } else if var_env.contains("ji") {
+            return Language::Ji(region);
+        } else if var_env.contains("yo") {
+            return Language::Yo(region);
+        } else if var_env.contains("zu") {
+            return Language::Zu(region);
+        }
+
+        // unknown language
+        return Language::En(Region::Any);
+    }
+}
+
+
 // FIXME: V2: Move `Unknown` variants to the top of the enum.
 
 /// The desktop environment of a system
 #[derive(Debug, PartialEq, Eq, Clone)]
 #[non_exhaustive]
 pub enum DesktopEnv {
+    /// Unknown desktop environment
+    Unknown(String),
+
     /// Popular GTK-based desktop environment on Linux
     Gnome,
     /// One of the desktop environments for a specific version of Windows
@@ -3765,8 +4603,6 @@ pub enum DesktopEnv {
     Ermine,
     /// Default desktop environment for Redox
     Orbital,
-    /// Unknown desktop environment
-    Unknown(String),
 }
 
 impl Display for DesktopEnv {
