@@ -435,7 +435,7 @@ impl Target for Os {
             let mut nodename = fs::read("/etc/nodename")?;
 
             // Remove all at and after the first newline (before end of file)
-            if let Some(slice) = nodename.split(b'\n').next() {
+            if let Some(slice) = nodename.split(|x| *x == b'\n').next() {
                 nodename.drain(slice.len()..);
             }
 
