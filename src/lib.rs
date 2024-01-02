@@ -120,8 +120,8 @@ impl Display for Region {
 /// A spoken language
 ///
 /// Use [`ToString::to_string()`] to convert to string of two letter lowercase
-/// language code followed an underscore and uppercase region code (example:
-/// `en_US`).
+/// language code followed an forward slash and uppercase region code (example:
+/// `en/US`).
 ///
 /// Uses <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>
 #[non_exhaustive]

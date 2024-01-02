@@ -320,7 +320,7 @@ impl Iterator for LangIter {
 pub(crate) fn lang() -> impl Iterator<Item = String> {
     const DEFAULT_LANG: &str = "en_US";
 
-    let array = std::env::var("LANG")
+    let array = env::var("LANG")
         .unwrap_or_default()
         .split('.')
         .next()
@@ -534,7 +534,7 @@ impl Target for Os {
 
     fn desktop_env(self) -> DesktopEnv {
         #[cfg(target_os = "macos")]
-        let env = Some("Aqua");
+        let env = "Aqua";
         // FIXME: WhoAmI 2.0: use `let else`
         #[cfg(not(target_os = "macos"))]
         let env = env::var_os("DESKTOP_SESSION");

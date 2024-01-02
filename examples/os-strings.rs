@@ -2,20 +2,20 @@ fn main() {
     println!("WhoAmI {}", env!("CARGO_PKG_VERSION"));
     println!();
     println!(
-        "User's Name            whoami::realname_os():     {:?}",
-        whoami::realname_os(),
-    );
-    println!(
-        "User's Username        whoami::username_os():     {:?}",
-        whoami::username(),
-    );
-    println!(
         "User's Language        whoami::lang():            {:?}",
         whoami::langs()
             .map(|l| l
                 .map(|l| l.to_string())
                 .unwrap_or_else(|_| "??".to_string()))
             .collect::<Vec<String>>(),
+    );
+    println!(
+        "User's Name            whoami::realname_os():     {:?}",
+        whoami::realname_os(),
+    );
+    println!(
+        "User's Username        whoami::username_os():     {:?}",
+        whoami::username(),
     );
     println!(
         "Device's Pretty Name   whoami::devicename_os():   {:?}",
