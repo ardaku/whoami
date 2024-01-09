@@ -2959,1368 +2959,428 @@ impl Display for Language {
             Self::__(code) => f.write_str(code.as_str()),
 
             // Abkhazian	AB
-            Self::Ab(region) => {
-                if *region != Region::Any {
-                    f.write_str("ab_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ab")
-                }
-            }
+            Self::Ab(region) => language_display_helper(*region, f, "ab".to_string()),
 
             // Afar	AA
-            Self::Aa(region) => {
-                if *region != Region::Any {
-                    f.write_str("aa_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("aa")
-                }
-            }
+            Self::Aa(region) => language_display_helper(*region, f, "aa".to_string()),
 
             // Afrikaans	AF
-            Self::Af(region) => {
-                if *region != Region::Any {
-                    f.write_str("af_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("af")
-                }
-            }
+            Self::Af(region) => language_display_helper(*region, f, "af".to_string()),
 
             // Albanian	SQ
-            Self::Sq(region) => {
-                if *region != Region::Any {
-                    f.write_str("sq_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("sq")
-                }
-            }
+            Self::Sq(region) => language_display_helper(*region, f, "sq".to_string()),
 
             // Amharic	AM
-            Self::Am(region) => {
-                if *region != Region::Any {
-                    f.write_str("am_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("am")
-                }
-            }
+            Self::Am(region) => language_display_helper(*region, f, "am".to_string()),
 
             // Arabic	AR
-            Self::Ar(region) => {
-                if *region != Region::Any {
-                    f.write_str("ar_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ar")
-                }
-            }
+            Self::Ar(region) => language_display_helper(*region, f, "ar".to_string()),
 
             // Armenian	HY
-            Self::Hy(region) => {
-                if *region != Region::Any {
-                    f.write_str("hy_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("hy")
-                }
-            }
+            Self::Hy(region) => language_display_helper(*region, f, "hy".to_string()),
 
             // Assamese	AS
-            Self::As(region) => {
-                if *region != Region::Any {
-                    f.write_str("as_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("as")
-                }
-            }
+            Self::As(region) => language_display_helper(*region, f, "as".to_string()),
 
             // Aymara	AY
-            Self::Ay(region) => {
-                if *region != Region::Any {
-                    f.write_str("ay_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ay")
-                }
-            }
+            Self::Ay(region) => language_display_helper(*region, f, "ay".to_string()),
 
             // Azerbaijani	AZ
-            Self::Az(region) => {
-                if *region != Region::Any {
-                    f.write_str("az_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("az")
-                }
-            }
+            Self::Az(region) => language_display_helper(*region, f, "az".to_string()),
 
             // Bashkir	BA
-            Self::Ba(region) => {
-                if *region != Region::Any {
-                    f.write_str("ba_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ba")
-                }
-            }
+            Self::Ba(region) => language_display_helper(*region, f, "ba".to_string()),
 
             // Basque	EU
-            Self::Eu(region) => {
-                if *region != Region::Any {
-                    f.write_str("eu_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("eu")
-                }
-            }
+            Self::Eu(region) => language_display_helper(*region, f, "eu".to_string()),
 
             // Bengali, Bangla	BN
-            Self::Bn(region) => {
-                if *region != Region::Any {
-                    f.write_str("bn_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("bn")
-                }
-            }
+            Self::Bn(region) => language_display_helper(*region, f, "bn".to_string()),
 
             // Bhutani	DZ
-            Self::Dz(region) => {
-                if *region != Region::Any {
-                    f.write_str("dz_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("dz")
-                }
-            }
+            Self::Dz(region) => language_display_helper(*region, f, "dz".to_string()),
 
             // Bihari	BH
-            Self::Bh(region) => {
-                if *region != Region::Any {
-                    f.write_str("bh_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("bh")
-                }
-            }
+            Self::Bh(region) => language_display_helper(*region, f, "bh".to_string()),
 
             // Bislama	BI
-            Self::Bi(region) => {
-                if *region != Region::Any {
-                    f.write_str("bi_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("bi")
-                }
-            }
+            Self::Bi(region) => language_display_helper(*region, f, "bi".to_string()),
 
             // Breton	BR
-            Self::Br(region) => {
-                if *region != Region::Any {
-                    f.write_str("br_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("br")
-                }
-            }
+            Self::Br(region) => language_display_helper(*region, f, "br".to_string()),
 
-        // Bulgarian	BG
-            Self::Bg(region) => {
-                if *region != Region::Any {
-                    f.write_str("bg_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("bg")
-                }
-            }
+            // Bulgarian	BG
+            Self::Bg(region) => language_display_helper(*region, f, "bg".to_string()),
 
             // Burmese	MY
-            Self::My(region) => {
-                if *region != Region::Any {
-                    f.write_str("my_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("my")
-                }
-            }
+            Self::My(region) => language_display_helper(*region, f, "my".to_string()),
 
             // Byelorussian	BE
-            Self::Be(region) => {
-                if *region != Region::Any {
-                    f.write_str("be_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("be")
-                }
-            }
+            Self::Be(region) => language_display_helper(*region, f, "be".to_string()),
 
             // Cambodian	KM
-            Self::Km(region) => {
-                if *region != Region::Any {
-                    f.write_str("km_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("km")
-                }
-            }
+            Self::Km(region) => language_display_helper(*region, f, "km".to_string()),
 
             // Catalan	CA
-            Self::Ca(region) => {
-                if *region != Region::Any {
-                    f.write_str("ca_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ca")
-                }
-            }
+            Self::Ca(region) => language_display_helper(*region, f, "ca".to_string()),
 
             // Chinese	ZH
-            Self::Zh(region) => {
-                if *region != Region::Any {
-                    f.write_str("zh_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("zh")
-                }
-            }
+            Self::Zh(region) => language_display_helper(*region, f, "zh".to_string()),
 
             // Corsican	CO
-            Self::Co(region) => {
-                if *region != Region::Any {
-                    f.write_str("co_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("co")
-                }
-            }
+            Self::Co(region) => language_display_helper(*region, f, "co".to_string()),
 
             // Croatian	HR
-            Self::Hr(region) => {
-                if *region != Region::Any {
-                    f.write_str("hr_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("hr")
-                }
-            }
+            Self::Hr(region) => language_display_helper(*region, f, "hr".to_string()),
 
             // Czech	CS
-            Self::Cs(region) => {
-                if *region != Region::Any {
-                    f.write_str("cs_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("cs")
-                }
-            }
+            Self::Cs(region) => language_display_helper(*region, f, "cs".to_string()),
 
             // Danish	DA
-            Self::Da(region) => {
-                if *region != Region::Any {
-                    f.write_str("da_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("da")
-                }
-            }
+            Self::Da(region) => language_display_helper(*region, f, "da".to_string()),
 
             // Dutch	NL
-            Self::Nl(region) => {
-                if *region != Region::Any {
-                    f.write_str("nl_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("nl")
-                }
-            }
+            Self::Nl(region) => language_display_helper(*region, f, "nl".to_string()),
 
             // English, American	EN
-            Self::En(region) => {
-                if *region != Region::Any {
-                    f.write_str("en_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("en")
-                }
-            }
+            Self::En(region) => language_display_helper(*region, f, "en".to_string()),
 
             // Esperanto	EO
-            Self::Eo(region) => {
-                if *region != Region::Any {
-                    f.write_str("eo_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("eo")
-                }
-            }
+            Self::Eo(region) => language_display_helper(*region, f, "eo".to_string()),
 
             // Estonian	ET
-            Self::Et(region) => {
-                if *region != Region::Any {
-                    f.write_str("et_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("et")
-                }
-            }
+            Self::Et(region) => language_display_helper(*region, f, "et".to_string()),
 
             // Faeroese	FO
-            Self::Fo(region) => {
-                if *region != Region::Any {
-                    f.write_str("fo_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("fo")
-                }
-            }
+            Self::Fo(region) => language_display_helper(*region, f, "fo".to_string()),
 
             // Fiji	FJ
-            Self::Fj(region) => {
-                if *region != Region::Any {
-                    f.write_str("fj_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("fj")
-                }
-            }
+            Self::Fj(region) => language_display_helper(*region, f, "fj".to_string()),
 
             // Finnish	FI
-            Self::Fi(region) => {
-                if *region != Region::Any {
-                    f.write_str("fi_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("fi")
-                }
-            }
+            Self::Fi(region) => language_display_helper(*region, f, "fi".to_string()),
 
             // French	FR
-            Self::Fr(region) => {
-                if *region != Region::Any {
-                    f.write_str("fr_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("fr")
-                }
-            }
+            Self::Fr(region) => language_display_helper(*region, f, "fr".to_string()),
 
             // Frisian	FY
-            Self::Fy(region) => {
-                if *region != Region::Any {
-                    f.write_str("fy_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("fy")
-                }
-            }
+            Self::Fy(region) => language_display_helper(*region, f, "fy".to_string()),
 
             // Gaelic (Scots Gaelic)	GD
-            Self::Gd(region) => {
-                if *region != Region::Any {
-                    f.write_str("gd_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("gd")
-                }
-            }
+            Self::Gd(region) => language_display_helper(*region, f, "gd".to_string()),
 
             // Galician	GL
-            Self::Gl(region) => {
-                if *region != Region::Any {
-                    f.write_str("gl_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("gl")
-                }
-            }
+            Self::Gl(region) => language_display_helper(*region, f, "gl".to_string()),
 
             // Georgian	KA
-            Self::Ka(region) => {
-                if *region != Region::Any {
-                    f.write_str("ka_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ka")
-                }
-            }
+            Self::Ka(region) => language_display_helper(*region, f, "ka".to_string()),
 
             // German	DE
-            Self::De(region) => {
-                if *region != Region::Any {
-                    f.write_str("de_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("de")
-                }
-            }
+            Self::De(region) => language_display_helper(*region, f, "de".to_string()),
 
             // Greek	EL
-            Self::El(region) => {
-                if *region != Region::Any {
-                    f.write_str("el_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("el")
-                }
-            }
+            Self::El(region) => language_display_helper(*region, f, "el".to_string()),
 
             // Greenlandic	KL
-            Self::Kl(region) => {
-                if *region != Region::Any {
-                    f.write_str("kl_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("kl")
-                }
-            }
+            Self::Kl(region) => language_display_helper(*region, f, "kl".to_string()),
 
             // Guarani	GN
-            Self::Gn(region) => {
-                if *region != Region::Any {
-                    f.write_str("gn_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("gn")
-                }
-            }
+            Self::Gn(region) => language_display_helper(*region, f, "gn".to_string()),
 
             // Gujarati	GU
-            Self::Gu(region) => {
-                if *region != Region::Any {
-                    f.write_str("gu_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("gu")
-                }
-            }
+            Self::Gu(region) => language_display_helper(*region, f, "gu".to_string()),
 
             // Hausa	HA
-            Self::Ha(region) => {
-                if *region != Region::Any {
-                    f.write_str("ha_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ha")
-                }
-            }
+            Self::Ha(region) => language_display_helper(*region, f, "ha".to_string()),
 
             // Hebrew	IW
-            Self::Iw(region) => {
-                if *region != Region::Any {
-                    f.write_str("iw_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("iw")
-                }
-            }
+            Self::Iw(region) => language_display_helper(*region, f, "iw".to_string()),
 
             // Hindi	HI
-            Self::Hi(region) => {
-                if *region != Region::Any {
-                    f.write_str("hi_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("hi")
-                }
-            }
+            Self::Hi(region) => language_display_helper(*region, f, "hi".to_string()),
 
             // Hungarian	HU
-            Self::Hu(region) => {
-                if *region != Region::Any {
-                    f.write_str("hu_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("hu")
-                }
-            }
+            Self::Hu(region) => language_display_helper(*region, f, "hu".to_string()),
 
             // Icelandic	IS
-            Self::Is(region) => {
-                if *region != Region::Any {
-                    f.write_str("is_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("is")
-                }
-            }
+            Self::Is(region) => language_display_helper(*region, f, "is".to_string()),
 
             // Indonesian	IN
-            Self::In(region) => {
-                if *region != Region::Any {
-                    f.write_str("in_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("in")
-                }
-            }
+            Self::In(region) => language_display_helper(*region, f, "in".to_string()),
 
             // Interlingua	IA
-            Self::Ia(region) => {
-                if *region != Region::Any {
-                    f.write_str("ia_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ia")
-                }
-            }
+            Self::Ia(region) => language_display_helper(*region, f, "ia".to_string()),
 
             // Interlingue	IE
-            Self::Ie(region) => {
-                if *region != Region::Any {
-                    f.write_str("ie_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ie")
-                }
-            }
+            Self::Ie(region) => language_display_helper(*region, f, "ie".to_string()),
 
             // Inupiak	IK
-            Self::Ik(region) => {
-                if *region != Region::Any {
-                    f.write_str("ik_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ik")
-                }
-            }
+            Self::Ik(region) => language_display_helper(*region, f, "ik".to_string()),
 
             // Irish	GA
-            Self::Ga(region) => {
-                if *region != Region::Any {
-                    f.write_str("ga_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ga")
-                }
-            }
+            Self::Ga(region) => language_display_helper(*region, f, "ga".to_string()),
 
             // Italian	IT
-            Self::It(region) => {
-                if *region != Region::Any {
-                    f.write_str("it_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("it")
-                }
-            }
+            Self::It(region) => language_display_helper(*region, f, "it".to_string()),
 
             // Japanese	JA
-            Self::Ja(region) => {
-                if *region != Region::Any {
-                    f.write_str("ja_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ja")
-                }
-            }
+            Self::Ja(region) => language_display_helper(*region, f, "ja".to_string()),
 
             // Javanese	JW
-            Self::Jw(region) => {
-                if *region != Region::Any {
-                    f.write_str("jw_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("jw")
-                }
-            }
+            Self::Jw(region) => language_display_helper(*region, f, "jw".to_string()),
 
             // Kannada	KN
-            Self::Kn(region) => {
-                if *region != Region::Any {
-                    f.write_str("kn_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("kn")
-                }
-            }
+            Self::Kn(region) => language_display_helper(*region, f, "kn".to_string()),
 
             // Kashmiri	KS
-            Self::Ks(region) => {
-                if *region != Region::Any {
-                    f.write_str("ks_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ks")
-                }
-            }
+            Self::Ks(region) => language_display_helper(*region, f, "ks".to_string()),
 
             // Kazakh	KK
-            Self::Kk(region) => {
-                if *region != Region::Any {
-                    f.write_str("kk_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("kk")
-                }
-            }
+            Self::Kk(region) => language_display_helper(*region, f, "kk".to_string()),
 
             // Kinyarwanda	RW
-            Self::Rw(region) => {
-                if *region != Region::Any {
-                    f.write_str("rw_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("rw")
-                }
-            }
+            Self::Rw(region) => language_display_helper(*region, f, "rw".to_string()),
 
             // Kirghiz	KY
-            Self::Ky(region) => {
-                if *region != Region::Any {
-                    f.write_str("ky_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ky")
-                }
-            }
+            Self::Ky(region) => language_display_helper(*region, f, "ky".to_string()),
 
             // Kirundi	RN
-            Self::Rn(region) => {
-                if *region != Region::Any {
-                    f.write_str("rn_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("rn")
-                }
-            }
+            Self::Rn(region) => language_display_helper(*region, f, "rn".to_string()),
 
             // Korean	KO
-            Self::Ko(region) => {
-                if *region != Region::Any {
-                    f.write_str("ko_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ko")
-                }
-            }
+            Self::Ko(region) => language_display_helper(*region, f, "ko".to_string()),
 
             // Kurdish	KU
-            Self::Ku(region) => {
-                if *region != Region::Any {
-                    f.write_str("ku_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ku")
-                }
-            }
+            Self::Ku(region) => language_display_helper(*region, f, "ku".to_string()),
 
             // Laothian	LO
-            Self::Lo(region) => {
-                if *region != Region::Any {
-                    f.write_str("lo_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("lo")
-                }
-            }
+            Self::Lo(region) => language_display_helper(*region, f, "lo".to_string()),
 
             // Latin	LA
-            Self::La(region) => {
-                if *region != Region::Any {
-                    f.write_str("la_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("la")
-                }
-            }
+            Self::La(region) => language_display_helper(*region, f, "la".to_string()),
 
             // Latvian, Lettish	LV
-            Self::Lv(region) => {
-                if *region != Region::Any {
-                    f.write_str("lv_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("lv")
-                }
-            }
+            Self::Lv(region) => language_display_helper(*region, f, "lv".to_string()),
 
             // Lingala	LN
-            Self::Ln(region) => {
-                if *region != Region::Any {
-                    f.write_str("ln_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ln")
-                }
-            }
+            Self::Ln(region) => language_display_helper(*region, f, "ln".to_string()),
 
             // Lithuanian	LT
-            Self::Lt(region) => {
-                if *region != Region::Any {
-                    f.write_str("lt_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("lt")
-                }
-            }
+            Self::Lt(region) => language_display_helper(*region, f, "lt".to_string()),
 
             // Macedonian	MK
-            Self::Mk(region) => {
-                if *region != Region::Any {
-                    f.write_str("mk_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("mk")
-                }
-            }
+            Self::Mk(region) => language_display_helper(*region, f, "mk".to_string()),
 
             // Malagasy	MG
-            Self::Mg(region) => {
-                if *region != Region::Any {
-                    f.write_str("mg_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("mg")
-                }
-            }
+            Self::Mg(region) => language_display_helper(*region, f, "mg".to_string()),
 
             // Malay	MS
-            Self::Ms(region) => {
-                if *region != Region::Any {
-                    f.write_str("ms_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ms")
-                }
-            }
-
+            Self::Ms(region) => language_display_helper(*region, f, "ms".to_string()),
             // Malayalam	ML
-            Self::Ml(region) => {
-                if *region != Region::Any {
-                    f.write_str("ml_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ml")
-                }
-            }
+            Self::Ml(region) => language_display_helper(*region, f, "ml".to_string()),
 
             // Maltese	MT
-            Self::Mt(region) => {
-                if *region != Region::Any {
-                    f.write_str("mt_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("mt")
-                }
-            }
+            Self::Mt(region) => language_display_helper(*region, f, "mt".to_string()),
 
             // Maori	MI
-            Self::Mi(region) => {
-                if *region != Region::Any {
-                    f.write_str("mi_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("mi")
-                }
-            }
+            Self::Mi(region) => language_display_helper(*region, f, "mi".to_string()),
 
             // Marathi	MR
-            Self::Mr(region) => {
-                if *region != Region::Any {
-                    f.write_str("mr_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("mr")
-                }
-            }
+            Self::Mr(region) => language_display_helper(*region, f, "mr".to_string()),
 
             // Moldavian	MO
-            Self::Mo(region) => {
-                if *region != Region::Any {
-                    f.write_str("mo_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("mo")
-                }
-            }
+            Self::Mo(region) => language_display_helper(*region, f, "mo".to_string()),
 
             // Mongolian	MN
-            Self::Mn(region) => {
-                if *region != Region::Any {
-                    f.write_str("mn_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("mn")
-                }
-            }
+            Self::Mn(region) => language_display_helper(*region, f, "mn".to_string()),
 
             // Nauru	NA
-            Self::Na(region) => {
-                if *region != Region::Any {
-                    f.write_str("na_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("na")
-                }
-            }
+            Self::Na(region) => language_display_helper(*region, f, "na".to_string()),
 
             // Nepali	NE
-            Self::Ne(region) => {
-                if *region != Region::Any {
-                    f.write_str("ne_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ne")
-                }
-            }
+            Self::Ne(region) => language_display_helper(*region, f, "ne".to_string()),
 
             // Norwegian	NO
-            Self::No(region) => {
-                if *region != Region::Any {
-                    f.write_str("no_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("no")
-                }
-            }
+            Self::No(region) => language_display_helper(*region, f, "no".to_string()),
 
             // Occitan	OC
-            Self::Oc(region) => {
-                if *region != Region::Any {
-                    f.write_str("oc_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("oc")
-                }
-            }
+            Self::Oc(region) => language_display_helper(*region, f, "oc".to_string()),
 
             // Oriya	OR
-            Self::Or(region) => {
-                if *region != Region::Any {
-                    f.write_str("or_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("or")
-                }
-            }
+            Self::Or(region) => language_display_helper(*region, f, "or".to_string()),
 
             // Oromo, Afan	OM
-            Self::Om(region) => {
-                if *region != Region::Any {
-                    f.write_str("om_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("om")
-                }
-            }
+            Self::Om(region) => language_display_helper(*region, f, "om".to_string()),
 
             // Pashto, Pushto	PS
-            Self::Ps(region) => {
-                if *region != Region::Any {
-                    f.write_str("ps_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ps")
-                }
-            }
+            Self::Ps(region) => language_display_helper(*region, f, "ps".to_string()),
 
             // Persian	FA
-            Self::Fa(region) => {
-                if *region != Region::Any {
-                    f.write_str("fa_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("fa")
-                }
-            }
+            Self::Fa(region) => language_display_helper(*region, f, "fa".to_string()),
 
             // Polish	PL
-            Self::Pl(region) => {
-                if *region != Region::Any {
-                    f.write_str("pl_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("pl")
-                }
-            }
+            Self::Pl(region) => language_display_helper(*region, f, "pl".to_string()),
 
             // Portuguese	PT
-            Self::Pt(region) => {
-                if *region != Region::Any {
-                    f.write_str("pt_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("pt")
-                }
-            }
+            Self::Pt(region) => language_display_helper(*region, f, "pt".to_string()),
 
             // Punjabi	PA
-            Self::Pa(region) => {
-                if *region != Region::Any {
-                    f.write_str("pd_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("pa")
-                }
-            }
+            Self::Pa(region) => language_display_helper(*region, f, "pa".to_string()),
 
             // Quechua	QU
-            Self::Qu(region) => {
-                if *region != Region::Any {
-                    f.write_str("qu_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("qu")
-                }
-            }
+            Self::Qu(region) => language_display_helper(*region, f, "qu".to_string()),
 
             // Rhaeto-Romance	RM
-            Self::Rm(region) => {
-                if *region != Region::Any {
-                    f.write_str("rm_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("rm")
-                }
-            }
+            Self::Rm(region) => language_display_helper(*region, f, "rm".to_string()),
 
             // Romanian	RO
-            Self::Ro(region) => {
-                if *region != Region::Any {
-                    f.write_str("ro_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ro")
-                }
-            }
+            Self::Ro(region) => language_display_helper(*region, f, "ro".to_string()),
 
             // Russian	RU
-            Self::Ru(region) => {
-                if *region != Region::Any {
-                    f.write_str("ru_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ru")
-                }
-            }
+            Self::Ru(region) => language_display_helper(*region, f, "ru".to_string()),
 
             // Samoan	SM
-            Self::Sm(region) => {
-                if *region != Region::Any {
-                    f.write_str("sm_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("sm")
-                }
-            }
+            Self::Sm(region) => language_display_helper(*region, f, "sm".to_string()),
 
             // Sangro	SG
-            Self::Sg(region) => {
-                if *region != Region::Any {
-                    f.write_str("sg_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("sg")
-                }
-            }
+            Self::Sg(region) => language_display_helper(*region, f, "sg".to_string()),
 
             // Sanskrit	SA
-            Self::Sa(region) => {
-                if *region != Region::Any {
-                    f.write_str("sa_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("sa")
-                }
-            }
+            Self::Sa(region) => language_display_helper(*region, f, "sa".to_string()),
 
             // Serbian	SR
-            Self::Sr(region) => {
-                if *region != Region::Any {
-                    f.write_str("sr_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("sr")
-                }
-            }
+            Self::Sr(region) => language_display_helper(*region, f, "sr".to_string()),
 
             // Serbo-Croatian	SH
-            Self::Sh(region) => {
-                if *region != Region::Any {
-                    f.write_str("sh_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("sh")
-                }
-            }
+            Self::Sh(region) => language_display_helper(*region, f, "sh".to_string()),
 
             // Sesotho	ST
-            Self::St(region) => {
-                if *region != Region::Any {
-                    f.write_str("st_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("st")
-                }
-            }
+            Self::St(region) => language_display_helper(*region, f, "st".to_string()),
 
             // Setswana	TN
-            Self::Tn(region) => {
-                if *region != Region::Any {
-                    f.write_str("tn_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("tn")
-                }
-            }
+            Self::Tn(region) => language_display_helper(*region, f, "tn".to_string()),
 
             // Shona	SN
-            Self::Sn(region) => {
-                if *region != Region::Any {
-                    f.write_str("sn_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("sn")
-                }
-            }
+            Self::Sn(region) => language_display_helper(*region, f, "sn".to_string()),
 
             // Sindhi	SD
-            Self::Sd(region) => {
-                if *region != Region::Any {
-                    f.write_str("sd_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("sd")
-                }
-            }
+            Self::Sd(region) => language_display_helper(*region, f, "sd".to_string()),
 
             // Singhalese	SI
-            Self::Si(region) => {
-                if *region != Region::Any {
-                    f.write_str("si_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("si")
-                }
-            }
+            Self::Si(region) => language_display_helper(*region, f, "si".to_string()),
 
             // Siswati	SS
-            Self::Ss(region) => {
-                if *region != Region::Any {
-                    f.write_str("ss_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ss")
-                }
-            }
+            Self::Ss(region) => language_display_helper(*region, f, "ss".to_string()),
 
             // Slovak	SK
-            Self::Sk(region) => {
-                if *region != Region::Any {
-                    f.write_str("sk_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("sk")
-                }
-            }
+            Self::Sk(region) => language_display_helper(*region, f, "sk".to_string()),
 
             // Slovenian	SL
-            Self::Sl(region) => {
-                if *region != Region::Any {
-                    f.write_str("Sl_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("Sl")
-                }
-            }
+            Self::Sl(region) => language_display_helper(*region, f, "sl".to_string()),
 
             // Somali	SO
-            Self::So(region) => {
-                if *region != Region::Any {
-                    f.write_str("so_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("so")
-                }
-            }
+            Self::So(region) => language_display_helper(*region, f, "so".to_string()),
 
             // Spanish	ES
-            Self::Es(region) => {
-                if *region != Region::Any {
-                    f.write_str("es_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("es")
-                }
-            }
+            Self::Es(region) => language_display_helper(*region, f, "es".to_string()),
 
             // Sudanese	SU
-            Self::Su(region) => {
-                if *region != Region::Any {
-                    f.write_str("su_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("su")
-                }
-            }
+            Self::Su(region) => language_display_helper(*region, f, "su".to_string()),
 
             // Swahili	SW
-            Self::Sw(region) => {
-                if *region != Region::Any {
-                    f.write_str("sw_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("sw")
-                }
-            }
+            Self::Sw(region) => language_display_helper(*region, f, "sw".to_string()),
 
             // Swedish	SV
-            Self::Sv(region) => {
-                if *region != Region::Any {
-                    f.write_str("sv_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("sv")
-                }
-            }
+            Self::Sv(region) => language_display_helper(*region, f, "sv".to_string()),
 
             // Tagalog	TL
-            Self::Tl(region) => {
-                if *region != Region::Any {
-                    f.write_str("tl_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("tl")
-                }
-            }
+            Self::Tl(region) => language_display_helper(*region, f, "tl".to_string()),
 
             // Tajik	TG
-            Self::Tg(region) => {
-                if *region != Region::Any {
-                    f.write_str("tg_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("tg")
-                }
-            }
+            Self::Tg(region) => language_display_helper(*region, f, "tg".to_string()),
 
             // Tamil	TA
-            Self::Ta(region) => {
-                if *region != Region::Any {
-                    f.write_str("ta_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ta")
-                }
-            }
+            Self::Ta(region) => language_display_helper(*region, f, "ta".to_string()),
 
             // Tatar	TT
-            Self::Tt(region) => {
-                if *region != Region::Any {
-                    f.write_str("tt_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("tt")
-                }
-            }
+            Self::Tt(region) => language_display_helper(*region, f, "tt".to_string()),
 
             // Tegulu	TE
-            Self::Te(region) => {
-                if *region != Region::Any {
-                    f.write_str("te_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("te")
-                }
-            }
+            Self::Te(region) => language_display_helper(*region, f, "te".to_string()),
 
             // Thai	TH
-            Self::Th(region) => {
-                if *region != Region::Any {
-                    f.write_str("th_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("th")
-                }
-            }
+            Self::Th(region) => language_display_helper(*region, f, "th".to_string()),
 
             // Tibetan	BO
-            Self::Bo(region) => {
-                if *region != Region::Any {
-                    f.write_str("bo_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("bo")
-                }
-            }
+            Self::Bo(region) => language_display_helper(*region, f, "bo".to_string()),
 
             // Tigrinya	TI
-            Self::Ti(region) => {
-                if *region != Region::Any {
-                    f.write_str("ti_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ti")
-                }
-            }
+            Self::Ti(region) => language_display_helper(*region, f, "ti".to_string()),
 
             // Tonga	TO
-            Self::To(region) => {
-                if *region != Region::Any {
-                    f.write_str("to_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("to")
-                }
-            }
+            Self::To(region) => language_display_helper(*region, f, "to".to_string()),
 
             // Tsonga	TS
-            Self::Ts(region) => {
-                if *region != Region::Any {
-                    f.write_str("ts_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ts")
-                }
-            }
+            Self::Ts(region) => language_display_helper(*region, f, "ts".to_string()),
 
             // Turkish	TR
-            Self::Tr(region) => {
-                if *region != Region::Any {
-                    f.write_str("tr_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("tr")
-                }
-            }
+            Self::Tr(region) => language_display_helper(*region, f, "tr".to_string()),
 
             // Turkmen	TK
-            Self::Tk(region) => {
-                if *region != Region::Any {
-                    f.write_str("tk_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("tk")
-                }
-            }
+            Self::Tk(region) => language_display_helper(*region, f, "tk".to_string()),
 
             // Twi	TW
-            Self::Tw(region) => {
-                if *region != Region::Any {
-                    f.write_str("tw_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("tw")
-                }
-            }
+            Self::Tw(region) => language_display_helper(*region, f, "tw".to_string()),
 
             // Ukrainian	UK
-            Self::Uk(region) => {
-                if *region != Region::Any {
-                    f.write_str("uk_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("uk")
-                }
-            }
+            Self::Uk(region) => language_display_helper(*region, f, "uk".to_string()),
 
             // Urdu	UR
-            Self::Ur(region) => {
-                if *region != Region::Any {
-                    f.write_str("ur_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ur")
-                }
-            }
+            Self::Ur(region) => language_display_helper(*region, f, "ur".to_string()),
 
             // Uzbek	UZ
-            Self::Uz(region) => {
-                if *region != Region::Any {
-                    f.write_str("uz_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("uz")
-                }
-            }
+            Self::Uz(region) => language_display_helper(*region, f, "uz".to_string()),
 
             // Vietnamese	VI
-            Self::Vi(region) => {
-                if *region != Region::Any {
-                    f.write_str("vi_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("vi")
-                }
-            }
+            Self::Vi(region) => language_display_helper(*region, f, "vi".to_string()),
 
             // Volapuk	VO
-            Self::Vo(region) => {
-                if *region != Region::Any {
-                    f.write_str("vo_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("vo")
-                }
-            }
+            Self::Vo(region) => language_display_helper(*region, f, "vo".to_string()),
 
             // Welsh	CY
-            Self::Cy(region) => {
-                if *region != Region::Any {
-                    f.write_str("cy_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("cy")
-                }
-            }
+            Self::Cy(region) => language_display_helper(*region, f, "cy".to_string()),
 
             // Wolof	WO
-            Self::Wo(region) => {
-                if *region != Region::Any {
-                    f.write_str("wo_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("wo")
-                }
-            }
+            Self::Wo(region) => language_display_helper(*region, f, "wo".to_string()),
 
             // Xhosa	XH
-            Self::Xh(region) => {
-                if *region != Region::Any {
-                    f.write_str("xh_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("xh")
-                }
-            }
+            Self::Xh(region) => language_display_helper(*region, f, "xh".to_string()),
 
             // Yiddish	JI
-            Self::Ji(region) => {
-                if *region != Region::Any {
-                    f.write_str("ji_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("ji")
-                }
-            }
+            Self::Ji(region) => language_display_helper(*region, f, "ji".to_string()),
 
             // Yoruba	YO
-            Self::Yo(region) => {
-                if *region != Region::Any {
-                    f.write_str("yo_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("yo")
-                }
-            }
+            Self::Yo(region) => language_display_helper(*region, f, "yo".to_string()),
 
             // Zulu	ZU
-            Self::Zu(region) => {
-                if *region != Region::Any {
-                    f.write_str("zu_")?;
-                    <Region as Display>::fmt(region, f)
-                } else {
-                    f.write_str("zu")
-                }
-            }
+            Self::Zu(region) => language_display_helper(*region, f, "zu".to_string()),
         }
     }
 }
 
+
+/// the String represents the two letter encoding of the language
+fn language_display_helper(region: Region, f: &mut Formatter<'_>, encoding: String) -> fmt::Result {
+    if region != Region::Any {
+        let mut display: String = encoding;
+        display.push('_');
+        f.write_str(&display)?;
+        <Region as Display>::fmt(&region, f)
+    } else {
+        let display: String = encoding;
+        f.write_str(&display)
+    }
+}
 
 
 
