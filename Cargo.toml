@@ -39,3 +39,6 @@ default = ["web"]
 # Enabling this feature indicates that the wasm32-unknown-unknown target should
 # be assumed to be in a web environment where it can call DOM APIs.
 web = ["web-sys", "wasm-bindgen"]
+
+[dependencies]
+ansi_term = "0.12.0"

@@ -72,6 +72,7 @@ const DEFAULT_USERNAME: &str = "Unknown";
 const DEFAULT_HOSTNAME: &str = "LocalHost";
 
 pub mod fallible;
+pub mod disp;
 
 #[allow(unsafe_code)]
 // Unix
@@ -302,18 +303,18 @@ impl Display for Platform {
         }
 
         f.write_str(match self {
-            Self::Linux => "Linux",
-            Self::Bsd => "BSD",
-            Self::Windows => "Windows",
-            Self::MacOS => "Mac OS",
-            Self::Illumos => "Illumos",
-            Self::Ios => "iOS",
-            Self::Android => "Android",
-            Self::Nintendo => "Nintendo",
-            Self::Xbox => "XBox",
-            Self::PlayStation => "PlayStation",
-            Self::Fuchsia => "Fuchsia",
-            Self::Redox => "Redox",
+            Self::Linux => disp::display_linux(),
+            Self::Bsd => disp::display_bsd(),
+            Self::Windows => disp::display_windows(),
+            Self::MacOS => disp::display_macos(),
+            Self::Illumos => disp::display_illumos(),
+            Self::Ios => disp::display_ios(),
+            Self::Android => disp::display_android(),
+            Self::Nintendo => disp::display_nintendo(),
+            Self::Xbox => disp::display_xbox(),
+            Self::PlayStation => disp::display_playstation(),
+            Self::Fuchsia => disp::display_fuchsia(),
+            Self::Redox => disp::display_redox(),
             Self::Unknown(a) => a,
         })
     }
