@@ -1,5 +1,3 @@
-use ansi_term::Colour;
-
 pub fn display_windows() -> &'static str {
     r#"
                             .oodMMMM

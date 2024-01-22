@@ -41,4 +41,4 @@ default = ["web"]
 web = ["web-sys", "wasm-bindgen"]
 
 [dependencies]
-ansi_term = "0.12.0"
+is-terminal = "0.4.10"

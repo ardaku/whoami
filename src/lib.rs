@@ -116,6 +116,7 @@ use std::{
     fmt::{self, Display, Formatter},
     io::{Error, ErrorKind},
 };
+use is_terminal::IsTerminal;
 
 /// This crate's convenience type alias for [`Result`](std::result::Result)s
 pub type Result<T = (), E = Error> = std::result::Result<T, E>;
@@ -298,27 +299,28 @@ pub enum Platform {
 
 impl Display for Platform {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        if let Self::Unknown(_) = self {
-            f.write_str("Unknown: ")?;
+        if std::io::stdout().is_terminal() {
+            f.write_str(match self {
+                Self::Linux => disp::display_linux(),
+                Self::Bsd => disp::display_bsd(),
+                Self::Windows => disp::display_windows(),
+                Self::MacOS => disp::display_macos(),
+                Self::Illumos => disp::display_illumos(),
+                Self::Ios => disp::display_ios(),
+                Self::Android => disp::display_android(),
+                Self::Nintendo => disp::display_nintendo(),
+                Self::Xbox => disp::display_xbox(),
+                Self::PlayStation => disp::display_playstation(),
+                Self::Fuchsia => disp::display_fuchsia(),
+                Self::Redox => disp::display_redox(),
+                Self::Unknown(a) => a,
+            })
+        } else {
+            write!(f, "{:?}", self)
         }
-
-        f.write_str(match self {
-            Self::Linux => disp::display_linux(),
-            Self::Bsd => disp::display_bsd(),
-            Self::Windows => disp::display_windows(),
-            Self::MacOS => disp::display_macos(),
-            Self::Illumos => disp::display_illumos(),
-            Self::Ios => disp::display_ios(),
-            Self::Android => disp::display_android(),
-            Self::Nintendo => disp::display_nintendo(),
-            Self::Xbox => disp::display_xbox(),
-            Self::PlayStation => disp::display_playstation(),
-            Self::Fuchsia => disp::display_fuchsia(),
-            Self::Redox => disp::display_redox(),
-            Self::Unknown(a) => a,
-        })
     }
 }
+
 
 /// The architecture of a CPU
 #[non_exhaustive]
