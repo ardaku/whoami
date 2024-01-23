@@ -44,7 +44,7 @@ pub fn display_bsd() -> &'static str {
 "#
 }
 
-pub fn display_macos() -> &'static str{
+pub fn display_macos() -> &'static str {
     r#" 
                 ,xNMM.
                .OMMMMo
@@ -94,7 +94,7 @@ pub fn display_illumos() -> &'static str {
 }
 
 pub fn display_ios() -> &'static str {
-        r#" 
+    r#" 
                 ,xNMM.
                .OMMMMo
                lMM"
@@ -217,7 +217,7 @@ pub fn display_fuchsia() -> &'static str {
 }
 
 pub fn display_linux() -> &'static str {
-  r#"
+    r#"
                   .88888888:.
                 88888888.88888.
               .8888888888888888.

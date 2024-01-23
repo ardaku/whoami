@@ -71,8 +71,8 @@
 const DEFAULT_USERNAME: &str = "Unknown";
 const DEFAULT_HOSTNAME: &str = "LocalHost";
 
-pub mod fallible;
 pub mod disp;
+pub mod fallible;
 
 #[allow(unsafe_code)]
 // Unix
@@ -116,6 +116,7 @@ use std::{
     fmt::{self, Display, Formatter},
     io::{Error, ErrorKind},
 };
+
 use is_terminal::IsTerminal;
 
 /// This crate's convenience type alias for [`Result`](std::result::Result)s
@@ -320,7 +321,6 @@ impl Display for Platform {
         }
     }
 }
-
 
 /// The architecture of a CPU
 #[non_exhaustive]
