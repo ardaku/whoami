@@ -1,3 +1,5 @@
+/// Returns a reference to a static string containing the ASCII art
+/// representation of the Windows logo.
 pub fn display_windows() -> &'static str {
     r#"
                             .oodMMMM
@@ -20,6 +22,8 @@ pub fn display_windows() -> &'static str {
 "#
 }
 
+/// Returns a reference to a static string containing the ASCII art
+/// representation of the BSD logo.
 pub fn display_bsd() -> &'static str {
     r#"
                ,        ,
@@ -44,6 +48,8 @@ pub fn display_bsd() -> &'static str {
 "#
 }
 
+/// Returns a reference to a static string containing the ASCII art
+/// representation of the MacOS logo.
 pub fn display_macos() -> &'static str {
     r#" 
                 ,xNMM.
@@ -65,6 +71,8 @@ pub fn display_macos() -> &'static str {
 "#
 }
 
+/// Returns a reference to a static string containing the ASCII art
+/// representation of the Illumos logo.
 pub fn display_illumos() -> &'static str {
     r#"
 ' Tw
@@ -93,6 +101,8 @@ pub fn display_illumos() -> &'static str {
     "#
 }
 
+/// Returns a reference to a static string containing the ASCII art
+/// representation of the iOS logo.
 pub fn display_ios() -> &'static str {
     r#" 
                 ,xNMM.
@@ -114,6 +124,8 @@ pub fn display_ios() -> &'static str {
 "#
 }
 
+/// Returns a reference to a static string containing the ASCII art
+/// representation of the Android logo.
 pub fn display_android() -> &'static str {
     r#"
          -o          o-
@@ -137,6 +149,8 @@ pub fn display_android() -> &'static str {
 "#
 }
 
+/// Returns a reference to a static string containing the ASCII art
+/// representation of the Nintendo logo.
 pub fn display_nintendo() -> &'static str {
     r#"
                                                                  .-----------------. .----------------.  .-----------------. .----------------.  .----------------.  .-----------------. .----------------.  .----------------. 
@@ -153,6 +167,9 @@ pub fn display_nintendo() -> &'static str {
 ⠀⠀⠀⠉⠛⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⠛⠉        '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------' 
     "#
 }
+
+/// Returns a reference to a static string containing the ASCII art
+/// representation of the Xbox logo.
 pub fn display_xbox() -> &'static str {
     r#"
 ⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣤⣶⣶⣶⣶⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀
@@ -171,6 +188,8 @@ pub fn display_xbox() -> &'static str {
     "#
 }
 
+/// Returns a reference to a static string containing the ASCII art
+/// representation of the Playstation logo.
 pub fn display_playstation() -> &'static str {
     r#"
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣷⣶⣤⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -188,6 +207,8 @@ pub fn display_playstation() -> &'static str {
     "#
 }
 
+/// Returns a reference to a static string containing the ASCII art
+/// representation of the Redox logo.
 pub fn display_redox() -> &'static str {
     r#"
      ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄▄  ▄       ▄ 
@@ -204,6 +225,8 @@ pub fn display_redox() -> &'static str {
     "#
 }
 
+/// Returns a reference to a static string containing the ASCII art
+/// representation of the Fuchsia logo.
 pub fn display_fuchsia() -> &'static str {
     r#"
         ▄████     ▄█▄     ▄  █    ▄▄▄▄▄   ▄█ ██
@@ -216,6 +239,8 @@ pub fn display_fuchsia() -> &'static str {
     "#
 }
 
+/// Returns a reference to a static string containing the ASCII art
+/// representation of the Linux logo.
 pub fn display_linux() -> &'static str {
     r#"
                   .88888888:.
