@@ -71,6 +71,7 @@
 const DEFAULT_USERNAME: &str = "Unknown";
 const DEFAULT_HOSTNAME: &str = "LocalHost";
 
+#[allow(missing_docs)]
 pub mod disp;
 pub mod fallible;
 
