@@ -18,6 +18,8 @@ pub(crate) fn string_from_os(string: OsString) -> Result<String> {
 
     #[cfg(target_os = "windows")]
     {
-        string.into_string().map_err(|e| "Not valid Unicode")
+        string.into_string().map_err(|_| {
+            Error::new(ErrorKind::InvalidData, "Not valid unicode")
+        })
     }
 }
