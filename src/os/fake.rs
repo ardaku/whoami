@@ -5,71 +5,62 @@ compile_error!("Unexpected pointer width for target platform");
 
 use std::ffi::OsString;
 
-use crate::{Arch, DesktopEnv, Platform, Result};
+use crate::{
+    os::{Os, Target},
+    Arch, DesktopEnv, Language, Platform, Result,
+};
 
 #[inline(always)]
 pub(crate) fn lang() -> impl Iterator<Item = String> {
     std::iter::once("en-US".to_string())
 }
 
-#[inline(always)]
-pub(crate) fn username_os() -> Result<OsString> {
-    Ok(username()?.into())
-}
+impl Target for Os {
+    fn langs(self) -> Vec<Language> {
+        todo!()
+    }
 
-#[inline(always)]
-pub(crate) fn realname_os() -> Result<OsString> {
-    Ok(realname()?.into())
-}
+    #[inline(always)]
+    fn realname(self) -> Result<OsString> {
+        Ok("Anonymous".to_string().into())
+    }
 
-#[inline(always)]
-pub(crate) fn devicename_os() -> Result<OsString> {
-    Ok(devicename()?.into())
-}
+    #[inline(always)]
+    fn username(self) -> Result<OsString> {
+        Ok("anonymous".to_string().into())
+    }
 
-#[inline(always)]
-pub(crate) fn distro_os() -> Result<OsString> {
-    Ok(distro()?.into())
-}
+    #[inline(always)]
+    fn devicename(self) -> Result<OsString> {
+        Ok("Unknown".to_string().into())
+    }
 
-#[inline(always)]
-pub(crate) fn username() -> Result<String> {
-    Ok("anonymous".to_string())
-}
+    #[inline(always)]
+    fn hostname(self) -> Result<String> {
+        Ok("localhost".to_string())
+    }
 
-#[inline(always)]
-pub(crate) fn realname() -> Result<String> {
-    Ok("Anonymous".to_string())
-}
+    #[inline(always)]
+    fn distro(self) -> Result<String> {
+        Ok("Emulated".to_string())
+    }
 
-#[inline(always)]
-pub(crate) fn devicename() -> Result<String> {
-    Ok("Unknown".to_string())
-}
+    #[inline(always)]
+    fn desktop_env(self) -> DesktopEnv {
+        DesktopEnv::Unknown("WebAssembly".to_string())
+    }
 
-#[inline(always)]
-pub(crate) fn hostname() -> Result<String> {
-    Ok("localhost".to_string())
-}
+    #[inline(always)]
+    fn platform(self) -> Platform {
+        Platform::Unknown("Unknown".to_string())
+    }
 
-#[inline(always)]
-pub(crate) fn distro() -> Result<String> {
-    Ok("Emulated".to_string())
-}
-
-#[inline(always)]
-pub(crate) fn desktop_env() -> DesktopEnv {
-    DesktopEnv::Unknown("WebAssembly".to_string())
-}
-
-pub(crate) fn platform() -> Platform {
-    Platform::Unknown("Unknown".to_string())
-}
-
-pub(crate) fn arch() -> Arch {
-    if cfg!(target_pointer_width = "64") {
-        Arch::Wasm64
-    } else {
-        Arch::Wasm32
+    #[inline(always)]
+    fn arch(self) -> Result<Arch> {
+        Ok(if cfg!(target_pointer_width = "64") {
+            Arch::Wasm64
+        } else {
+            Arch::Wasm32
+        })
     }
 }
