@@ -566,11 +566,12 @@ pub fn lang() -> impl Iterator<Item = String> {
 
 /// Get the user's preferred language(s).
 ///
-/// Returned as iterator of [`Language`]s wrapped in [`Result`]s.  The most
-/// preferred language is returned first, followed by next preferred, and so on.
-/// Unrecognized languages may return an error.
+/// The most preferred language is returned first, followed by next preferred,
+/// and so on.  Unrecognized languages won't cause this function to error.
 #[inline(always)]
-pub fn langs() -> impl Iterator<Item = Result<Language>> {
+pub fn langs() -> Result<Vec<Language>> {
     #[allow(deprecated)]
-    lang().map(|string| Ok(Language::__(Box::new(string))))
+    Ok(lang()
+        .map(|string| Language::__(Box::new(string)))
+        .collect())
 }
