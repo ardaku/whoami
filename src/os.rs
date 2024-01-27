@@ -1,8 +1,17 @@
 #![allow(unsafe_code)]
 
+// Redox - FIXME: Currently routes to fake.rs
+#[cfg_attr(
+    all(target_os = "redox", not(target_arch = "wasm32")),
+    path = "os/fake.rs"
+)]
 // Unix
 #[cfg_attr(
-    not(any(target_os = "windows", target_arch = "wasm32")),
+    not(any(
+        target_arch = "wasm32",
+        target_os = "redox",
+        target_os = "windows",
+    )),
     path = "os/unix.rs"
 )]
 // Wasm32 (Daku) - FIXME: Currently routes to fake.rs
