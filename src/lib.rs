@@ -68,47 +68,9 @@
     html_favicon_url = "https://raw.githubusercontent.com/ardaku/whoami/stable/res/icon.svg"
 )]
 
-const DEFAULT_USERNAME: &str = "Unknown";
-const DEFAULT_HOSTNAME: &str = "LocalHost";
-
+mod conversions;
 pub mod fallible;
-
-#[allow(unsafe_code)]
-// Unix
-#[cfg_attr(
-    not(any(target_os = "windows", target_arch = "wasm32")),
-    path = "unix.rs"
-)]
-// Wasm32 (Daku) - FIXME: Currently routes to fake.rs
-#[cfg_attr(all(target_arch = "wasm32", target_os = "daku"), path = "fake.rs")]
-// Wasm32 (Wasi) - FIXME: Currently routes to fake.rs
-#[cfg_attr(all(target_arch = "wasm32", target_os = "wasi"), path = "fake.rs")]
-// Wasm32 (Web)
-#[cfg_attr(
-    all(
-        target_arch = "wasm32",
-        not(target_os = "wasi"),
-        not(target_os = "daku"),
-        feature = "web",
-    ),
-    path = "web.rs"
-)]
-// Wasm32 (Unknown)
-#[cfg_attr(
-    all(
-        target_arch = "wasm32",
-        not(target_os = "wasi"),
-        not(target_os = "daku"),
-        not(feature = "web"),
-    ),
-    path = "fake.rs"
-)]
-// Windows
-#[cfg_attr(
-    all(target_os = "windows", not(target_arch = "wasm32")),
-    path = "windows.rs"
-)]
-mod platform;
+mod os;
 
 use std::{
     ffi::OsString,
@@ -116,17 +78,28 @@ use std::{
     io::{Error, ErrorKind},
 };
 
+use crate::os::{Os, Target};
+
+macro_rules! report_message {
+    () => {
+        "Please report this issue at https://github.com/ardaku/whoami/issues"
+    };
+}
+
+const DEFAULT_USERNAME: &str = "Unknown";
+const DEFAULT_HOSTNAME: &str = "LocalHost";
+
 /// This crate's convenience type alias for [`Result`](std::result::Result)s
 pub type Result<T = (), E = Error> = std::result::Result<T, E>;
 
-/// Region code for a [`Language`] dialect
+/// Country code for a [`Language`] dialect
 ///
 /// Uses <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>
 #[non_exhaustive]
 #[repr(u32)]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub enum Region {
-    // FIXME: V2: u32::from_ne_bytes for region codes, with `\0` for unused
+pub enum Country {
+    // FIXME: V2: u32::from_ne_bytes for country codes, with `\0` for unused
     // FIXME: Add aliases up to 3-4 letters, but hidden
     /// Any dialect
     Any,
@@ -135,7 +108,7 @@ pub enum Region {
     Us,
 }
 
-impl Display for Region {
+impl Display for Country {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.write_str(match self {
             Self::Any => "**",
@@ -147,8 +120,8 @@ impl Display for Region {
 /// A spoken language
 ///
 /// Use [`ToString::to_string()`] to convert to string of two letter lowercase
-/// language code followed and underscore and uppercase region code (example:
-/// `en_US`).
+/// language code followed an forward slash and uppercase country code (example:
+/// `en/US`).
 ///
 /// Uses <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>
 #[non_exhaustive]
@@ -159,18 +132,18 @@ pub enum Language {
     __(Box<String>),
     /// `en`: English
     #[doc(hidden)]
-    En(Region),
+    En(Country),
     /// `es`: Spanish
     #[doc(hidden)]
-    Es(Region),
+    Es(Country),
 }
 
 impl Language {
-    /// Retrieve the region code for this language dialect.
-    pub fn region(&self) -> Region {
+    /// Retrieve the country code for this language dialect.
+    pub fn country(&self) -> Country {
         match self {
-            Self::__(_) => Region::Any,
-            Self::En(region) | Self::Es(region) => *region,
+            Self::__(_) => Country::Any,
+            Self::En(country) | Self::Es(country) => *country,
         }
     }
 }
@@ -179,18 +152,18 @@ impl Display for Language {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::__(code) => f.write_str(code.as_str()),
-            Self::En(region) => {
-                if *region != Region::Any {
-                    f.write_str("en_")?;
-                    <Region as Display>::fmt(region, f)
+            Self::En(country) => {
+                if *country != Country::Any {
+                    f.write_str("en/")?;
+                    <Country as Display>::fmt(country, f)
                 } else {
                     f.write_str("en")
                 }
             }
-            Self::Es(region) => {
-                if *region != Region::Any {
-                    f.write_str("es_")?;
-                    <Region as Display>::fmt(region, f)
+            Self::Es(country) => {
+                if *country != Country::Any {
+                    f.write_str("es/")?;
+                    <Country as Display>::fmt(country, f)
                 } else {
                     f.write_str("es")
                 }
@@ -464,7 +437,7 @@ impl Arch {
 /// Get the CPU Architecture.
 #[inline(always)]
 pub fn arch() -> Arch {
-    platform::arch()
+    Target::arch(Os).expect(concat!("arch() failed.  ", report_message!()))
 }
 
 /// Get the user's username.
@@ -518,7 +491,7 @@ pub fn devicename() -> String {
 #[inline(always)]
 pub fn devicename_os() -> OsString {
     fallible::devicename_os()
-        .or_else(|_| fallible::hostname_os())
+        .or_else(|_| fallible::hostname().map(OsString::from))
         .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string().into())
 }
 
@@ -540,8 +513,10 @@ pub fn hostname() -> String {
 /// case-insensitive, this method normalizes to lowercase (unlike
 /// [`devicename()`]).
 #[inline(always)]
+#[deprecated(note = "use `hostname()` instead", since = "1.5.0")]
 pub fn hostname_os() -> OsString {
-    fallible::hostname_os()
+    fallible::hostname()
+        .map(OsString::from)
         .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_lowercase().into())
 }
 
@@ -557,8 +532,10 @@ pub fn distro() -> String {
 ///
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
+#[deprecated(note = "use `distro()` instead", since = "1.5.0")]
 pub fn distro_os() -> OsString {
-    fallible::distro_os()
+    fallible::distro()
+        .map(OsString::from)
         .unwrap_or_else(|_| format!("Unknown {}", platform()).into())
 }
 
@@ -567,24 +544,24 @@ pub fn distro_os() -> OsString {
 /// Example: "gnome" or "windows"
 #[inline(always)]
 pub fn desktop_env() -> DesktopEnv {
-    platform::desktop_env()
+    Target::desktop_env(Os)
 }
 
 /// Get the platform.
 #[inline(always)]
 pub fn platform() -> Platform {
-    platform::platform()
+    Target::platform(Os)
 }
 
 /// Get the user's preferred language(s).
 ///
 /// Returned as iterator of two letter language codes (lowercase), optionally
-/// followed by a dash (-) and a two letter region code (uppercase).  The most
+/// followed by a dash (-) and a two letter country code (uppercase).  The most
 /// preferred language is returned first, followed by next preferred, and so on.
 #[inline(always)]
 #[deprecated(note = "use `langs()` instead", since = "1.5.0")]
 pub fn lang() -> impl Iterator<Item = String> {
-    platform::lang()
+    os::lang()
 }
 
 /// Get the user's preferred language(s).

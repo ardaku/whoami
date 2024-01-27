@@ -6,7 +6,11 @@
 
 use std::ffi::OsString;
 
-use crate::{platform, Result};
+use crate::{
+    conversions,
+    os::{Os, Target},
+    Result,
+};
 
 /// Get the user's username.
 ///
@@ -14,7 +18,7 @@ use crate::{platform, Result};
 /// are not allowed in the username.
 #[inline(always)]
 pub fn username() -> Result<String> {
-    platform::username()
+    username_os().and_then(conversions::string_from_os)
 }
 
 /// Get the user's username.
@@ -23,19 +27,19 @@ pub fn username() -> Result<String> {
 /// spaces are not allowed in the username.
 #[inline(always)]
 pub fn username_os() -> Result<OsString> {
-    platform::username_os()
+    Target::username(Os)
 }
 
 /// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname() -> Result<String> {
-    platform::realname()
+    realname_os().and_then(conversions::string_from_os)
 }
 
 /// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname_os() -> Result<OsString> {
-    platform::realname_os()
+    Target::realname(Os)
 }
 
 /// Get the name of the operating system distribution and (possibly) version.
@@ -43,15 +47,7 @@ pub fn realname_os() -> Result<OsString> {
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn distro() -> Result<String> {
-    platform::distro()
-}
-
-/// Get the name of the operating system distribution and (possibly) version.
-///
-/// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
-#[inline(always)]
-pub fn distro_os() -> Result<OsString> {
-    platform::distro_os()
+    Target::distro(Os)
 }
 
 /// Get the device name (also known as "Pretty Name").
@@ -59,7 +55,7 @@ pub fn distro_os() -> Result<OsString> {
 /// Often used to identify device for bluetooth pairing.
 #[inline(always)]
 pub fn devicename() -> Result<String> {
-    platform::devicename()
+    devicename_os().and_then(conversions::string_from_os)
 }
 
 /// Get the device name (also known as "Pretty Name").
@@ -67,7 +63,7 @@ pub fn devicename() -> Result<String> {
 /// Often used to identify device for bluetooth pairing.
 #[inline(always)]
 pub fn devicename_os() -> Result<OsString> {
-    platform::devicename_os()
+    Target::devicename(Os)
 }
 
 /// Get the host device's hostname.
@@ -78,20 +74,9 @@ pub fn devicename_os() -> Result<OsString> {
 /// [`devicename()`]).
 #[inline(always)]
 pub fn hostname() -> Result<String> {
-    let mut hostname = platform::hostname()?;
+    let mut hostname = Target::hostname(Os)?;
 
     hostname.make_ascii_lowercase();
 
     Ok(hostname)
-}
-
-/// Get the host device's hostname.
-///
-/// Limited to a-z (case insensitve), 0-9, and dashes.  This limit also applies
-/// to `devicename()` when targeting Windows.  Since the hostname is
-/// case-insensitive, this method normalizes to lowercase (unlike
-/// [`devicename()`]).
-#[inline(always)]
-pub fn hostname_os() -> Result<OsString> {
-    Ok(hostname()?.into())
 }
