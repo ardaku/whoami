@@ -19,10 +19,10 @@
     all(target_arch = "wasm32", target_os = "daku"),
     path = "os/fake.rs"
 )]
-// Wasm32 (Wasi) - FIXME: Currently routes to fake.rs
+// Wasm32 (Wasi)
 #[cfg_attr(
     all(target_arch = "wasm32", target_os = "wasi"),
-    path = "os/fake.rs"
+    path = "os/wasi.rs"
 )]
 // Wasm32 (Web)
 #[cfg_attr(

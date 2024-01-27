@@ -35,7 +35,7 @@ WhoAmI targets all platforms that can run Rust, including:
  - [Web Assembly](https://github.com/ardaku/whoami/blob/stable/WASM.md)
    - Mock implementation
    - Web Browser - DOM
-   - WASI (Wasite/Quantii, others) **mock implementation, full implementation planned later**
+   - WASI (Wasite, others) **may partially or fully work - but untested**
    - Daku (Ardaku/Quantii, others) **mock implementation, full implementation planned later**
  - Illumos variants (SmartOS, OmniOS, others) **may partially or fully work - but untested**
  - Android **may partially or fully work - but untested, planned later**

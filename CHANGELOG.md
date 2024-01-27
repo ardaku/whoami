@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 
 ### Added
 
+ - WASI support
  - Fallible functions
    - `whoami::fallible::devicename()`
    - `whoami::fallible::devicename_os()`

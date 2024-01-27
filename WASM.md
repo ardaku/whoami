@@ -12,7 +12,6 @@ WhoAmI links to web-sys and defaults values to browser information:
  - `platform()`: Host operating system by view of browser (Example: "Linux")
  - `distro()`: Host distro by view of browser (Example "Unknown Linux")
  - `desktop_env()`: "Web Browser"
- - `arch()`: "wasm32"
 
 ## Mock
 If you compile WhoAmI with `default-features = false`, WhoAmI will not bind to
@@ -26,22 +25,20 @@ web-sys, and will instead return these mock values:
  - `platform()`: "Unknown"
  - `distro()`: "Emulated"
  - `desktop_env()`: "Unknown WebAssembly"
- - `arch()`: "wasm32"
 
 ## Wasi (Wasite)
 Building WhoAmI targeting Wasi will assume the
 [wasite](https://ardaku.org/wasite/env_vars.html) environment variables are set,
 as Wasi alone does not currently support the functionality WhoAmI requires.
 
- - `realname()`: `$USER`
- - `username()`: `$USER`
- - `lang()`: `$LANGS`
- - `devicename()`: `$NAME`
- - `hostname()`: `$HOSTNAME`
- - `platform()`: "Wasite"
- - `distro()`: "Unknown wasi"
- - `desktop_env()`: "Unknown wasite"
- - `arch()`: "wasm32"
+ - `realname()`: `$USER` - Fallback "Anonymous"
+ - `username()`: `$USER` - Fallback "anonymous"
+ - `lang()`: `$LANGS` - Fallback "en-US"
+ - `devicename()`: `$NAME` - Fallback "Unknown"
+ - `hostname()`: `$HOSTNAME` - Fallback "localhost"
+ - `platform()`: "WASI"
+ - `distro()`: "Unknown WASI"
+ - `desktop_env()`: `Unknown($DESKTOP_SESSION)` - Fallback "Unknown WASI"
 
 ## Daku (Quantii, other Ardaku environments)
 WhoAmi will depend on currently unstable portals in the
