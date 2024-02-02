@@ -34,6 +34,9 @@ optional = true
 version = "0.2"
 optional = true
 
+[target.'cfg(all(target_arch = "wasm32", target_os = "wasi"))'.dependencies.wasite]
+version = "0.1"
+
 [features]
 default = ["web"]
 # Enabling this feature indicates that the wasm32-unknown-unknown target should
