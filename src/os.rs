@@ -62,6 +62,7 @@ pub(crate) struct Os;
 /// Target platform support
 pub(crate) trait Target {
     /// Return a list of languages.
+    #[allow(dead_code)] // FIXME
     fn langs(self) -> Vec<Language>;
     /// Return the user's "real" / "full" name.
     fn realname(self) -> Result<OsString>;

@@ -524,6 +524,7 @@ pub fn hostname() -> String {
 #[inline(always)]
 #[deprecated(note = "use `fallible::hostname()` instead", since = "1.5.0")]
 pub fn hostname_os() -> OsString {
+    #[allow(deprecated)]
     hostname().into()
 }
 
