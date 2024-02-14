@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog], and this project adheres to
    - `whoami::fallible::devicename()`
    - `whoami::fallible::devicename_os()`
    - `whoami::fallible::distro()`
-   - `whoami::fallible::hostname()`
+   - `whoami::fallible::hostname()` - notably doesn't normalize to lowercase
    - `whoami::fallible::realname()`
    - `whoami::fallible::realname_os()`
    - `whoami::fallible::username()`
@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 ### Changed
 
  - Deprecated `whoami::distro_os()`
+ - Deprecated `whoami::hostname()`
  - Deprecated `whoami::hostname_os()`
  - Deprecated `whoami::lang()`
 
