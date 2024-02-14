@@ -1,6 +1,6 @@
 [package]
 name = "whoami"
-version = "1.4.1"
+version = "1.5.0-pre.0"
 edition = "2018"
 license = "Apache-2.0 OR BSL-1.0 OR MIT"
 documentation = "https://docs.rs/whoami"
