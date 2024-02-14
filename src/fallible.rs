@@ -68,15 +68,10 @@ pub fn devicename_os() -> Result<OsString> {
 
 /// Get the host device's hostname.
 ///
-/// Limited to a-z (case insensitve), 0-9, and dashes.  This limit also applies
-/// to `devicename()` when targeting Windows.  Since the hostname is
-/// case-insensitive, this method normalizes to lowercase (unlike
-/// [`devicename()`]).
+/// Limited to a-z, A-Z, 0-9, and dashes.  This limit also applies to
+/// [`devicename()`] when targeting Windows.  Usually hostnames are
+/// case-insensitive, but it's not a hard requirement.
 #[inline(always)]
 pub fn hostname() -> Result<String> {
-    let mut hostname = Target::hostname(Os)?;
-
-    hostname.make_ascii_lowercase();
-
-    Ok(hostname)
+    Target::hostname(Os)
 }

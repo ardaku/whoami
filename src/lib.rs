@@ -497,27 +497,35 @@ pub fn devicename_os() -> OsString {
 
 /// Get the host device's hostname.
 ///
-/// Limited to a-z (case insensitve), 0-9, and dashes.  This limit also applies
-/// to `devicename()` when targeting Windows.  Since the hostname is
-/// case-insensitive, this method normalizes to lowercase (unlike
-/// [`devicename()`]).
+/// Limited to a-z (case insensitive), 0-9, and dashes.  This limit also applies
+/// to `devicename()` with the exeception of case sensitivity when targeting
+/// Windows.  This method normalizes to lowercase.  Usually hostnames will be
+/// case-insensitive, but it's not a hard requirement.
+///
+/// Use [`fallible::hostname()`] for case-sensitive hostname.
 #[inline(always)]
+#[deprecated(note = "use `fallible::hostname()` instead", since = "1.5.0")]
 pub fn hostname() -> String {
-    fallible::hostname().unwrap_or_else(|_| DEFAULT_HOSTNAME.to_lowercase())
+    let mut hostname = fallible::hostname()
+        .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_lowercase());
+
+    hostname.make_ascii_lowercase();
+    hostname
 }
 
 /// Get the host device's hostname.
 ///
-/// Limited to a-z (case insensitve), 0-9, and dashes.  This limit also applies
-/// to `devicename()` when targeting Windows.  Since the hostname is
-/// case-insensitive, this method normalizes to lowercase (unlike
-/// [`devicename()`]).
+/// Limited to a-z (case insensitive), 0-9, and dashes.  This limit also applies
+/// to `devicename()` with the exeception of case sensitivity when targeting
+/// Windows.  This method normalizes to lowercase.  Usually hostnames will be
+/// case-insensitive, but it's not a hard requirement.
+///
+/// Use [`fallible::hostname()`] for case-sensitive hostname.
 #[inline(always)]
-#[deprecated(note = "use `hostname()` instead", since = "1.5.0")]
+#[deprecated(note = "use `fallible::hostname()` instead", since = "1.5.0")]
 pub fn hostname_os() -> OsString {
-    fallible::hostname()
-        .map(OsString::from)
-        .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_lowercase().into())
+    #[allow(deprecated)]
+    hostname().into()
 }
 
 /// Get the name of the operating system distribution and (possibly) version.

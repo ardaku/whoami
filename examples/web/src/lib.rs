@@ -25,7 +25,7 @@ pub fn main() {
         whoami::username(),
     ));
     log(format!(
-        "User's Languages       whoami::lang():        {:?}",
+        "User's Languages       whoami::langs():        {:?}",
         whoami::langs()
             .map(|l| l.map(|l| l.to_string()).unwrap_or("??".to_string()))
             .collect::<Vec<String>>(),
@@ -35,8 +35,9 @@ pub fn main() {
         whoami::devicename(),
     ));
     log(format!(
-        "Device's Hostname      whoami::hostname():    {}",
-        whoami::hostname(),
+        "Device's Hostname      whoami::fallible::hostname():    {}",
+        whoami::fallible::hostname()
+            .unwrap_or_else(|_| "localhost".to_string()),
     ));
     log(format!(
         "Device's Platform      whoami::platform():    {}",
