@@ -1,4 +1,7 @@
+// We don't need unsafe, yay!
 #![forbid(unsafe_code)]
+// Redox support has its own MSRV of 1.65, is nightly lint
+#![allow(unknown_lints, clippy::incompatible_msrv)]
 
 use std::{borrow::Cow, ffi::OsString, fs, io::Error};
 
