@@ -1,4 +1,4 @@
-![WhoAmI Logo](https://raw.githubusercontent.com/ardaku/whoami/stable/res/icon.svg)
+![WhoAmI Logo](https://raw.githubusercontent.com/ardaku/whoami/v1/res/icon.svg)
 
 #### [Changelog][3] | [Source][4] | [Getting Started][5]
 
@@ -34,7 +34,7 @@ WhoAmI targets all platforms that can run Rust, including:
  - BSD variants (FreeBSD, others)
  - illumos variants (SmartOS, OmniOS, others) **Target-Specific MSRV 1.65**
  - Redox **Target-Specific MSRV 1.65**
- - [Web Assembly](https://github.com/ardaku/whoami/blob/stable/WASM.md)
+ - [Web Assembly](https://github.com/ardaku/whoami/blob/v1/WASM.md)
    - Mock implementation
    - Web Browser - DOM
    - WASI (Wasite, others) **may partially or fully work - but untested, testing
@@ -89,14 +89,14 @@ email at [aldaronlau@gmail.com][13].
 [0]: https://docs.rs/whoami
 [1]: https://crates.io/crates/whoami
 [2]: https://github.com/ardaku/whoami/actions?query=workflow%3Atests
-[3]: https://github.com/ardaku/whoami/blob/stable/CHANGELOG.md
+[3]: https://github.com/ardaku/whoami/blob/v1/CHANGELOG.md
 [4]: https://github.com/ardaku/whoami/
 [5]: https://docs.rs/whoami#getting-started
 [6]: https://aldaronlau.com/
-[7]: https://github.com/ardaku/whoami/blob/stable/LICENSE_APACHE
+[7]: https://github.com/ardaku/whoami/blob/v1/LICENSE_APACHE
 [8]: https://www.apache.org/licenses/LICENSE-2.0
-[9]: https://github.com/ardaku/whoami/blob/stable/LICENSE_MIT
+[9]: https://github.com/ardaku/whoami/blob/v1/LICENSE_MIT
 [10]: https://mit-license.org/
-[11]: https://github.com/ardaku/whoami/blob/stable/LICENSE_BOOST
+[11]: https://github.com/ardaku/whoami/blob/v1/LICENSE_BOOST
 [12]: https://www.boost.org/LICENSE_1_0.txt
 [13]: mailto:aldaronlau@gmail.com
