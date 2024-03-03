@@ -25,7 +25,15 @@ include = [
 ]
 rust-version = "1.40"
 
-# Target-specific dependency required to work with wasm-bindgen
+# Target specific dependencies for redox
+[target.'cfg(all(target_os = "redox", not(target_arch = "wasm32")))'.dependencies.redox_syscall]
+version = "0.4"
+
+# Target specific dependencies for wasite
+[target.'cfg(all(target_arch = "wasm32", target_os = "wasi"))'.dependencies.wasite]
+version = "0.1"
+
+# Target-specific dependency for wasm-bindgen
 [target.'cfg(all(target_arch = "wasm32", not(target_os = "wasi"), not(target_os = "daku")))'.dependencies.web-sys]
 version = "0.3"
 features = ["Navigator", "Document", "Window", "Location"]
@@ -33,9 +41,6 @@ optional = true
 [target.'cfg(all(target_arch = "wasm32", not(target_os = "wasi"), not(target_os = "daku")))'.dependencies.wasm-bindgen]
 version = "0.2"
 optional = true
-
-[target.'cfg(all(target_arch = "wasm32", target_os = "wasi"))'.dependencies.wasite]
-version = "0.1"
 
 [features]
 default = ["web"]

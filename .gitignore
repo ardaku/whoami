@@ -4,3 +4,4 @@ Cargo.lock
 /ignore/
 /a.out
 /**/*.swp
+/build/

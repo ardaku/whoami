@@ -1,9 +1,9 @@
 #![allow(unsafe_code)]
 
-// Redox - FIXME: Currently routes to fake.rs
+// Redox
 #[cfg_attr(
     all(target_os = "redox", not(target_arch = "wasm32")),
-    path = "os/fake.rs"
+    path = "os/redox.rs"
 )]
 // Unix
 #[cfg_attr(
@@ -14,10 +14,10 @@
     )),
     path = "os/unix.rs"
 )]
-// Wasm32 (Daku) - FIXME: Currently routes to fake.rs
+// Wasm32 (Daku)
 #[cfg_attr(
     all(target_arch = "wasm32", target_os = "daku"),
-    path = "os/fake.rs"
+    path = "os/daku.rs"
 )]
 // Wasm32 (Wasi)
 #[cfg_attr(
@@ -51,7 +51,10 @@
 )]
 mod target;
 
-use std::ffi::OsString;
+use std::{
+    ffi::OsString,
+    io::{Error, ErrorKind},
+};
 
 pub(crate) use self::target::*;
 use crate::{Arch, DesktopEnv, Language, Platform, Result};
@@ -80,4 +83,22 @@ pub(crate) trait Target {
     fn platform(self) -> Platform;
     /// Return the computer's CPU architecture.
     fn arch(self) -> Result<Arch>;
+}
+
+// This is only used on some platforms
+#[allow(dead_code)]
+fn err_missing_record() -> Error {
+    Error::new(ErrorKind::NotFound, "Missing record")
+}
+
+// This is only used on some platforms
+#[allow(dead_code)]
+fn err_null_record() -> Error {
+    Error::new(ErrorKind::NotFound, "Null record")
+}
+
+// This is only used on some platforms
+#[allow(dead_code)]
+fn err_empty_record() -> Error {
+    Error::new(ErrorKind::NotFound, "Empty record")
 }
