@@ -1,8 +1,5 @@
 //! This is mostly the same as fake.rs for now
 
-#[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
-compile_error!("Unexpected pointer width for target platform");
-
 use std::ffi::OsString;
 
 use crate::{
@@ -55,8 +52,13 @@ impl Target for Os {
     fn arch(self) -> Result<Arch> {
         Ok(if cfg!(target_pointer_width = "64") {
             Arch::Wasm64
-        } else {
+        } else if cfg!(target_pointer_width = "32") {
             Arch::Wasm32
+        } else {
+            return Err(Error::new(
+                ErrorKind::Unsupported,
+                "Unexpected pointer width for target platform",
+            ));
         })
     }
 }

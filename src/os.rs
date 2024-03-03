@@ -1,5 +1,10 @@
 #![allow(unsafe_code)]
 
+// Daku
+#[cfg_attr(
+    all(target_arch = "wasm32", target_os = "daku"),
+    path = "os/daku.rs"
+)]
 // Redox
 #[cfg_attr(
     all(target_os = "redox", not(target_arch = "wasm32")),
@@ -7,24 +12,26 @@
 )]
 // Unix
 #[cfg_attr(
-    not(any(
-        target_arch = "wasm32",
-        target_os = "redox",
-        target_os = "windows",
-    )),
+    all(
+        any(
+            target_os = "linux",
+            target_os = "macos",
+            target_os = "dragonfly",
+            target_os = "freebsd",
+            target_os = "netbsd",
+            target_os = "openbsd",
+            target_os = "illumos",
+        ),
+        not(target_arch = "wasm32")
+    ),
     path = "os/unix.rs"
 )]
-// Wasm32 (Daku)
-#[cfg_attr(
-    all(target_arch = "wasm32", target_os = "daku"),
-    path = "os/daku.rs"
-)]
-// Wasm32 (Wasi)
+// Wasi
 #[cfg_attr(
     all(target_arch = "wasm32", target_os = "wasi"),
     path = "os/wasi.rs"
 )]
-// Wasm32 (Web)
+// Web
 #[cfg_attr(
     all(
         target_arch = "wasm32",
@@ -33,16 +40,6 @@
         feature = "web",
     ),
     path = "os/web.rs"
-)]
-// Wasm32 (Unknown)
-#[cfg_attr(
-    all(
-        target_arch = "wasm32",
-        not(target_os = "wasi"),
-        not(target_os = "daku"),
-        not(feature = "web"),
-    ),
-    path = "os/fake.rs"
 )]
 // Windows
 #[cfg_attr(

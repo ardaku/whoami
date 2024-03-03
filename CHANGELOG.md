@@ -29,6 +29,9 @@ The format is based on [Keep a Changelog], and this project adheres to
 
  - Generated device names that infer casing based on the hostname when the
    device name is not available - now returns the hostname unchanged
+ - Partial (potentially unsound) support for Android, iOS, watchOS, tvOS,
+   Fuchsia, Haiku, Solaris, and a few others.  These targets now use the "fake"
+   implementation.
 
 ### Changed
 
@@ -71,7 +74,7 @@ The format is based on [Keep a Changelog], and this project adheres to
    architecture
  - `Arch::width()` method which returns the address width of a CPU architecture
  - *`web`* feature (enabled by default).  Disabling this feature allows you to
-   use wasm32-unknown-unknown with whoami outside of the browser with a mock
+   use wasm32-unknown-unknown with whoami outside of the browser with a fake
    implementation.
  - Officially support compiling to WASI or Daku WebAssembly platforms;
    functionality not supported yet.

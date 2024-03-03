@@ -4,6 +4,10 @@ This file outlines the regression testing plan for all platforms.
 
 ## Linux / Fedora Silverblue
 
+Testing is done on Fedora Silverblue 39.
+
+
+
 ## Linux / Ubuntu
 
 ## Windows

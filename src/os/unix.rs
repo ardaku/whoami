@@ -1,6 +1,13 @@
 #[cfg(target_os = "illumos")]
 use std::convert::TryInto;
-#[cfg(not(target_os = "macos"))]
+#[cfg(any(
+    target_os = "linux",
+    target_os = "dragonfly",
+    target_os = "freebsd",
+    target_os = "netbsd",
+    target_os = "openbsd",
+    target_os = "illumos",
+))]
 use std::env;
 use std::{
     ffi::{c_void, CStr, OsString},
@@ -27,15 +34,7 @@ use crate::{
     Arch, DesktopEnv, Platform, Result,
 };
 
-#[cfg(not(any(
-    target_os = "macos",
-    target_os = "freebsd",
-    target_os = "dragonfly",
-    target_os = "bitrig",
-    target_os = "openbsd",
-    target_os = "netbsd",
-    target_os = "illumos",
-)))]
+#[cfg(target_os = "linux")]
 #[repr(C)]
 struct PassWd {
     pw_name: *const c_void,
@@ -49,9 +48,8 @@ struct PassWd {
 
 #[cfg(any(
     target_os = "macos",
-    target_os = "freebsd",
     target_os = "dragonfly",
-    target_os = "bitrig",
+    target_os = "freebsd",
     target_os = "openbsd",
     target_os = "netbsd"
 ))]
@@ -94,7 +92,14 @@ extern "system" {
     ) -> *mut PassWd;
 }
 
-#[cfg(not(target_os = "illumos"))]
+#[cfg(any(
+    target_os = "linux",
+    target_os = "macos",
+    target_os = "dragonfly",
+    target_os = "freebsd",
+    target_os = "netbsd",
+    target_os = "openbsd",
+))]
 extern "system" {
     fn getpwuid_r(
         uid: u32,
@@ -237,7 +242,14 @@ fn getpwuid(name: Name) -> Result<OsString> {
 
     // Get PassWd `struct`.
     let passwd = unsafe {
-        #[cfg(not(target_os = "illumos"))]
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "macos",
+            target_os = "dragonfly",
+            target_os = "freebsd",
+            target_os = "netbsd",
+            target_os = "openbsd",
+        ))]
         {
             let ret = getpwuid_r(
                 geteuid(),
@@ -345,7 +357,6 @@ fn distro_xml(data: String) -> Result<String> {
 
 #[cfg(any(
     target_os = "macos",
-    target_os = "ios",
     target_os = "freebsd",
     target_os = "netbsd",
     target_os = "openbsd",
@@ -400,7 +411,14 @@ impl Default for UtsName {
 #[inline(always)]
 unsafe fn uname(buf: *mut UtsName) -> c_int {
     extern "C" {
-        #[cfg(not(target_os = "freebsd"))]
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "macos",
+            target_os = "dragonfly",
+            target_os = "netbsd",
+            target_os = "openbsd",
+            target_os = "illumos",
+        ))]
         fn uname(buf: *mut UtsName) -> c_int;
 
         #[cfg(target_os = "freebsd")]
@@ -460,7 +478,13 @@ impl Target for Os {
             Ok(OsString::from_vec(nodename))
         }
 
-        #[cfg(not(any(target_os = "macos", target_os = "illumos")))]
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "dragonfly",
+            target_os = "freebsd",
+            target_os = "netbsd",
+            target_os = "openbsd",
+        ))]
         {
             let machine_info = fs::read("/etc/machine-info")?;
 
@@ -512,7 +536,14 @@ impl Target for Os {
             }
         }
 
-        #[cfg(not(target_os = "macos"))]
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "dragonfly",
+            target_os = "freebsd",
+            target_os = "netbsd",
+            target_os = "openbsd",
+            target_os = "illumos",
+        ))]
         {
             let program = fs::read("/etc/os-release")?;
             let distro = String::from_utf8_lossy(&program);
@@ -549,10 +580,25 @@ impl Target for Os {
     fn desktop_env(self) -> DesktopEnv {
         #[cfg(target_os = "macos")]
         let env = "Aqua";
+
         // FIXME: WhoAmI 2.0: use `let else`
-        #[cfg(not(target_os = "macos"))]
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "dragonfly",
+            target_os = "freebsd",
+            target_os = "netbsd",
+            target_os = "openbsd",
+            target_os = "illumos",
+        ))]
         let env = env::var_os("DESKTOP_SESSION");
-        #[cfg(not(target_os = "macos"))]
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "dragonfly",
+            target_os = "freebsd",
+            target_os = "netbsd",
+            target_os = "openbsd",
+            target_os = "illumos",
+        ))]
         let env = if let Some(ref env) = env {
             env.to_string_lossy()
         } else {
@@ -581,15 +627,7 @@ impl Target for Os {
 
     #[inline(always)]
     fn platform(self) -> Platform {
-        #[cfg(not(any(
-            target_os = "macos",
-            target_os = "freebsd",
-            target_os = "dragonfly",
-            target_os = "bitrig",
-            target_os = "openbsd",
-            target_os = "netbsd",
-            target_os = "illumos"
-        )))]
+        #[cfg(target_os = "linux")]
         {
             Platform::Linux
         }
@@ -600,11 +638,10 @@ impl Target for Os {
         }
 
         #[cfg(any(
-            target_os = "freebsd",
             target_os = "dragonfly",
-            target_os = "bitrig",
+            target_os = "freebsd",
+            target_os = "netbsd",
             target_os = "openbsd",
-            target_os = "netbsd"
         ))]
         {
             Platform::Bsd

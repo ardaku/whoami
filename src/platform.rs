@@ -14,7 +14,10 @@ pub enum Platform {
     Illumos,
     Ios,
     Android,
+    // FIXME: Separate for different Nintendo consoles in whoami 2.0.0,
+    // currently only used for 3DS
     Nintendo,
+    // FIXME: Currently unused, remove in whoami 2.0.0
     Xbox,
     PlayStation,
     Fuchsia,

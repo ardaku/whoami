@@ -35,14 +35,12 @@ WhoAmI targets all platforms that can run Rust, including:
  - illumos variants (SmartOS, OmniOS, others) **Target-Specific MSRV 1.65**
  - Redox **Target-Specific MSRV 1.65**
  - [Web Assembly](https://github.com/ardaku/whoami/blob/v1/WASM.md)
-   - Mock implementation
+   - Fake implementation
    - Web Browser - DOM
-   - WASI (Wasite, others) **may partially or fully work - but untested, testing
-     planned later**
-   - Daku (Ardaku/Quantii, others) **mock implementation, full implementation
-     planned later**
- - Android **may partially or fully work - but untested, testing planned later**
- - iOS **planned later**
+   - WASI (Wasite, others) **untested, testing planned later**
+   - Daku (Ardaku/Quantii, others) **planned later**
+ - Android **planned later**
+ - iOS / watchOS / tvOS **planned later**
  - Fuchsia **planned later**
  - Others? (make a PR or open an issue)
 
