@@ -12,7 +12,7 @@ This file outlines the regression testing plan for all platforms.
 
 ## FreeBSD
 
-## Illumos
+## illumos
 
 Testing is done on Tribblix (virtualized on Fedora Silverblue):
 
@@ -62,7 +62,7 @@ User's Name            whoami::realname():            Tribblix Jack
 User's Username        whoami::username():            jack
 Device's Pretty Name   whoami::devicename():          tribblix
 Device's Hostname      whoami::fallible::hostname():  tribblix
-Device's Platform      whoami::platform():            Illumos
+Device's Platform      whoami::platform():            illumos
 Device's OS Distro     whoami::distro():              Tribblix
 Device's Desktop Env.  whoami::desktop_env():         Unknown: Unknown
 Device's CPU Arch      whoami::arch():                Unknown: i86pc

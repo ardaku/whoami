@@ -34,16 +34,18 @@ The format is based on [Keep a Changelog], and this project adheres to
  - Deprecated `whoami::hostname()`
  - Deprecated `whoami::hostname_os()`
  - Deprecated `whoami::lang()`
- - Illumos and Redox are no longer untested targets
- - Documented that Illumos and Redox have a higher MSRV (Rust 1.65) than other
+ - illumos and Redox are no longer untested targets
+ - Documented that illumos and Redox have a higher MSRV (Rust 1.65) than other
    targets
+ - Display implementation on `Platform::Illumos` now displays in lowercase:
+   illumos
 
 ### Fixed
 
  - Removed some unnecessary allocations
  - Rare and nearly impossible cases of undefined behavior
  - Better handling of UTF-8 non-conformant strings
- - Multiple instances of undefined behavior on Illumos
+ - Multiple instances of undefined behavior on illumos
 
 ## [1.4.1] - 2023-06-25
 
@@ -55,7 +57,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 
 ### Added
 
- - Support for Illumos
+ - Support for illumos
 
 ## [1.3.0] - 2022-12-28
 

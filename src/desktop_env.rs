@@ -14,7 +14,7 @@ pub enum DesktopEnv {
     Lxde,
     /// Stacking window manager for X Windows on Linux
     Openbox,
-    /// Desktop environment for Linux, BSD and Illumos
+    /// Desktop environment for Linux, BSD and illumos
     Mate,
     /// Lightweight desktop enivornment for unix-like operating systems
     Xfce,

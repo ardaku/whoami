@@ -33,7 +33,7 @@ impl Display for Platform {
             Self::Bsd => "BSD",
             Self::Windows => "Windows",
             Self::MacOS => "Mac OS",
-            Self::Illumos => "Illumos",
+            Self::Illumos => "illumos",
             Self::Ios => "iOS",
             Self::Android => "Android",
             Self::Nintendo => "Nintendo",
