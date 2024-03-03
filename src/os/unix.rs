@@ -1,5 +1,8 @@
+#[cfg(target_os = "illumos")]
+use std::convert::TryInto;
+#[cfg(not(target_os = "macos"))]
+use std::env;
 use std::{
-    env,
     ffi::{c_void, CStr, OsString},
     fs,
     io::{Error, ErrorKind},
@@ -8,6 +11,7 @@ use std::{
         raw::{c_char, c_int},
         unix::ffi::OsStringExt,
     },
+    slice,
 };
 #[cfg(target_os = "macos")]
 use std::{
@@ -166,7 +170,7 @@ fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
             return Err(super::err_empty_record());
         }
 
-        std::slice::from_raw_parts(string.cast(), length)
+        slice::from_raw_parts(string.cast(), length)
     };
 
     // Turn byte slice into Rust String.
@@ -186,7 +190,7 @@ fn os_from_cstring(string: *const c_void) -> Result<OsString> {
             return Err(super::err_empty_record());
         }
 
-        std::slice::from_raw_parts(string.cast(), length)
+        slice::from_raw_parts(string.cast(), length)
     };
 
     // Turn byte slice into Rust String.
@@ -256,8 +260,6 @@ fn getpwuid(name: Name) -> Result<OsString> {
 
         #[cfg(target_os = "illumos")]
         {
-            use std::convert::TryInto;
-
             let ret = getpwuid_r(
                 geteuid(),
                 passwd.as_mut_ptr(),

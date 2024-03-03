@@ -184,7 +184,7 @@ pub fn langs() -> Result<impl Iterator<Item = Language>> {
             lang.split_terminator('.')
                 .next()
                 .unwrap_or_default()
-                .replace(['_', '-'], "/"),
+                .replace(|x| ['_', '-'].contains(&x), "/"),
         )))
     }))
 }
