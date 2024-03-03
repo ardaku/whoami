@@ -1,0 +1,7 @@
+# Redox recipe for testing whoami
+
+[source]
+git = "https://github.com/AldaronLau/whome.git"
+
+[build]
+template = "cargo"

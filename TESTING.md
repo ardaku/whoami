@@ -31,14 +31,59 @@ cd build/
 git clone https://gitlab.redox-os.org/redox-os/redox.git --origin upstream --recursive
 ```
 
+### Create our demo recipe
+
+Make sure whome is updated to the whoami testing branch.
+
+```shell
+mkdir -p build/redox/cookbook/recipes/demos/whome/
+cp recipe.toml build/redox/cookbook/recipes/demos/whome/
+cp build/redox/config/desktop.toml config/x86_64/ardaku.toml
+```
+
+In `config/x86_64/ardaku.toml`, under `[packages]`:
+
+```toml
+whome = {}
+```
+
 ### Build Redox
+
+This takes a while
 
 ```shell
 make all
+```
+
+or 
+
+```shell
+make rebuild
 ```
 
 ### Run Redox
 
 ```shell
 make qemu
+```
+
+### Test it
+
+Verify you are on the new version
+
+```shell
+whome --version
+```
+
+Default settings should output:
+
+```console
+realname:     user
+username:     user
+devicename:   redox
+hostname:     redox
+distro:       Redox OS 0.8.0
+desktop_env:  Orbital
+platform:     Redox
+arch:         Unknown: x86_64
 ```
