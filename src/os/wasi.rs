@@ -5,7 +5,7 @@ use std::{env, ffi::OsString};
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, Platform, Result,
+    Arch, DesktopEnv, Platform, Result,
 };
 
 impl Target for Os {

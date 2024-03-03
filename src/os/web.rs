@@ -6,12 +6,11 @@ use std::{
     io::{Error, ErrorKind},
 };
 
-use wasm_bindgen::JsValue;
 use web_sys::window;
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, Platform, Result,
+    Arch, DesktopEnv, Platform, Result,
 };
 
 // Get the user agent
@@ -26,15 +25,18 @@ fn document_domain() -> Option<String> {
 
 impl Target for Os {
     fn langs(self) -> Result<String> {
-        let array = if let Some(window) = window() {
+        if let Some(window) = window() {
             Ok(window
                 .navigator()
                 .languages()
+                .to_vec()
+                .into_iter()
                 .filter_map(|l| l.as_string())
-                .join(';'))
+                .collect::<Vec<String>>()
+                .join(";"))
         } else {
             Err(Error::new(ErrorKind::NotFound, "Window missing"))
-        };
+        }
     }
 
     fn realname(self) -> Result<OsString> {

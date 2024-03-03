@@ -9,7 +9,7 @@ use syscall::{call, error};
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, Platform, Result,
+    Arch, DesktopEnv, Platform, Result,
 };
 
 /// Row in the Redox /etc/passwd file
