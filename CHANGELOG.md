@@ -34,12 +34,14 @@ The format is based on [Keep a Changelog], and this project adheres to
  - Deprecated `whoami::hostname()`
  - Deprecated `whoami::hostname_os()`
  - Deprecated `whoami::lang()`
+ - Illumos and Redox are no longer untested targets
 
 ### Fixed
 
  - Removed some unnecessary allocations
  - Rare and nearly impossible cases of undefined behavior
  - Better handling of UTF-8 non-conformant strings
+ - Multiple instances of undefined behavior on Illumos
 
 ## [1.4.1] - 2023-06-25
 
