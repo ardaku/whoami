@@ -29,7 +29,8 @@ use crate::{
     target_os = "dragonfly",
     target_os = "bitrig",
     target_os = "openbsd",
-    target_os = "netbsd"
+    target_os = "netbsd",
+    target_os = "illumos",
 )))]
 #[repr(C)]
 struct PassWd {
@@ -63,6 +64,20 @@ struct PassWd {
     pw_shell: *const c_void,
     pw_expire: isize,
     pw_fields: i32,
+}
+
+#[cfg(target_os = "illumos")]
+#[repr(C)]
+struct PassWd {
+     pw_name: *const c_void, 
+     pw_passwd: *const c_void, 
+     pw_uid: u32,
+     pw_gid: u32,
+     pw_age: *const c_void, 
+     pw_comment: *const c_void, 
+     pw_gecos: *const c_void, 
+     pw_dir: *const c_void, 
+     pw_shell: *const c_void,
 }
 
 extern "system" {

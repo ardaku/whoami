@@ -2,6 +2,28 @@
 
 This file outlines the regression testing plan for all platforms.
 
+## Linux / Fedora Silverblue
+
+## Linux / Ubuntu
+
+## Windows
+
+## MacOS
+
+## FreeBSD
+
+## Illumos
+
+Testing is done on Tribblix (virtualized on Fedora Silverblue):
+
+<http://www.tribblix.org/download.html>
+
+Download the 64-bit x86/x64 standard image.
+
+Install it in GNOME Boxes.
+
+
+
 ## Redox
 
 <https://doc.redox-os.org/book/ch08-01-advanced-build.html#understanding-cross-compilation-for-redox>
