@@ -13,7 +13,7 @@ use std::{
 use crate::{
     conversions,
     os::{Os, Target},
-    Arch, DesktopEnv, Language, Platform, Result,
+    Arch, DesktopEnv, Platform, Result,
 };
 
 #[repr(C)]
@@ -167,8 +167,8 @@ impl Target for Os {
         // Combine into a single string
         Ok(String::from_utf16_lossy(&buffer)
             .split('\0')
-            .map(|x| x.to_string())
-            .join(';'))
+            .collect::<Vec<&str>>()
+            .join(";"))
     }
 
     fn realname(self) -> Result<OsString> {
