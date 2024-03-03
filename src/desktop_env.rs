@@ -73,3 +73,20 @@ impl Display for DesktopEnv {
         })
     }
 }
+
+impl DesktopEnv {
+    /// Returns true if the desktop environment is based on GTK.
+    pub fn is_gtk(&self) -> bool {
+        *self == Self::Gnome
+            || *self == Self::Ubuntu
+            || *self == Self::Cinnamon
+            || *self == Self::Lxde
+            || *self == Self::Mate
+            || *self == Self::Xfce
+    }
+
+    /// Returns true if the desktop environment is based on KDE.
+    pub fn is_kde(&self) -> bool {
+        *self == Self::Kde
+    }
+}

@@ -24,6 +24,8 @@ The format is based on [Keep a Changelog], and this project adheres to
  - `whoami::langs()`
  - `whoami::fallible::account()`
  - `whoami::fallible::account_os()`
+ - `whoami::DesktopEnv::is_gtk()`
+ - `whoami::DesktopEnv::is_kde()`
 
 ### Removed
 
