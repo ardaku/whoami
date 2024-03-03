@@ -1,6 +1,9 @@
 //! This is mostly the same as fake.rs for now
 
-use std::ffi::OsString;
+use std::{
+    ffi::OsString,
+    io::{Error, ErrorKind},
+};
 
 use crate::{
     os::{Os, Target},
@@ -56,7 +59,7 @@ impl Target for Os {
             Arch::Wasm32
         } else {
             return Err(Error::new(
-                ErrorKind::Unsupported,
+                ErrorKind::Other, // FIXME: WhoAmI 2.0, Unsupported
                 "Unexpected pointer width for target platform",
             ));
         })

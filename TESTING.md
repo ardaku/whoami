@@ -6,7 +6,78 @@ This file outlines the regression testing plan for all platforms.
 
 Testing is done on Fedora Silverblue 39.
 
+Open a terminal (outside of toolbox), and:
 
+```rust
+cargo run --example whoami-demo
+cargo run --example whoami-demo --release
+cargo run --example os-strings
+cargo run --example os-strings --release
+```
+
+Expect to see something like:
+
+```console
+WhoAmI 1.5.0
+
+User's Language        whoami::langs():               en/US
+User's Name            whoami::realname():            Jeron Lau
+User's Username        whoami::username():            jeron
+User's Username        whoami::fallible::account():   jeron
+Device's Pretty Name   whoami::devicename():          Zetêy
+Device's Hostname      whoami::fallible::hostname():  zetey
+Device's Platform      whoami::platform():            Linux
+Device's OS Distro     whoami::distro():              Fedora Linux 39.20240202.0 (Silverblue)
+Device's Desktop Env.  whoami::desktop_env():         Gnome
+Device's CPU Arch      whoami::arch():                x86_64
+```
+
+```console
+WhoAmI 1.5.0
+
+User's Language        whoami::langs():                 "en/US"
+User's Name            whoami::realname_os():           "Jeron Lau"
+User's Username        whoami::username_os():           "jeron"
+User's Account         whoami::fallible::account_os():  "jeron"
+Device's Pretty Name   whoami::devicename_os():         "Zetêy"
+Device's Hostname      whoami::fallible::hostname():    "zetey"
+Device's Platform      whoami::platform():              Linux
+Device's OS Distro     whoami::distro():                "Fedora Linux 39.20240202.0 (Silverblue)"
+Device's Desktop Env.  whoami::desktop_env():           Gnome
+Device's CPU Arch      whoami::arch():                  X64
+```
+
+Now, `toolbox enter`, and do the same.  Expecting something like:
+
+```console
+WhoAmI 1.5.0
+
+User's Language        whoami::langs():               en/US
+User's Name            whoami::realname():            Jeron Lau
+User's Username        whoami::username():            jeron
+User's Username        whoami::fallible::account():   jeron
+Device's Pretty Name   whoami::devicename():          toolbox
+Device's Hostname      whoami::fallible::hostname():  toolbox
+Device's Platform      whoami::platform():            Linux
+Device's OS Distro     whoami::distro():              Fedora Linux 39 (Container Image)
+Device's Desktop Env.  whoami::desktop_env():         Gnome
+Device's CPU Arch      whoami::arch():                x86_64
+```
+
+```console
+WhoAmI 1.5.0
+
+User's Language        whoami::langs():                 "en/US"
+User's Name            whoami::realname_os():           "Jeron Lau"
+User's Username        whoami::username_os():           "jeron"
+User's Account         whoami::fallible::account_os():  "jeron"
+Device's Pretty Name   whoami::devicename_os():         "toolbox"
+Device's Hostname      whoami::fallible::hostname():    "toolbox"
+Device's Platform      whoami::platform():              Linux
+Device's OS Distro     whoami::distro():                "Fedora Linux 39 (Container Image)"
+Device's Desktop Env.  whoami::desktop_env():           Gnome
+Device's CPU Arch      whoami::arch():                  X64
+```
 
 ## Linux / Ubuntu
 
