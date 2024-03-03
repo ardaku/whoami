@@ -1,12 +1,12 @@
 #![forbid(unsafe_code)]
 
-use std::{io::Error, ffi::OsString, fs, borrow::Cow};
+use std::{borrow::Cow, ffi::OsString, fs, io::Error};
 
-use redox_syscall::{call, error};
+use syscall::{call, error};
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, Platform, Result
+    Arch, DesktopEnv, Language, Platform, Result,
 };
 
 /// Row in the Redox /etc/passwd file
@@ -14,7 +14,7 @@ struct Passwd<'a>(Cow<'a, str>);
 
 impl Passwd<'_> {
     fn column(&self, number: usize) -> Option<&str> {
-        self.split(';').skip(number).next()
+        self.0.split(';').nth(number)
     }
 
     fn username(&self) -> Option<String> {
@@ -36,22 +36,14 @@ impl Passwd<'_> {
 
 struct Uname<'a>(Cow<'a, str>);
 
-impl Uname {
+impl Uname<'_> {
     fn row(&self, number: usize) -> Option<&str> {
-        self.lines().skip(number).next()
-    }
-
-    fn kernel_name(&self) -> Option<String> {
-        self.row(0).map(ToString::to_string)
-    }
-
-    fn kernel_release(&self) -> Option<String> {
-        self.row(2).map(ToString::to_string)
+        self.0.lines().nth(number)
     }
 
     fn machine_arch(&self) -> Option<Arch> {
         // FIXME: Don't hardcode unknown arch
-        Some(Arc::Unknown(self.row(4)?))
+        Some(Arch::Unknown(self.row(4)?.to_string()))
     }
 }
 
@@ -75,23 +67,17 @@ fn passwd() -> Result<Passwd<'static>> {
         let passwd = Passwd(user.into());
 
         if passwd.uid() == Some(euid) && passwd.gid() == Some(egid) {
-            return Ok(Passwd(passwd.0.to_owned()));
+            return Ok(Passwd(passwd.0.into_owned().into()));
         }
     }
 
-    Err(Error::new(ErrorKind::NotFound, "Missing record"))
+    Err(super::err_missing_record())
 }
 
 fn uname() -> Result<Uname<'static>> {
     let uname_file = fs::read_to_string("sys:uname")?;
 
     Ok(Uname(uname_file.into()))
-}
-
-fn redox_version() -> Result<String> {
-    let release_file = fs::read_to_string("/etc/redox-release")?;
-
-    Ok(release_file.lines().next().unwrap_or_default().to_string())
 }
 
 fn hostname() -> Result<String> {
@@ -102,7 +88,8 @@ fn hostname() -> Result<String> {
 
 #[inline(always)]
 pub(crate) fn lang() -> impl Iterator<Item = String> {
-    std::iter::once("en-US".to_string())
+    // FIXME: Look for unix-like language env vars
+    std::iter::once("en/US".to_string())
 }
 
 impl Target for Os {
@@ -132,11 +119,17 @@ impl Target for Os {
 
     #[inline(always)]
     fn distro(self) -> Result<String> {
-        let version = redox_version();
-        let mut distro_name = "Redox ".to_string();
+        let release_file = fs::read_to_string("/etc/os-release")?;
 
-        distro_name.push_str(&version);
-        distro_name
+        for kv in release_file.lines() {
+            if let Some(kv) = kv.strip_prefix("PRETTY_NAME=\"") {
+                if let Some(kv) = kv.strip_suffix('\"') {
+                    return Ok(kv.to_string());
+                }
+            }
+        }
+
+        Err(super::err_missing_record())
     }
 
     #[inline(always)]
@@ -151,6 +144,8 @@ impl Target for Os {
 
     #[inline(always)]
     fn arch(self) -> Result<Arch> {
-        uname().arch()
+        uname()?
+            .machine_arch()
+            .ok_or_else(super::err_missing_record)
     }
 }

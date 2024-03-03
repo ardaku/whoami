@@ -12,6 +12,7 @@ Tested on Fedora Silverblue 39
 
 ```shell
 rustup update nightly stable
+rustup target add --toolchain stable x86_64-unknown-redox
 ```
 
 ### Install pre-requisites

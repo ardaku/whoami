@@ -1,4 +1,4 @@
-//! Currently used for WebAssembly unknown (non-web) only
+//! This is mostly the same as fake.rs for now
 
 #[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
 compile_error!("Unexpected pointer width for target platform");
@@ -47,12 +47,12 @@ impl Target for Os {
 
     #[inline(always)]
     fn desktop_env(self) -> DesktopEnv {
-        DesktopEnv::Unknown("WebAssembly".to_string())
+        DesktopEnv::Unknown("Unknown Daku".to_string())
     }
 
     #[inline(always)]
     fn platform(self) -> Platform {
-        Platform::Unknown("Unknown".to_string())
+        Platform::Unknown("Daku".to_string())
     }
 
     #[inline(always)]

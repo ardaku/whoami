@@ -126,7 +126,7 @@ unsafe fn strlen_gecos(cs: *const c_void) -> usize {
 
 fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
     if string.is_null() {
-        return Err(Error::new(ErrorKind::NotFound, "Null record"));
+        return Err(super::err_null_record());
     }
 
     // Get a byte slice of the c string.
@@ -134,7 +134,7 @@ fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
         let length = strlen_gecos(string);
 
         if length == 0 {
-            return Err(Error::new(ErrorKind::InvalidData, "Empty record"));
+            return Err(super::err_empty_record());
         }
 
         std::slice::from_raw_parts(string.cast(), length)
@@ -146,7 +146,7 @@ fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
 
 fn os_from_cstring(string: *const c_void) -> Result<OsString> {
     if string.is_null() {
-        return Err(Error::new(ErrorKind::NotFound, "Null record"));
+        return Err(super::err_null_record());
     }
 
     // Get a byte slice of the c string.
@@ -154,7 +154,7 @@ fn os_from_cstring(string: *const c_void) -> Result<OsString> {
         let length = strlen(string);
 
         if length == 0 {
-            return Err(Error::new(ErrorKind::InvalidData, "Empty record"));
+            return Err(super::err_empty_record());
         }
 
         std::slice::from_raw_parts(string.cast(), length)
@@ -219,7 +219,7 @@ fn getpwuid(name: Name) -> Result<OsString> {
         let _passwd = _passwd.assume_init();
 
         if _passwd.is_null() {
-            return Err(Error::new(ErrorKind::NotFound, "Null record"));
+            return Err(super::err_null_record());
         }
 
         passwd.assume_init()
@@ -424,7 +424,7 @@ impl Target for Os {
             });
 
             if out.as_bytes().is_empty() {
-                return Err(Error::new(ErrorKind::InvalidData, "Empty record"));
+                return Err(super::err_empty_record());
             }
 
             Ok(out)
@@ -440,7 +440,7 @@ impl Target for Os {
             }
 
             if nodename.is_empty() {
-                return Err(Error::new(ErrorKind::InvalidData, "Empty record"));
+                return Err(super::err_empty_record());
             }
 
             Ok(OsString::from_vec(nodename))
@@ -461,7 +461,7 @@ impl Target for Os {
                 }
             }
 
-            Err(Error::new(ErrorKind::NotFound, "Missing record"))
+            Err(super::err_missing_record())
         }
     }
 
@@ -494,7 +494,7 @@ impl Target for Os {
             ) {
                 distro_xml(data)
             } else {
-                Err(Error::new(ErrorKind::NotFound, "Missing record"))
+                Err(super::err_missing_record())
             }
         }
 

@@ -32,15 +32,15 @@ WhoAmI targets all platforms that can run Rust, including:
  - Windows
  - Mac OS
  - BSD variants (FreeBSD, others)
+ - Illumos variants (SmartOS, OmniOS, others) **Target-Specific MSRV 1.65**
+ - Redox **Target-Specific MSRV 1.65**
  - [Web Assembly](https://github.com/ardaku/whoami/blob/stable/WASM.md)
    - Mock implementation
    - Web Browser - DOM
    - WASI (Wasite, others) **may partially or fully work - but untested**
    - Daku (Ardaku/Quantii, others) **mock implementation, full implementation planned later**
- - Illumos variants (SmartOS, OmniOS, others) **may partially or fully work - but untested**
  - Android **may partially or fully work - but untested, planned later**
  - iOS **planned later**
- - Redox **planned later**
  - Fuchsia **planned later**
  - Various game consoles **planned later**
  - Others? (make a PR or open an issue)
@@ -49,8 +49,11 @@ WhoAmI targets all platforms that can run Rust, including:
 WhoAmI 1.x.y targets Rust 1.40.0 stable and later, and the 1.x.y track will
 be maintained at least until the release of the Rust 2024 edition.
 
-The MSRV will only be updated on major version bumps, and version 2.0.0 will
-target Rust 1.65.0 and later to make use of the `let else` syntax.
+The MSRV will not be updated until version 2.0.0, after which breaking changes
+may happen on minor releases, and version 2.0.0 will target Rust 1.65.0 and
+later to make use of the `let else` syntax.  The current plan is for all 2.x
+releases to be supported and receive bugfixes at least until sometime in 2027,
+bumping MSRV only as needed.
 
 ## Binary
 [whome](https://crates.io/crates/whome): `whoami` command RiR (Re-written in
