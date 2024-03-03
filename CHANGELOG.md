@@ -35,6 +35,8 @@ The format is based on [Keep a Changelog], and this project adheres to
  - Deprecated `whoami::hostname_os()`
  - Deprecated `whoami::lang()`
  - Illumos and Redox are no longer untested targets
+ - Documented that Illumos and Redox have a higher MSRV (Rust 1.65) than other
+   targets
 
 ### Fixed
 

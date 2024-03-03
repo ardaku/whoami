@@ -1,7 +1,4 @@
-**/target/
-**/*.rs.bk
-Cargo.lock
-/ignore/
-/a.out
-/**/*.swp
 /build/
+/**/target/
+/**/*.swp
+/**/*.rs.bk
