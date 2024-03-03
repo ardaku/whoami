@@ -80,6 +80,17 @@ struct PassWd {
     pw_shell: *const c_void,
 }
 
+#[cfg(target_os = "illumos")]
+extern "system" {
+    fn getpwuid_r(
+        uid: u32,
+        pwd: *mut PassWd,
+        buf: *mut c_void,
+        buflen: c_int,
+    ) -> *mut PassWd;
+}
+
+#[cfg(not(target_os = "illumos"))]
 extern "system" {
     fn getpwuid_r(
         uid: u32,
@@ -88,6 +99,9 @@ extern "system" {
         buflen: usize,
         result: *mut *mut PassWd,
     ) -> i32;
+}
+
+extern "system" {
     fn geteuid() -> u32;
     fn gethostname(name: *mut c_void, len: usize) -> i32;
 }
@@ -219,22 +233,41 @@ fn getpwuid(name: Name) -> Result<OsString> {
 
     // Get PassWd `struct`.
     let passwd = unsafe {
-        let ret = getpwuid_r(
-            geteuid(),
-            passwd.as_mut_ptr(),
-            buffer.as_mut_ptr() as *mut c_void,
-            BUF_SIZE,
-            _passwd.as_mut_ptr(),
-        );
+        #[cfg(not(target_os = "illumos"))]
+        {
+            let ret = getpwuid_r(
+                geteuid(),
+                passwd.as_mut_ptr(),
+                buffer.as_mut_ptr() as *mut c_void,
+                BUF_SIZE,
+                _passwd.as_mut_ptr(),
+            );
 
-        if ret != 0 {
-            return Err(Error::last_os_error());
+            if ret != 0 {
+                return Err(Error::last_os_error());
+            }
+
+            let _passwd = _passwd.assume_init();
+
+            if _passwd.is_null() {
+                return Err(super::err_null_record());
+            }
         }
 
-        let _passwd = _passwd.assume_init();
+        #[cfg(target_os = "illumos")]
+        {
+            use std::convert::TryInto;
 
-        if _passwd.is_null() {
-            return Err(super::err_null_record());
+            let ret = getpwuid_r(
+                geteuid(),
+                passwd.as_mut_ptr(),
+                buffer.as_mut_ptr() as *mut c_void,
+                BUF_SIZE.try_into().unwrap_or(c_int::MAX),
+            );
+
+            if ret.is_null() {
+                return Err(Error::last_os_error());
+            }
         }
 
         passwd.assume_init()
@@ -359,7 +392,6 @@ pub(crate) fn lang() -> impl Iterator<Item = String> {
     target_os = "freebsd",
     target_os = "netbsd",
     target_os = "openbsd",
-    target_os = "illumos"
 ))]
 #[repr(C)]
 struct UtsName {
@@ -368,6 +400,16 @@ struct UtsName {
     release: [c_char; 256],
     version: [c_char; 256],
     machine: [c_char; 256],
+}
+
+#[cfg(target_os = "illumos")]
+#[repr(C)]
+struct UtsName {
+    sysname: [c_char; 257],
+    nodename: [c_char; 257],
+    release: [c_char; 257],
+    version: [c_char; 257],
+    machine: [c_char; 257],
 }
 
 #[cfg(target_os = "dragonfly")]
