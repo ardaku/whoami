@@ -63,7 +63,8 @@ use crate::{Arch, DesktopEnv, Platform, Result};
 pub(crate) struct Os;
 
 /// Target platform support
-pub(crate) trait Target {
+pub(crate) trait Target: Sized {
+    /// Return a semicolon-delimited string of language/COUNTRY codes.
     fn langs(self) -> Result<String>;
     /// Return the user's "real" / "full" name.
     fn realname(self) -> Result<OsString>;
@@ -81,6 +82,12 @@ pub(crate) trait Target {
     fn platform(self) -> Platform;
     /// Return the computer's CPU architecture.
     fn arch(self) -> Result<Arch>;
+
+    /// Return the user's account name (usually just the username, but may
+    /// include an account server hostname).
+    fn account(self) -> Result<OsString> {
+        self.username()
+    }
 }
 
 // This is only used on some platforms

@@ -12,6 +12,28 @@ use crate::{
     Result,
 };
 
+/// Get the user's account name; usually just the username, but may include an
+/// account server hostname.
+///
+/// If you don't want the account server hostname, use [`username()`].
+///
+/// Example: `username@example.com`
+#[inline(always)]
+pub fn account() -> Result<String> {
+    account_os().and_then(conversions::string_from_os)
+}
+
+/// Get the user's account name; usually just the username, but may include an
+/// account server hostname.
+///
+/// If you don't want the account server hostname, use [`username()`].
+///
+/// Example: `username@example.com`
+#[inline(always)]
+pub fn account_os() -> Result<OsString> {
+    Target::account(Os)
+}
+
 /// Get the user's username.
 ///
 /// On unix-systems this differs from [`realname()`] most notably in that spaces

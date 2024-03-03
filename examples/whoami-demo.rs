@@ -18,6 +18,10 @@ fn main() {
         whoami::username(),
     );
     println!(
+        "User's Username        whoami::fallible::account():   {}",
+        whoami::fallible::account().unwrap_or_else(|_| "<unknown>".to_string()),
+    );
+    println!(
         "Device's Pretty Name   whoami::devicename():          {}",
         whoami::devicename(),
     );

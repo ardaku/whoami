@@ -19,9 +19,11 @@ The format is based on [Keep a Changelog], and this project adheres to
    - `whoami::fallible::realname_os()`
    - `whoami::fallible::username()`
    - `whoami::fallible::username_os()`
+ - `whoami::Language`
+ - `whoami::Country`
  - `whoami::langs()`
- - `Language`
- - `Country`
+ - `whoami::fallible::account()`
+ - `whoami::fallible::account_os()`
 
 ### Removed
 
