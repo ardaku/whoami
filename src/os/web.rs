@@ -24,43 +24,17 @@ fn document_domain() -> Option<String> {
     window()?.document()?.location()?.hostname().ok()
 }
 
-struct LangIter {
-    array: Vec<JsValue>,
-    index: usize,
-}
-
-impl Iterator for LangIter {
-    type Item = String;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if let Some(value) = self.array.get(self.index) {
-            self.index += 1;
-            if let Some(lang) = value.as_string() {
-                Some(lang)
-            } else {
-                self.next()
-            }
-        } else {
-            None
-        }
-    }
-}
-
-#[inline(always)]
-pub(crate) fn lang() -> impl Iterator<Item = String> {
-    let array = if let Some(window) = window() {
-        window.navigator().languages().to_vec()
-    } else {
-        Vec::new()
-    };
-    let index = 0;
-
-    LangIter { array, index }
-}
-
 impl Target for Os {
-    fn langs(self) -> Vec<Language> {
-        todo!()
+    fn langs(self) -> Result<String> {
+        let array = if let Some(window) = window() {
+            Ok(window
+                .navigator()
+                .languages()
+                .filter_map(|l| l.as_string())
+                .join(';'))
+        } else {
+            Err(Error::new(ErrorKind::NotFound, "Window missing"))
+        };
     }
 
     fn realname(self) -> Result<OsString> {

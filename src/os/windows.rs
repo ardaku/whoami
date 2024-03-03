@@ -127,55 +127,48 @@ impl Iterator for LangIter {
     }
 }
 
-#[inline(always)]
-pub(crate) fn lang() -> impl Iterator<Item = String> {
-    let mut num_languages = 0;
-    let mut buffer_size = 0;
-    let mut buffer;
-
-    unsafe {
-        assert_ne!(
-            GetUserPreferredUILanguages(
-                0x08, /* MUI_LANGUAGE_NAME */
-                &mut num_languages,
-                ptr::null_mut(), // List of languages.
-                &mut buffer_size,
-            ),
-            0
-        );
-
-        buffer = Vec::with_capacity(buffer_size as usize);
-
-        assert_ne!(
-            GetUserPreferredUILanguages(
-                0x08, /* MUI_LANGUAGE_NAME */
-                &mut num_languages,
-                buffer.as_mut_ptr(), // List of languages.
-                &mut buffer_size,
-            ),
-            0
-        );
-
-        buffer.set_len(buffer_size as usize);
-    }
-
-    // We know it ends in two null characters.
-    buffer.pop();
-    buffer.pop();
-
-    //
-    let array = String::from_utf16_lossy(&buffer)
-        .split('\0')
-        .map(|x| x.to_string())
-        .collect();
-    let index = 0;
-
-    LangIter { array, index }
-}
-
 impl Target for Os {
-    fn langs(self) -> Vec<Language> {
-        todo!()
+    #[inline(always)]
+    fn langs(self) -> Result<String> {
+        let mut num_languages = 0;
+        let mut buffer_size = 0;
+        let mut buffer;
+
+        unsafe {
+            assert_ne!(
+                GetUserPreferredUILanguages(
+                    0x08, /* MUI_LANGUAGE_NAME */
+                    &mut num_languages,
+                    ptr::null_mut(), // List of languages.
+                    &mut buffer_size,
+                ),
+                0
+            );
+
+            buffer = Vec::with_capacity(buffer_size as usize);
+
+            assert_ne!(
+                GetUserPreferredUILanguages(
+                    0x08, /* MUI_LANGUAGE_NAME */
+                    &mut num_languages,
+                    buffer.as_mut_ptr(), // List of languages.
+                    &mut buffer_size,
+                ),
+                0
+            );
+
+            buffer.set_len(buffer_size as usize);
+        }
+
+        // We know it ends in two null characters.
+        buffer.pop();
+        buffer.pop();
+
+        // Combine into a single string
+        Ok(String::from_utf16_lossy(&buffer)
+            .split('\0')
+            .map(|x| x.to_string())
+            .join(';'))
     }
 
     fn realname(self) -> Result<OsString> {

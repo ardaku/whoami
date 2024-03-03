@@ -16,8 +16,9 @@ pub(crate) fn lang() -> impl Iterator<Item = String> {
 }
 
 impl Target for Os {
-    fn langs(self) -> Vec<Language> {
-        todo!()
+    #[inline(always)]
+    fn langs(self) -> Result<String> {
+        Ok("en/US".to_string())
     }
 
     #[inline(always)]

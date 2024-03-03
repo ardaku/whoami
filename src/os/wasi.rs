@@ -8,20 +8,9 @@ use crate::{
     Arch, DesktopEnv, Language, Platform, Result,
 };
 
-#[inline(always)]
-pub(crate) fn lang() -> impl Iterator<Item = String> {
-    let langs: Vec<String> = wasite::langs()
-        .unwrap_or_else(|_e| "en_US".to_string())
-        .split(';')
-        .map(|lang| lang.to_string())
-        .collect();
-
-    langs.into_iter()
-}
-
 impl Target for Os {
-    fn langs(self) -> Vec<Language> {
-        todo!()
+    fn langs(self) -> Result<String> {
+        super::unix_lang()
     }
 
     #[inline(always)]

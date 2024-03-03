@@ -10,14 +10,10 @@ use crate::{
     Arch, DesktopEnv, Language, Platform, Result,
 };
 
-#[inline(always)]
-pub(crate) fn lang() -> impl Iterator<Item = String> {
-    std::iter::once("en/US".to_string())
-}
-
 impl Target for Os {
-    fn langs(self) -> Vec<Language> {
-        todo!()
+    #[inline(always)]
+    fn langs(self) -> Result<String> {
+        Ok("en/US".to_string())
     }
 
     #[inline(always)]

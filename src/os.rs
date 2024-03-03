@@ -52,21 +52,19 @@
 mod target;
 
 use std::{
+    env::{self, VarError},
     ffi::OsString,
     io::{Error, ErrorKind},
 };
 
-pub(crate) use self::target::*;
-use crate::{Arch, DesktopEnv, Language, Platform, Result};
+use crate::{Arch, DesktopEnv, Platform, Result};
 
 /// Implement `Target for Os` to add platform support for a target.
 pub(crate) struct Os;
 
 /// Target platform support
 pub(crate) trait Target {
-    /// Return a list of languages.
-    #[allow(dead_code)] // FIXME
-    fn langs(self) -> Vec<Language>;
+    fn langs(self) -> Result<String>;
     /// Return the user's "real" / "full" name.
     fn realname(self) -> Result<OsString>;
     /// Return the user's username.
@@ -101,4 +99,25 @@ fn err_null_record() -> Error {
 #[allow(dead_code)]
 fn err_empty_record() -> Error {
     Error::new(ErrorKind::NotFound, "Empty record")
+}
+
+// This is only used on some platforms
+#[allow(dead_code)]
+fn unix_lang() -> Result<String> {
+    let check_var = |var| {
+        env::var(var).map_err(|e| {
+            let kind = match e {
+                VarError::NotPresent => ErrorKind::NotFound,
+                VarError::NotUnicode(_) => ErrorKind::InvalidData,
+            };
+            Error::new(kind, e)
+        })
+    };
+    let langs = check_var("LANGS").or_else(|_| check_var("LANG"))?;
+
+    if langs.is_empty() {
+        return Err(err_empty_record());
+    }
+
+    Ok(langs)
 }

@@ -2,7 +2,7 @@ use std::ffi::OsString;
 
 use crate::{
     fallible,
-    os::{self, Os, Target},
+    os::{Os, Target},
     Arch, DesktopEnv, Language, Platform, Result,
 };
 
@@ -150,16 +150,41 @@ pub fn platform() -> Platform {
 #[inline(always)]
 #[deprecated(note = "use `langs()` instead", since = "1.5.0")]
 pub fn lang() -> impl Iterator<Item = String> {
-    os::lang()
+    let langs_vec = if let Ok(langs) = langs() {
+        langs
+            .map(|lang| lang.to_string().replace('/', "-"))
+            .collect()
+    } else {
+        ["en-US".to_string()].to_vec()
+    };
+
+    langs_vec.into_iter()
 }
 
 /// Get the user's preferred language(s).
 ///
-/// Returned as iterator of [`Language`]s wrapped in [`Result`]s.  The most
-/// preferred language is returned first, followed by next preferred, and so on.
-/// Unrecognized languages may return an error.
+/// Returned as iterator of [`Language`]s.  The most preferred language is
+/// returned first, followed by next preferred, and so on.  Unrecognized
+/// languages may either return an error or be skipped.
 #[inline(always)]
-pub fn langs() -> impl Iterator<Item = Result<Language>> {
-    #[allow(deprecated)]
-    lang().map(|string| Ok(Language::__(Box::new(string))))
+pub fn langs() -> Result<impl Iterator<Item = Language>> {
+    // FIXME: Could do less allocation
+    let langs = Target::langs(Os)?;
+    let langs = langs
+        .split(';')
+        .map(ToString::to_string)
+        .collect::<Vec<_>>();
+
+    Ok(langs.into_iter().filter_map(|lang| {
+        if lang == "C" {
+            return None;
+        }
+
+        Some(Language::__(Box::new(
+            lang.split_terminator('.')
+                .next()
+                .unwrap_or_default()
+                .replace(['_', '-'], "/"),
+        )))
+    }))
 }

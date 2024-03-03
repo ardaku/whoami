@@ -20,7 +20,7 @@ use std::{
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, Platform, Result,
+    Arch, DesktopEnv, Platform, Result,
 };
 
 #[cfg(not(any(
@@ -341,51 +341,6 @@ fn distro_xml(data: String) -> Result<String> {
     })
 }
 
-struct LangIter {
-    array: String,
-    index: Option<bool>,
-}
-
-impl Iterator for LangIter {
-    type Item = String;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.index? && self.array.contains('-') {
-            self.index = Some(false);
-            let mut temp = self.array.split('-').next()?.to_string();
-            mem::swap(&mut temp, &mut self.array);
-            Some(temp)
-        } else {
-            self.index = None;
-            let mut temp = String::new();
-            mem::swap(&mut temp, &mut self.array);
-            Some(temp)
-        }
-    }
-}
-
-#[inline(always)]
-pub(crate) fn lang() -> impl Iterator<Item = String> {
-    const DEFAULT_LANG: &str = "en_US";
-
-    let array = env::var("LANG")
-        .unwrap_or_default()
-        .split('.')
-        .next()
-        .unwrap_or(DEFAULT_LANG)
-        .to_string();
-    let array = if array == "C" {
-        DEFAULT_LANG.to_string()
-    } else {
-        array
-    };
-
-    LangIter {
-        array: array.replace('_', "-"),
-        index: Some(true),
-    }
-}
-
 #[cfg(any(
     target_os = "macos",
     target_os = "ios",
@@ -461,8 +416,8 @@ unsafe fn uname(buf: *mut UtsName) -> c_int {
 }
 
 impl Target for Os {
-    fn langs(self) -> Vec<Language> {
-        todo!()
+    fn langs(self) -> Result<String> {
+        super::unix_lang()
     }
 
     fn realname(self) -> Result<OsString> {
