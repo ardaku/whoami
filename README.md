@@ -60,6 +60,11 @@ bumping MSRV only as needed.
 [whome](https://crates.io/crates/whome): `whoami` command RiR (Re-written in
 Rust) that depends on this crate.
 
+## Testing
+The testing procedure is documented at
+<https://github.com/ardaku/whoami/blob/v1/TESTING.md>.  The full manual test
+suite is run for each change that affects multiple platforms.
+
 ## License
 Copyright © 2017-2024 The WhoAmI Contributors.
 
