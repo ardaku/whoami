@@ -57,7 +57,7 @@ impl Target for Os {
         } else if cfg!(target_os = "windows") {
             Platform::Windows
         } else if cfg!(target_os = "macos") {
-            Platform::MacOS
+            Platform::Mac
         } else if cfg!(target_os = "redox") {
             Platform::Redox
         } else if cfg!(target_os = "linux") {
@@ -88,7 +88,7 @@ impl Target for Os {
         } else if cfg!(target_os = "nto") {
             Platform::Unknown("QNX Neutrino".to_string())
         } else if cfg!(target_os = "horizon") {
-            Platform::Nintendo
+            Platform::Nintendo3ds
         } else if cfg!(target_os = "vita") {
             Platform::PlayStation
         } else if cfg!(target_os = "hurd") {
@@ -116,7 +116,7 @@ impl Target for Os {
             Arch::Wasm32
         } else {
             return Err(Error::new(
-                ErrorKind::Other, // FIXME: WhoAmI 2.0, Unsupported
+                ErrorKind::Unsupported,
                 "Unexpected pointer width for target platform",
             ));
         })

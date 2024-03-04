@@ -11,24 +11,23 @@ fn main() {
     );
     println!(
         "User's Name            whoami::realname():            {}",
-        whoami::realname(),
+        whoami::realname().unwrap_or_else(|_| "<unknown>".to_string()),
     );
     println!(
         "User's Username        whoami::username():            {}",
-        whoami::username(),
+        whoami::username().unwrap_or_else(|_| "<unknown>".to_string()),
     );
     println!(
-        "User's Username        whoami::fallible::account():   {}",
-        whoami::fallible::account().unwrap_or_else(|_| "<unknown>".to_string()),
+        "User's Username        whoami::account():             {}",
+        whoami::account().unwrap_or_else(|_| "<unknown>".to_string()),
     );
     println!(
         "Device's Pretty Name   whoami::devicename():          {}",
-        whoami::devicename(),
+        whoami::devicename().unwrap_or_else(|_| "<unknown>".to_string()),
     );
     println!(
-        "Device's Hostname      whoami::fallible::hostname():  {}",
-        whoami::fallible::hostname()
-            .unwrap_or_else(|_| "localhost".to_string()),
+        "Device's Hostname      whoami::hostname():            {}",
+        whoami::hostname().unwrap_or_else(|_| "<unknown>".to_string()),
     );
     println!(
         "Device's Platform      whoami::platform():            {}",
@@ -36,7 +35,7 @@ fn main() {
     );
     println!(
         "Device's OS Distro     whoami::distro():              {}",
-        whoami::distro(),
+        whoami::distro().unwrap_or_else(|_| "<unknown>".to_string()),
     );
     println!(
         "Device's Desktop Env.  whoami::desktop_env():         {}",

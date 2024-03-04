@@ -11,25 +11,26 @@ fn main() {
     );
     println!(
         "User's Name            whoami::realname_os():           {:?}",
-        whoami::realname_os(),
-    );
-    println!(
-        "User's Username        whoami::username_os():           {:?}",
-        whoami::username_os(),
-    );
-    println!(
-        "User's Account         whoami::fallible::account_os():  {:?}",
-        whoami::fallible::account_os()
+        whoami::realname_os()
             .unwrap_or_else(|_| "<unknown>".to_string().into()),
     );
     println!(
-        "Device's Pretty Name   whoami::devicename_os():         {:?}",
-        whoami::devicename_os(),
+        "User's Username        whoami::username_os():           {:?}",
+        whoami::username_os()
+            .unwrap_or_else(|_| "<unknown>".to_string().into()),
     );
     println!(
-        "Device's Hostname      whoami::fallible::hostname():    {:?}",
-        whoami::fallible::hostname()
-            .unwrap_or_else(|_| "localhost".to_string()),
+        "User's Account         whoami::account_os():            {:?}",
+        whoami::account_os().unwrap_or_else(|_| "<unknown>".to_string().into()),
+    );
+    println!(
+        "Device's Pretty Name   whoami::devicename_os():         {:?}",
+        whoami::devicename_os()
+            .unwrap_or_else(|_| "<unknown>".to_string().into()),
+    );
+    println!(
+        "Device's Hostname      whoami::hostname():              {:?}",
+        whoami::hostname().unwrap_or_else(|_| "<unknown>".to_string()),
     );
     println!(
         "Device's Platform      whoami::platform():              {:?}",

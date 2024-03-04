@@ -575,7 +575,7 @@ impl Target for Os {
         #[cfg(target_os = "macos")]
         let env = "Aqua";
 
-        // FIXME: WhoAmI 2.0: use `let else`
+        // FIXME: use `let else`
         #[cfg(any(
             target_os = "linux",
             target_os = "dragonfly",
@@ -612,7 +612,7 @@ impl Target for Os {
         } else if env.eq_ignore_ascii_case("UBUNTU") {
             DesktopEnv::Ubuntu
         } else if env.eq_ignore_ascii_case("PLASMA5") {
-            DesktopEnv::Kde
+            DesktopEnv::Plasma
         // TODO: Other Linux Desktop Environments
         } else {
             DesktopEnv::Unknown(env.to_string())
@@ -628,7 +628,7 @@ impl Target for Os {
 
         #[cfg(target_os = "macos")]
         {
-            Platform::MacOS
+            Platform::Mac
         }
 
         #[cfg(any(

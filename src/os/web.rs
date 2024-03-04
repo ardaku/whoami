@@ -150,8 +150,7 @@ impl Target for Os {
             // Platform::FreeBsd,
             // Platform::Ios,
             // Platform::Android,
-            // Platform::Nintendo,
-            // Platform::Xbox,
+            // Platform::Nintendo3s,
             // Platform::PlayStation,
             // Platform::Dive,
             // Platform::Fuchsia,
@@ -184,14 +183,13 @@ impl Target for Os {
         } else if string.contains("Linux") {
             Platform::Linux
         } else if string.contains("Mac OS X") {
-            Platform::MacOS
+            Platform::Mac
         } else {
             // TODO:
             // Platform::FreeBsd,
             // Platform::Ios,
             // Platform::Android,
-            // Platform::Nintendo,
-            // Platform::Xbox,
+            // Platform::Nintendo3ds,
             // Platform::PlayStation,
             // Platform::Dive,
             // Platform::Fuchsia,
