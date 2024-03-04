@@ -176,15 +176,16 @@ pub fn langs() -> Result<impl Iterator<Item = Language>> {
         .collect::<Vec<_>>();
 
     Ok(langs.into_iter().filter_map(|lang| {
+        let lang = lang
+            .split_terminator('.')
+            .next()
+            .unwrap_or_default()
+            .replace(|x| ['_', '-'].contains(&x), "/");
+
         if lang == "C" {
             return None;
         }
 
-        Some(Language::__(Box::new(
-            lang.split_terminator('.')
-                .next()
-                .unwrap_or_default()
-                .replace(|x| ['_', '-'].contains(&x), "/"),
-        )))
+        Some(Language::__(Box::new(lang)))
     }))
 }

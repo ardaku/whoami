@@ -149,7 +149,78 @@ Device's CPU Arch      whoami::arch():                x86_64
 
 ## MacOS
 
-## FreeBSD
+Testing is done on macOS Catalina.
+
+Clone whoami, and run:
+
+```rust
+cargo +stable run --example whoami-demo
+cargo +stable run --example whoami-demo --release
+```
+
+Expect to see something like:
+
+```console
+WhoAmI 1.5.0
+
+User's Language        whoami::langs():               en/US
+User's Name            whoami::realname():            Aldaron Lau
+User's Username        whoami::username():            aldaronlau
+User's Username        whoami::fallible::account():   aldaronlau
+Device's Pretty Name   whoami::devicename():          Aldaron’s MacBook Air
+Device's Hostname      whoami::fallible::hostname():  Aldarons-MacBook-Air.local
+Device's Platform      whoami::platform():            Mac OS
+Device's OS Distro     whoami::distro():              Mac OS X 10.15.7
+Device's Desktop Env.  whoami::desktop_env():         Aqua
+Device's CPU Arch      whoami::arch():                x86_64
+```
+
+## BSD
+
+Testing is done on FreeBSD (virtualized on Fedora Silverblue):
+
+Download from within GNOME Boxes.
+
+Set 4 GiB memory, and 20 GiB Storage limit
+
+Go through the installation process, keeping all defaults.
+
+### Install packages
+
+Log in as root
+
+```shell
+pkg install git
+```
+
+Log in as you
+
+```shell
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # 1
+. "$HOME/.cargo/env"
+git clone https://github.com/ardaku/whoami.git
+cd whoami
+# run both debug and release
+cargo run --example whoami-demo
+cargo run --example whoami-demo --release
+```
+
+Expect to see something like:
+
+```console
+WhoAmI 1.5.0
+
+User's Language        whoami::langs():               en/US
+User's Name            whoami::realname():            Aldaron Lau
+User's Username        whoami::username():            aldaron
+User's Username        whoami::fallible::account():   aldaron
+Device's Pretty Name   whoami::devicename():          bsdtime
+Device's Hostname      whoami::fallible::hostname():  bsdtime
+Device's Platform      whoami::platform():            BSD
+Device's OS Distro     whoami::distro():              FreeBSD 14.0-RELEASE
+Device's Desktop Env.  whoami::desktop_env():         Unknown: Unknown
+Device's CPU Arch      whoami::arch():                x86_64
+```
 
 ## illumos
 
