@@ -72,7 +72,6 @@ mod api;
 mod arch;
 mod conversions;
 mod desktop_env;
-pub mod fallible;
 mod language;
 mod os;
 mod platform;
@@ -80,8 +79,9 @@ mod result;
 
 pub use self::{
     api::{
-        arch, desktop_env, devicename, devicename_os, distro, langs, platform,
-        realname, realname_os, username, username_os,
+        account, account_os, arch, desktop_env, devicename, devicename_os,
+        distro, hostname, langs, platform, realname, realname_os, username,
+        username_os,
     },
     arch::{Arch, Width},
     desktop_env::DesktopEnv,

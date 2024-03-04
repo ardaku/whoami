@@ -1,7 +1,7 @@
 use std::ffi::OsString;
 
 use crate::{
-    fallible,
+    conversions,
     os::{Os, Target},
     Arch, DesktopEnv, Language, Platform, Result,
 };
@@ -12,13 +12,32 @@ macro_rules! report_message {
     };
 }
 
-const DEFAULT_USERNAME: &str = "Unknown";
-const DEFAULT_HOSTNAME: &str = "LocalHost";
-
 /// Get the CPU Architecture.
 #[inline(always)]
 pub fn arch() -> Arch {
     Target::arch(Os).expect(concat!("arch() failed.  ", report_message!()))
+}
+
+/// Get the user's account name; usually just the username, but may include an
+/// account server hostname.
+///
+/// If you don't want the account server hostname, use [`username()`].
+///
+/// Example: `username@example.com`
+#[inline(always)]
+pub fn account() -> Result<String> {
+    account_os().and_then(conversions::string_from_os)
+}
+
+/// Get the user's account name; usually just the username, but may include an
+/// account server hostname.
+///
+/// If you don't want the account server hostname, use [`username()`].
+///
+/// Example: `username@example.com`
+#[inline(always)]
+pub fn account_os() -> Result<OsString> {
+    Target::account(Os)
 }
 
 /// Get the user's username.
@@ -26,8 +45,8 @@ pub fn arch() -> Arch {
 /// On unix-systems this differs from [`realname()`] most notably in that spaces
 /// are not allowed in the username.
 #[inline(always)]
-pub fn username() -> String {
-    fallible::username().unwrap_or_else(|_| DEFAULT_USERNAME.to_lowercase())
+pub fn username() -> Result<String> {
+    username_os().and_then(conversions::string_from_os)
 }
 
 /// Get the user's username.
@@ -35,53 +54,54 @@ pub fn username() -> String {
 /// On unix-systems this differs from [`realname_os()`] most notably in that
 /// spaces are not allowed in the username.
 #[inline(always)]
-pub fn username_os() -> OsString {
-    fallible::username_os()
-        .unwrap_or_else(|_| DEFAULT_USERNAME.to_lowercase().into())
+pub fn username_os() -> Result<OsString> {
+    Target::username(Os)
 }
 
 /// Get the user's real (full) name.
 #[inline(always)]
-pub fn realname() -> String {
-    fallible::realname()
-        .or_else(|_| fallible::username())
-        .unwrap_or_else(|_| DEFAULT_USERNAME.to_owned())
+pub fn realname() -> Result<String> {
+    realname_os().and_then(conversions::string_from_os)
 }
 
 /// Get the user's real (full) name.
 #[inline(always)]
-pub fn realname_os() -> OsString {
-    fallible::realname_os()
-        .or_else(|_| fallible::username_os())
-        .unwrap_or_else(|_| DEFAULT_USERNAME.to_owned().into())
+pub fn realname_os() -> Result<OsString> {
+    Target::realname(Os)
+}
+
+/// Get the host device's hostname.
+///
+/// Limited to a-z, A-Z, 0-9, and dashes.  This limit also applies to
+/// [`devicename()`] when targeting Windows.  Usually hostnames are
+/// case-insensitive, but it's not a hard requirement.
+#[inline(always)]
+pub fn hostname() -> Result<String> {
+    Target::hostname(Os)
 }
 
 /// Get the device name (also known as "Pretty Name").
 ///
 /// Often used to identify device for bluetooth pairing.
 #[inline(always)]
-pub fn devicename() -> String {
-    fallible::devicename()
-        .or_else(|_| fallible::hostname())
-        .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string())
+pub fn devicename() -> Result<String> {
+    devicename_os().and_then(conversions::string_from_os)
 }
 
 /// Get the device name (also known as "Pretty Name").
 ///
 /// Often used to identify device for bluetooth pairing.
 #[inline(always)]
-pub fn devicename_os() -> OsString {
-    fallible::devicename_os()
-        .or_else(|_| fallible::hostname().map(OsString::from))
-        .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string().into())
+pub fn devicename_os() -> Result<OsString> {
+    Target::devicename(Os)
 }
 
 /// Get the name of the operating system distribution and (possibly) version.
 ///
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
-pub fn distro() -> String {
-    fallible::distro().unwrap_or_else(|_| format!("Unknown {}", platform()))
+pub fn distro() -> Result<String> {
+    Target::distro(Os)
 }
 
 /// Get the desktop environment.
