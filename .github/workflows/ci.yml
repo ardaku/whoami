@@ -17,6 +17,7 @@ jobs:
         toolchain: ${{ matrix.tc }}
         components: rustfmt, clippy
         override: true
+    - run: cargo update
     - run: cargo fmt --check
     - run: cargo clippy -- -D warnings
   checks-cross-compile:
@@ -43,6 +44,7 @@ jobs:
         target: ${{ matrix.cc }}
         components: clippy
         override: true
+    - run: cargo update
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
   checks-cross-compile-ios:
     runs-on: ${{ matrix.os }}
@@ -77,12 +79,8 @@ jobs:
         target: ${{ matrix.cc }}
         components: clippy
         override: true
-    - run: cargo update -p bumpalo --precise 3.4.0
-    - run: cargo update -p web-sys --precise 0.3.55
-    - run: cargo update -p js-sys --precise 0.3.55
-    - run: cargo update -p wasm-bindgen --precise 0.2.78
-    - run: cargo update -p log --precise 0.4.17
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
+    - run: cargo update
     - run: cargo clippy --no-default-features --target=${{ matrix.cc }} -- -D warnings
     - run: RUSTFLAGS="--cfg target_os=\"daku\"" cargo clippy --target=${{ matrix.cc }} -- -D warnings
   test:
@@ -111,6 +109,7 @@ jobs:
         profile: minimal
         toolchain: ${{ matrix.tc }}
         override: true
+    - run: cargo update
     - run: cargo test --all --all-features --target=x86_64-apple-darwin
   cross-compile:
     runs-on: ${{ matrix.os }}
@@ -165,6 +164,7 @@ jobs:
         toolchain: ${{ matrix.tc }}
         target: ${{ matrix.cc }}
         override: true
+    - run: cargo update
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile-wasm:
     runs-on: ${{ matrix.os }}
@@ -181,14 +181,8 @@ jobs:
         toolchain: ${{ matrix.tc }}
         target: ${{ matrix.cc }}
         override: true
-    - run: cargo update -p bumpalo --precise 3.4.0
-    - run: cargo update -p web-sys --precise 0.3.55
-    - run: cargo update -p js-sys --precise 0.3.55
-    - run: cargo update -p wasm-bindgen --precise 0.2.78
-    - run: cargo update -p log --precise 0.4.17
-    - run: cargo update -p quote --precise 1.0.30
-    - run: cargo update -p proc-macro2 --precise 1.0.63
     - run: cargo build --all-features --target=${{ matrix.cc }}
+    - run: cargo update
     - run: cargo build --no-default-features --target=${{ matrix.cc }}
     - run: RUSTFLAGS="--cfg target_os=\"daku\"" cargo build --target=${{ matrix.cc }}
   cross-compile-illumos:
@@ -206,6 +200,7 @@ jobs:
         toolchain: ${{ matrix.tc }}
         target: ${{ matrix.cc }}
         override: true
+    - run: cargo update
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile-redox:
     runs-on: ${{ matrix.os }}
@@ -222,4 +217,5 @@ jobs:
         toolchain: ${{ matrix.tc }}
         target: ${{ matrix.cc }}
         override: true
+    - run: cargo update
     - run: cargo build --all-features --target=${{ matrix.cc }}

@@ -1,10 +1,10 @@
 [package]
 name = "whoami"
-version = "1.5.0-pre.0"
+version = "1.5.0"
 edition = "2018"
 license = "Apache-2.0 OR BSL-1.0 OR MIT"
 documentation = "https://docs.rs/whoami"
-homepage = "https://github.com/ardaku/whoami/blob/stable/CHANGELOG.md"
+homepage = "https://github.com/ardaku/whoami/blob/v1/CHANGELOG.md"
 repository = "https://github.com/ardaku/whoami"
 readme = "README.md"
 description = "Retrieve the current user and environment."
@@ -17,33 +17,30 @@ categories = [
     "value-formatting",
 ]
 include = [
-    "LICENSE_APACHE",
-    "LICENSE_BOOST",
-    "LICENSE_MIT",
-    "README.md",
-    "src/*",
+    "/LICENSE_APACHE",
+    "/LICENSE_BOOST",
+    "/LICENSE_MIT",
+    "/README.md",
+    "/src/*",
 ]
 rust-version = "1.40"
 
-# Target specific dependencies for redox
+# Target specific dependency for redox
 [target.'cfg(all(target_os = "redox", not(target_arch = "wasm32")))'.dependencies.redox_syscall]
 version = "0.4"
 
-# Target specific dependencies for wasite
+# Target specific dependency for wasite
 [target.'cfg(all(target_arch = "wasm32", target_os = "wasi"))'.dependencies.wasite]
 version = "0.1"
 
-# Target-specific dependency for wasm-bindgen
+# Target-specific dependency for web browser
 [target.'cfg(all(target_arch = "wasm32", not(target_os = "wasi"), not(target_os = "daku")))'.dependencies.web-sys]
 version = "0.3"
 features = ["Navigator", "Document", "Window", "Location"]
-optional = true
-[target.'cfg(all(target_arch = "wasm32", not(target_os = "wasi"), not(target_os = "daku")))'.dependencies.wasm-bindgen]
-version = "0.2"
 optional = true
 
 [features]
 default = ["web"]
 # Enabling this feature indicates that the wasm32-unknown-unknown target should
 # be assumed to be in a web environment where it can call DOM APIs.
-web = ["web-sys", "wasm-bindgen"]
+web = ["web-sys"]

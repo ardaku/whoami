@@ -13,7 +13,7 @@ use std::{
 use crate::{
     conversions,
     os::{Os, Target},
-    Arch, DesktopEnv, Language, Platform, Result,
+    Arch, DesktopEnv, Platform, Result,
 };
 
 #[repr(C)]
@@ -50,6 +50,7 @@ struct SystemInfo {
 
 #[allow(unused)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 enum ExtendedNameFormat {
     Unknown,          // Nothing
     FullyQualifiedDN, // Nothing
@@ -81,6 +82,7 @@ enum ComputerNameFormat {
 
 const ERR_MORE_DATA: i32 = 0xEA;
 const ERR_INSUFFICIENT_BUFFER: i32 = 0x7A;
+const ERR_NONE_MAPPED: i32 = 0x534;
 
 #[link(name = "secur32")]
 extern "system" {
@@ -108,149 +110,124 @@ extern "system" {
     fn GetNativeSystemInfo(system_info: *mut SystemInfo);
 }
 
-struct LangIter {
-    array: Vec<String>,
-    index: usize,
-}
+fn username() -> Result<OsString> {
+    // Step 1. Retreive the entire length of the username
+    let mut size = 0;
+    let fail = unsafe { GetUserNameW(ptr::null_mut(), &mut size) == 0 };
+    assert!(fail);
 
-impl Iterator for LangIter {
-    type Item = String;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if let Some(value) = self.array.get(self.index) {
-            self.index += 1;
-
-            Some(value.to_string())
-        } else {
-            None
-        }
+    if Error::last_os_error().raw_os_error() != Some(ERR_INSUFFICIENT_BUFFER) {
+        return Err(Error::last_os_error());
     }
-}
 
-#[inline(always)]
-pub(crate) fn lang() -> impl Iterator<Item = String> {
-    let mut num_languages = 0;
-    let mut buffer_size = 0;
-    let mut buffer;
-
+    // Step 2. Allocate memory to put the Windows (UTF-16) string.
+    let mut name: Vec<u16> =
+        Vec::with_capacity(size.try_into().unwrap_or(std::usize::MAX));
+    size = name.capacity().try_into().unwrap_or(std::u32::MAX);
+    let orig_size = size;
+    let fail =
+        unsafe { GetUserNameW(name.as_mut_ptr().cast(), &mut size) == 0 };
+    if fail {
+        return Err(Error::last_os_error());
+    }
+    debug_assert_eq!(orig_size, size);
     unsafe {
-        assert_ne!(
-            GetUserPreferredUILanguages(
-                0x08, /* MUI_LANGUAGE_NAME */
-                &mut num_languages,
-                ptr::null_mut(), // List of languages.
-                &mut buffer_size,
-            ),
-            0
-        );
+        name.set_len(size.try_into().unwrap_or(std::usize::MAX));
+    }
+    let terminator = name.pop(); // Remove Trailing Null
+    debug_assert_eq!(terminator, Some(0u16));
 
-        buffer = Vec::with_capacity(buffer_size as usize);
+    // Step 3. Convert to Rust String
+    Ok(OsString::from_wide(&name))
+}
 
-        assert_ne!(
-            GetUserPreferredUILanguages(
-                0x08, /* MUI_LANGUAGE_NAME */
-                &mut num_languages,
-                buffer.as_mut_ptr(), // List of languages.
-                &mut buffer_size,
-            ),
-            0
-        );
+fn extended_name(format: ExtendedNameFormat) -> Result<OsString> {
+    // Step 1. Retrieve the entire length of the username
+    let mut buf_size = 0;
+    let fail =
+        unsafe { GetUserNameExW(format, ptr::null_mut(), &mut buf_size) == 0 };
 
-        buffer.set_len(buffer_size as usize);
+    assert!(fail);
+
+    let last_err = Error::last_os_error().raw_os_error();
+
+    if last_err == Some(ERR_NONE_MAPPED) {
+        return Err(super::err_missing_record());
     }
 
-    // We know it ends in two null characters.
-    buffer.pop();
-    buffer.pop();
+    if last_err != Some(ERR_MORE_DATA) {
+        return Err(Error::last_os_error());
+    }
 
-    //
-    let array = String::from_utf16_lossy(&buffer)
-        .split('\0')
-        .map(|x| x.to_string())
-        .collect();
-    let index = 0;
+    // Step 2. Allocate memory to put the Windows (UTF-16) string.
+    let mut name: Vec<u16> =
+        Vec::with_capacity(buf_size.try_into().unwrap_or(std::usize::MAX));
+    let mut name_len = name.capacity().try_into().unwrap_or(std::u32::MAX);
+    let fail = unsafe {
+        GetUserNameExW(format, name.as_mut_ptr().cast(), &mut name_len) == 0
+    };
+    if fail {
+        return Err(Error::last_os_error());
+    }
 
-    LangIter { array, index }
+    assert_eq!(buf_size, name_len + 1);
+
+    unsafe { name.set_len(name_len.try_into().unwrap_or(std::usize::MAX)) };
+
+    // Step 3. Convert to Rust String
+    Ok(OsString::from_wide(&name))
 }
 
 impl Target for Os {
-    fn langs(self) -> Vec<Language> {
-        todo!()
+    #[inline(always)]
+    fn langs(self) -> Result<String> {
+        let mut num_languages = 0;
+        let mut buffer_size = 0;
+        let mut buffer;
+
+        unsafe {
+            assert_ne!(
+                GetUserPreferredUILanguages(
+                    0x08, /* MUI_LANGUAGE_NAME */
+                    &mut num_languages,
+                    ptr::null_mut(), // List of languages.
+                    &mut buffer_size,
+                ),
+                0
+            );
+
+            buffer = Vec::with_capacity(buffer_size as usize);
+
+            assert_ne!(
+                GetUserPreferredUILanguages(
+                    0x08, /* MUI_LANGUAGE_NAME */
+                    &mut num_languages,
+                    buffer.as_mut_ptr(), // List of languages.
+                    &mut buffer_size,
+                ),
+                0
+            );
+
+            buffer.set_len(buffer_size as usize);
+        }
+
+        // We know it ends in two null characters.
+        buffer.pop();
+        buffer.pop();
+
+        // Combine into a single string
+        Ok(String::from_utf16_lossy(&buffer)
+            .split('\0')
+            .collect::<Vec<&str>>()
+            .join(";"))
     }
 
     fn realname(self) -> Result<OsString> {
-        // Step 1. Retrieve the entire length of the username
-        let mut buf_size = 0;
-        let fail = unsafe {
-            GetUserNameExW(
-                ExtendedNameFormat::Display,
-                ptr::null_mut(),
-                &mut buf_size,
-            ) == 0
-        };
-
-        assert!(fail);
-
-        if Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
-            return Err(Error::last_os_error());
-        }
-
-        // Step 2. Allocate memory to put the Windows (UTF-16) string.
-        let mut name: Vec<u16> =
-            Vec::with_capacity(buf_size.try_into().unwrap_or(std::usize::MAX));
-        let mut name_len = name.capacity().try_into().unwrap_or(std::u32::MAX);
-        let fail = unsafe {
-            GetUserNameExW(
-                ExtendedNameFormat::Display,
-                name.as_mut_ptr().cast(),
-                &mut name_len,
-            ) == 0
-        };
-        if fail {
-            return Err(Error::last_os_error());
-        }
-
-        assert_eq!(buf_size, name_len + 1);
-
-        unsafe {
-            name.set_len(name_len.try_into().unwrap_or(std::usize::MAX));
-        }
-
-        // Step 3. Convert to Rust String
-        Ok(OsString::from_wide(&name))
+        extended_name(ExtendedNameFormat::Display)
     }
 
     fn username(self) -> Result<OsString> {
-        // Step 1. Retreive the entire length of the username
-        let mut size = 0;
-        let fail = unsafe { GetUserNameW(ptr::null_mut(), &mut size) == 0 };
-        assert!(fail);
-
-        if Error::last_os_error().raw_os_error()
-            != Some(ERR_INSUFFICIENT_BUFFER)
-        {
-            return Err(Error::last_os_error());
-        }
-
-        // Step 2. Allocate memory to put the Windows (UTF-16) string.
-        let mut name: Vec<u16> =
-            Vec::with_capacity(size.try_into().unwrap_or(std::usize::MAX));
-        size = name.capacity().try_into().unwrap_or(std::u32::MAX);
-        let orig_size = size;
-        let fail =
-            unsafe { GetUserNameW(name.as_mut_ptr().cast(), &mut size) == 0 };
-        if fail {
-            return Err(Error::last_os_error());
-        }
-        debug_assert_eq!(orig_size, size);
-        unsafe {
-            name.set_len(size.try_into().unwrap_or(std::usize::MAX));
-        }
-        let terminator = name.pop(); // Remove Trailing Null
-        debug_assert_eq!(terminator, Some(0u16));
-
-        // Step 3. Convert to Rust String
-        Ok(OsString::from_wide(&name))
+        username()
     }
 
     fn devicename(self) -> Result<OsString> {
@@ -267,9 +244,7 @@ impl Target for Os {
 
         assert!(fail);
 
-        if Error::last_os_error().raw_os_error()
-            != Some(ERR_INSUFFICIENT_BUFFER)
-        {
+        if Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
             return Err(Error::last_os_error());
         }
 
@@ -310,9 +285,7 @@ impl Target for Os {
 
         assert!(fail);
 
-        if Error::last_os_error().raw_os_error()
-            != Some(ERR_INSUFFICIENT_BUFFER)
-        {
+        if Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
             return Err(Error::last_os_error());
         }
 
@@ -471,5 +444,14 @@ impl Target for Os {
                 )
             })?,
         })
+    }
+
+    #[inline(always)]
+    fn account(self) -> Result<OsString> {
+        match extended_name(ExtendedNameFormat::UserPrincipal) {
+            Ok(name) => Ok(name),
+            Err(e) if e.kind() == ErrorKind::NotFound => username(),
+            Err(e) => Err(e),
+        }
     }
 }

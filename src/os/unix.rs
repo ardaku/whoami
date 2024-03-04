@@ -1,5 +1,15 @@
+#[cfg(target_os = "illumos")]
+use std::convert::TryInto;
+#[cfg(any(
+    target_os = "linux",
+    target_os = "dragonfly",
+    target_os = "freebsd",
+    target_os = "netbsd",
+    target_os = "openbsd",
+    target_os = "illumos",
+))]
+use std::env;
 use std::{
-    env,
     ffi::{c_void, CStr, OsString},
     fs,
     io::{Error, ErrorKind},
@@ -8,6 +18,7 @@ use std::{
         raw::{c_char, c_int},
         unix::ffi::OsStringExt,
     },
+    slice,
 };
 #[cfg(target_os = "macos")]
 use std::{
@@ -20,18 +31,10 @@ use std::{
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, Platform, Result,
+    Arch, DesktopEnv, Platform, Result,
 };
 
-#[cfg(not(any(
-    target_os = "macos",
-    target_os = "freebsd",
-    target_os = "dragonfly",
-    target_os = "bitrig",
-    target_os = "openbsd",
-    target_os = "netbsd",
-    target_os = "illumos",
-)))]
+#[cfg(target_os = "linux")]
 #[repr(C)]
 struct PassWd {
     pw_name: *const c_void,
@@ -45,9 +48,8 @@ struct PassWd {
 
 #[cfg(any(
     target_os = "macos",
-    target_os = "freebsd",
     target_os = "dragonfly",
-    target_os = "bitrig",
+    target_os = "freebsd",
     target_os = "openbsd",
     target_os = "netbsd"
 ))]
@@ -90,7 +92,14 @@ extern "system" {
     ) -> *mut PassWd;
 }
 
-#[cfg(not(target_os = "illumos"))]
+#[cfg(any(
+    target_os = "linux",
+    target_os = "macos",
+    target_os = "dragonfly",
+    target_os = "freebsd",
+    target_os = "netbsd",
+    target_os = "openbsd",
+))]
 extern "system" {
     fn getpwuid_r(
         uid: u32,
@@ -166,7 +175,7 @@ fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
             return Err(super::err_empty_record());
         }
 
-        std::slice::from_raw_parts(string.cast(), length)
+        slice::from_raw_parts(string.cast(), length)
     };
 
     // Turn byte slice into Rust String.
@@ -186,7 +195,7 @@ fn os_from_cstring(string: *const c_void) -> Result<OsString> {
             return Err(super::err_empty_record());
         }
 
-        std::slice::from_raw_parts(string.cast(), length)
+        slice::from_raw_parts(string.cast(), length)
     };
 
     // Turn byte slice into Rust String.
@@ -233,7 +242,14 @@ fn getpwuid(name: Name) -> Result<OsString> {
 
     // Get PassWd `struct`.
     let passwd = unsafe {
-        #[cfg(not(target_os = "illumos"))]
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "macos",
+            target_os = "dragonfly",
+            target_os = "freebsd",
+            target_os = "netbsd",
+            target_os = "openbsd",
+        ))]
         {
             let ret = getpwuid_r(
                 geteuid(),
@@ -256,8 +272,6 @@ fn getpwuid(name: Name) -> Result<OsString> {
 
         #[cfg(target_os = "illumos")]
         {
-            use std::convert::TryInto;
-
             let ret = getpwuid_r(
                 geteuid(),
                 passwd.as_mut_ptr(),
@@ -341,54 +355,8 @@ fn distro_xml(data: String) -> Result<String> {
     })
 }
 
-struct LangIter {
-    array: String,
-    index: Option<bool>,
-}
-
-impl Iterator for LangIter {
-    type Item = String;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.index? && self.array.contains('-') {
-            self.index = Some(false);
-            let mut temp = self.array.split('-').next()?.to_string();
-            mem::swap(&mut temp, &mut self.array);
-            Some(temp)
-        } else {
-            self.index = None;
-            let mut temp = String::new();
-            mem::swap(&mut temp, &mut self.array);
-            Some(temp)
-        }
-    }
-}
-
-#[inline(always)]
-pub(crate) fn lang() -> impl Iterator<Item = String> {
-    const DEFAULT_LANG: &str = "en_US";
-
-    let array = env::var("LANG")
-        .unwrap_or_default()
-        .split('.')
-        .next()
-        .unwrap_or(DEFAULT_LANG)
-        .to_string();
-    let array = if array == "C" {
-        DEFAULT_LANG.to_string()
-    } else {
-        array
-    };
-
-    LangIter {
-        array: array.replace('_', "-"),
-        index: Some(true),
-    }
-}
-
 #[cfg(any(
     target_os = "macos",
-    target_os = "ios",
     target_os = "freebsd",
     target_os = "netbsd",
     target_os = "openbsd",
@@ -443,7 +411,14 @@ impl Default for UtsName {
 #[inline(always)]
 unsafe fn uname(buf: *mut UtsName) -> c_int {
     extern "C" {
-        #[cfg(not(target_os = "freebsd"))]
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "macos",
+            target_os = "dragonfly",
+            target_os = "netbsd",
+            target_os = "openbsd",
+            target_os = "illumos",
+        ))]
         fn uname(buf: *mut UtsName) -> c_int;
 
         #[cfg(target_os = "freebsd")]
@@ -461,8 +436,8 @@ unsafe fn uname(buf: *mut UtsName) -> c_int {
 }
 
 impl Target for Os {
-    fn langs(self) -> Vec<Language> {
-        todo!()
+    fn langs(self) -> Result<String> {
+        super::unix_lang()
     }
 
     fn realname(self) -> Result<OsString> {
@@ -503,7 +478,13 @@ impl Target for Os {
             Ok(OsString::from_vec(nodename))
         }
 
-        #[cfg(not(any(target_os = "macos", target_os = "illumos")))]
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "dragonfly",
+            target_os = "freebsd",
+            target_os = "netbsd",
+            target_os = "openbsd",
+        ))]
         {
             let machine_info = fs::read("/etc/machine-info")?;
 
@@ -555,7 +536,14 @@ impl Target for Os {
             }
         }
 
-        #[cfg(not(target_os = "macos"))]
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "dragonfly",
+            target_os = "freebsd",
+            target_os = "netbsd",
+            target_os = "openbsd",
+            target_os = "illumos",
+        ))]
         {
             let program = fs::read("/etc/os-release")?;
             let distro = String::from_utf8_lossy(&program);
@@ -592,10 +580,25 @@ impl Target for Os {
     fn desktop_env(self) -> DesktopEnv {
         #[cfg(target_os = "macos")]
         let env = "Aqua";
+
         // FIXME: WhoAmI 2.0: use `let else`
-        #[cfg(not(target_os = "macos"))]
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "dragonfly",
+            target_os = "freebsd",
+            target_os = "netbsd",
+            target_os = "openbsd",
+            target_os = "illumos",
+        ))]
         let env = env::var_os("DESKTOP_SESSION");
-        #[cfg(not(target_os = "macos"))]
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "dragonfly",
+            target_os = "freebsd",
+            target_os = "netbsd",
+            target_os = "openbsd",
+            target_os = "illumos",
+        ))]
         let env = if let Some(ref env) = env {
             env.to_string_lossy()
         } else {
@@ -624,15 +627,7 @@ impl Target for Os {
 
     #[inline(always)]
     fn platform(self) -> Platform {
-        #[cfg(not(any(
-            target_os = "macos",
-            target_os = "freebsd",
-            target_os = "dragonfly",
-            target_os = "bitrig",
-            target_os = "openbsd",
-            target_os = "netbsd",
-            target_os = "illumos"
-        )))]
+        #[cfg(target_os = "linux")]
         {
             Platform::Linux
         }
@@ -643,11 +638,10 @@ impl Target for Os {
         }
 
         #[cfg(any(
-            target_os = "freebsd",
             target_os = "dragonfly",
-            target_os = "bitrig",
+            target_os = "freebsd",
+            target_os = "netbsd",
             target_os = "openbsd",
-            target_os = "netbsd"
         ))]
         {
             Platform::Bsd

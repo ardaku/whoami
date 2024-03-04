@@ -1,5 +1,10 @@
 #![allow(unsafe_code)]
 
+// Daku
+#[cfg_attr(
+    all(target_arch = "wasm32", target_os = "daku"),
+    path = "os/daku.rs"
+)]
 // Redox
 #[cfg_attr(
     all(target_os = "redox", not(target_arch = "wasm32")),
@@ -7,24 +12,26 @@
 )]
 // Unix
 #[cfg_attr(
-    not(any(
-        target_arch = "wasm32",
-        target_os = "redox",
-        target_os = "windows",
-    )),
+    all(
+        any(
+            target_os = "linux",
+            target_os = "macos",
+            target_os = "dragonfly",
+            target_os = "freebsd",
+            target_os = "netbsd",
+            target_os = "openbsd",
+            target_os = "illumos",
+        ),
+        not(target_arch = "wasm32")
+    ),
     path = "os/unix.rs"
 )]
-// Wasm32 (Daku)
-#[cfg_attr(
-    all(target_arch = "wasm32", target_os = "daku"),
-    path = "os/daku.rs"
-)]
-// Wasm32 (Wasi)
+// Wasi
 #[cfg_attr(
     all(target_arch = "wasm32", target_os = "wasi"),
     path = "os/wasi.rs"
 )]
-// Wasm32 (Web)
+// Web
 #[cfg_attr(
     all(
         target_arch = "wasm32",
@@ -34,16 +41,6 @@
     ),
     path = "os/web.rs"
 )]
-// Wasm32 (Unknown)
-#[cfg_attr(
-    all(
-        target_arch = "wasm32",
-        not(target_os = "wasi"),
-        not(target_os = "daku"),
-        not(feature = "web"),
-    ),
-    path = "os/fake.rs"
-)]
 // Windows
 #[cfg_attr(
     all(target_os = "windows", not(target_arch = "wasm32")),
@@ -52,21 +49,20 @@
 mod target;
 
 use std::{
+    env::{self, VarError},
     ffi::OsString,
     io::{Error, ErrorKind},
 };
 
-pub(crate) use self::target::*;
-use crate::{Arch, DesktopEnv, Language, Platform, Result};
+use crate::{Arch, DesktopEnv, Platform, Result};
 
 /// Implement `Target for Os` to add platform support for a target.
 pub(crate) struct Os;
 
 /// Target platform support
-pub(crate) trait Target {
-    /// Return a list of languages.
-    #[allow(dead_code)] // FIXME
-    fn langs(self) -> Vec<Language>;
+pub(crate) trait Target: Sized {
+    /// Return a semicolon-delimited string of language/COUNTRY codes.
+    fn langs(self) -> Result<String>;
     /// Return the user's "real" / "full" name.
     fn realname(self) -> Result<OsString>;
     /// Return the user's username.
@@ -83,6 +79,12 @@ pub(crate) trait Target {
     fn platform(self) -> Platform;
     /// Return the computer's CPU architecture.
     fn arch(self) -> Result<Arch>;
+
+    /// Return the user's account name (usually just the username, but may
+    /// include an account server hostname).
+    fn account(self) -> Result<OsString> {
+        self.username()
+    }
 }
 
 // This is only used on some platforms
@@ -101,4 +103,25 @@ fn err_null_record() -> Error {
 #[allow(dead_code)]
 fn err_empty_record() -> Error {
     Error::new(ErrorKind::NotFound, "Empty record")
+}
+
+// This is only used on some platforms
+#[allow(dead_code)]
+fn unix_lang() -> Result<String> {
+    let check_var = |var| {
+        env::var(var).map_err(|e| {
+            let kind = match e {
+                VarError::NotPresent => ErrorKind::NotFound,
+                VarError::NotUnicode(_) => ErrorKind::InvalidData,
+            };
+            Error::new(kind, e)
+        })
+    };
+    let langs = check_var("LANGS").or_else(|_| check_var("LANG"))?;
+
+    if langs.is_empty() {
+        return Err(err_empty_record());
+    }
+
+    Ok(langs)
 }

@@ -1,23 +1,19 @@
 //! This is mostly the same as fake.rs for now
 
-#[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
-compile_error!("Unexpected pointer width for target platform");
-
-use std::ffi::OsString;
+use std::{
+    ffi::OsString,
+    io::{Error, ErrorKind},
+};
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, Platform, Result,
+    Arch, DesktopEnv, Platform, Result,
 };
 
-#[inline(always)]
-pub(crate) fn lang() -> impl Iterator<Item = String> {
-    std::iter::once("en/US".to_string())
-}
-
 impl Target for Os {
-    fn langs(self) -> Vec<Language> {
-        todo!()
+    #[inline(always)]
+    fn langs(self) -> Result<String> {
+        Ok("en/US".to_string())
     }
 
     #[inline(always)]
@@ -59,8 +55,13 @@ impl Target for Os {
     fn arch(self) -> Result<Arch> {
         Ok(if cfg!(target_pointer_width = "64") {
             Arch::Wasm64
-        } else {
+        } else if cfg!(target_pointer_width = "32") {
             Arch::Wasm32
+        } else {
+            return Err(Error::new(
+                ErrorKind::Other, // FIXME: WhoAmI 2.0, Unsupported
+                "Unexpected pointer width for target platform",
+            ));
         })
     }
 }

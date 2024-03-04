@@ -4,11 +4,10 @@ fn main() {
     println!(
         "User's Language        whoami::langs():               {}",
         whoami::langs()
-            .map(|l| l
-                .map(|l| l.to_string())
-                .unwrap_or_else(|_| "??".to_string()))
-            .collect::<Vec<String>>()
-            .join(", "),
+            .map(|l| {
+                l.map(|l| l.to_string()).collect::<Vec<String>>().join(", ")
+            })
+            .unwrap_or_else(|_| "??".to_string()),
     );
     println!(
         "User's Name            whoami::realname():            {}",
@@ -17,6 +16,10 @@ fn main() {
     println!(
         "User's Username        whoami::username():            {}",
         whoami::username(),
+    );
+    println!(
+        "User's Username        whoami::fallible::account():   {}",
+        whoami::fallible::account().unwrap_or_else(|_| "<unknown>".to_string()),
     );
     println!(
         "Device's Pretty Name   whoami::devicename():          {}",

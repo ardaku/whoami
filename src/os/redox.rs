@@ -9,7 +9,7 @@ use syscall::{call, error};
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, Platform, Result,
+    Arch, DesktopEnv, Platform, Result,
 };
 
 /// Row in the Redox /etc/passwd file
@@ -89,15 +89,9 @@ fn hostname() -> Result<String> {
     Ok(hostname_file.lines().next().unwrap_or_default().to_string())
 }
 
-#[inline(always)]
-pub(crate) fn lang() -> impl Iterator<Item = String> {
-    // FIXME: Look for unix-like language env vars
-    std::iter::once("en/US".to_string())
-}
-
 impl Target for Os {
-    fn langs(self) -> Vec<Language> {
-        todo!()
+    fn langs(self) -> Result<String> {
+        super::unix_lang()
     }
 
     #[inline(always)]

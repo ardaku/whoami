@@ -17,42 +17,44 @@ pub fn main() {
 
     // Print out code from regular example.
     log(format!(
-        "User's Name            whoami::realname():    {}",
+        "User's Name            whoami::realname():            {}",
         whoami::realname(),
     ));
     log(format!(
-        "User's Username        whoami::username():    {}",
+        "User's Username        whoami::username():            {}",
         whoami::username(),
     ));
     log(format!(
-        "User's Languages       whoami::langs():        {:?}",
+        "User's Language        whoami::langs():               {}",
         whoami::langs()
-            .map(|l| l.map(|l| l.to_string()).unwrap_or("??".to_string()))
-            .collect::<Vec<String>>(),
+            .map(|l| {
+                l.map(|l| l.to_string()).collect::<Vec<String>>().join(", ")
+            })
+            .unwrap_or_else(|_| "??".to_string()),
     ));
     log(format!(
-        "Device's Pretty Name   whoami::devicename():  {}",
+        "Device's Pretty Name   whoami::devicename():          {}",
         whoami::devicename(),
     ));
     log(format!(
-        "Device's Hostname      whoami::fallible::hostname():    {}",
+        "Device's Hostname      whoami::fallible::hostname():  {}",
         whoami::fallible::hostname()
             .unwrap_or_else(|_| "localhost".to_string()),
     ));
     log(format!(
-        "Device's Platform      whoami::platform():    {}",
+        "Device's Platform      whoami::platform():            {}",
         whoami::platform(),
     ));
     log(format!(
-        "Device's OS Distro     whoami::distro():      {}",
+        "Device's OS Distro     whoami::distro():              {}",
         whoami::distro(),
     ));
     log(format!(
-        "Device's Desktop Env.  whoami::desktop_env(): {}",
+        "Device's Desktop Env.  whoami::desktop_env():         {}",
         whoami::desktop_env(),
     ));
     log(format!(
-        "Device's CPU Arch      whoami::arch():        {}",
+        "Device's CPU Arch      whoami::arch():                {}",
         whoami::arch(),
     ));
 }

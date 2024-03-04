@@ -13,9 +13,9 @@ WhoAmI links to web-sys and defaults values to browser information:
  - `distro()`: Host distro by view of browser (Example "Unknown Linux")
  - `desktop_env()`: "Web Browser"
 
-## Mock
+## Fake
 If you compile WhoAmI with `default-features = false`, WhoAmI will not bind to
-web-sys, and will instead return these mock values:
+web-sys, and will instead return these fake values:
 
  - `realname()`: "Anonymous"
  - `username()`: "anonymous"
@@ -24,7 +24,7 @@ web-sys, and will instead return these mock values:
  - `hostname()`: "localhost"
  - `platform()`: "Unknown"
  - `distro()`: "Emulated"
- - `desktop_env()`: "Unknown WebAssembly"
+ - `desktop_env()`: "Unknown"
 
 ## Wasi (Wasite)
 Building WhoAmI targeting Wasi will assume the

@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], and this project adheres to
 [Semantic Versioning].
 
-## [1.5.0] - UNRELEASED
+## [1.5.0] - 2024-03-03
 
 ### Added
 
@@ -19,14 +19,21 @@ The format is based on [Keep a Changelog], and this project adheres to
    - `whoami::fallible::realname_os()`
    - `whoami::fallible::username()`
    - `whoami::fallible::username_os()`
+ - `whoami::Language`
+ - `whoami::Country`
  - `whoami::langs()`
- - `Language`
- - `Country`
+ - `whoami::fallible::account()`
+ - `whoami::fallible::account_os()`
+ - `whoami::DesktopEnv::is_gtk()`
+ - `whoami::DesktopEnv::is_kde()`
 
 ### Removed
 
  - Generated device names that infer casing based on the hostname when the
    device name is not available - now returns the hostname unchanged
+ - Partial (potentially unsound) support for Android, iOS, watchOS, tvOS,
+   Fuchsia, Haiku, Solaris, and a few others.  These targets now use the "fake"
+   implementation.
 
 ### Changed
 
@@ -34,12 +41,18 @@ The format is based on [Keep a Changelog], and this project adheres to
  - Deprecated `whoami::hostname()`
  - Deprecated `whoami::hostname_os()`
  - Deprecated `whoami::lang()`
+ - illumos and Redox are no longer untested targets
+ - Documented that illumos and Redox have a higher MSRV (Rust 1.65) than other
+   targets
+ - Display implementation on `Platform::Illumos` now displays in lowercase:
+   illumos
 
 ### Fixed
 
  - Removed some unnecessary allocations
  - Rare and nearly impossible cases of undefined behavior
  - Better handling of UTF-8 non-conformant strings
+ - Multiple instances of undefined behavior on illumos
 
 ## [1.4.1] - 2023-06-25
 
@@ -51,7 +64,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 
 ### Added
 
- - Support for Illumos
+ - Support for illumos
 
 ## [1.3.0] - 2022-12-28
 
@@ -63,7 +76,7 @@ The format is based on [Keep a Changelog], and this project adheres to
    architecture
  - `Arch::width()` method which returns the address width of a CPU architecture
  - *`web`* feature (enabled by default).  Disabling this feature allows you to
-   use wasm32-unknown-unknown with whoami outside of the browser with a mock
+   use wasm32-unknown-unknown with whoami outside of the browser with a fake
    implementation.
  - Officially support compiling to WASI or Daku WebAssembly platforms;
    functionality not supported yet.
