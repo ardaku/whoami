@@ -5,24 +5,18 @@ use std::fmt::{self, Display, Formatter};
 #[derive(Debug, PartialEq, Eq, Clone)]
 #[non_exhaustive]
 pub enum Platform {
+    Unknown(String),
     Linux,
     Bsd,
     Windows,
-    // FIXME: Non-standard casing; Rename to 'Mac' rather than 'MacOs' in
-    // whoami 2.0.0
-    MacOS,
+    Mac,
     Illumos,
     Ios,
     Android,
-    // FIXME: Separate for different Nintendo consoles in whoami 2.0.0,
-    // currently only used for 3DS
-    Nintendo,
-    // FIXME: Currently unused, remove in whoami 2.0.0
-    Xbox,
+    Nintendo3ds,
     PlayStation,
     Fuchsia,
     Redox,
-    Unknown(String),
 }
 
 impl Display for Platform {
@@ -32,19 +26,18 @@ impl Display for Platform {
         }
 
         f.write_str(match self {
+            Self::Unknown(a) => a,
             Self::Linux => "Linux",
             Self::Bsd => "BSD",
             Self::Windows => "Windows",
-            Self::MacOS => "Mac OS",
+            Self::Mac => "macOS",
             Self::Illumos => "illumos",
             Self::Ios => "iOS",
             Self::Android => "Android",
-            Self::Nintendo => "Nintendo",
-            Self::Xbox => "XBox",
+            Self::Nintendo3ds => "Nintendo 3DS",
             Self::PlayStation => "PlayStation",
             Self::Fuchsia => "Fuchsia",
             Self::Redox => "Redox",
-            Self::Unknown(a) => a,
         })
     }
 }

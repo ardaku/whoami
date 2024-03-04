@@ -1,11 +1,11 @@
 use std::fmt::{self, Display, Formatter};
 
-// FIXME: V2: Move `Unknown` variants to the top of the enum.
-
 /// The desktop environment of a system
 #[derive(Debug, PartialEq, Eq, Clone)]
 #[non_exhaustive]
 pub enum DesktopEnv {
+    /// Unknown desktop environment
+    Unknown(String),
     /// Popular GTK-based desktop environment on Linux
     Gnome,
     /// One of the desktop environments for a specific version of Windows
@@ -19,8 +19,7 @@ pub enum DesktopEnv {
     /// Lightweight desktop enivornment for unix-like operating systems
     Xfce,
     /// KDE Plasma desktop enviroment
-    // FIXME: Rename to 'Plasma' in whoami 2.0.0
-    Kde,
+    Plasma,
     /// Default desktop environment on Linux Mint
     Cinnamon,
     /// Tiling window manager for Linux
@@ -41,8 +40,6 @@ pub enum DesktopEnv {
     Ermine,
     /// Default desktop environment for Redox
     Orbital,
-    /// Unknown desktop environment
-    Unknown(String),
 }
 
 impl Display for DesktopEnv {
@@ -52,13 +49,14 @@ impl Display for DesktopEnv {
         }
 
         f.write_str(match self {
+            Self::Unknown(a) => a,
             Self::Gnome => "Gnome",
             Self::Windows => "Windows",
             Self::Lxde => "LXDE",
             Self::Openbox => "Openbox",
             Self::Mate => "Mate",
             Self::Xfce => "XFCE",
-            Self::Kde => "KDE",
+            Self::Plasma => "KDE Plasma",
             Self::Cinnamon => "Cinnamon",
             Self::I3 => "I3",
             Self::Aqua => "Aqua",
@@ -69,7 +67,6 @@ impl Display for DesktopEnv {
             Self::Ubuntu => "Ubuntu",
             Self::Ermine => "Ermine",
             Self::Orbital => "Orbital",
-            Self::Unknown(a) => a,
         })
     }
 }
@@ -87,6 +84,6 @@ impl DesktopEnv {
 
     /// Returns true if the desktop environment is based on KDE.
     pub fn is_kde(&self) -> bool {
-        *self == Self::Kde
+        *self == Self::Plasma
     }
 }

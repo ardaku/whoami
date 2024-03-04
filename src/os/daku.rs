@@ -59,7 +59,7 @@ impl Target for Os {
             Arch::Wasm32
         } else {
             return Err(Error::new(
-                ErrorKind::Other, // FIXME: WhoAmI 2.0, Unsupported
+                ErrorKind::Unsupported,
                 "Unexpected pointer width for target platform",
             ));
         })

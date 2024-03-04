@@ -27,8 +27,7 @@ fn main() {
     );
     println!(
         "Device's Hostname      whoami::hostname():            {}",
-        whoami::hostname()
-            .unwrap_or_else(|_| "<unknown>".to_string()),
+        whoami::hostname().unwrap_or_else(|_| "<unknown>".to_string()),
     );
     println!(
         "Device's Platform      whoami::platform():            {}",

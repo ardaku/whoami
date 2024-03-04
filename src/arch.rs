@@ -28,6 +28,8 @@ impl Display for Width {
 #[non_exhaustive]
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum Arch {
+    /// Unknown Architecture
+    Unknown(String),
     /// ARMv5
     ArmV5,
     /// ARMv6 (Sometimes just referred to as ARM)
@@ -72,8 +74,6 @@ pub enum Arch {
     Wasm32,
     /// 64-bit Web Assembly
     Wasm64,
-    /// Unknown Architecture
-    Unknown(String),
 }
 
 impl Display for Arch {
@@ -83,6 +83,7 @@ impl Display for Arch {
         }
 
         f.write_str(match self {
+            Self::Unknown(arch) => arch,
             Self::ArmV5 => "armv5",
             Self::ArmV6 => "armv6",
             Self::ArmV7 => "armv7",
@@ -105,7 +106,6 @@ impl Display for Arch {
             Self::Wasm32 => "wasm32",
             Self::Wasm64 => "wasm64",
             Self::X64 => "x86_64",
-            Self::Unknown(arch) => arch,
         })
     }
 }
