@@ -82,6 +82,7 @@ enum ComputerNameFormat {
 
 const ERR_MORE_DATA: i32 = 0xEA;
 const ERR_INSUFFICIENT_BUFFER: i32 = 0x7A;
+const ERR_NONE_MAPPED: i32 = 0x534;
 
 #[link(name = "secur32")]
 extern "system" {
@@ -148,7 +149,13 @@ fn extended_name(format: ExtendedNameFormat) -> Result<OsString> {
 
     assert!(fail);
 
-    if Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
+    let last_err = Error::last_os_error().raw_os_error();
+
+    if last_err == Some(ERR_NONE_MAPPED) {
+        return Err(super::err_missing_record());
+    }
+
+    if last_err != Some(ERR_MORE_DATA) {
         return Err(Error::last_os_error());
     }
 
@@ -238,7 +245,7 @@ impl Target for Os {
         assert!(fail);
 
         if Error::last_os_error().raw_os_error()
-            != Some(ERR_INSUFFICIENT_BUFFER)
+            != Some(ERR_MORE_DATA)
         {
             return Err(Error::last_os_error());
         }
@@ -281,7 +288,7 @@ impl Target for Os {
         assert!(fail);
 
         if Error::last_os_error().raw_os_error()
-            != Some(ERR_INSUFFICIENT_BUFFER)
+            != Some(ERR_MORE_DATA)
         {
             return Err(Error::last_os_error());
         }
@@ -445,12 +452,10 @@ impl Target for Os {
 
     #[inline(always)]
     fn account(self) -> Result<OsString> {
-        let name = extended_name(ExtendedNameFormat::UserPrincipal)?;
-
-        if name.is_empty() {
-            return username();
+        match extended_name(ExtendedNameFormat::UserPrincipal) {
+            Ok(name) => Ok(name),
+            Err(e) if e.kind() == ErrorKind::NotFound => username(),
+            Err(e) => Err(e),
         }
-
-        Ok(name)
     }
 }
