@@ -88,7 +88,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        tc: [1.40.0, stable, beta, nightly]
+        tc: [1.65.0, stable, beta, nightly]
     steps:
     - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
@@ -116,7 +116,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        tc: [1.40.0, stable, beta, nightly]
+        tc: [1.65.0, stable, beta, nightly]
         cc:
         - aarch64-linux-android
         - i686-pc-windows-gnu
@@ -138,7 +138,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest]
-        tc: [1.40.0, stable, beta, nightly]
+        tc: [1.65.0, stable, beta, nightly]
         cc: [aarch64-apple-ios]
     steps:
     - uses: actions/checkout@v2
@@ -171,7 +171,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        tc: [1.40.0, stable, beta, nightly]
+        tc: [1.65.0, stable, beta, nightly]
         cc: [wasm32-unknown-unknown]
     steps:
     - uses: actions/checkout@v2

@@ -306,8 +306,8 @@ fn distro_xml(data: String) -> Result<String> {
             for line in data[start + "<dict>".len()..end].lines() {
                 let line = line.trim();
 
-                if line.starts_with("<key>") {
-                    match line["<key>".len()..].trim_end_matches("</key>") {
+                if let Some(key) = line.strip_prefix("<key>") {
+                    match key.trim_end_matches("</key>") {
                         "ProductName" => set_product_name = true,
                         "ProductUserVisibleVersion" => {
                             set_user_visible_version = true
@@ -319,18 +319,14 @@ fn distro_xml(data: String) -> Result<String> {
                         }
                         _ => {}
                     }
-                } else if line.starts_with("<string>") {
+                } else if let Some(value) = line.strip_prefix("<string>") {
                     if set_product_name {
-                        product_name = Some(
-                            line["<string>".len()..]
-                                .trim_end_matches("</string>"),
-                        );
+                        product_name =
+                            Some(value.trim_end_matches("</string>"));
                         set_product_name = false;
                     } else if set_user_visible_version {
-                        user_visible_version = Some(
-                            line["<string>".len()..]
-                                .trim_end_matches("</string>"),
-                        );
+                        user_visible_version =
+                            Some(value.trim_end_matches("</string>"));
                         set_user_visible_version = false;
                     }
                 }
