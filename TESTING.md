@@ -98,8 +98,8 @@ source "$HOME/.cargo/env"
 Clone whoami, open a terminal, and run:
 
 ```rust
-cargo +stable run --example whoami-demo
-cargo +stable run --example whoami-demo --release
+cargo run --example whoami-demo
+cargo run --example whoami-demo --release
 ```
 
 Expect to see something like:
@@ -126,8 +126,8 @@ Testing is done on Windows 10
 Clone whoami, open Git BASH, and run:
 
 ```rust
-cargo +stable run --example whoami-demo
-cargo +stable run --example whoami-demo --release
+cargo run --example whoami-demo
+cargo run --example whoami-demo --release
 ```
 
 Expect to see something like:
@@ -154,8 +154,8 @@ Testing is done on macOS Catalina.
 Clone whoami, and run:
 
 ```rust
-cargo +stable run --example whoami-demo
-cargo +stable run --example whoami-demo --release
+cargo run --example whoami-demo
+cargo run --example whoami-demo --release
 ```
 
 Expect to see something like:
@@ -362,4 +362,78 @@ distro:       Redox OS 0.8.0
 desktop_env:  Orbital
 platform:     Redox
 arch:         Unknown: x86_64
+```
+
+## Web
+
+Build web example and start webserver on Fedora Silverblue.
+
+Check the web console in Firefox:
+
+```console
+User's Name            whoami::realname():            Anonymous
+User's Username        whoami::username():            anonymous
+User's Language        whoami::langs():               en/US, en
+Device's Pretty Name   whoami::devicename():          Firefox 122.0
+Device's Hostname      whoami::fallible::hostname():  localhost
+Device's Platform      whoami::platform():            Linux
+Device's OS Distro     whoami::distro():              Unknown Linux
+Device's Desktop Env.  whoami::desktop_env():         Web Browser
+Device's CPU Arch      whoami::arch():                wasm32
+```
+
+Check the web console in Opera:
+
+```console
+User's Name            whoami::realname():            Anonymous
+User's Username        whoami::username():            anonymous
+User's Language        whoami::langs():               en/US, en
+Device's Pretty Name   whoami::devicename():          Opera 107.0.0.0
+Device's Hostname      whoami::fallible::hostname():  localhost
+Device's Platform      whoami::platform():            Linux
+Device's OS Distro     whoami::distro():              Unknown Linux
+Device's Desktop Env.  whoami::desktop_env():         Web Browser
+Device's CPU Arch      whoami::arch():                wasm32
+```
+
+Check the web console in Chrome:
+
+```console
+User's Name            whoami::realname():            Anonymous
+User's Username        whoami::username():            anonymous
+User's Language        whoami::langs():               en/US, en
+Device's Pretty Name   whoami::devicename():          Chrome 122.0.0.0
+Device's Hostname      whoami::fallible::hostname():  localhost
+Device's Platform      whoami::platform():            Linux
+Device's OS Distro     whoami::distro():              Unknown Linux
+Device's Desktop Env.  whoami::desktop_env():         Web Browser
+Device's CPU Arch      whoami::arch():                wasm32
+```
+
+Check the web console in Ungoogled Chromium:
+
+```console
+User's Name            whoami::realname():            Anonymous
+User's Username        whoami::username():            anonymous
+User's Language        whoami::langs():               en/US, en
+Device's Pretty Name   whoami::devicename():          Chrome 122.0.0.0
+Device's Hostname      whoami::fallible::hostname():  localhost
+Device's Platform      whoami::platform():            Linux
+Device's OS Distro     whoami::distro():              Unknown Linux
+Device's Desktop Env.  whoami::desktop_env():         Web Browser
+Device's CPU Arch      whoami::arch():                wasm32
+```
+
+Check the web console in GNOME Web (Epiphany):
+
+```console
+User's Name            whoami::realname():            Anonymous
+User's Username        whoami::username():            anonymous
+User's Language        whoami::langs():               en/US
+Device's Pretty Name   whoami::devicename():          GNOME Web
+Device's Hostname      whoami::fallible::hostname():  localhost
+Device's Platform      whoami::platform():            Linux
+Device's OS Distro     whoami::distro():              Unknown Linux
+Device's Desktop Env.  whoami::desktop_env():         Web Browser
+Device's CPU Arch      whoami::arch():                wasm32
 ```
