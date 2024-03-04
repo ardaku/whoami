@@ -210,7 +210,7 @@ Expect to see something like:
 ```console
 WhoAmI 1.5.0
 
-User's Language        whoami::langs():               en/US
+User's Language        whoami::langs():               
 User's Name            whoami::realname():            Aldaron Lau
 User's Username        whoami::username():            aldaron
 User's Username        whoami::fallible::account():   aldaron
