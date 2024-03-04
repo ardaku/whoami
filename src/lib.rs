@@ -10,39 +10,47 @@
 //!
 //! ```rust
 //! println!(
-//!     "User's Name            whoami::realname():    {}",
-//!     whoami::realname(),
+//!     "User's Language        whoami::langs():               {}",
+//!     whoami::langs()
+//!         .map(|l| {
+//!             l.map(|l| l.to_string()).collect::<Vec<String>>().join(", ")
+//!         })
+//!         .unwrap_or_else(|_| "??".to_string()),
 //! );
 //! println!(
-//!     "User's Username        whoami::username():    {}",
-//!     whoami::username(),
+//!     "User's Name            whoami::realname():            {}",
+//!     whoami::realname().unwrap_or_else(|_| "<unknown>".to_string()),
 //! );
 //! println!(
-//!     "User's Language        whoami::lang():        {:?}",
-//!     whoami::lang().collect::<Vec<String>>(),
+//!     "User's Username        whoami::username():            {}",
+//!     whoami::username().unwrap_or_else(|_| "<unknown>".to_string()),
 //! );
 //! println!(
-//!     "Device's Pretty Name   whoami::devicename():  {}",
-//!     whoami::devicename(),
+//!     "User's Username        whoami::account():             {}",
+//!     whoami::account().unwrap_or_else(|_| "<unknown>".to_string()),
 //! );
 //! println!(
-//!     "Device's Hostname      whoami::hostname():    {}",
-//!     whoami::hostname(),
+//!     "Device's Pretty Name   whoami::devicename():          {}",
+//!     whoami::devicename().unwrap_or_else(|_| "<unknown>".to_string()),
 //! );
 //! println!(
-//!     "Device's Platform      whoami::platform():    {}",
+//!     "Device's Hostname      whoami::hostname():            {}",
+//!     whoami::hostname().unwrap_or_else(|_| "<unknown>".to_string()),
+//! );
+//! println!(
+//!     "Device's Platform      whoami::platform():            {}",
 //!     whoami::platform(),
 //! );
 //! println!(
-//!     "Device's OS Distro     whoami::distro():      {}",
-//!     whoami::distro(),
+//!     "Device's OS Distro     whoami::distro():              {}",
+//!     whoami::distro().unwrap_or_else(|_| "<unknown>".to_string()),
 //! );
 //! println!(
-//!     "Device's Desktop Env.  whoami::desktop_env(): {}",
+//!     "Device's Desktop Env.  whoami::desktop_env():         {}",
 //!     whoami::desktop_env(),
 //! );
 //! println!(
-//!     "Device's CPU Arch      whoami::arch():        {}",
+//!     "Device's CPU Arch      whoami::arch():                {}",
 //!     whoami::arch(),
 //! );
 //! ```
