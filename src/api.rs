@@ -76,56 +76,12 @@ pub fn devicename_os() -> OsString {
         .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_string().into())
 }
 
-/// Get the host device's hostname.
-///
-/// Limited to a-z (case insensitive), 0-9, and dashes.  This limit also applies
-/// to `devicename()` with the exeception of case sensitivity when targeting
-/// Windows.  This method normalizes to lowercase.  Usually hostnames will be
-/// case-insensitive, but it's not a hard requirement.
-///
-/// Use [`fallible::hostname()`] for case-sensitive hostname.
-#[inline(always)]
-#[deprecated(note = "use `fallible::hostname()` instead", since = "1.5.0")]
-pub fn hostname() -> String {
-    let mut hostname = fallible::hostname()
-        .unwrap_or_else(|_| DEFAULT_HOSTNAME.to_lowercase());
-
-    hostname.make_ascii_lowercase();
-    hostname
-}
-
-/// Get the host device's hostname.
-///
-/// Limited to a-z (case insensitive), 0-9, and dashes.  This limit also applies
-/// to `devicename()` with the exeception of case sensitivity when targeting
-/// Windows.  This method normalizes to lowercase.  Usually hostnames will be
-/// case-insensitive, but it's not a hard requirement.
-///
-/// Use [`fallible::hostname()`] for case-sensitive hostname.
-#[inline(always)]
-#[deprecated(note = "use `fallible::hostname()` instead", since = "1.5.0")]
-pub fn hostname_os() -> OsString {
-    #[allow(deprecated)]
-    hostname().into()
-}
-
 /// Get the name of the operating system distribution and (possibly) version.
 ///
 /// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
 #[inline(always)]
 pub fn distro() -> String {
     fallible::distro().unwrap_or_else(|_| format!("Unknown {}", platform()))
-}
-
-/// Get the name of the operating system distribution and (possibly) version.
-///
-/// Example: "Windows 10" or "Fedora 26 (Workstation Edition)"
-#[inline(always)]
-#[deprecated(note = "use `distro()` instead", since = "1.5.0")]
-pub fn distro_os() -> OsString {
-    fallible::distro()
-        .map(OsString::from)
-        .unwrap_or_else(|_| format!("Unknown {}", platform()).into())
 }
 
 /// Get the desktop environment.
@@ -140,25 +96,6 @@ pub fn desktop_env() -> DesktopEnv {
 #[inline(always)]
 pub fn platform() -> Platform {
     Target::platform(Os)
-}
-
-/// Get the user's preferred language(s).
-///
-/// Returned as iterator of two letter language codes (lowercase), optionally
-/// followed by a dash (-) and a two letter country code (uppercase).  The most
-/// preferred language is returned first, followed by next preferred, and so on.
-#[inline(always)]
-#[deprecated(note = "use `langs()` instead", since = "1.5.0")]
-pub fn lang() -> impl Iterator<Item = String> {
-    let langs_vec = if let Ok(langs) = langs() {
-        langs
-            .map(|lang| lang.to_string().replace('/', "-"))
-            .collect()
-    } else {
-        ["en-US".to_string()].to_vec()
-    };
-
-    langs_vec.into_iter()
 }
 
 /// Get the user's preferred language(s).

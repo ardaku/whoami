@@ -78,12 +78,10 @@ mod os;
 mod platform;
 mod result;
 
-#[allow(deprecated)]
 pub use self::{
     api::{
-        arch, desktop_env, devicename, devicename_os, distro, distro_os,
-        hostname, hostname_os, lang, langs, platform, realname, realname_os,
-        username, username_os,
+        arch, desktop_env, devicename, devicename_os, distro, langs, platform,
+        realname, realname_os, username, username_os,
     },
     arch::{Arch, Width},
     desktop_env::DesktopEnv,
