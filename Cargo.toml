@@ -17,11 +17,11 @@ categories = [
     "value-formatting",
 ]
 include = [
-    "LICENSE_APACHE",
-    "LICENSE_BOOST",
-    "LICENSE_MIT",
-    "README.md",
-    "src/*",
+    "/LICENSE_APACHE",
+    "/LICENSE_BOOST",
+    "/LICENSE_MIT",
+    "/README.md",
+    "/src/*",
 ]
 rust-version = "1.40"
 
