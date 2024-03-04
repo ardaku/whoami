@@ -81,7 +81,71 @@ Device's CPU Arch      whoami::arch():                  X64
 
 ## Linux / Ubuntu
 
+Testing is done on Ubuntu 23.10 (virtualized on Fedora Silverblue):
+
+https://ubuntu.com/download/desktop
+
+Install from file within GNOME boxes (keep all defaults).
+
+In Ubuntu Installer, do default installation.
+
+```shell
+sudo apt install git curl gcc tig # y
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # 1
+source "$HOME/.cargo/env"
+```
+
+Clone whoami, open a terminal, and run:
+
+```rust
+cargo +stable run --example whoami-demo
+cargo +stable run --example whoami-demo --release
+```
+
+Expect to see something like:
+
+```console
+WhoAmI 1.5.0
+
+User's Language        whoami::langs():               en/US
+User's Name            whoami::realname():            Jeron Lau
+User's Username        whoami::username():            aldaron
+User's Username        whoami::fallible::account():   aldaron
+Device's Pretty Name   whoami::devicename():          ubuntu-box
+Device's Hostname      whoami::fallible::hostname():  ubuntu-box
+Device's Platform      whoami::platform():            Linux
+Device's OS Distro     whoami::distro():              Ubuntu 23.10
+Device's Desktop Env.  whoami::desktop_env():         Ubuntu
+Device's CPU Arch      whoami::arch():                x86_64
+```
+
 ## Windows
+
+Testing is done on Windows 10
+
+Clone whoami, open Git BASH, and run:
+
+```rust
+cargo +stable run --example whoami-demo
+cargo +stable run --example whoami-demo --release
+```
+
+Expect to see something like:
+
+```console
+WhoAmI 1.5.0
+
+User's Language        whoami::langs():               en/US
+User's Name            whoami::realname():            Aldaron Lau
+User's Username        whoami::username():            Aldaron Lau
+User's Username        whoami::fallible::account():   Aldaron Lau
+Device's Pretty Name   whoami::devicename():          Helpy-Witch
+Device's Hostname      whoami::fallible::hostname():  HELPY-WITCH
+Device's Platform      whoami::platform():            Windows
+Device's OS Distro     whoami::distro():              Windows 10.0.19044 (Workstation)
+Device's Desktop Env.  whoami::desktop_env():         Windows
+Device's CPU Arch      whoami::arch():                x86_64
+```
 
 ## MacOS
 

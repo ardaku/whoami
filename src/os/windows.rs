@@ -244,9 +244,7 @@ impl Target for Os {
 
         assert!(fail);
 
-        if Error::last_os_error().raw_os_error()
-            != Some(ERR_MORE_DATA)
-        {
+        if Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
             return Err(Error::last_os_error());
         }
 
@@ -287,9 +285,7 @@ impl Target for Os {
 
         assert!(fail);
 
-        if Error::last_os_error().raw_os_error()
-            != Some(ERR_MORE_DATA)
-        {
+        if Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
             return Err(Error::last_os_error());
         }
 
