@@ -2,6 +2,7 @@
 
 [source]
 git = "https://github.com/AldaronLau/whome.git"
+rev = "0545b887c8419edddc79e5044e5d67f8ec9e0c30"
 
 [build]
 template = "cargo"

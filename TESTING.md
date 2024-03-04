@@ -265,9 +265,9 @@ cargo run --example whoami-demo --release
 Expected output is
 
 ```console
-WhoAmI 1.5.0-pre.0
+WhoAmI 1.5.0
 
-User's Language        whoami::langs():               
+User's Language        whoami::langs():               ??
 User's Name            whoami::realname():            Tribblix Jack
 User's Username        whoami::username():            jack
 Device's Pretty Name   whoami::devicename():          tribblix
