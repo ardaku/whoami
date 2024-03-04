@@ -183,7 +183,7 @@ impl Target for Os {
         } else if string.contains("Linux") {
             Platform::Linux
         } else if string.contains("Mac OS X") {
-            Platform::MacOS
+            Platform::Mac
         } else {
             // TODO:
             // Platform::FreeBsd,

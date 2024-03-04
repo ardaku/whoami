@@ -628,7 +628,7 @@ impl Target for Os {
 
         #[cfg(target_os = "macos")]
         {
-            Platform::MacOS
+            Platform::Mac
         }
 
         #[cfg(any(

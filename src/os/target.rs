@@ -57,7 +57,7 @@ impl Target for Os {
         } else if cfg!(target_os = "windows") {
             Platform::Windows
         } else if cfg!(target_os = "macos") {
-            Platform::MacOS
+            Platform::Mac
         } else if cfg!(target_os = "redox") {
             Platform::Redox
         } else if cfg!(target_os = "linux") {
