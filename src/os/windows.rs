@@ -1,5 +1,4 @@
 use std::{
-    convert::TryInto,
     ffi::OsString,
     io::{Error, ErrorKind},
     mem::MaybeUninit,

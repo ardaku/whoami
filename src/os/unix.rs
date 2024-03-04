@@ -1,5 +1,3 @@
-#[cfg(target_os = "illumos")]
-use std::convert::TryInto;
 #[cfg(any(
     target_os = "linux",
     target_os = "dragonfly",
