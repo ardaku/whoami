@@ -268,6 +268,7 @@ fn getpwuid(name: Name) -> Result<OsString> {
             if _passwd.is_null() {
                 return Err(super::err_null_record());
             }
+            passwd.assume_init()
         }
 
         #[cfg(target_os = "illumos")]
@@ -282,9 +283,8 @@ fn getpwuid(name: Name) -> Result<OsString> {
             if ret.is_null() {
                 return Err(Error::last_os_error());
             }
+            passwd.assume_init()
         }
-
-        passwd.assume_init()
     };
 
     // Extract names.
