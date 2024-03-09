@@ -71,6 +71,18 @@
     variant_size_differences,
     unsafe_code
 )]
+#![deny(
+    rustdoc::broken_intra_doc_links,
+    rustdoc::private_intra_doc_links,
+    rustdoc::missing_crate_level_docs,
+    rustdoc::private_doc_tests,
+    rustdoc::invalid_codeblock_attributes,
+    rustdoc::invalid_html_tags,
+    rustdoc::invalid_rust_codeblocks,
+    rustdoc::bare_urls,
+    rustdoc::unescaped_backticks,
+    rustdoc::redundant_explicit_links
+)]
 #![doc(
     html_logo_url = "https://raw.githubusercontent.com/ardaku/whoami/v1/res/icon.svg",
     html_favicon_url = "https://raw.githubusercontent.com/ardaku/whoami/v1/res/icon.svg"
