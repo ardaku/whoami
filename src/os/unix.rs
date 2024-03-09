@@ -238,7 +238,6 @@ fn getpwuid(name: Name) -> Result<OsString> {
     const BUF_SIZE: usize = 16_384; // size from the man page
     let mut buffer = mem::MaybeUninit::<[u8; BUF_SIZE]>::uninit();
     let mut passwd = mem::MaybeUninit::<PassWd>::uninit();
-    let mut _passwd = mem::MaybeUninit::<*mut PassWd>::uninit();
 
     // Get PassWd `struct`.
     let passwd = unsafe {
@@ -251,6 +250,7 @@ fn getpwuid(name: Name) -> Result<OsString> {
             target_os = "openbsd",
         ))]
         {
+            let mut _passwd = mem::MaybeUninit::<*mut PassWd>::uninit();
             let ret = getpwuid_r(
                 geteuid(),
                 passwd.as_mut_ptr(),
