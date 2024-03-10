@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], and this project adheres to
 [Semantic Versioning].
 
+## [1.5.1] - 2024-03-09
+
+### Fixed
+
+ - Broken link in docs
+
 ## [1.5.0] - 2024-03-03
 
 ### Added
