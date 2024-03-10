@@ -96,6 +96,7 @@ jobs:
         profile: minimal
         toolchain: ${{ matrix.tc }}
         override: true
+    - run: cargo doc
     - run: cargo test --all --all-features
   test-macos:
     runs-on: macos-latest
