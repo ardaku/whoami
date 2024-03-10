@@ -4,7 +4,7 @@
 //! Using the whoami crate is super easy!  All of the public items are simple
 //! functions with no parameters that return [`String`]s or [`OsString`]s (with
 //! the exception of [`desktop_env()`], [`platform()`], and [`arch()`], which
-//! return enums, and [`lang()`] that returns an iterator of [`String`]s).  The
+//! return enums, and [`langs()`] that returns an iterator of [`String`]s).  The
 //! following example shows how to use all of the functions (except those that
 //! return [`OsString`]):
 //!
@@ -46,6 +46,8 @@
 //!     whoami::arch(),
 //! );
 //! ```
+//!
+//! [`OsString`]: std::ffi::OsString
 
 #![warn(
     anonymous_parameters,
