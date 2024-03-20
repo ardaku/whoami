@@ -314,7 +314,7 @@ Make sure whome is updated to the whoami testing branch.
 ```shell
 mkdir -p build/redox/cookbook/recipes/demos/whome/
 cp recipe.toml build/redox/cookbook/recipes/demos/whome/
-cp build/redox/config/desktop.toml config/x86_64/ardaku.toml
+cp build/redox/config/desktop.toml build/redox/config/x86_64/ardaku.toml
 ```
 
 In `config/x86_64/ardaku.toml`, under `[packages]`:

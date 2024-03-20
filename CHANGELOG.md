@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], and this project adheres to
 [Semantic Versioning].
 
+## [1.5.2] - 2024-03-19
+
+### Changed
+
+ - Update redox\_syscall to 0.5
+
 ## [1.5.1] - 2024-03-09
 
 ### Fixed
