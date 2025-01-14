@@ -35,7 +35,7 @@ use crate::{
     Arch, DesktopEnv, Platform, Result,
 };
 
-#[cfg(any(target_os = "linux", target_os = "hurd",))]
+#[cfg(any(target_os = "linux", target_os = "hurd"))]
 #[repr(C)]
 struct PassWd {
     pw_name: *const c_void,
@@ -118,10 +118,7 @@ extern "system" {
 }
 
 #[cfg(target_os = "macos")]
-// FIXME: seemingly false positive for link lint
-#[allow(clippy::duplicated_attributes)]
 #[link(name = "CoreFoundation", kind = "framework")]
-#[link(name = "SystemConfiguration", kind = "framework")]
 extern "system" {
     fn CFStringGetCString(
         the_string: *mut c_void,
@@ -134,11 +131,16 @@ extern "system" {
         length: c_long,
         encoding: u32,
     ) -> c_long;
+    fn CFRelease(cf: *const c_void);
+}
+
+#[cfg(target_os = "macos")]
+#[link(name = "SystemConfiguration", kind = "framework")]
+extern "system" {
     fn SCDynamicStoreCopyComputerName(
         store: *mut c_void,
         encoding: *mut u32,
     ) -> *mut c_void;
-    fn CFRelease(cf: *const c_void);
 }
 
 enum Name {
