@@ -208,7 +208,7 @@ impl Target for Os {
             // Platform::Dive,
             // Platform::Fuchsia,
             // Platform::Redox,
-            Platform::Unknown(format!("Unrecognized platform: {}", string))
+            Platform::Unknown(string.to_string())
         }
     }
 
