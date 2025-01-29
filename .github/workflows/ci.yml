@@ -189,12 +189,12 @@ jobs:
         override: true
     - run: cargo update
     - run: cargo build --all-features --target=${{ matrix.cc }}
-  cross-compile-wasm:
+  cross-compile-wasm-old:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest]
-        tc: [1.40.0, stable, beta, nightly]
+        tc: [1.40.0]
         cc: [wasm32-unknown-unknown]
     steps:
     - uses: actions/checkout@v2
@@ -204,6 +204,25 @@ jobs:
         toolchain: ${{ matrix.tc }}
         target: ${{ matrix.cc }}
         override: true
+    - run: cargo build --all-features --target=${{ matrix.cc }}
+    - run: cargo build --no-default-features --target=${{ matrix.cc }}
+    - run: RUSTFLAGS="--cfg daku" cargo build --target=${{ matrix.cc }}
+  cross-compile-wasm:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        tc: [stable, beta, nightly]
+        cc: [wasm32-unknown-unknown]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ matrix.tc }}
+        target: ${{ matrix.cc }}
+        override: true
+    - run: cargo update -p wasm-bindgen --precise 0.2.100
     - run: cargo build --all-features --target=${{ matrix.cc }}
     - run: cargo update
     - run: cargo build --no-default-features --target=${{ matrix.cc }}
