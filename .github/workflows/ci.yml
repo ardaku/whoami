@@ -77,6 +77,7 @@ jobs:
         target: ${{ matrix.cc }}
         components: clippy
         override: true
+    - run: cargo update -p wasm-bindgen --precise 0.2.100
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
     - run: cargo update
     - run: cargo clippy --no-default-features --target=${{ matrix.cc }} -- -D warnings
