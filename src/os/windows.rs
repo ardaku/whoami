@@ -65,14 +65,14 @@ enum ExtendedNameFormat {
 #[allow(unused)]
 #[repr(C)]
 enum ComputerNameFormat {
-    NetBIOS,                   // Same as GetComputerNameW
-    DnsHostname,               // Fancy Name
-    DnsDomain,                 // Nothing
-    DnsFullyQualified,         // Fancy Name with, for example, .com
-    PhysicalNetBIOS,           // Same as GetComputerNameW
-    PhysicalDnsHostname,       // Same as GetComputerNameW
-    PhysicalDnsDomain,         // Nothing
-    PhysicalDnsFullyQualified, // Fancy Name with, for example, .com
+    NetBIOS,                   // All caps hostname
+    DnsHostname,               // Hostname
+    DnsDomain,                 // Nothing or domain
+    DnsFullyQualified,         // Hostname with, for example, .com
+    PhysicalNetBIOS,           // All caps name
+    PhysicalDnsHostname,       // Hostname
+    PhysicalDnsDomain,         // Nothing or domain
+    PhysicalDnsFullyQualified, // Hostname with, for example, .com
     Max,
 }
 
@@ -273,7 +273,7 @@ impl Target for Os {
         let fail = unsafe {
             // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
             GetComputerNameExW(
-                ComputerNameFormat::NetBIOS,
+                ComputerNameFormat::PhysicalDnsHostname,
                 ptr::null_mut(),
                 &mut size,
             ) == 0
@@ -292,7 +292,7 @@ impl Target for Os {
 
         if unsafe {
             GetComputerNameExW(
-                ComputerNameFormat::NetBIOS,
+                ComputerNameFormat::PhysicalDnsHostname,
                 name.as_mut_ptr().cast(),
                 &mut size,
             ) == 0
