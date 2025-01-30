@@ -109,7 +109,6 @@ pub use self::{
     },
     arch::{Arch, Width},
     desktop_env::DesktopEnv,
-    env, // for environment variables (LANG, LC_ALL)
     language::{Country, Language},
     platform::Platform,
     result::Result,
