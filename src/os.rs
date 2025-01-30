@@ -115,7 +115,10 @@ fn unix_lang() -> Result<String> {
             Error::new(kind, e)
         })
     };
-    let langs = check_var("LANGS").or_else(|_| check_var("LANG"))?;
+    let langs = check_var("LC_ALL")
+        .or_else(|_| check_var("LANGS"))
+        .or_else(|_| check_var("LANG"))
+        .or_else(|_| check_var("LANGUAGE"))?;
 
     if langs.is_empty() {
         return Err(err_empty_record());

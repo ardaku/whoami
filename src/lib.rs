@@ -109,26 +109,8 @@ pub use self::{
     },
     arch::{Arch, Width},
     desktop_env::DesktopEnv,
+    env, // for environment variables (LANG, LC_ALL)
     language::{Country, Language},
     platform::Platform,
     result::Result,
-    env,                    // for environment variables (LANG, LC_ALL)
 };
-
-/// output : en_US.UTF-8
-/// en     : language
-/// US     : country
-#[allow(dead_code)]
-fn get_language_and_country() -> String {
-    if let Ok(language) = env::var("LC_ALL") {
-        // possible output : en_US.UTF-8
-        return language;
-    } else if let Ok(language) = env::var("LANG") {
-        // possible output : en_US.UTF-8
-        return language;
-    } else if let Ok(language) = env::var("LANGUAGE") {
-        // possible output : en_US.UTF-8
-        return language;
-    }
-    String::new()
-}
