@@ -177,18 +177,12 @@ impl Target for Os {
         let begin = if let Some(b) = string.find('(') {
             b
         } else {
-            return Platform::Unknown(
-                "Failed to parse platform: Missing '(' in user agent"
-                    .to_string(),
-            );
+            return Platform::Unknown("Unknown".to_string());
         };
         let end = if let Some(e) = string.find(')') {
             e
         } else {
-            return Platform::Unknown(
-                "Failed to parse platform: Missing ')' in user agent"
-                    .to_string(),
-            );
+            return Platform::Unknown("Unknown".to_string());
         };
         let string = &string[begin + 1..end];
 
