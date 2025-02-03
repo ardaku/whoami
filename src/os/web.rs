@@ -35,7 +35,10 @@ impl Target for Os {
                 .collect::<Vec<String>>()
                 .join(";"))
         } else {
-            Err(Error::new(ErrorKind::NotFound, "Window missing"))
+            Err(Error::new(
+                ErrorKind::NotFound,
+                "Failed to retrieve languages: Window object is missing",
+            ))
         }
     }
 
@@ -91,7 +94,12 @@ impl Target for Os {
     fn hostname(self) -> Result<String> {
         document_domain()
             .filter(|x| !x.is_empty())
-            .ok_or_else(|| Error::new(ErrorKind::NotFound, "Domain missing"))
+            .ok_or_else(|| {
+                Error::new(
+                    ErrorKind::NotFound,
+                    "Domain missing, failed to retrieve document domain from window"
+                )
+            })
     }
 
     fn distro(self) -> Result<String> {
