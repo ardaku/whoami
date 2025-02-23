@@ -31,7 +31,8 @@ impl Display for Country {
 /// language code followed an forward slash and uppercase country code (example:
 /// `en/US`).
 ///
-/// Uses <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>
+/// Language codes defined in ISO 639 <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>,
+/// Country codes defined in ISO 3166 <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>
 #[non_exhaustive]
 #[derive(Clone, Eq, PartialEq, Debug)]
 // #[allow(variant_size_differences)]
