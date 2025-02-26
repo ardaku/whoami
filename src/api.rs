@@ -169,7 +169,7 @@ pub fn langs() -> Result<impl Iterator<Item = Language>> {
     // FIXME: Could do less allocation
     let langs = Target::langs(Os)?;
     let langs = langs
-        .split(';')
+        .split(':')
         .map(ToString::to_string)
         .filter_map(|lang| {
             let lang = lang
