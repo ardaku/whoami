@@ -8,7 +8,7 @@
 [![Crates.io](https://img.shields.io/crates/v/whoami)](https://crates.io/crates/whoami)
 [![Crates.io](https://img.shields.io/crates/d/whoami)](https://crates.io/crates/whoami)
 [![Crates.io (recent)](https://img.shields.io/crates/dr/whoami)](https://crates.io/crates/whoami)  
-[![Crates.io](https://img.shields.io/crates/l/whoami)](https://github.com/ardaku/whoami/search?l=Text&q=license)
+[![Crates.io](https://img.shields.io/crates/l/whoami)](https://github.com/search?q=repo%3Aardaku%2Fwhoami+path%3A**%2FLICENSE*&type=code)
 [![Docs.rs](https://docs.rs/whoami/badge.svg)](https://docs.rs/whoami/)
 
 Retrieve the current user and environment through simple functions.
