@@ -5,11 +5,11 @@ use std::{env, ffi::OsString};
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Platform, Result,
+    Arch, DesktopEnv, LanguagePrefs, Platform, Result,
 };
 
 impl Target for Os {
-    fn langs(self) -> Result<String> {
+    fn lang_prefs(self) -> Result<LanguagePrefs> {
         super::unix_lang()
     }
 

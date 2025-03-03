@@ -52,7 +52,7 @@ use std::{
     io::{Error, ErrorKind},
 };
 
-use crate::{Arch, DesktopEnv, Platform, Result};
+use crate::{Arch, DesktopEnv, Language, LanguagePrefs, Platform, Result};
 
 /// Implement `Target for Os` to add platform support for a target.
 pub(crate) struct Os;
@@ -60,7 +60,7 @@ pub(crate) struct Os;
 /// Target platform support
 pub(crate) trait Target: Sized {
     /// Return a semicolon-delimited string of language/COUNTRY codes.
-    fn langs(self) -> Result<String>;
+    fn lang_prefs(self) -> Result<LanguagePrefs>;
     /// Return the user's "real" / "full" name.
     fn realname(self) -> Result<OsString>;
     /// Return the user's username.
@@ -105,32 +105,57 @@ fn err_empty_record() -> Error {
 
 // This is only used on some platforms
 #[allow(dead_code)]
-fn unix_lang() -> Result<String> {
-    let check_var = |var| {
-        env::var(var).map_err(|e| {
-            let kind = match e {
-                VarError::NotPresent => ErrorKind::NotFound,
-                VarError::NotUnicode(_) => ErrorKind::InvalidData,
-            };
-            Error::new(kind, e)
-        })
+fn unix_lang() -> Result<LanguagePrefs> {
+    let env_var = |var: &str| match env::var(var) {
+        Ok(value) => Ok(if value.is_empty() { None } else { Some(value) }),
+        Err(VarError::NotPresent) => Ok(None),
+        Err(VarError::NotUnicode(_)) => Err(ErrorKind::InvalidData),
     };
 
     // Uses priority defined in
     // <https://www.gnu.org/software/gettext/manual/html_node/Locale-Environment-Variables.html>
-    let locale = check_var("LC_ALL").or_else(|_| check_var("LANG"));
+    let lc_all = env_var("LC_ALL")?;
+    let lang = env_var("LANG")?;
 
-    // The LANGUAGE environment variable takes precedence if and only if
-    // localization is enabled, i.e., LC_ALL / LANG is not "C".
-    // <https://www.gnu.org/software/gettext/manual/html_node/The-LANGUAGE-variable.html>
-    let langs = match &locale {
-        Ok(loc) if loc != "C" => check_var("LANGUAGE").or(locale),
-        _ => locale,
-    }?;
-
-    if langs.is_empty() {
+    if lang.is_none() && lc_all.is_none() {
         return Err(err_empty_record());
     }
 
-    Ok(langs)
+    // Standard locales that have a higher global precedence than their specific
+    // counterparts, indicating that one should not perform any localization.
+    // https://www.gnu.org/software/libc/manual/html_node/Standard-Locales.html
+    if let Some(l) = &lang {
+        if l == "C" || l == "POSIX" {
+            return Ok(LanguagePrefs {
+                fallbacks: Vec::new(),
+                ..Default::default()
+            });
+        }
+    }
+
+    // The LANGUAGE environment variable takes precedence if and only if
+    // localization is enabled, i.e., LC_ALL / LANG is not "C" or "POSIX".
+    // <https://www.gnu.org/software/gettext/manual/html_node/The-LANGUAGE-variable.html>
+    if let Some(language) = env_var("LANGUAGE")? {
+        return Ok(LanguagePrefs {
+            fallbacks: language.split(":").map(Language::from).collect(),
+            ..Default::default()
+        });
+    }
+
+    // All fields other than LANGUAGE can only contain a single value, so we
+    // don't need to perform any splitting at this point.
+    let lang_from_var = |var| -> Result<Option<Language>, Error> {
+        Ok(env_var(var)?.map(Language::from))
+    };
+
+    Ok(LanguagePrefs {
+        fallbacks: lang.map_or_else(Vec::new, |l| [Language::from(l)].to_vec()),
+        collation: lang_from_var("LC_COLLATE")?,
+        char_classes: lang_from_var("LC_CTYPE")?,
+        monetary: lang_from_var("LC_MONTEARY")?,
+        messages: lang_from_var("LC_MESSAGES")?,
+        numeric: lang_from_var("LC_NUMERIC")?,
+        time: lang_from_var("LC_TIME")?,
+    })
 }

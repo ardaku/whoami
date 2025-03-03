@@ -7,7 +7,7 @@ use syscall::{call, error};
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Platform, Result,
+    Arch, DesktopEnv, LanguagePrefs, Platform, Result,
 };
 
 /// Row in the Redox /etc/passwd file
@@ -88,7 +88,7 @@ fn hostname() -> Result<String> {
 }
 
 impl Target for Os {
-    fn langs(self) -> Result<String> {
+    fn lang_prefs(self) -> Result<LanguagePrefs> {
         super::unix_lang()
     }
 

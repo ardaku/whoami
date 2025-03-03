@@ -9,7 +9,7 @@ use std::{
 use crate::{
     conversions,
     os::{Os, Target},
-    Arch, DesktopEnv, Platform, Result,
+    Arch, DesktopEnv, Language, LanguagePrefs, Platform, Result,
 };
 
 #[repr(C)]
@@ -176,7 +176,7 @@ fn extended_name(format: ExtendedNameFormat) -> Result<OsString> {
 
 impl Target for Os {
     #[inline(always)]
-    fn langs(self) -> Result<String> {
+    fn lang_prefs(self) -> Result<LanguagePrefs> {
         let mut num_languages = 0;
         let mut buffer_size = 0;
         let mut buffer;
@@ -212,10 +212,13 @@ impl Target for Os {
         buffer.pop();
 
         // Combine into a single string
-        Ok(String::from_utf16_lossy(&buffer)
-            .split('\0')
-            .collect::<Vec<&str>>()
-            .join(";"))
+        Ok(LanguagePrefs {
+            fallbacks: String::from_utf16_lossy(&buffer)
+                .split('\0')
+                .map(Language::from)
+                .collect::<Vec<Language>>(),
+            ..Default::default()
+        })
     }
 
     fn realname(self) -> Result<OsString> {
