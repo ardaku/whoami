@@ -48,18 +48,18 @@ struct SystemInfo {
 #[repr(C)]
 #[derive(Copy, Clone)]
 enum ExtendedNameFormat {
-    Unknown,          // Nothing
-    FullyQualifiedDN, // Nothing
-    SamCompatible,    // Hostname Followed By Username
-    Display,          // Full Name
-    UniqueId,         // Nothing
-    Canonical,        // Nothing
-    UserPrincipal,    // Nothing
-    CanonicalEx,      // Nothing
-    ServicePrincipal, // Nothing
-    DnsDomain,        // Nothing
-    GivenName,        // Nothing
-    Surname,          // Nothing
+    Unknown = 0,           // Nothing
+    FullyQualifiedDN = 1,  // Nothing
+    SamCompatible = 2,     // Hostname Followed By Username
+    Display = 3,           // Full Name
+    UniqueId = 6,          // Nothing
+    Canonical = 7,         // Nothing
+    UserPrincipal = 8,     // Nothing
+    CanonicalEx = 9,       // Nothing
+    ServicePrincipal = 10, // Nothing
+    DnsDomain = 12,        // Nothing
+    GivenName = 13,        // Nothing
+    Surname = 14,          // Nothing
 }
 
 #[allow(unused)]
