@@ -511,7 +511,7 @@ impl Target for Os {
                         .unwrap_or(pretty_hostname);
                     let pretty_hostname = {
                         let mut vec = Vec::with_capacity(pretty_hostname.len());
-                        let mut pretty_hostname = pretty_hostname.into_iter();
+                        let mut pretty_hostname = pretty_hostname.iter();
 
                         while let Some(&c) = pretty_hostname.next() {
                             if c == b'\\' {
