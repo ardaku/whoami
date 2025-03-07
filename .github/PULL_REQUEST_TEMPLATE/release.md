@@ -433,3 +433,13 @@
     Device's Desktop Env.  whoami::desktop_env():         Web Browser
     Device's CPU Arch      whoami::arch():                wasm32
     ```
+
+# Changelog
+
+## Added
+
+## Changed
+
+## Fixed
+
+## Removed
