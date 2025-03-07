@@ -157,15 +157,6 @@ impl Target for Os {
                 string[begin..].to_string().replace('_', ".")
             }
         } else {
-            // TODO:
-            // Platform::FreeBsd,
-            // Platform::Ios,
-            // Platform::Android,
-            // Platform::Nintendo3s,
-            // Platform::PlayStation,
-            // Platform::Dive,
-            // Platform::Fuchsia,
-            // Platform::Redox
             string.to_string()
         })
     }
@@ -196,15 +187,6 @@ impl Target for Os {
         } else if string.contains("Mac OS X") {
             Platform::Mac
         } else {
-            // TODO:
-            // Platform::FreeBsd,
-            // Platform::Ios,
-            // Platform::Android,
-            // Platform::Nintendo3ds,
-            // Platform::PlayStation,
-            // Platform::Dive,
-            // Platform::Fuchsia,
-            // Platform::Redox,
             Platform::Unknown(string.to_string())
         }
     }
