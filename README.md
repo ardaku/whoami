@@ -66,9 +66,8 @@ with bugfixes until the end of 2027 at minimum.
 
 ## Testing
 
-The testing procedure is documented at
-<https://github.com/ardaku/whoami/blob/v2/TESTING.md>.  The full manual test
-suite is run for each change that affects multiple platforms.
+The interactive testing procedure is documented in the release PR template.  The
+full manual test suite is run for each change that affects multiple platforms.
 
 ## License
 
