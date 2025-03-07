@@ -153,7 +153,7 @@ impl Display for LanguagePrefs {
             if i != 0 {
                 f.write_str(",")?;
             }
-            f.write_str(name)?;
+            write!(f, "{}=", name)?;
             for (j, lang) in langs.iter().enumerate() {
                 if j != 0 {
                     f.write_str(":")?;
