@@ -1,4 +1,5 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to
@@ -12,7 +13,17 @@ The format is based on [Keep a Changelog], and this project adheres to
 
 ### Changed
 
- - Removed comment about hostname being limited to ASCII
+ - Removed comment about hostname being limited to ASCII due to Unicode
+   hostnames being supported on Windows
+ - More descriptive error messages on the web target
+
+### Fixed
+
+ - `account()` always returning username instead of user principal name on
+   Windows
+ - `langs()` now returns a list accurate to the POSIX locale spec
+ - `hostname()` on Windows now returns `PhysicalDnsHostname` instead of
+   `NetBIOS`
 
 ## [1.5.2] - 2024-09-02
 
