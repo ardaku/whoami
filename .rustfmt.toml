@@ -1,5 +1,5 @@
 # Don't deviate too much, just reduce columns and stricter enforcement
-edition = "2021"
+edition = "2024"
 unstable_features = true
 max_width = 80
 reorder_impl_items = true
