@@ -1,4 +1,4 @@
-Fix #0 <!-- Please fill in with appropriate issue number -->
+Fixes #0 <!-- Please fill in with appropriate issue number -->
 
 <!-- Please describe changes in the PR here -->
 <!--- Check CONTRIBUTING.md for more information-->
