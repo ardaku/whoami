@@ -675,7 +675,6 @@ impl Target for Os {
             DesktopEnv::Ubuntu
         } else if env.eq_ignore_ascii_case("PLASMA5") {
             DesktopEnv::Kde
-        // TODO: Other Linux Desktop Environments
         } else {
             DesktopEnv::Unknown(env.to_string())
         }
