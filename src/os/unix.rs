@@ -500,10 +500,44 @@ impl Target for Os {
                 let mut j = i.split(|b| *b == b'=');
 
                 if j.next() == Some(b"PRETTY_HOSTNAME") {
-                    if let Some(value) = j.next() {
-                        // FIXME: Can " be escaped in pretty name?
-                        return Ok(OsString::from_vec(value.to_vec()));
-                    }
+                    let pretty_hostname = j.next().ok_or(Error::new(
+                        ErrorKind::InvalidData,
+                        "parsing failed",
+                    ))?;
+                    let pretty_hostname = pretty_hostname
+                        .strip_prefix(b"\"")
+                        .unwrap_or(pretty_hostname)
+                        .strip_suffix(b"\"")
+                        .unwrap_or(pretty_hostname);
+                    let pretty_hostname = {
+                        let mut vec = Vec::with_capacity(pretty_hostname.len());
+                        let mut pretty_hostname = pretty_hostname.iter();
+
+                        while let Some(&c) = pretty_hostname.next() {
+                            if c == b'\\' {
+                                vec.push(match pretty_hostname.next() {
+                                    Some(b'\\') => b'\\',
+                                    Some(b't') => b'\t',
+                                    Some(b'r') => b'\r',
+                                    Some(b'n') => b'\n',
+                                    Some(b'\'') => b'\'',
+                                    Some(b'"') => b'"',
+                                    _ => {
+                                        return Err(Error::new(
+                                            ErrorKind::InvalidData,
+                                            "parsing failed",
+                                        ));
+                                    }
+                                });
+                            } else {
+                                vec.push(c);
+                            }
+                        }
+
+                        vec
+                    };
+
+                    return Ok(OsString::from_vec(pretty_hostname));
                 }
             }
 
