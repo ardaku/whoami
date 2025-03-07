@@ -515,11 +515,13 @@ impl Target for Os {
                         ErrorKind::InvalidData,
                         "parsing failed",
                     ))?;
-                    let pretty_hostname = pretty_hostname
-                        .strip_prefix(b"\"")
-                        .unwrap_or(pretty_hostname)
-                        .strip_suffix(b"\"")
-                        .unwrap_or(pretty_hostname);
+                    let pretty_hostname = if pretty_hostname.starts_with(b"\"")
+                        && pretty_hostname.ends_with(b"\"")
+                    {
+                        &pretty_hostname[1..pretty_hostname.len() - 1]
+                    } else {
+                        pretty_hostname
+                    };
                     let pretty_hostname = {
                         let mut vec = Vec::with_capacity(pretty_hostname.len());
                         let mut pretty_hostname = pretty_hostname.iter();
