@@ -10,7 +10,7 @@ use web_sys::window;
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Platform, Result,
+    Arch, DesktopEnv, Language, LanguagePrefs, Platform, Result,
 };
 
 // Get the user agent
@@ -24,16 +24,19 @@ fn document_domain() -> Option<String> {
 }
 
 impl Target for Os {
-    fn langs(self) -> Result<String> {
+    fn lang_prefs(self) -> Result<LanguagePrefs> {
         if let Some(window) = window() {
-            Ok(window
+            let langs = window
                 .navigator()
                 .languages()
                 .to_vec()
                 .into_iter()
-                .filter_map(|l| l.as_string())
-                .collect::<Vec<String>>()
-                .join(";"))
+                .filter_map(|l| l.as_string().map(Language::from))
+                .collect::<Vec<_>>();
+            Ok(LanguagePrefs {
+                fallbacks: langs,
+                ..Default::default()
+            })
         } else {
             Err(Error::new(
                 ErrorKind::NotFound,

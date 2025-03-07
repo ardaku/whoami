@@ -2,12 +2,8 @@ fn main() {
     println!("WhoAmI {}", env!("CARGO_PKG_VERSION"));
     println!();
     println!(
-        "User's Language        whoami::langs():               {}",
-        whoami::langs()
-            .map(|l| {
-                l.map(|l| l.to_string()).collect::<Vec<String>>().join(", ")
-            })
-            .unwrap_or_else(|_| "??".to_string()),
+        "User's Language        whoami::lang_prefs():          {}",
+        whoami::lang_prefs().unwrap_or_default()
     );
     println!(
         "User's Name            whoami::realname():            {}",

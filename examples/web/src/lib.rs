@@ -25,12 +25,8 @@ pub fn main() {
         whoami::username(),
     ));
     log(format!(
-        "User's Language        whoami::langs():               {}",
-        whoami::langs()
-            .map(|l| {
-                l.map(|l| l.to_string()).collect::<Vec<String>>().join(", ")
-            })
-            .unwrap_or_else(|_| "??".to_string()),
+        "User's Language        whoami::lang_prefs():          {}",
+        whoami::lang_prefs().unwrap_or_default(),
     ));
     log(format!(
         "Device's Pretty Name   whoami::devicename():          {}",

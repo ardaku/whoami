@@ -4,18 +4,14 @@
 //! Using the whoami crate is super easy!  All of the public items are simple
 //! functions with no parameters that return [`String`]s or [`OsString`]s (with
 //! the exception of [`desktop_env()`], [`platform()`], and [`arch()`], which
-//! return enums, and [`langs()`] that returns an iterator of [`String`]s).  The
-//! following example shows how to use all of the functions (except those that
-//! return [`OsString`]):
+//! return enums, and [`lang_prefs()`] that returns [`LanguagePrefs`]).
+//! The following example shows how to use all of the functions (except those
+//! that return [`OsString`]):
 //!
 //! ```rust
 //! println!(
-//!     "User's Language        whoami::langs():               {}",
-//!     whoami::langs()
-//!         .map(|l| {
-//!             l.map(|l| l.to_string()).collect::<Vec<String>>().join(", ")
-//!         })
-//!         .unwrap_or_else(|_| "??".to_string()),
+//!     "User's Language        whoami::lang_prefs():          {}",
+//!     whoami::lang_prefs().unwrap_or_default(),
 //! );
 //! println!(
 //!     "User's Name            whoami::realname():            {}",
@@ -104,12 +100,12 @@ mod result;
 pub use self::{
     api::{
         account, account_os, arch, desktop_env, devicename, devicename_os,
-        distro, hostname, langs, platform, realname, realname_os, username,
-        username_os,
+        distro, hostname, lang_prefs, platform, realname, realname_os,
+        username, username_os,
     },
     arch::{Arch, Width},
     desktop_env::DesktopEnv,
-    language::{Country, Language},
+    language::{Country, Language, LanguagePrefs},
     platform::Platform,
     result::Result,
 };

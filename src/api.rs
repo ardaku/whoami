@@ -3,7 +3,7 @@ use std::{env, ffi::OsString};
 use crate::{
     conversions,
     os::{Os, Target},
-    Arch, DesktopEnv, Language, Platform, Result,
+    Arch, DesktopEnv, LanguagePrefs, Platform, Result,
 };
 
 macro_rules! report_message {
@@ -130,29 +130,9 @@ pub fn platform() -> Platform {
 
 /// Get the user's preferred language(s).
 ///
-/// Returned as iterator of [`Language`]s.  The most preferred language is
-/// returned first, followed by next preferred, and so on.  Unrecognized
-/// languages may either return an error or be skipped.
+/// Returned as a [`LanguagePrefs`].  Unrecognized languages may
+/// either return an error or be skipped.
 #[inline(always)]
-pub fn langs() -> Result<impl Iterator<Item = Language>> {
-    // FIXME: Could do less allocation
-    let langs = Target::langs(Os)?;
-    let langs = langs
-        .split(':')
-        .map(ToString::to_string)
-        .filter_map(|lang| {
-            let lang = lang
-                .split_terminator('.')
-                .next()
-                .unwrap_or_default()
-                .replace(|x| ['_', '-'].contains(&x), "/");
-
-            if lang == "C" {
-                return None;
-            }
-
-            Some(Language::__(Box::new(lang)))
-        });
-
-    Ok(langs.collect::<Vec<_>>().into_iter())
+pub fn lang_prefs() -> Result<LanguagePrefs> {
+    Target::lang_prefs(Os)
 }
