@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog], and this project adheres to
  - `langs()` now returns a list accurate to the POSIX locale spec
  - `hostname()` on Windows now returns `PhysicalDnsHostname` instead of
    `NetBIOS`
+ - `devicename()`: Fixed reading escaped unix pretty names
 
 ## [1.5.2] - 2024-09-02
 
