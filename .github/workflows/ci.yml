@@ -35,6 +35,7 @@ jobs:
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup target add ${{ matrix.cc }}
     - run: cargo update
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
   checks-cross-compile-ios:
@@ -49,6 +50,7 @@ jobs:
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup target add ${{ matrix.cc }}
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
   checks-cross-compile-wasm:
     runs-on: ${{ matrix.os }}
@@ -62,6 +64,7 @@ jobs:
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup target add ${{ matrix.cc }}
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
     - run: cargo update
     - run: cargo clippy --no-default-features --target=${{ matrix.cc }} -- -D warnings
@@ -111,6 +114,7 @@ jobs:
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile:
     runs-on: ${{ matrix.os }}
@@ -130,6 +134,7 @@ jobs:
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile-ios:
     runs-on: ${{ matrix.os }}
@@ -143,6 +148,7 @@ jobs:
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile-m1:
     runs-on: ${{ matrix.os }}
@@ -156,6 +162,7 @@ jobs:
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup target add ${{ matrix.cc }}
     - run: cargo update
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile-wasm:
@@ -170,6 +177,7 @@ jobs:
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --all-features --target=${{ matrix.cc }}
     - run: cargo update
     - run: cargo build --no-default-features --target=${{ matrix.cc }}
@@ -186,6 +194,7 @@ jobs:
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile-redox:
     runs-on: ${{ matrix.os }}
@@ -199,6 +208,7 @@ jobs:
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --all-features --target=${{ matrix.cc }}
   clippy-cross-compile:
     runs-on: ${{ matrix.os }}
@@ -214,4 +224,5 @@ jobs:
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup target add ${{ matrix.cc }}
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
