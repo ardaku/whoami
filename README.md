@@ -11,7 +11,7 @@
 [![Crates.io](https://img.shields.io/crates/l/whoami)](https://github.com/search?q=repo%3Aardaku%2Fwhoami+path%3A**%2FLICENSE*&type=code)
 [![Docs.rs](https://docs.rs/whoami/badge.svg)](https://docs.rs/whoami/)
 
-Retrieve the current user and environment through simple functions.
+Rust library for getting information about the current user and environment.
 
 Check out the [documentation] for examples.
 
@@ -21,7 +21,7 @@ Check out the [documentation] for examples.
  - Get the user's username
  - Get the user's preferred language(s)
  - Get the devices's hostname
- - Get the devices's "pretty" or "fancy" name
+ - Get the devices's "pretty hostname" or "fancy name"
  - Get the devices's desktop environment
  - Get the devices's OS name and version
  - Get the devices's platform name
