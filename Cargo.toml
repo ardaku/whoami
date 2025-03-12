@@ -7,7 +7,7 @@ documentation = "https://docs.rs/whoami"
 homepage = "https://github.com/ardaku/whoami/releases"
 repository = "https://github.com/ardaku/whoami"
 readme = "README.md"
-description = "Rust library to get information about the current user and environment"
+description = "Rust library for getting information about the current user and environment"
 keywords = ["user", "username", "whoami", "platform", "detect"]
 categories = [
     "os",

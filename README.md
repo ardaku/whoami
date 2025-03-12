@@ -11,7 +11,7 @@
 [![Crates.io](https://img.shields.io/crates/l/whoami)](https://github.com/search?q=repo%3Aardaku%2Fwhoami+path%3A**%2FLICENSE*&type=code)
 [![Docs.rs](https://docs.rs/whoami/badge.svg)](https://docs.rs/whoami/)
 
-Rust library to get information about the current user and environment.
+Rust library for getting information about the current user and environment.
 
 Check out the [documentation] for examples.
 

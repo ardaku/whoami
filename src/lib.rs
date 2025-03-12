@@ -1,4 +1,4 @@
-//! Rust library to get information about the current user and environment.
+//! Rust library for getting information about the current user and environment.
 //!
 //! ## Getting Started
 //!
