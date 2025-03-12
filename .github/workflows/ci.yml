@@ -10,13 +10,10 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         tc: [nightly]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: ${{ matrix.tc }}
-        components: rustfmt, clippy
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo update
     - run: cargo fmt --check
     - run: cargo clippy -- -D warnings
@@ -34,14 +31,10 @@ jobs:
         - wasm32-wasip1
         - x86_64-apple-darwin
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: ${{ matrix.tc }}
-        target: ${{ matrix.cc }}
-        components: clippy
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo update
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
   checks-cross-compile-ios:
@@ -52,14 +45,10 @@ jobs:
         tc: [nightly]
         cc: [aarch64-apple-ios]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: ${{ matrix.tc }}
-        target: ${{ matrix.cc }}
-        components: clippy
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
   checks-cross-compile-wasm:
     runs-on: ${{ matrix.os }}
@@ -69,14 +58,10 @@ jobs:
         tc: [nightly]
         cc: [wasm32-unknown-unknown]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: ${{ matrix.tc }}
-        target: ${{ matrix.cc }}
-        components: clippy
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
     - run: cargo update
     - run: cargo clippy --no-default-features --target=${{ matrix.cc }} -- -D warnings
@@ -88,12 +73,10 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         tc: [1.65.0, stable, beta, nightly]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: ${{ matrix.tc }}
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo doc
     - run: cargo test --all --all-features
   test-macos:
@@ -102,12 +85,10 @@ jobs:
       matrix:
         tc: [stable, beta, nightly]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: ${{ matrix.tc }}
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo update
     - run: cargo test --all --all-features
   # TODO: can be merged back into "cross-compile" after MSRV bumped to 1.78
@@ -126,13 +107,10 @@ jobs:
         - wasm32-wasi
         - x86_64-apple-darwin
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: ${{ matrix.tc }}
-        target: ${{ matrix.cc }}
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile:
     runs-on: ${{ matrix.os }}
@@ -148,13 +126,10 @@ jobs:
         - wasm32-wasip1
         - x86_64-apple-darwin
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: ${{ matrix.tc }}
-        target: ${{ matrix.cc }}
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile-ios:
     runs-on: ${{ matrix.os }}
@@ -164,13 +139,10 @@ jobs:
         tc: [1.65.0, stable, beta, nightly]
         cc: [aarch64-apple-ios]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: ${{ matrix.tc }}
-        target: ${{ matrix.cc }}
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile-m1:
     runs-on: ${{ matrix.os }}
@@ -180,13 +152,10 @@ jobs:
         tc: [stable, beta, nightly]
         cc: [aarch64-apple-darwin]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: ${{ matrix.tc }}
-        target: ${{ matrix.cc }}
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo update
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile-wasm:
@@ -197,13 +166,10 @@ jobs:
         tc: [1.65.0, stable, beta, nightly]
         cc: [wasm32-unknown-unknown]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: ${{ matrix.tc }}
-        target: ${{ matrix.cc }}
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo build --all-features --target=${{ matrix.cc }}
     - run: cargo update
     - run: cargo build --no-default-features --target=${{ matrix.cc }}
@@ -216,13 +182,10 @@ jobs:
         tc: [1.65.0, stable, beta, nightly]
         cc: [x86_64-unknown-illumos]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: ${{ matrix.tc }}
-        target: ${{ matrix.cc }}
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo build --all-features --target=${{ matrix.cc }}
   cross-compile-redox:
     runs-on: ${{ matrix.os }}
@@ -232,13 +195,10 @@ jobs:
         tc: [1.65.0, stable, beta, nightly]
         cc: [x86_64-unknown-redox]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: ${{ matrix.tc }}
-        target: ${{ matrix.cc }}
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo build --all-features --target=${{ matrix.cc }}
   clippy-cross-compile:
     runs-on: ${{ matrix.os }}
@@ -250,12 +210,8 @@ jobs:
         - x86_64-unknown-illumos
         - x86_64-unknown-redox
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        components: clippy
-        toolchain: ${{ matrix.tc }}
-        target: ${{ matrix.cc }}
-        override: true
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
     - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
