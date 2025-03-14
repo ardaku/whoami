@@ -2,6 +2,9 @@ on: [push, pull_request]
 
 name: tests
 
+env:
+  RUSTUP_AUTO_INSTALL: 0
+
 jobs:
   checks:
     runs-on: ${{ matrix.os }}
