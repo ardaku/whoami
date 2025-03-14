@@ -103,7 +103,7 @@
     Expect to see something like:
 
     ```console
-    WhoAmI 1.5.0
+    WhoAmI 1.6.0
 
     User's Language        whoami::langs():               en/US
     User's Name            whoami::realname():            Jeron Lau
@@ -112,7 +112,7 @@
     Device's Pretty Name   whoami::devicename():          ubuntu-box
     Device's Hostname      whoami::fallible::hostname():  ubuntu-box
     Device's Platform      whoami::platform():            Linux
-    Device's OS Distro     whoami::distro():              Ubuntu 23.10
+    Device's OS Distro     whoami::distro():              Ubuntu 24.04.1 LTS
     Device's Desktop Env.  whoami::desktop_env():         Ubuntu
     Device's CPU Arch      whoami::arch():                x86_64
     ```
