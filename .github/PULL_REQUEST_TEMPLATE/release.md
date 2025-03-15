@@ -79,7 +79,7 @@
     Device's CPU Arch      whoami::arch():                  X64
     ```
     </details>
- - [ ] Testing complete on Ubuntu Linux 23.10
+ - [ ] Testing complete on Ubuntu Linux 24.04.1 LTS
     <details><summary>Ubuntu Virtualized on Fedora Silverblue Testing</summary>
     <https://ubuntu.com/download/desktop>
 
