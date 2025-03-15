@@ -167,3 +167,7 @@ dependencies = [
  "wasite",
  "web-sys",
 ]
+
+[[package]]
+name = "xtask"
+version = "0.0.0"

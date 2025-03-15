@@ -104,7 +104,7 @@ jobs:
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
-    - run: cargo build --all-features --target=${{ matrix.cc }}
+    - run: cargo build --all-features --target=${{ matrix.cc }} -p whoami
   cross-compile-ios:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -149,7 +149,7 @@ jobs:
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
-    - run: cargo build --all-features --target=${{ matrix.cc }}
+    - run: cargo build --all-features --target=${{ matrix.cc }} -p whoami
   cross-compile-redox:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -163,7 +163,7 @@ jobs:
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
-    - run: cargo build --all-features --target=${{ matrix.cc }}
+    - run: cargo build --all-features --target=${{ matrix.cc }} -p whoami
   clippy-cross-compile:
     runs-on: ${{ matrix.os }}
     strategy:
