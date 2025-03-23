@@ -1,8 +1,6 @@
 [package]
 name = "whoami_web"
-version = "0.1.0"
-authors = ["Jeron Aldaron Lau <jeronlau@plopgrizzly.com>"]
-edition = "2021"
+edition = "2024"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -30,7 +28,4 @@ features = ["console"]
 
 # `whoami` - the crate we're testing!
 [dependencies.whoami]
-path = "../../"
-
-[profile.release]
-opt-level = "s" # Tell `rustc` to optimize for small code size.
+path = "../whoami"
