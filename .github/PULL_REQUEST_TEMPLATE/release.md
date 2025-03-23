@@ -369,8 +369,8 @@
     ```console
     User's Name            whoami::realname():            Anonymous
     User's Username        whoami::username():            anonymous
-    User's Language        whoami::langs():               en/US, en
-    Device's Pretty Name   whoami::devicename():          Firefox 122.0
+    User's Language        whoami::langs():               en/US;en
+    Device's Pretty Name   whoami::devicename():          Firefox 136.0
     Device's Hostname      whoami::fallible::hostname():  localhost
     Device's Platform      whoami::platform():            Linux
     Device's OS Distro     whoami::distro():              Unknown Linux
@@ -383,7 +383,7 @@
     ```console
     User's Name            whoami::realname():            Anonymous
     User's Username        whoami::username():            anonymous
-    User's Language        whoami::langs():               en/US, en
+    User's Language        whoami::langs():               en/US;en
     Device's Pretty Name   whoami::devicename():          Opera 107.0.0.0
     Device's Hostname      whoami::fallible::hostname():  localhost
     Device's Platform      whoami::platform():            Linux
@@ -397,7 +397,7 @@
     ```console
     User's Name            whoami::realname():            Anonymous
     User's Username        whoami::username():            anonymous
-    User's Language        whoami::langs():               en/US, en
+    User's Language        whoami::langs():               en/US;en
     Device's Pretty Name   whoami::devicename():          Chrome 122.0.0.0
     Device's Hostname      whoami::fallible::hostname():  localhost
     Device's Platform      whoami::platform():            Linux
@@ -411,7 +411,7 @@
     ```console
     User's Name            whoami::realname():            Anonymous
     User's Username        whoami::username():            anonymous
-    User's Language        whoami::langs():               en/US, en
+    User's Language        whoami::langs():               en/US;en
     Device's Pretty Name   whoami::devicename():          Chrome 122.0.0.0
     Device's Hostname      whoami::fallible::hostname():  localhost
     Device's Platform      whoami::platform():            Linux
