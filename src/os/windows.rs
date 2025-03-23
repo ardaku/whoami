@@ -91,12 +91,11 @@ extern "system" {
         b: *mut c_char,
         c: *mut c_ulong,
     ) -> c_uchar;
+}
+
+#[link(name = "advapi32")]
+extern "system" {
     fn GetUserNameW(a: *mut c_char, b: *mut c_ulong) -> c_int;
-    fn GetComputerNameExW(
-        a: ComputerNameFormat,
-        b: *mut c_char,
-        c: *mut c_ulong,
-    ) -> c_int;
 }
 
 #[link(name = "kernel32")]
@@ -108,6 +107,11 @@ extern "system" {
         pcch_languages_buffer: *mut c_ulong,
     ) -> c_int;
     fn GetNativeSystemInfo(system_info: *mut SystemInfo);
+    fn GetComputerNameExW(
+        a: ComputerNameFormat,
+        b: *mut c_char,
+        c: *mut c_ulong,
+    ) -> c_int;
 }
 
 fn username() -> Result<OsString> {
