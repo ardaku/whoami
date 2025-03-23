@@ -6,7 +6,7 @@
 
  - [ ] Testing complete on Fedora Silverblue 41.
     <details><summary>Linux / Fedora Silverblue Testing</summary>
-    Open a terminal (outside of toolbox), and:
+    Open a terminal (outside of toolbx), and:
 
     ```rust
     cargo run --example whoami-demo
@@ -47,7 +47,7 @@
     Device's CPU Arch      whoami::arch():                  X64
     ```
 
-    Now, `toolbox enter`, and do the same.  Expecting something like:
+    Now, `toolbx enter`, and do the same.  Expecting something like:
 
     ```console
     WhoAmI 1.6.0
@@ -323,7 +323,7 @@
 
     ### Build Redox
 
-    Back in `cd build/redox`, this takes a while
+    Back in `cd build/redox`, this takes a while (need to run in toolbx and outside)
 
     ```shell
     make all
