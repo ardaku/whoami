@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog], and this project adheres to
  - `hostname()` on Windows now returns `PhysicalDnsHostname` instead of
    `NetBIOS`
  - `devicename()`: Fixed reading escaped unix pretty names
+ - Link error on Windows (in future Rust version)
 
 ## [1.5.2] - 2024-09-02
 
