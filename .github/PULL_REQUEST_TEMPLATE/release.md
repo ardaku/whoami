@@ -6,7 +6,7 @@
 
  - [ ] Testing complete on Fedora Silverblue 41.
     <details><summary>Linux / Fedora Silverblue Testing</summary>
-    Open a terminal (outside of toolbox), and:
+    Open a terminal (outside of toolbx), and:
 
     ```rust
     cargo run --example whoami-demo
@@ -18,68 +18,68 @@
     Expect to see something like:
 
     ```console
-    WhoAmI 1.5.0
-
+    WhoAmI 1.6.0
+    
     User's Language        whoami::langs():               en/US
-    User's Name            whoami::realname():            Jeron Lau
+    User's Name            whoami::realname():            Jeryn Aldaron Lau
     User's Username        whoami::username():            jeron
     User's Username        whoami::fallible::account():   jeron
-    Device's Pretty Name   whoami::devicename():          Zetêy
-    Device's Hostname      whoami::fallible::hostname():  zetey
+    Device's Pretty Name   whoami::devicename():          ¡Zeatei~
+    Device's Hostname      whoami::fallible::hostname():  zeatei
     Device's Platform      whoami::platform():            Linux
-    Device's OS Distro     whoami::distro():              Fedora Linux 39.20240202.0 (Silverblue)
+    Device's OS Distro     whoami::distro():              Fedora Linux 41.20250305.0 (Silverblue)
     Device's Desktop Env.  whoami::desktop_env():         Gnome
     Device's CPU Arch      whoami::arch():                x86_64
     ```
 
     ```console
-    WhoAmI 1.5.0
-
+    WhoAmI 1.6.0
+    
     User's Language        whoami::langs():                 "en/US"
-    User's Name            whoami::realname_os():           "Jeron Lau"
+    User's Name            whoami::realname_os():           "Jeryn Aldaron Lau"
     User's Username        whoami::username_os():           "jeron"
     User's Account         whoami::fallible::account_os():  "jeron"
-    Device's Pretty Name   whoami::devicename_os():         "Zetêy"
-    Device's Hostname      whoami::fallible::hostname():    "zetey"
+    Device's Pretty Name   whoami::devicename_os():         "¡Zeatei~"
+    Device's Hostname      whoami::fallible::hostname():    "zeatei"
     Device's Platform      whoami::platform():              Linux
-    Device's OS Distro     whoami::distro():                "Fedora Linux 39.20240202.0 (Silverblue)"
+    Device's OS Distro     whoami::distro():                "Fedora Linux 41.20250305.0 (Silverblue)"
     Device's Desktop Env.  whoami::desktop_env():           Gnome
     Device's CPU Arch      whoami::arch():                  X64
     ```
 
-    Now, `toolbox enter`, and do the same.  Expecting something like:
+    Now, `toolbx enter`, and do the same.  Expecting something like:
 
     ```console
-    WhoAmI 1.5.0
-
+    WhoAmI 1.6.0
+    
     User's Language        whoami::langs():               en/US
     User's Name            whoami::realname():            Jeron Lau
     User's Username        whoami::username():            jeron
     User's Username        whoami::fallible::account():   jeron
-    Device's Pretty Name   whoami::devicename():          toolbox
-    Device's Hostname      whoami::fallible::hostname():  toolbox
+    Device's Pretty Name   whoami::devicename():          toolbx
+    Device's Hostname      whoami::fallible::hostname():  toolbx
     Device's Platform      whoami::platform():            Linux
-    Device's OS Distro     whoami::distro():              Fedora Linux 39 (Container Image)
+    Device's OS Distro     whoami::distro():              Fedora Linux 41 (Toolbx Container Image)
     Device's Desktop Env.  whoami::desktop_env():         Gnome
     Device's CPU Arch      whoami::arch():                x86_64
     ```
 
     ```console
-    WhoAmI 1.5.0
-
+    WhoAmI 1.6.0
+    
     User's Language        whoami::langs():                 "en/US"
     User's Name            whoami::realname_os():           "Jeron Lau"
     User's Username        whoami::username_os():           "jeron"
     User's Account         whoami::fallible::account_os():  "jeron"
-    Device's Pretty Name   whoami::devicename_os():         "toolbox"
-    Device's Hostname      whoami::fallible::hostname():    "toolbox"
+    Device's Pretty Name   whoami::devicename_os():         "toolbx"
+    Device's Hostname      whoami::fallible::hostname():    "toolbx"
     Device's Platform      whoami::platform():              Linux
-    Device's OS Distro     whoami::distro():                "Fedora Linux 39 (Container Image)"
+    Device's OS Distro     whoami::distro():                "Fedora Linux 41 (Toolbx Container Image)"
     Device's Desktop Env.  whoami::desktop_env():           Gnome
     Device's CPU Arch      whoami::arch():                  X64
     ```
     </details>
- - [ ] Testing complete on Ubuntu Linux 23.10
+ - [ ] Testing complete on Ubuntu Linux 24.04.1 LTS
     <details><summary>Ubuntu Virtualized on Fedora Silverblue Testing</summary>
     <https://ubuntu.com/download/desktop>
 
@@ -103,7 +103,7 @@
     Expect to see something like:
 
     ```console
-    WhoAmI 1.5.0
+    WhoAmI 1.6.0
 
     User's Language        whoami::langs():               en/US
     User's Name            whoami::realname():            Jeron Lau
@@ -112,7 +112,7 @@
     Device's Pretty Name   whoami::devicename():          ubuntu-box
     Device's Hostname      whoami::fallible::hostname():  ubuntu-box
     Device's Platform      whoami::platform():            Linux
-    Device's OS Distro     whoami::distro():              Ubuntu 23.10
+    Device's OS Distro     whoami::distro():              Ubuntu 24.04.1 LTS
     Device's Desktop Env.  whoami::desktop_env():         Ubuntu
     Device's CPU Arch      whoami::arch():                x86_64
     ```
@@ -282,7 +282,7 @@
     ### Install pre-requisites
 
     ```shell
-    sudo dnf install git file autoconf vim bison flex genisoimage gperf glibc-devel.i686 expat expat-devel fuse-devel fuse3-devel gmp-devel perl-HTML-Parser libpng-devel libtool libjpeg-turbo-devel libvorbis-devel SDL2_ttf-devel mesa-libOSMesa-devel m4 nasm po4a syslinux texinfo sdl12-compat-devel ninja-build meson python3-mako make gcc gcc-c++ openssl patch automake perl-Pod-Html perl-FindBin gperf curl gettext-devel perl-Pod-Xhtml pkgconf-pkg-config cmake cbindgen just mpfr-devel qemu doxygen 'perl(ExtUtils::MakeMaker)'
+    sudo dnf install podman git file autoconf vim bison flex genisoimage gperf glibc-devel.i686 expat expat-devel fuse-devel fuse3-devel gmp-devel perl-HTML-Parser libpng-devel libtool libjpeg-turbo-devel libvorbis-devel SDL2_ttf-devel mesa-libOSMesa-devel m4 nasm po4a syslinux texinfo sdl12-compat-devel ninja-build meson python3-mako make gcc gcc-c++ openssl patch automake perl-Pod-Html perl-FindBin gperf curl gettext-devel perl-Pod-Xhtml pkgconf-pkg-config cmake cbindgen just mpfr-devel qemu doxygen 'perl(ExtUtils::MakeMaker)'
 
     cargo install --locked --force --version 0.1.1 cargo-config
     ```
@@ -323,7 +323,7 @@
 
     ### Build Redox
 
-    Back in `cd build/redox`, this takes a while
+    Back in `cd build/redox`, this takes a while (need to run in toolbx and outside)
 
     ```shell
     make all
@@ -369,8 +369,8 @@
     ```console
     User's Name            whoami::realname():            Anonymous
     User's Username        whoami::username():            anonymous
-    User's Language        whoami::langs():               en/US, en
-    Device's Pretty Name   whoami::devicename():          Firefox 122.0
+    User's Language        whoami::langs():               en/US;en
+    Device's Pretty Name   whoami::devicename():          Firefox 136.0
     Device's Hostname      whoami::fallible::hostname():  localhost
     Device's Platform      whoami::platform():            Linux
     Device's OS Distro     whoami::distro():              Unknown Linux
@@ -383,7 +383,7 @@
     ```console
     User's Name            whoami::realname():            Anonymous
     User's Username        whoami::username():            anonymous
-    User's Language        whoami::langs():               en/US, en
+    User's Language        whoami::langs():               en/US;en
     Device's Pretty Name   whoami::devicename():          Opera 107.0.0.0
     Device's Hostname      whoami::fallible::hostname():  localhost
     Device's Platform      whoami::platform():            Linux
@@ -397,7 +397,7 @@
     ```console
     User's Name            whoami::realname():            Anonymous
     User's Username        whoami::username():            anonymous
-    User's Language        whoami::langs():               en/US, en
+    User's Language        whoami::langs():               en/US;en
     Device's Pretty Name   whoami::devicename():          Chrome 122.0.0.0
     Device's Hostname      whoami::fallible::hostname():  localhost
     Device's Platform      whoami::platform():            Linux
@@ -411,7 +411,7 @@
     ```console
     User's Name            whoami::realname():            Anonymous
     User's Username        whoami::username():            anonymous
-    User's Language        whoami::langs():               en/US, en
+    User's Language        whoami::langs():               en/US;en
     Device's Pretty Name   whoami::devicename():          Chrome 122.0.0.0
     Device's Hostname      whoami::fallible::hostname():  localhost
     Device's Platform      whoami::platform():            Linux
