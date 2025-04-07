@@ -18,11 +18,11 @@ pub fn main() {
     // Print out code from regular example.
     log(format!(
         "User's Name            whoami::realname():            {}",
-        whoami::realname(),
+        whoami::realname().unwrap_or_default(),
     ));
     log(format!(
         "User's Username        whoami::username():            {}",
-        whoami::username(),
+        whoami::username().unwrap_or_default(),
     ));
     log(format!(
         "User's Language        whoami::lang_prefs():          {}",
@@ -30,23 +30,22 @@ pub fn main() {
     ));
     log(format!(
         "Device's Pretty Name   whoami::devicename():          {}",
-        whoami::devicename(),
+        whoami::devicename().unwrap_or_default(),
     ));
     log(format!(
         "Device's Hostname      whoami::fallible::hostname():  {}",
-        whoami::fallible::hostname()
-            .unwrap_or_else(|_| "localhost".to_string()),
+        whoami::hostname().unwrap_or_else(|_| "localhost".to_string()),
     ));
     log(format!(
-        "Device's Platform      whoami::platform():            {}",
+        "Device's Platform      whoami::platform():            {:?}",
         whoami::platform(),
     ));
     log(format!(
         "Device's OS Distro     whoami::distro():              {}",
-        whoami::distro(),
+        whoami::distro().unwrap_or_default(),
     ));
     log(format!(
-        "Device's Desktop Env.  whoami::desktop_env():         {}",
+        "Device's Desktop Env.  whoami::desktop_env():         {:?}",
         whoami::desktop_env(),
     ));
     log(format!(

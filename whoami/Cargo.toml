@@ -27,15 +27,15 @@ rust-version = "1.65"
 
 # Target specific dependency for redox
 [target.'cfg(all(target_os = "redox", not(target_arch = "wasm32")))'.dependencies.redox_syscall]
-version = "0.5"
+version = "0.5.11"
 
 # Target specific dependency for wasite
 [target.'cfg(all(target_arch = "wasm32", target_os = "wasi"))'.dependencies.wasite]
-version = "0.1"
+version = "0.1.0"
 
 # Target-specific dependency for web browser
 [target.'cfg(all(target_arch = "wasm32", not(target_os = "wasi"), not(daku)))'.dependencies.web-sys]
-version = "0.3"
+version = "0.3.77"
 features = ["Navigator", "Document", "Window", "Location"]
 optional = true
 
