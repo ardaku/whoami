@@ -26,8 +26,8 @@ include = [
 rust-version = "1.40"
 
 # Target specific dependency for redox
-[target.'cfg(all(target_os = "redox", not(target_arch = "wasm32")))'.dependencies.redox_syscall]
-version = "0.5"
+[target.'cfg(all(target_os = "redox", not(target_arch = "wasm32")))'.dependencies.libredox]
+version = "0.1.9"
 
 # Target specific dependency for wasite
 [target.'cfg(all(target_arch = "wasm32", target_os = "wasi"))'.dependencies.wasite]

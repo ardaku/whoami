@@ -5,7 +5,7 @@
 
 use std::{borrow::Cow, ffi::OsString, fs, io::Error};
 
-use syscall::{call, error};
+use libredox::{call, error};
 
 use crate::{
     os::{Os, Target},
@@ -51,7 +51,7 @@ impl Uname<'_> {
 }
 
 fn to_io_error(error: error::Error) -> Error {
-    Error::from_raw_os_error(error.errno)
+    Error::from_raw_os_error(error.errno())
 }
 
 fn euid() -> Result<usize> {
