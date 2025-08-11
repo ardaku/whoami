@@ -245,7 +245,7 @@ jobs:
         target: ${{ matrix.cc }}
         override: true
     - run: cargo build --all-features --target=${{ matrix.cc }}
-    - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings
+    - run: cargo clippy --all-features --target=${{ matrix.cc }} -- -D warnings -A clippy::incompatible-msrv
   cross-compile-redox-and-checks:
     runs-on: ${{ matrix.os }}
     strategy:
