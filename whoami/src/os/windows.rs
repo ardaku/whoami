@@ -437,10 +437,7 @@ impl Target for Os {
             12 => Arch::Arm64,
             // PROCESSOR_ARCHITECTURE_UNKNOWN
             0xFFFF => proc(buf.processor_type).map_err(|e| {
-                Error::new(
-                    ErrorKind::InvalidData,
-                    format!("Unknown arch: {e}"),
-                )
+                Error::new(ErrorKind::InvalidData, format!("Unknown arch: {e}"))
             })?,
             invalid => proc(buf.processor_type).map_err(|e| {
                 Error::new(
