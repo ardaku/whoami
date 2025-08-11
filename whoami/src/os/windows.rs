@@ -439,13 +439,13 @@ impl Target for Os {
             0xFFFF => proc(buf.processor_type).map_err(|e| {
                 Error::new(
                     ErrorKind::InvalidData,
-                    format!("Unknown arch: {}", e),
+                    format!("Unknown arch: {e}"),
                 )
             })?,
             invalid => proc(buf.processor_type).map_err(|e| {
                 Error::new(
                     ErrorKind::InvalidData,
-                    format!("Invalid arch: {}/{}", invalid, e),
+                    format!("Invalid arch: {invalid}/{e}"),
                 )
             })?,
         })
