@@ -126,7 +126,7 @@ impl Target for Os {
             };
             let string = &string[begin + 3..end];
 
-            format!("Windows {}", string)
+            format!("Windows {string}")
         } else if string.contains("Linux") {
             let string = if string.contains("X11") || string.contains("Wayland")
             {

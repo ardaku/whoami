@@ -338,13 +338,13 @@ fn distro_xml(data: String) -> Result<String> {
 
     Ok(if let Some(product_name) = product_name {
         if let Some(user_visible_version) = user_visible_version {
-            format!("{} {}", product_name, user_visible_version)
+            format!("{product_name} {user_visible_version}")
         } else {
             product_name.to_string()
         }
     } else {
         user_visible_version
-            .map(|v| format!("Mac OS (Unknown) {}", v))
+            .map(|v| format!("Mac OS (Unknown) {v}"))
             .ok_or_else(|| {
                 Error::new(ErrorKind::InvalidData, "Parsing failed")
             })?

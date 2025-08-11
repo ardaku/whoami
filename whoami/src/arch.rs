@@ -138,10 +138,7 @@ impl Arch {
             | Arch::X64 => Ok(Width::Bits64),
             Arch::Unknown(unknown_arch) => Err(Error::new(
                 ErrorKind::InvalidData,
-                format!(
-                    "Tried getting width of unknown arch ({})",
-                    unknown_arch,
-                ),
+                format!("Tried getting width of unknown arch ({unknown_arch})"),
             )),
         }
     }
