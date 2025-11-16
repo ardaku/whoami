@@ -1,8 +1,14 @@
-Fixes #0 <!-- Please fill in with appropriate issue number -->
+Add web improvements and new Rust example (first contribution)
 
-<!-- Please describe changes in the PR here -->
-<!--- Check CONTRIBUTING.md for more information-->
+<!### Summary
 
-## Testing / Verification
+This pull request adds my first contribution to the project.  
+I added a small Rust example and improved parts of the web demo UI.
 
-<!-- Please describe any testing or verification done here -->
+### Changes
+
+- added new Rust example: `whoami/examples/greeter.rs`
+- updated `example-web/index.html`
+- updated `whoami/Cargo.toml`
+- updated `whoami/src/os/web.rs`
+- updated `Cargo.lock`
