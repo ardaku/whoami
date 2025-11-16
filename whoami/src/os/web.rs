@@ -1,17 +1,68 @@
 #[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
 compile_error!("Unexpected pointer width for target platform");
 
+use wasm_bindgen::prelude::*;
+use web_sys::window;
+
+
+
+
+
+
+#[wasm_bindgen]
+pub fn browser() -> String {
+    window()
+        .and_then(|w| w.navigator().user_agent().ok())
+        .unwrap_or_else(|| "Unknown Browser".to_string())
+}
+
+#[wasm_bindgen]
+pub fn is_mobile() -> bool {
+    window()
+        .and_then(|w| Some(w.navigator().user_agent().ok()?))
+        .map(|ua| {
+            ua.to_lowercase().contains("mobile")
+                || ua.to_lowercase().contains("android")
+                || ua.to_lowercase().contains("iphone")
+                || ua.to_lowercase().contains("ipad")
+        })
+        .unwrap_or(false)
+}
+
+#[wasm_bindgen]
+pub fn timezone() -> String {
+    let dtf = js_sys::Intl::DateTimeFormat::new(
+        &js_sys::Array::new(),
+        &js_sys::Object::new(),
+    );
+
+    let opts = dtf.resolved_options();
+
+    // SAFELY READ opts.timeZone USING REFLECT
+    let tz = js_sys::Reflect::get(&opts, &JsValue::from_str("timeZone"));
+
+    match tz {
+        Ok(val) => val.as_string().unwrap_or("Unknown".into()),
+        Err(_) => "Unknown".into(),
+    }
+}
+
+
+
+
 use std::{
     ffi::OsString,
     io::{Error, ErrorKind},
 };
 
-use web_sys::window;
+
 
 use crate::{
     os::{Os, Target},
     Arch, DesktopEnv, Language, LanguagePrefs, Platform, Result,
 };
+
+
 
 // Get the user agent
 fn user_agent() -> Option<String> {
