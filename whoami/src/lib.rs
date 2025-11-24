@@ -1,6 +1,7 @@
-//! Crate for getting the user's username, realname and environment.
+//! Rust library for getting information about the current user and environment.
 //!
 //! ## Getting Started
+//!
 //! Using the whoami crate is super easy!  All of the public items are simple
 //! functions with no parameters that return [`String`]s or [`OsString`]s (with
 //! the exception of [`desktop_env()`], [`platform()`], and [`arch()`], which
