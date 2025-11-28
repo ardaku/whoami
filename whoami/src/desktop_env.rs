@@ -62,7 +62,7 @@ impl Display for DesktopEnv {
             Self::Aqua => "Aqua",
             Self::Ios => "IOS",
             Self::Android => "Android",
-            Self::WebBrowser(a) => return write!(f, "WebBrowser ( {} )", a),
+            Self::WebBrowser(a) => return write!(f, "WebBrowser ({a})"),
             Self::Console => "Console",
             Self::Ubuntu => "Ubuntu",
             Self::Ermine => "Ermine",
