@@ -37,8 +37,7 @@ fn browser_info() -> String {
         .replace('/', " ");
     let string = if let Some(s) = string.rfind("Safari") {
         if let Some(s) = orig_string.rfind("Chrome") {
-            if let Some(e) =
-                orig_string.get(s..).unwrap_or_default().find(' ')
+            if let Some(e) = orig_string.get(s..).unwrap_or_default().find(' ')
             {
                 orig_string
                     .get(s..)
