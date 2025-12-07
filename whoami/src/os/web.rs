@@ -23,6 +23,47 @@ fn document_domain() -> Option<String> {
     window()?.document()?.location()?.hostname().ok()
 }
 
+// Get the browser name and version for desktop environment
+fn browser_info() -> String {
+    let orig_string = user_agent().unwrap_or_default();
+    let start = if let Some(s) = orig_string.rfind(' ') {
+        s
+    } else {
+        return "Unknown Browser".to_string();
+    };
+    let string = orig_string
+        .get(start + 1..)
+        .unwrap_or("Unknown Browser")
+        .replace('/', " ");
+    let string = if let Some(s) = string.rfind("Safari") {
+        if let Some(s) = orig_string.rfind("Chrome") {
+            if let Some(e) = orig_string.get(s..).unwrap_or_default().find(' ')
+            {
+                orig_string
+                    .get(s..)
+                    .unwrap_or("Chrome")
+                    .get(..e)
+                    .unwrap_or("Chrome")
+                    .replace('/', " ")
+            } else {
+                "Chrome".to_string()
+            }
+        } else if orig_string.contains("Linux") {
+            "GNOME Web".to_string()
+        } else {
+            string.get(s..).unwrap_or("Safari").replace('/', " ")
+        }
+    } else if string.contains("Edg ") {
+        string.replace("Edg ", "Edge ")
+    } else if string.contains("OPR ") {
+        string.replace("OPR ", "Opera ")
+    } else {
+        string
+    };
+
+    string
+}
+
 impl Target for Os {
     fn lang_prefs(self) -> Result<LanguagePrefs> {
         if let Some(window) = window() {
@@ -54,44 +95,7 @@ impl Target for Os {
     }
 
     fn devicename(self) -> Result<OsString> {
-        let orig_string = user_agent().unwrap_or_default();
-        let start = if let Some(s) = orig_string.rfind(' ') {
-            s
-        } else {
-            return Ok("Unknown Browser".to_string().into());
-        };
-        let string = orig_string
-            .get(start + 1..)
-            .unwrap_or("Unknown Browser")
-            .replace('/', " ");
-        let string = if let Some(s) = string.rfind("Safari") {
-            if let Some(s) = orig_string.rfind("Chrome") {
-                if let Some(e) =
-                    orig_string.get(s..).unwrap_or_default().find(' ')
-                {
-                    orig_string
-                        .get(s..)
-                        .unwrap_or("Chrome")
-                        .get(..e)
-                        .unwrap_or("Chrome")
-                        .replace('/', " ")
-                } else {
-                    "Chrome".to_string()
-                }
-            } else if orig_string.contains("Linux") {
-                "GNOME Web".to_string()
-            } else {
-                string.get(s..).unwrap_or("Safari").replace('/', " ")
-            }
-        } else if string.contains("Edg ") {
-            string.replace("Edg ", "Edge ")
-        } else if string.contains("OPR ") {
-            string.replace("OPR ", "Opera ")
-        } else {
-            string
-        };
-
-        Ok(string.into())
+        Ok("Browser".to_string().into())
     }
 
     fn hostname(self) -> Result<String> {
@@ -163,7 +167,7 @@ impl Target for Os {
 
     #[inline(always)]
     fn desktop_env(self) -> Option<DesktopEnv> {
-        Some(DesktopEnv::WebBrowser)
+        Some(DesktopEnv::WebBrowser(browser_info()))
     }
 
     fn platform(self) -> Platform {

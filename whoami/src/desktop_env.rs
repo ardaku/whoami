@@ -31,7 +31,7 @@ pub enum DesktopEnv {
     /// Desktop environment for Android
     Android,
     /// Running as Web Assembly on a web page
-    WebBrowser,
+    WebBrowser(String),
     /// A desktop environment for a video game console
     Console,
     /// Ubuntu-branded GNOME
@@ -62,7 +62,7 @@ impl Display for DesktopEnv {
             Self::Aqua => "Aqua",
             Self::Ios => "IOS",
             Self::Android => "Android",
-            Self::WebBrowser => "Web Browser",
+            Self::WebBrowser(a) => return write!(f, "WebBrowser ({a})"),
             Self::Console => "Console",
             Self::Ubuntu => "Ubuntu",
             Self::Ermine => "Ermine",
