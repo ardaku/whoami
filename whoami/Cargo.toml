@@ -36,8 +36,11 @@ version = "0.1.0"
 # Target-specific dependency for web browser
 [target.'cfg(all(target_arch = "wasm32", not(target_os = "wasi"), not(daku)))'.dependencies.web-sys]
 version = "0.3.77"
-features = ["Navigator", "Document", "Window", "Location"]
+features = ["Navigator", "Document", "Window", "Location", "console"]
 optional = true
+
+[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
+wasm-bindgen-test = "0.3"
 
 [features]
 default = ["web"]

@@ -136,6 +136,33 @@ jobs:
     - run: cargo update
     - run: cargo build --no-default-features --target=${{ matrix.cc }}
     - run: RUSTFLAGS="--cfg daku" cargo build --target=${{ matrix.cc }}
+  test-wasm:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tc: [stable, nightly]
+    steps:
+    - uses: taiki-e/checkout-action@v1
+    - uses: taiki-e/install-action@v2
+    - name: Install wasm-pack
+      run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+    - name: Setup Chrome for headless testing
+      uses: browser-actions/setup-chrome@latest
+    - run: rustup set profile minimal
+    - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup target add wasm32-unknown-unknown
+    - name: Run WASM tests in headless browser
+      run: |
+        cd whoami
+        wasm-pack test --headless --chrome --all-features
+    - name: Run WASM tests for web feature
+      run: |
+        cd whoami
+        wasm-pack test --headless --chrome --features web
+    - name: Run WASM tests without default features
+      run: |
+        cd whoami
+        wasm-pack test --headless --chrome --no-default-features
   cross-compile-illumos:
     runs-on: ${{ matrix.os }}
     strategy:
