@@ -74,7 +74,45 @@ pub fn realname_os() -> Result<OsString> {
 ///
 /// Usually hostnames are case-insensitive, but it's not a hard requirement.
 ///
-/// FIXME: Document platform-specific character limitations
+/// # Platform-Specific Character Limitations
+///
+/// ## Unix/Linux/BSD
+/// - **Maximum length**: 255 bytes (excluding null terminator)
+/// - **Encoding**: Must be valid UTF-8
+/// - **Characters**: Typically follows RFC 952/1123 DNS hostname rules:
+///   - Alphanumeric characters (a-z, A-Z, 0-9)
+///   - Hyphens (-), but not at start or end
+/// - Note: POSIX allows any character except null and newline, but network
+///   hostnames should follow DNS rules for interoperability
+///
+/// ## Windows
+/// - **Maximum length**: 63 characters for DNS hostname (per label)
+/// - **Encoding**: UTF-16 (converted to UTF-8 String)
+/// - **Characters**: Follows DNS hostname rules (RFC 1123):
+///   - Alphanumeric characters (a-z, A-Z, 0-9)
+///   - Hyphens (-), but not at start or end
+///
+/// ## Redox
+/// - Reads from `/etc/hostname` file
+/// - First line of file is used as hostname
+/// - No inherent character limitations beyond file system
+///
+/// ## Web (WASM)
+/// - Returns the document's domain name
+/// - Follows DNS hostname rules as enforced by browsers
+/// - Must be valid UTF-8
+///
+/// ## Other Platforms
+/// - WASI: Returns system hostname or defaults to "localhost"
+/// - Default: Returns "localhost" for unsupported platforms
+///
+/// # Notes
+/// For maximum compatibility across all platforms and network protocols,
+/// hostnames should:
+/// - Be 63 characters or less
+/// - Contain only ASCII alphanumeric characters and hyphens
+/// - Not start or end with a hyphen
+/// - Be case-insensitive (though case may be preserved)
 #[inline(always)]
 pub fn hostname() -> Result<String> {
     Target::hostname(Os)
