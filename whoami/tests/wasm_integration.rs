@@ -22,8 +22,6 @@ fn test_wasm_username() {
 
     let name = result.unwrap();
     assert!(!name.is_empty(), "username should not be empty in WASM");
-
-    console_log!("WASM username: {:?}", name);
 }
 
 #[wasm_bindgen_test]
@@ -33,8 +31,6 @@ fn test_wasm_realname() {
 
     let name = result.unwrap();
     assert!(!name.is_empty(), "realname should not be empty in WASM");
-
-    console_log!("WASM realname: {:?}", name);
 }
 
 #[wasm_bindgen_test]
@@ -44,8 +40,6 @@ fn test_wasm_hostname() {
 
     let name = result.unwrap();
     assert!(!name.is_empty(), "hostname should not be empty in WASM");
-
-    console_log!("WASM hostname: {}", name);
 }
 
 #[wasm_bindgen_test]
@@ -55,8 +49,6 @@ fn test_wasm_devicename() {
 
     let name = result.unwrap();
     assert!(!name.is_empty(), "devicename should not be empty in WASM");
-
-    console_log!("WASM devicename: {:?}", name);
 }
 
 #[wasm_bindgen_test]
@@ -66,8 +58,6 @@ fn test_wasm_distro() {
 
     let name = result.unwrap();
     assert!(!name.is_empty(), "distro should not be empty in WASM");
-
-    console_log!("WASM distro: {}", name);
 }
 
 #[wasm_bindgen_test]
@@ -92,7 +82,6 @@ fn test_wasm_platform() {
 #[wasm_bindgen_test]
 fn test_wasm_arch() {
     let architecture = arch();
-    console_log!("WASM architecture: {:?}", architecture);
 
     // In WASM32, we expect Wasm architecture
     assert_eq!(
@@ -140,10 +129,6 @@ fn test_wasm_lang() {
                 lang_str
             );
         }
-    } else {
-        console_log!(
-            "Language detection not available in this WASM environment"
-        );
     }
 }
 
@@ -177,8 +162,6 @@ fn test_wasm_all_apis_callable() {
     let _ = arch();
     let _ = desktop_env();
     let _ = lang_prefs();
-
-    console_log!("All WASM APIs callable without panicking");
 }
 
 #[wasm_bindgen_test]
@@ -192,8 +175,6 @@ fn test_wasm_string_encoding() {
 
     let hostname_str = hostname().unwrap();
     assert!(hostname_str.chars().all(|c| !c.is_control()));
-
-    console_log!("WASM string encoding verified");
 }
 
 #[wasm_bindgen_test]
@@ -209,8 +190,6 @@ fn test_wasm_error_handling() {
 
     let hostname_result = hostname();
     assert!(hostname_result.is_ok() || hostname_result.is_err());
-
-    console_log!("WASM error handling verified");
 }
 
 #[wasm_bindgen_test]
@@ -220,12 +199,8 @@ fn test_wasm_rapid_calls() {
         let _ = username();
         let _ = hostname();
 
-        if i % 10 == 0 {
-            console_log!("WASM rapid calls iteration: {}", i);
-        }
+        if i % 10 == 0 {}
     }
-
-    console_log!("WASM rapid calls test completed");
 }
 
 #[wasm_bindgen_test]
@@ -239,8 +214,6 @@ fn test_wasm_interleaved_calls() {
         let _ = realname();
         let _ = distro();
     }
-
-    console_log!("WASM interleaved calls test completed");
 }
 
 #[wasm_bindgen_test]
@@ -259,8 +232,6 @@ fn test_wasm_memory_stability() {
         initial_username, final_username,
         "Results should remain stable across many calls"
     );
-
-    console_log!("WASM memory stability verified");
 }
 
 #[wasm_bindgen_test]
@@ -268,8 +239,6 @@ fn test_wasm_platform_specific_behavior() {
     // Test platform-specific behavior in WASM
     let platform = platform();
     let arch = arch();
-
-    console_log!("Platform: {:?}, Arch: {:?}", platform, arch);
 
     // In WASM, architecture should always be Wasm32
     assert_eq!(arch, Arch::Wasm32);
@@ -281,11 +250,8 @@ fn test_wasm_platform_specific_behavior() {
                 !s.is_empty(),
                 "Unknown platform should have a description"
             );
-            console_log!("Platform description: {}", s);
         }
-        _ => {
-            console_log!("Detected specific platform: {:?}", platform);
-        }
+        _ => {}
     }
 }
 
@@ -302,8 +268,6 @@ fn test_wasm_concurrent_access() {
     // Verify all succeeded
     let all_ok = results.iter().all(|r| r.is_ok());
     assert!(all_ok, "All concurrent-like calls should succeed");
-
-    console_log!("WASM concurrent access test completed");
 }
 
 #[wasm_bindgen_test]
@@ -320,34 +284,24 @@ fn test_wasm_edge_cases() {
     // Valid UTF-8 checks
     let realname_str = realname().unwrap();
     assert!(realname_str.chars().count() > 0);
-
-    console_log!("WASM edge cases verified");
 }
 
 #[wasm_bindgen_test]
 fn test_wasm_api_completeness() {
     // Verify that all public APIs are accessible in WASM
 
-    // Core identification APIs
+    // Core identification APIs - verify they compile and are callable
     let has_username = username().is_ok();
-    let has_realname = realname().is_ok();
     let has_hostname = hostname().is_ok();
-    let has_devicename = devicename().is_ok();
 
-    // System information APIs
-    let has_distro = distro().is_ok();
-    let has_platform = true; // platform() doesn't return Result
-    let has_arch = true; // arch() doesn't return Result
-    let has_desktop_env = true; // desktop_env() doesn't return Result
-
-    // Language API
-    let has_lang = lang_prefs().is_ok();
-
-    console_log!(
-        "WASM API availability - username: {}, realname: {}, hostname: {}, devicename: {}, distro: {}, platform: {}, arch: {}, desktop_env: {}, lang: {}",
-        has_username, has_realname, has_hostname, has_devicename,
-        has_distro, has_platform, has_arch, has_desktop_env, has_lang
-    );
+    // Verify other APIs compile
+    let _ = realname();
+    let _ = devicename();
+    let _ = distro();
+    let _ = platform();
+    let _ = arch();
+    let _ = desktop_env();
+    let _ = lang_prefs();
 
     // At least core APIs should work
     assert!(
@@ -355,5 +309,3 @@ fn test_wasm_api_completeness() {
         "At least username or hostname should work in WASM"
     );
 }
-
-// Helper macro for console logging in tests

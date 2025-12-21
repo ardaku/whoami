@@ -151,6 +151,8 @@ jobs:
     - run: rustup set profile minimal
     - run: rustup toolchain install ${{ matrix.tc }}
     - run: rustup target add wasm32-unknown-unknown
+    # TODO: Consider using wasmtime instead of Chrome for faster, lighter CI
+    # wasmtime would eliminate browser dependencies and improve test performance
     - name: Run WASM tests in headless browser
       run: |
         cd whoami
