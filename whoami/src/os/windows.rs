@@ -64,6 +64,7 @@ enum ExtendedNameFormat {
 
 #[allow(unused)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 enum ComputerNameFormat {
     NetBIOS,                   // All caps hostname
     DnsHostname,               // Hostname
@@ -178,6 +179,39 @@ fn extended_name(format: ExtendedNameFormat) -> Result<OsString> {
     Ok(OsString::from_wide(&name))
 }
 
+/// Helper function to retrieve computer name using GetComputerNameExW
+fn get_computer_name(format: ComputerNameFormat) -> Result<Vec<u16>> {
+    // Step 1. Retrieve the entire length of the computer name
+    let mut size = 0;
+    let fail = unsafe {
+        // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
+        GetComputerNameExW(format, ptr::null_mut(), &mut size) == 0
+    };
+
+    assert!(fail);
+
+    if Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
+        return Err(Error::last_os_error());
+    }
+
+    // Step 2. Allocate memory to put the Windows (UTF-16) string.
+    let mut name: Vec<u16> =
+        Vec::with_capacity(size.try_into().unwrap_or(usize::MAX));
+    let mut size = name.capacity().try_into().unwrap_or(u32::MAX);
+
+    if unsafe {
+        GetComputerNameExW(format, name.as_mut_ptr().cast(), &mut size) == 0
+    } {
+        return Err(Error::last_os_error());
+    }
+
+    unsafe {
+        name.set_len(size.try_into().unwrap_or(usize::MAX));
+    }
+
+    Ok(name)
+}
+
 impl Target for Os {
     #[inline(always)]
     fn lang_prefs(self) -> Result<LanguagePrefs> {
@@ -234,85 +268,19 @@ impl Target for Os {
     }
 
     fn devicename(self) -> Result<OsString> {
-        // Step 1. Retreive the entire length of the device name
-        let mut size = 0;
-        let fail = unsafe {
-            // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
-            GetComputerNameExW(
-                ComputerNameFormat::DnsHostname,
-                ptr::null_mut(),
-                &mut size,
-            ) == 0
-        };
-
-        assert!(fail);
-
-        if Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
-            return Err(Error::last_os_error());
-        }
-
-        // Step 2. Allocate memory to put the Windows (UTF-16) string.
-        let mut name: Vec<u16> =
-            Vec::with_capacity(size.try_into().unwrap_or(usize::MAX));
-        let mut size = name.capacity().try_into().unwrap_or(u32::MAX);
-
-        if unsafe {
-            GetComputerNameExW(
-                ComputerNameFormat::DnsHostname,
-                name.as_mut_ptr().cast(),
-                &mut size,
-            ) == 0
-        } {
-            return Err(Error::last_os_error());
-        }
-
-        unsafe {
-            name.set_len(size.try_into().unwrap_or(usize::MAX));
-        }
-
-        // Step 3. Convert to Rust String
-        Ok(OsString::from_wide(&name))
+        get_computer_name(ComputerNameFormat::DnsHostname).map(|s| {
+            let mut name = s;
+            unsafe {
+                name.set_len(name.len().saturating_sub(1));
+            }
+            OsString::from_wide(&name)
+        })
     }
 
     fn hostname(self) -> Result<String> {
-        // Step 1. Retreive the entire length of the username
-        let mut size = 0;
-        let fail = unsafe {
-            // Ignore error, we know that it will be ERROR_INSUFFICIENT_BUFFER
-            GetComputerNameExW(
-                ComputerNameFormat::PhysicalDnsHostname,
-                ptr::null_mut(),
-                &mut size,
-            ) == 0
-        };
-
-        assert!(fail);
-
-        if Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
-            return Err(Error::last_os_error());
-        }
-
-        // Step 2. Allocate memory to put the Windows (UTF-16) string.
-        let mut name: Vec<u16> =
-            Vec::with_capacity(size.try_into().unwrap_or(usize::MAX));
-        let mut size = name.capacity().try_into().unwrap_or(u32::MAX);
-
-        if unsafe {
-            GetComputerNameExW(
-                ComputerNameFormat::PhysicalDnsHostname,
-                name.as_mut_ptr().cast(),
-                &mut size,
-            ) == 0
-        } {
-            return Err(Error::last_os_error());
-        }
-
-        unsafe {
-            name.set_len(size.try_into().unwrap_or(usize::MAX));
-        }
-
-        // Step 3. Convert to Rust String
-        conversions::string_from_os(OsString::from_wide(&name))
+        get_computer_name(ComputerNameFormat::PhysicalDnsHostname).and_then(
+            |name| conversions::string_from_os(OsString::from_wide(&name)),
+        )
     }
 
     fn distro(self) -> Result<String> {
