@@ -4,6 +4,7 @@ compile_error!("Unexpected pointer width for target platform");
 use std::{
     ffi::OsString,
     io::{Error, ErrorKind},
+    str::FromStr,
 };
 
 use web_sys::window;
@@ -73,7 +74,7 @@ impl Target for Os {
                 .to_vec()
                 .into_iter()
                 .filter_map(|l| l.as_string().map(Language::from_str))
-                .collect::<Result<Vec<_>>>();
+                .collect::<Result<Vec<_>>>()?;
             Ok(LanguagePreferences {
                 fallbacks: langs,
                 ..Default::default()
