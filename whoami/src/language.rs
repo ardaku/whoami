@@ -9,6 +9,8 @@ use crate::Result;
 
 /// A spoken language
 ///
+/// Returned from various methods on [`LanguagePreferences`]
+///
 /// Use [`ToString::to_string()`] to convert to string of two letter lowercase
 /// language code followed an forward slash and uppercase country code (example:
 /// `en/US`).
@@ -148,7 +150,9 @@ impl Display for Language {
     }
 }
 
-/// [`Language`] preferences for a user.
+/// [`Language`] preferences for a user
+///
+/// Returned from [`lang_prefs()`](crate::lang_prefs)
 ///
 /// Fields are sorted in order of the user's preference.
 ///

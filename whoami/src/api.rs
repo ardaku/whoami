@@ -168,8 +168,7 @@ pub fn platform() -> Platform {
 
 /// Get the user's preferred language(s).
 ///
-/// Returned as a [`LanguagePreferences`].  Unrecognized languages may
-/// either return an error or be skipped.
+/// Returned as an instance of [`LanguagePreferences`]
 #[inline(always)]
 pub fn lang_prefs() -> Result<LanguagePreferences> {
     Target::lang_prefs(Os)
