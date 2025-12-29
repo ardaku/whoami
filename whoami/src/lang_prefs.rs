@@ -7,7 +7,7 @@ use std::{
 
 use crate::Result;
 
-/// A spoken language
+/// A spoken language identifier
 ///
 /// Returned from various methods on [`LanguagePreferences`]
 ///
@@ -19,21 +19,24 @@ use crate::Result;
 /// `en/US` since it's a common choice for lingua franca.  It is not guaranteed
 /// to stay the same across whoami versions.
 ///
-/// Language codes defined in an undefined superset of
+/// Language codes are defined in an unspecified superset of
 /// [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes),
-/// Country codes defined in an undefined superset of
-/// [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+/// Country codes are defined in an unspecified superset of
+/// [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
+///
+/// You can compare languages with strings (where the separator can be any of
+/// `-`, `_`, or `/`).
 #[non_exhaustive]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub struct Language {
     /// The language code for this language
     ///
     /// Uses <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>
-    pub lang: [NonZeroU8; 2],
+    lang: [NonZeroU8; 2],
     /// The optional country code for this language dialect
     ///
     /// Uses <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>
-    pub country: Option<[NonZeroU8; 2]>,
+    country: Option<[NonZeroU8; 2]>,
 }
 
 impl Default for Language {
@@ -49,8 +52,6 @@ impl FromStr for Language {
     /// `Language` where language is a two letter language code and country is a
     /// two letter country code.  The encoding is ignored.
     fn from_str(s: &str) -> Result<Self> {
-        const SEPARATORS: &[char] = &['_', '-', '/'];
-
         // Strip the encoding off the end if it exists
         let lang = s.split_terminator('.').next().unwrap_or_default();
 
@@ -64,10 +65,7 @@ impl FromStr for Language {
             .next()
             .ok_or_else(|| Error::new(ErrorKind::InvalidData, "No lang"))?
             .as_bytes();
-        let country = parts
-            .next()
-            .unwrap_or("\0\0")
-            .as_bytes();
+        let country = parts.next().unwrap_or("\0\0").as_bytes();
 
         // Verify that the lengths are valid
         if parts.next().is_some() {
@@ -150,6 +148,42 @@ impl Display for Language {
     }
 }
 
+impl PartialEq<Language> for str {
+    fn eq(&self, lang: &Language) -> bool {
+        lang_str_eq(lang, self)
+    }
+}
+
+impl PartialEq<Language> for &str {
+    fn eq(&self, lang: &Language) -> bool {
+        lang_str_eq(lang, self)
+    }
+}
+
+impl PartialEq<Language> for String {
+    fn eq(&self, lang: &Language) -> bool {
+        lang_str_eq(lang, self)
+    }
+}
+
+impl PartialEq<String> for Language {
+    fn eq(&self, string: &String) -> bool {
+        lang_str_eq(self, string)
+    }
+}
+
+impl PartialEq<str> for Language {
+    fn eq(&self, string: &str) -> bool {
+        lang_str_eq(self, string)
+    }
+}
+
+impl PartialEq<&str> for Language {
+    fn eq(&self, string: &&str) -> bool {
+        lang_str_eq(self, string)
+    }
+}
+
 /// [`Language`] preferences for a user
 ///
 /// Returned from [`lang_prefs()`](crate::lang_prefs)
@@ -226,7 +260,7 @@ impl LanguagePreferences {
         &'a self,
         l: &Option<Language>,
     ) -> impl Iterator<Item = Language> + 'a {
-        l.clone().into_iter().chain(self.fallbacks.iter().cloned())
+        (*l).into_iter().chain(self.fallbacks.iter().cloned())
     }
 
     /// Returns the collation langs of this [`LanguagePreferences`] in order of
@@ -293,3 +327,23 @@ impl LanguagePreferences {
         self.chain_fallbacks(&self.time)
     }
 }
+
+fn lang_str_eq(language: &Language, string: &str) -> bool {
+    let mut iter = string.split(SEPARATORS);
+    let string_lang = iter.next().map(|s| s.as_bytes());
+    let string_country = iter.next().map(|s| s.as_bytes());
+    let end = iter.next();
+    let lang = [language.lang[0].get(), language.lang[1].get()];
+    let Some(country) = language.country.as_ref() else {
+        return end.is_none()
+            && string_lang == Some(&lang)
+            && string_country.is_none();
+    };
+    let country = [country[0].get(), country[1].get()];
+
+    end.is_none()
+        && string_lang == Some(&lang)
+        && string_country == Some(&country)
+}
+
+const SEPARATORS: &[char] = &['_', '-', '/'];
