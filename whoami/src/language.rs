@@ -59,14 +59,14 @@ impl FromStr for Language {
         }
 
         // Split apart lang and country
-        let mut parts = lang.split_terminator(SEPARATORS);
+        let mut parts = lang.split(SEPARATORS);
         let lang = parts
             .next()
             .ok_or_else(|| Error::new(ErrorKind::InvalidData, "No lang"))?
             .as_bytes();
         let country = parts
             .next()
-            .ok_or_else(|| Error::new(ErrorKind::InvalidData, "No country"))?
+            .unwrap_or("\0\0")
             .as_bytes();
 
         // Verify that the lengths are valid
@@ -77,7 +77,7 @@ impl FromStr for Language {
                 ErrorKind::InvalidData,
                 "Invalid length lang code",
             ));
-        } else if ![0, 2].contains(&country.len()) {
+        } else if country.len() != 2 {
             return Err(Error::new(
                 ErrorKind::InvalidData,
                 "Invalid length country code",
