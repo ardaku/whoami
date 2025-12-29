@@ -93,7 +93,7 @@ mod api;
 mod arch;
 mod conversions;
 mod desktop_env;
-mod language;
+mod lang_prefs;
 mod os;
 mod platform;
 mod result;
@@ -106,7 +106,7 @@ pub use self::{
     },
     arch::{Arch, Width},
     desktop_env::DesktopEnv,
-    language::{Language, LanguagePreferences},
+    lang_prefs::{Language, LanguagePreferences},
     platform::Platform,
     result::Result,
 };
