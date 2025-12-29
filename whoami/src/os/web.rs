@@ -10,7 +10,7 @@ use web_sys::window;
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, LanguagePrefs, Platform, Result,
+    Arch, DesktopEnv, Language, LanguagePreferences, Platform, Result,
 };
 
 // Get the user agent
@@ -65,7 +65,7 @@ fn browser_info() -> String {
 }
 
 impl Target for Os {
-    fn lang_prefs(self) -> Result<LanguagePrefs> {
+    fn lang_prefs(self) -> Result<LanguagePreferences> {
         if let Some(window) = window() {
             let langs = window
                 .navigator()
@@ -74,7 +74,7 @@ impl Target for Os {
                 .into_iter()
                 .filter_map(|l| l.as_string().map(Language::from_str))
                 .collect::<Result<Vec<_>>>();
-            Ok(LanguagePrefs {
+            Ok(LanguagePreferences {
                 fallbacks: langs,
                 ..Default::default()
             })

@@ -52,7 +52,9 @@ use std::{
     io::{Error, ErrorKind},
 };
 
-use crate::{Arch, DesktopEnv, Language, LanguagePrefs, Platform, Result};
+use crate::{
+    Arch, DesktopEnv, Language, LanguagePreferences, Platform, Result,
+};
 
 /// Implement `Target for Os` to add platform support for a target.
 pub(crate) struct Os;
@@ -60,7 +62,7 @@ pub(crate) struct Os;
 /// Target platform support
 pub(crate) trait Target: Sized {
     /// Return a semicolon-delimited string of language/COUNTRY codes.
-    fn lang_prefs(self) -> Result<LanguagePrefs>;
+    fn lang_prefs(self) -> Result<LanguagePreferences>;
     /// Return the user's "real" / "full" name.
     fn realname(self) -> Result<OsString>;
     /// Return the user's username.
@@ -105,7 +107,7 @@ fn err_empty_record() -> Error {
 
 // This is only used on some platforms
 #[allow(dead_code)]
-fn unix_lang() -> Result<LanguagePrefs> {
+fn unix_lang() -> Result<LanguagePreferences> {
     use std::str::FromStr;
 
     let env_var = |var: &str| match env::var(var) {
@@ -128,7 +130,7 @@ fn unix_lang() -> Result<LanguagePrefs> {
     // https://www.gnu.org/software/libc/manual/html_node/Standard-Locales.html
     if let Some(l) = &lang {
         if l == "C" || l == "POSIX" {
-            return Ok(LanguagePrefs {
+            return Ok(LanguagePreferences {
                 fallbacks: Vec::new(),
                 ..Default::default()
             });
@@ -139,7 +141,7 @@ fn unix_lang() -> Result<LanguagePrefs> {
     // localization is enabled, i.e., LC_ALL / LANG is not "C" or "POSIX".
     // <https://www.gnu.org/software/gettext/manual/html_node/The-LANGUAGE-variable.html>
     if let Some(language) = env_var("LANGUAGE")? {
-        return Ok(LanguagePrefs {
+        return Ok(LanguagePreferences {
             fallbacks: language
                 .split(":")
                 .map(Language::from_str)
@@ -154,7 +156,7 @@ fn unix_lang() -> Result<LanguagePrefs> {
         env_var(var)?.as_deref().map(Language::from_str).transpose()
     };
 
-    Ok(LanguagePrefs {
+    Ok(LanguagePreferences {
         fallbacks: lang
             .as_ref()
             .map(|l| -> Result<_> { Ok([Language::from_str(l)?].to_vec()) })

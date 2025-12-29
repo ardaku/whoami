@@ -7,7 +7,7 @@ use libredox::{call, error};
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, LanguagePrefs, Platform, Result,
+    Arch, DesktopEnv, LanguagePreferences, Platform, Result,
 };
 
 /// Row in the Redox /etc/passwd file
@@ -88,7 +88,7 @@ fn hostname() -> Result<String> {
 }
 
 impl Target for Os {
-    fn lang_prefs(self) -> Result<LanguagePrefs> {
+    fn lang_prefs(self) -> Result<LanguagePreferences> {
         super::unix_lang()
     }
 

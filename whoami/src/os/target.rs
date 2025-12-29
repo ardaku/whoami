@@ -9,13 +9,13 @@ use std::{
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, LanguagePrefs, Platform, Result,
+    Arch, DesktopEnv, Language, LanguagePreferences, Platform, Result,
 };
 
 impl Target for Os {
     #[inline(always)]
-    fn lang_prefs(self) -> Result<LanguagePrefs> {
-        Ok(LanguagePrefs {
+    fn lang_prefs(self) -> Result<LanguagePreferences> {
+        Ok(LanguagePreferences {
             fallbacks: [Language::default()].to_vec(),
             ..Default::default()
         })

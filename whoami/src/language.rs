@@ -157,9 +157,9 @@ impl Display for Language {
 /// are defined in <https://learn.microsoft.com/en-us/cpp/c-runtime-library/locale-categories>.
 #[derive(Debug, Clone, Default)]
 #[non_exhaustive]
-pub struct LanguagePrefs {
+pub struct LanguagePreferences {
     /// Determines general user language preference, should be used in
-    /// situations which are not encompassed by other [`LanguagePrefs`].
+    /// situations which are not encompassed by other [`LanguagePreferences`].
     pub(crate) fallbacks: Vec<Language>,
 
     /// Determines collation rules used for sorting and regular expressions,
@@ -190,7 +190,7 @@ pub struct LanguagePrefs {
     pub(crate) time: Option<Language>,
 }
 
-impl Display for LanguagePrefs {
+impl Display for LanguagePreferences {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let langs: [(&str, Vec<Language>); 6] = [
             ("Collation", self.collation_langs().collect()),
@@ -217,7 +217,7 @@ impl Display for LanguagePrefs {
     }
 }
 
-impl LanguagePrefs {
+impl LanguagePreferences {
     fn chain_fallbacks<'a>(
         &'a self,
         l: &Option<Language>,
@@ -225,8 +225,8 @@ impl LanguagePrefs {
         l.clone().into_iter().chain(self.fallbacks.iter().cloned())
     }
 
-    /// Returns the collation langs of this [`LanguagePrefs`] in order of the
-    /// user's preference
+    /// Returns the collation langs of this [`LanguagePreferences`] in order of
+    /// the user's preference
     ///
     /// Collation langs are used for sorting and regular expressions,
     /// including character equivalence classes and multicharacter collating
@@ -235,8 +235,8 @@ impl LanguagePrefs {
         self.chain_fallbacks(&self.collation)
     }
 
-    /// Returns the char class langs of this [`LanguagePrefs`] in order of the
-    /// user's preference
+    /// Returns the char class langs of this [`LanguagePreferences`] in order of
+    /// the user's preference
     ///
     /// Char class langs determine the interpretation of byte sequences as
     /// characters (e.g., single versus multibyte characters), character
@@ -246,20 +246,21 @@ impl LanguagePrefs {
         self.chain_fallbacks(&self.char_classes)
     }
 
-    /// Returns the monetary langs of this [`LanguagePrefs`] in order of the
-    /// user's preference
+    /// Returns the monetary langs of this [`LanguagePreferences`] in order of
+    /// the user's preference
     ///
     /// Monetary langs determine the formatting used for monetary-related
     /// numeric values, i.e, the way numbers are usually printed with details
     /// such as decimal point versus decimal comma.
     ///
-    /// For nonmonetary numeric values, see [`LanguagePrefs::numeric_langs`]
+    /// For nonmonetary numeric values, see
+    /// [`LanguagePreferences::numeric_langs`]
     pub fn monetary_langs(&self) -> impl Iterator<Item = Language> + '_ {
         self.chain_fallbacks(&self.monetary)
     }
 
-    /// Returns the messages langs of this [`LanguagePrefs`] in order of the
-    /// user's preference
+    /// Returns the messages langs of this [`LanguagePreferences`] in order of
+    /// the user's preference
     ///
     /// Message determines the language in which messages are
     /// displayed and what an affirmative or negative answer looks
@@ -268,20 +269,20 @@ impl LanguagePrefs {
         self.chain_fallbacks(&self.messages)
     }
 
-    /// Returns the numeric langs of this [`LanguagePrefs`] in order of the
-    /// user's preference
+    /// Returns the numeric langs of this [`LanguagePreferences`] in order of
+    /// the user's preference
     ///
     /// Numeric langs determine the formatting rules used for nonmonetary
     /// numeric values. For example, the thousands separator and the radix
     /// character.
     ///
-    /// For monetary formatting, see [`LanguagePrefs::monetary_langs`].
+    /// For monetary formatting, see [`LanguagePreferences::monetary_langs`].
     pub fn numeric_langs(&self) -> impl Iterator<Item = Language> + '_ {
         self.chain_fallbacks(&self.numeric)
     }
 
-    /// Returns the time langs of this [`LanguagePrefs`] in order of the user's
-    /// preference
+    /// Returns the time langs of this [`LanguagePreferences`] in order of the
+    /// user's preference
     ///
     /// Time langs determine format and contents of date and time information.
     pub fn time_langs(&self) -> impl Iterator<Item = Language> + '_ {

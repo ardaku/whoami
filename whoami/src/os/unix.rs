@@ -25,7 +25,7 @@ use std::{
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, LanguagePrefs, Platform, Result,
+    Arch, DesktopEnv, LanguagePreferences, Platform, Result,
 };
 
 #[cfg(any(target_os = "linux", target_os = "hurd"))]
@@ -443,7 +443,7 @@ unsafe fn uname(buf: *mut UtsName) -> c_int {
 }
 
 impl Target for Os {
-    fn lang_prefs(self) -> Result<LanguagePrefs> {
+    fn lang_prefs(self) -> Result<LanguagePreferences> {
         super::unix_lang()
     }
 
