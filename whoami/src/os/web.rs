@@ -73,7 +73,9 @@ impl Target for Os {
                 .languages()
                 .to_vec()
                 .into_iter()
-                .filter_map(|l| l.as_string().map(Language::from_str))
+                .filter_map(|l| {
+                    l.as_string().as_deref().map(Language::from_str)
+                })
                 .collect::<Result<Vec<_>>>()?;
             Ok(LanguagePreferences {
                 fallbacks: langs,
