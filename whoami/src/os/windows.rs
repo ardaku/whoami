@@ -4,6 +4,7 @@ use std::{
     mem::{self, MaybeUninit},
     os::windows::ffi::OsStringExt,
     ptr,
+    str::FromStr,
 };
 
 use crate::{
