@@ -3,7 +3,7 @@ use std::{env, ffi::OsString};
 use crate::{
     conversions,
     os::{Os, Target},
-    Arch, DesktopEnv, LanguagePrefs, Platform, Result,
+    Arch, DesktopEnv, LanguagePreferences, Platform, Result,
 };
 
 macro_rules! report_message {
@@ -168,9 +168,8 @@ pub fn platform() -> Platform {
 
 /// Get the user's preferred language(s).
 ///
-/// Returned as a [`LanguagePrefs`].  Unrecognized languages may
-/// either return an error or be skipped.
+/// Returned as an instance of [`LanguagePreferences`]
 #[inline(always)]
-pub fn lang_prefs() -> Result<LanguagePrefs> {
+pub fn lang_prefs() -> Result<LanguagePreferences> {
     Target::lang_prefs(Os)
 }

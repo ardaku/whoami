@@ -4,13 +4,14 @@ compile_error!("Unexpected pointer width for target platform");
 use std::{
     ffi::OsString,
     io::{Error, ErrorKind},
+    str::FromStr,
 };
 
 use web_sys::window;
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, LanguagePrefs, Platform, Result,
+    Arch, DesktopEnv, Language, LanguagePreferences, Platform, Result,
 };
 
 // Get the user agent
@@ -65,16 +66,18 @@ fn browser_info() -> String {
 }
 
 impl Target for Os {
-    fn lang_prefs(self) -> Result<LanguagePrefs> {
+    fn lang_prefs(self) -> Result<LanguagePreferences> {
         if let Some(window) = window() {
             let langs = window
                 .navigator()
                 .languages()
                 .to_vec()
                 .into_iter()
-                .filter_map(|l| l.as_string().map(Language::from))
-                .collect::<Vec<_>>();
-            Ok(LanguagePrefs {
+                .filter_map(|l| {
+                    l.as_string().as_deref().map(Language::from_str)
+                })
+                .collect::<Result<Vec<_>>>()?;
+            Ok(LanguagePreferences {
                 fallbacks: langs,
                 ..Default::default()
             })

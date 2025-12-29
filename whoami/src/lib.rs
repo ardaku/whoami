@@ -5,7 +5,7 @@
 //! Using the whoami crate is super easy!  All of the public items are simple
 //! functions with no parameters that return [`String`]s or [`OsString`]s (with
 //! the exception of [`desktop_env()`], [`platform()`], and [`arch()`], which
-//! return enums, and [`lang_prefs()`] that returns [`LanguagePrefs`]).
+//! return enums, and [`lang_prefs()`] that returns [`LanguagePreferences`]).
 //! The following example shows how to use all of the functions (except those
 //! that return [`OsString`]):
 //!
@@ -93,7 +93,7 @@ mod api;
 mod arch;
 mod conversions;
 mod desktop_env;
-mod language;
+mod lang_prefs;
 mod os;
 mod platform;
 mod result;
@@ -106,7 +106,7 @@ pub use self::{
     },
     arch::{Arch, Width},
     desktop_env::DesktopEnv,
-    language::{Country, Language, LanguagePrefs},
+    lang_prefs::{Language, LanguagePreferences},
     platform::Platform,
     result::Result,
 };
