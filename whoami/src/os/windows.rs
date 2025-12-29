@@ -219,8 +219,8 @@ impl Target for Os {
         Ok(LanguagePrefs {
             fallbacks: String::from_utf16_lossy(&buffer)
                 .split('\0')
-                .map(Language::from)
-                .collect::<Vec<Language>>(),
+                .map(Language::from_str)
+                .collect::<Result<Vec<Language>>>()?,
             ..Default::default()
         })
     }

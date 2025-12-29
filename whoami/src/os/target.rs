@@ -16,7 +16,7 @@ impl Target for Os {
     #[inline(always)]
     fn lang_prefs(self) -> Result<LanguagePrefs> {
         Ok(LanguagePrefs {
-            fallbacks: [Language::from("en/US")].to_vec(),
+            fallbacks: [Language::default()].to_vec(),
             ..Default::default()
         })
     }

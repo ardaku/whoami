@@ -1,29 +1,11 @@
-use std::fmt::{self, Display, Formatter};
+use std::{
+    fmt::{self, Display, Formatter},
+    io::{Error, ErrorKind},
+    num::NonZeroU8,
+    str::FromStr,
+};
 
-/// Country code for a [`Language`] dialect
-///
-/// Uses <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>
-#[non_exhaustive]
-#[repr(u32)]
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub enum Country {
-    // FIXME: V2: u32::from_ne_bytes for country codes, with `\0` for unused
-    // FIXME: Add aliases up to 3-4 letters, but hidden
-    /// Any dialect
-    Any,
-    /// `US`: United States of America
-    #[doc(hidden)]
-    Us,
-}
-
-impl Display for Country {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        f.write_str(match self {
-            Self::Any => "**",
-            Self::Us => "US",
-        })
-    }
-}
+use crate::Result;
 
 /// A spoken language
 ///
@@ -31,69 +13,138 @@ impl Display for Country {
 /// language code followed an forward slash and uppercase country code (example:
 /// `en/US`).
 ///
-/// Language codes defined in ISO 639 <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>,
-/// Country codes defined in ISO 3166 <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>
+/// The [`Default`] implementation can be used for fallbacks, and is set to
+/// `en/US` since it's a common choice for lingua franca.  It is not guaranteed
+/// to stay the same across whoami versions.
+///
+/// Language codes defined in an undefined superset of
+/// [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes),
+/// Country codes defined in an undefined superset of
+/// [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
 #[non_exhaustive]
-#[derive(Clone, Eq, PartialEq, Debug)]
-// #[allow(variant_size_differences)]
-pub enum Language {
-    #[doc(hidden)]
-    __(Box<String>),
-    /// `en`: English
-    #[doc(hidden)]
-    En(Country),
-    /// `es`: Spanish
-    #[doc(hidden)]
-    Es(Country),
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+pub struct Language {
+    /// The language code for this language
+    ///
+    /// Uses <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>
+    pub lang: [NonZeroU8; 2],
+    /// The optional country code for this language dialect
+    ///
+    /// Uses <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>
+    pub country: Option<[NonZeroU8; 2]>,
 }
 
-impl Language {
-    /// Retrieve the country code for this language dialect.
-    pub fn country(&self) -> Country {
-        match self {
-            Self::__(_) => Country::Any,
-            Self::En(country) | Self::Es(country) => *country,
-        }
+impl Default for Language {
+    fn default() -> Self {
+        Self::from_str("en/US").expect("this is a bug; failed to parse en/US")
     }
 }
 
-// Reads an `language_COUNTRY.Encoding` formatted string into a Language where
-// language is a two letter language code and country is a two letter country
-// code.
-impl<T: AsRef<str>> From<T> for Language {
-    // FIXME: Could do less allocation
-    fn from(item: T) -> Self {
-        let lang = item
-            .as_ref()
-            .split_terminator('.')
+impl FromStr for Language {
+    type Err = Error;
+
+    /// Reads an `language{/_-}COUNTRY.Encoding` formatted string into a
+    /// `Language` where language is a two letter language code and country is a
+    /// two letter country code.  The encoding is ignored.
+    fn from_str(s: &str) -> Result<Self> {
+        const SEPARATORS: &[char] = &['_', '-', '/'];
+
+        // Strip the encoding off the end if it exists
+        let lang = s.split_terminator('.').next().unwrap_or_default();
+
+        if lang.is_empty() {
+            return Err(Error::new(ErrorKind::NotFound, "Empty record"));
+        }
+
+        // Split apart lang and country
+        let mut parts = lang.split_terminator(SEPARATORS);
+        let lang = parts
             .next()
-            .unwrap_or_default()
-            .replace(|x| ['_', '-'].contains(&x), "/");
-        Self::__(Box::new(lang))
+            .ok_or_else(|| Error::new(ErrorKind::InvalidData, "No lang"))?
+            .as_bytes();
+        let country = parts
+            .next()
+            .ok_or_else(|| Error::new(ErrorKind::InvalidData, "No country"))?
+            .as_bytes();
+
+        // Verify that the lengths are valid
+        if parts.next().is_some() {
+            return Err(Error::new(ErrorKind::InvalidData, "Invalid locale"));
+        } else if lang.len() != 2 {
+            return Err(Error::new(
+                ErrorKind::InvalidData,
+                "Invalid length lang code",
+            ));
+        } else if ![0, 2].contains(&country.len()) {
+            return Err(Error::new(
+                ErrorKind::InvalidData,
+                "Invalid length country code",
+            ));
+        }
+
+        // Verify the contents are valid
+        let Some(lang) = NonZeroU8::new(lang[0]).zip(NonZeroU8::new(lang[1]))
+        else {
+            return Err(Error::new(
+                ErrorKind::InvalidData,
+                "Lang code contains NUL",
+            ));
+        };
+        let lang = [lang.0, lang.1];
+
+        if (country[0] == 0 || country[1] == 0)
+            && (country[0] != 0 || country[1] != 0)
+        {
+            return Err(Error::new(
+                ErrorKind::InvalidData,
+                "Country code contains NUL",
+            ));
+        }
+
+        let country = NonZeroU8::new(country[0])
+            .zip(NonZeroU8::new(country[1]))
+            .map(|country| [country.0, country.1]);
+
+        if !(lang[0].get().is_ascii_lowercase()
+            && lang[1].get().is_ascii_lowercase())
+        {
+            return Err(Error::new(
+                ErrorKind::InvalidData,
+                "Lang code not ascii lowercase",
+            ));
+        }
+
+        if let Some(ref country) = country {
+            if !(country[0].get().is_ascii_uppercase()
+                && country[1].get().is_ascii_uppercase())
+            {
+                return Err(Error::new(
+                    ErrorKind::InvalidData,
+                    "Country code not ascii uppercase",
+                ));
+            }
+        }
+
+        Ok(Self { lang, country })
     }
 }
 
 impl Display for Language {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::__(code) => f.write_str(code.as_str()),
-            Self::En(country) => {
-                if *country != Country::Any {
-                    f.write_str("en/")?;
-                    <Country as Display>::fmt(country, f)
-                } else {
-                    f.write_str("en")
-                }
-            }
-            Self::Es(country) => {
-                if *country != Country::Any {
-                    f.write_str("es/")?;
-                    <Country as Display>::fmt(country, f)
-                } else {
-                    f.write_str("es")
-                }
-            }
-        }
+        f.write_str(&String::from_utf8_lossy(&[
+            self.lang[0].get(),
+            self.lang[1].get(),
+        ]))?;
+
+        let Some(country) = self.country.as_ref() else {
+            return Ok(());
+        };
+
+        f.write_str("/")?;
+        f.write_str(&String::from_utf8_lossy(&[
+            country[0].get(),
+            country[1].get(),
+        ]))
     }
 }
 

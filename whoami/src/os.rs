@@ -106,6 +106,8 @@ fn err_empty_record() -> Error {
 // This is only used on some platforms
 #[allow(dead_code)]
 fn unix_lang() -> Result<LanguagePrefs> {
+    use std::str::FromStr;
+
     let env_var = |var: &str| match env::var(var) {
         Ok(value) => Ok(if value.is_empty() { None } else { Some(value) }),
         Err(VarError::NotPresent) => Ok(None),
@@ -138,7 +140,10 @@ fn unix_lang() -> Result<LanguagePrefs> {
     // <https://www.gnu.org/software/gettext/manual/html_node/The-LANGUAGE-variable.html>
     if let Some(language) = env_var("LANGUAGE")? {
         return Ok(LanguagePrefs {
-            fallbacks: language.split(":").map(Language::from).collect(),
+            fallbacks: language
+                .split(":")
+                .map(Language::from_str)
+                .collect::<Result<_>>()?,
             ..Default::default()
         });
     }
@@ -146,11 +151,15 @@ fn unix_lang() -> Result<LanguagePrefs> {
     // All fields other than LANGUAGE can only contain a single value, so we
     // don't need to perform any splitting at this point.
     let lang_from_var = |var| -> Result<Option<Language>, Error> {
-        Ok(env_var(var)?.map(Language::from))
+        env_var(var)?.as_deref().map(Language::from_str).transpose()
     };
 
     Ok(LanguagePrefs {
-        fallbacks: lang.map_or_else(Vec::new, |l| [Language::from(l)].to_vec()),
+        fallbacks: lang
+            .as_ref()
+            .map(|l| -> Result<_> { Ok([Language::from_str(l)?].to_vec()) })
+            .transpose()?
+            .unwrap_or(Vec::new()),
         collation: lang_from_var("LC_COLLATE")?,
         char_classes: lang_from_var("LC_CTYPE")?,
         monetary: lang_from_var("LC_MONTEARY")?,

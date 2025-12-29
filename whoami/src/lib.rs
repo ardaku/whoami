@@ -106,7 +106,7 @@ pub use self::{
     },
     arch::{Arch, Width},
     desktop_env::DesktopEnv,
-    language::{Country, Language, LanguagePrefs},
+    language::{Language, LanguagePrefs},
     platform::Platform,
     result::Result,
 };
