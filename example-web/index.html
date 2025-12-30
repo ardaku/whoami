@@ -1,14 +1,67 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
-  </head>
-  <body>
-    <script type="module">
-        import init, {main} from './pkg/whoami_web.js';
-        init().then(function(wasm) {
-            main();
-        });
-    </script>
-  </body>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>whoami Web Demo</title>
+<style>
+  body {
+    background: #282a36;
+    color: #f8f8f2;
+    font-family: Consolas, monospace;
+    padding: 20px;
+  }
+  .card {
+    background: #44475a;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    margin: auto;
+  }
+  h1 {
+    color: #50fa7b;
+  }
+  dt {
+    color: #8be9fd;
+  }
+</style>
+</head>
+<body>
+<h1>whoami Web Demo</h1>
+
+<div class="card">
+  <dl>
+  
+
+   
+
+    <dt>Browser:</dt>
+    <dd id="browser"></dd>
+
+    <dt>Timezone:</dt>
+    <dd id="timezone"></dd>
+
+    <dt>Mobile Device:</dt>
+    <dd id="mobile"></dd>
+  </dl>
+</div>
+
+<script type="module">
+  import init, {
+
+    browser,
+    timezone,
+    is_mobile
+  } from "./pkg/whoami_web.js";
+
+  (async () => {
+    await init();
+
+   
+    document.getElementById("browser").textContent = browser();
+    document.getElementById("timezone").textContent = timezone();
+    document.getElementById("mobile").textContent = is_mobile() ? "Yes" : "No";
+  })();
+</script>
+
+</body>
 </html>
