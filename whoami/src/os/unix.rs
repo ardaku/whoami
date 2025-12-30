@@ -161,14 +161,21 @@ unsafe fn strlen_gecos(cs: *const c_void) -> usize {
     len
 }
 
-fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
+/// Helper function to convert C string to OsString using a custom strlen function
+fn os_from_cstring_impl<F>(
+    string: *const c_void,
+    strlen_fn: F,
+) -> Result<OsString>
+where
+    F: Fn(*const c_void) -> usize,
+{
     if string.is_null() {
         return Err(super::err_null_record());
     }
 
     // Get a byte slice of the c string.
     let slice = unsafe {
-        let length = strlen_gecos(string);
+        let length = strlen_fn(string);
 
         if length == 0 {
             return Err(super::err_empty_record());
@@ -181,24 +188,12 @@ fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
     Ok(OsString::from_vec(slice.to_vec()))
 }
 
+fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
+    os_from_cstring_impl(string, |s| unsafe { strlen_gecos(s) })
+}
+
 fn os_from_cstring(string: *const c_void) -> Result<OsString> {
-    if string.is_null() {
-        return Err(super::err_null_record());
-    }
-
-    // Get a byte slice of the c string.
-    let slice = unsafe {
-        let length = strlen(string);
-
-        if length == 0 {
-            return Err(super::err_empty_record());
-        }
-
-        slice::from_raw_parts(string.cast(), length)
-    };
-
-    // Turn byte slice into Rust String.
-    Ok(OsString::from_vec(slice.to_vec()))
+    os_from_cstring_impl(string, |s| unsafe { strlen(s) })
 }
 
 #[cfg(target_os = "macos")]
