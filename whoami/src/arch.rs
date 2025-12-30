@@ -27,7 +27,7 @@ impl Display for Width {
 /// The architecture of a CPU
 #[non_exhaustive]
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub enum Arch {
+pub enum CpuArchitecture {
     /// Unknown Architecture
     Unknown(String),
     /// ARMv5
@@ -76,7 +76,7 @@ pub enum Arch {
     Wasm64,
 }
 
-impl Display for Arch {
+impl Display for CpuArchitecture {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         if let Self::Unknown(_) = self {
             f.write_str("Unknown: ")?;
@@ -110,33 +110,33 @@ impl Display for Arch {
     }
 }
 
-impl Arch {
+impl CpuArchitecture {
     /// Get the width of this architecture.
     pub fn width(&self) -> Result<Width> {
         match self {
-            Arch::ArmV5
-            | Arch::ArmV6
-            | Arch::ArmV7
-            | Arch::I386
-            | Arch::I586
-            | Arch::I686
-            | Arch::Mips
-            | Arch::MipsEl
-            | Arch::PowerPc
-            | Arch::Riscv32
-            | Arch::Sparc
-            | Arch::Wasm32 => Ok(Width::Bits32),
-            Arch::Arm64
-            | Arch::Mips64
-            | Arch::Mips64El
-            | Arch::PowerPc64
-            | Arch::PowerPc64Le
-            | Arch::Riscv64
-            | Arch::S390x
-            | Arch::Sparc64
-            | Arch::Wasm64
-            | Arch::X64 => Ok(Width::Bits64),
-            Arch::Unknown(unknown_arch) => Err(Error::new(
+            Self::ArmV5
+            | Self::ArmV6
+            | Self::ArmV7
+            | Self::I386
+            | Self::I586
+            | Self::I686
+            | Self::Mips
+            | Self::MipsEl
+            | Self::PowerPc
+            | Self::Riscv32
+            | Self::Sparc
+            | Self::Wasm32 => Ok(Width::Bits32),
+            Self::Arm64
+            | Self::Mips64
+            | Self::Mips64El
+            | Self::PowerPc64
+            | Self::PowerPc64Le
+            | Self::Riscv64
+            | Self::S390x
+            | Self::Sparc64
+            | Self::Wasm64
+            | Self::X64 => Ok(Width::Bits64),
+            Self::Unknown(unknown_arch) => Err(Error::new(
                 ErrorKind::InvalidData,
                 format!("Tried getting width of unknown arch ({unknown_arch})"),
             )),

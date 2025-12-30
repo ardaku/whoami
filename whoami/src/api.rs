@@ -3,7 +3,7 @@ use std::{env, ffi::OsString};
 use crate::{
     conversions,
     os::{Os, Target},
-    Arch, DesktopEnv, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, LanguagePreferences, Platform, Result,
 };
 
 macro_rules! report_message {
@@ -14,7 +14,7 @@ macro_rules! report_message {
 
 /// Get the CPU Architecture.
 #[inline(always)]
-pub fn arch() -> Arch {
+pub fn cpu_arch() -> CpuArchitecture {
     Target::arch(Os).expect(concat!("arch() failed.  ", report_message!()))
 }
 
@@ -149,7 +149,7 @@ pub fn distro() -> Result<String> {
 /// Returns `None` if a desktop environment is not available (for example in a
 /// TTY or over SSH)
 #[inline(always)]
-pub fn desktop_env() -> Option<DesktopEnv> {
+pub fn desktop_env() -> Option<DesktopEnvironment> {
     if env::var_os("SSH_CLIENT").is_some()
         || env::var_os("SSH_TTY").is_some()
         || env::var_os("SSH_CONNECTION").is_some()

@@ -41,7 +41,7 @@ fn main() {
         whoami::desktop_env(),
     );
     println!(
-        "Device's CPU Arch      whoami::arch():                  {:?}",
-        whoami::arch(),
+        "Device's CPU Arch      whoami::cpu_arch():              {:?}",
+        whoami::cpu_arch(),
     );
 }

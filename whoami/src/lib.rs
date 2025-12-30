@@ -4,10 +4,10 @@
 //!
 //! Using the whoami crate is super easy!  All of the public items are simple
 //! functions with no parameters that return [`String`]s or [`OsString`]s (with
-//! the exception of [`desktop_env()`], [`platform()`], and [`arch()`], which
-//! return enums, and [`lang_prefs()`] that returns [`LanguagePreferences`]).
-//! The following example shows how to use all of the functions (except those
-//! that return [`OsString`]):
+//! the exception of [`desktop_env()`], [`platform()`], and [`cpu_arch()`],
+//! which return enums, and [`lang_prefs()`] that returns
+//! [`LanguagePreferences`]).  The following example shows how to use all of the
+//! functions (except those that return [`OsString`]):
 //!
 //! ```rust
 //! println!(
@@ -49,8 +49,8 @@
 //!         .unwrap_or_else(|| "<unknown>".to_string()),
 //! );
 //! println!(
-//!     "Device's CPU Arch      whoami::arch():                {}",
-//!     whoami::arch(),
+//!     "Device's CPU Arch      whoami::cpu_arch():            {}",
+//!     whoami::cpu_arch(),
 //! );
 //! ```
 //!
@@ -100,12 +100,12 @@ mod result;
 
 pub use self::{
     api::{
-        account, account_os, arch, desktop_env, devicename, devicename_os,
+        account, account_os, cpu_arch, desktop_env, devicename, devicename_os,
         distro, hostname, lang_prefs, platform, realname, realname_os,
         username, username_os,
     },
-    arch::{Arch, Width},
-    desktop_env::DesktopEnv,
+    arch::{CpuArchitecture, Width},
+    desktop_env::DesktopEnvironment,
     lang_prefs::{Language, LanguagePreferences},
     platform::Platform,
     result::Result,

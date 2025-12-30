@@ -40,7 +40,7 @@ fn main() {
             .unwrap_or_else(|| "<unknown>".to_string()),
     );
     println!(
-        "Device's CPU Arch      whoami::arch():                {}",
-        whoami::arch(),
+        "Device's CPU Arch      whoami::cpu_arch():            {}",
+        whoami::cpu_arch(),
     );
 }

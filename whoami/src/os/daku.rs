@@ -7,7 +7,8 @@ use std::{
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, Language, LanguagePreferences,
+    Platform, Result,
 };
 
 impl Target for Os {
@@ -45,7 +46,7 @@ impl Target for Os {
     }
 
     #[inline(always)]
-    fn desktop_env(self) -> Option<DesktopEnv> {
+    fn desktop_env(self) -> Option<DesktopEnvironment> {
         None
     }
 
@@ -55,11 +56,11 @@ impl Target for Os {
     }
 
     #[inline(always)]
-    fn arch(self) -> Result<Arch> {
+    fn arch(self) -> Result<CpuArchitecture> {
         Ok(if cfg!(target_pointer_width = "64") {
-            Arch::Wasm64
+            CpuArchitecture::Wasm64
         } else if cfg!(target_pointer_width = "32") {
-            Arch::Wasm32
+            CpuArchitecture::Wasm32
         } else {
             return Err(Error::new(
                 ErrorKind::Unsupported,

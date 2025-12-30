@@ -25,7 +25,7 @@ use std::{
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, LanguagePreferences, Platform, Result,
 };
 
 #[cfg(any(target_os = "linux", target_os = "hurd"))]
@@ -620,7 +620,7 @@ impl Target for Os {
         }
     }
 
-    fn desktop_env(self) -> Option<DesktopEnv> {
+    fn desktop_env(self) -> Option<DesktopEnvironment> {
         #[cfg(target_os = "macos")]
         let env = OsStr::new("Aqua");
 
@@ -639,21 +639,21 @@ impl Target for Os {
         let env = env.to_string_lossy();
 
         Some(if env.eq_ignore_ascii_case("AQUA") {
-            DesktopEnv::Aqua
+            DesktopEnvironment::Aqua
         } else if env.eq_ignore_ascii_case("GNOME") {
-            DesktopEnv::Gnome
+            DesktopEnvironment::Gnome
         } else if env.eq_ignore_ascii_case("LXDE") {
-            DesktopEnv::Lxde
+            DesktopEnvironment::Lxde
         } else if env.eq_ignore_ascii_case("OPENBOX") {
-            DesktopEnv::Openbox
+            DesktopEnvironment::Openbox
         } else if env.eq_ignore_ascii_case("I3") {
-            DesktopEnv::I3
+            DesktopEnvironment::I3
         } else if env.eq_ignore_ascii_case("UBUNTU") {
-            DesktopEnv::Ubuntu
+            DesktopEnvironment::Ubuntu
         } else if env.eq_ignore_ascii_case("PLASMA5") {
-            DesktopEnv::Plasma
+            DesktopEnvironment::Plasma
         } else {
-            DesktopEnv::Unknown(env.to_string())
+            DesktopEnvironment::Unknown(env.to_string())
         })
     }
 
@@ -691,7 +691,7 @@ impl Target for Os {
     }
 
     #[inline(always)]
-    fn arch(self) -> Result<Arch> {
+    fn arch(self) -> Result<CpuArchitecture> {
         let mut buf = UtsName::default();
 
         if unsafe { uname(&mut buf) } == -1 {
@@ -703,28 +703,28 @@ impl Target for Os {
 
         Ok(match arch_str.as_ref() {
             "aarch64" | "arm64" | "aarch64_be" | "armv8b" | "armv8l" => {
-                Arch::Arm64
+                CpuArchitecture::Arm64
             }
-            "armv5" => Arch::ArmV5,
-            "armv6" | "arm" => Arch::ArmV6,
-            "armv7" => Arch::ArmV7,
-            "i386" => Arch::I386,
-            "i586" => Arch::I586,
-            "i686" | "i686-AT386" => Arch::I686,
-            "mips" => Arch::Mips,
-            "mipsel" => Arch::MipsEl,
-            "mips64" => Arch::Mips64,
-            "mips64el" => Arch::Mips64El,
-            "powerpc" | "ppc" | "ppcle" => Arch::PowerPc,
-            "powerpc64" | "ppc64" | "ppc64le" => Arch::PowerPc64,
-            "powerpc64le" => Arch::PowerPc64Le,
-            "riscv32" => Arch::Riscv32,
-            "riscv64" => Arch::Riscv64,
-            "s390x" => Arch::S390x,
-            "sparc" => Arch::Sparc,
-            "sparc64" => Arch::Sparc64,
-            "x86_64" | "amd64" => Arch::X64,
-            _ => Arch::Unknown(arch_str.into_owned()),
+            "armv5" => CpuArchitecture::ArmV5,
+            "armv6" | "arm" => CpuArchitecture::ArmV6,
+            "armv7" => CpuArchitecture::ArmV7,
+            "i386" => CpuArchitecture::I386,
+            "i586" => CpuArchitecture::I586,
+            "i686" | "i686-AT386" => CpuArchitecture::I686,
+            "mips" => CpuArchitecture::Mips,
+            "mipsel" => CpuArchitecture::MipsEl,
+            "mips64" => CpuArchitecture::Mips64,
+            "mips64el" => CpuArchitecture::Mips64El,
+            "powerpc" | "ppc" | "ppcle" => CpuArchitecture::PowerPc,
+            "powerpc64" | "ppc64" | "ppc64le" => CpuArchitecture::PowerPc64,
+            "powerpc64le" => CpuArchitecture::PowerPc64Le,
+            "riscv32" => CpuArchitecture::Riscv32,
+            "riscv64" => CpuArchitecture::Riscv64,
+            "s390x" => CpuArchitecture::S390x,
+            "sparc" => CpuArchitecture::Sparc,
+            "sparc64" => CpuArchitecture::Sparc64,
+            "x86_64" | "amd64" => CpuArchitecture::X64,
+            _ => CpuArchitecture::Unknown(arch_str.into_owned()),
         })
     }
 }

@@ -1,15 +1,31 @@
 #![allow(unsafe_code)]
 
 // Daku
-#[cfg_attr(all(target_arch = "wasm32", daku), path = "os/daku.rs")]
+#[cfg_attr(
+    all(
+        not(any(
+            feature = "force-stub",
+            all(target_os = "wasi", feature = "wasi-wasite")
+        )),
+        target_arch = "wasm32",
+        daku,
+    ),
+    path = "os/daku.rs"
+)]
 // Redox
 #[cfg_attr(
-    all(target_os = "redox", not(target_arch = "wasm32")),
+    all(
+        not(any(feature = "force-stub", target_arch = "wasm32")),
+        feature = "std",
+        target_os = "redox",
+    ),
     path = "os/redox.rs"
 )]
 // Unix
 #[cfg_attr(
     all(
+        not(any(feature = "force-stub", target_arch = "wasm32")),
+        feature = "std",
         any(
             target_os = "linux",
             target_os = "macos",
@@ -20,31 +36,41 @@
             target_os = "illumos",
             target_os = "hurd",
         ),
-        not(target_arch = "wasm32")
     ),
     path = "os/unix.rs"
 )]
-// Wasi
-#[cfg_attr(
-    all(target_arch = "wasm32", target_os = "wasi"),
-    path = "os/wasi.rs"
-)]
-// Web
+// Wasite WASM
 #[cfg_attr(
     all(
+        not(feature = "force-stub"),
         target_arch = "wasm32",
-        not(target_os = "wasi"),
-        not(daku),
+        target_os = "wasi",
+        feature = "wasi-wasite",
+    ),
+    path = "os/wasite.rs"
+)]
+// Web WASM
+#[cfg_attr(
+    all(
+        not(any(
+            feature = "force-stub",
+            daku,
+            all(target_os = "wasi", feature = "wasi-wasite")
+        )),
         feature = "web",
     ),
     path = "os/web.rs"
 )]
 // Windows
 #[cfg_attr(
-    all(target_os = "windows", not(target_arch = "wasm32")),
+    all(
+        not(any(feature = "force-stub", target_arch = "wasm32")),
+        feature = "std",
+        target_os = "windows",
+    ),
     path = "os/windows.rs"
 )]
-mod target;
+mod stub;
 
 use std::{
     env::{self, VarError},
@@ -53,7 +79,8 @@ use std::{
 };
 
 use crate::{
-    Arch, DesktopEnv, Language, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, Language, LanguagePreferences,
+    Platform, Result,
 };
 
 /// Implement `Target for Os` to add platform support for a target.
@@ -74,11 +101,11 @@ pub(crate) trait Target: Sized {
     /// Return the OS distribution's name.
     fn distro(self) -> Result<String>;
     /// Return the desktop environment.
-    fn desktop_env(self) -> Option<DesktopEnv>;
+    fn desktop_env(self) -> Option<DesktopEnvironment>;
     /// Return the target platform.
     fn platform(self) -> Platform;
     /// Return the computer's CPU architecture.
-    fn arch(self) -> Result<Arch>;
+    fn arch(self) -> Result<CpuArchitecture>;
 
     /// Return the user's account name (usually just the username, but may
     /// include an account server hostname).

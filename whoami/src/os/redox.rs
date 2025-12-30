@@ -7,7 +7,7 @@ use libredox::{call, error};
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnv, LanguagePreferences, Platform, Result,
 };
 
 /// Row in the Redox /etc/passwd file
@@ -42,9 +42,9 @@ impl Uname<'_> {
         self.0.lines().nth(number)
     }
 
-    fn machine_arch(&self) -> Option<Arch> {
+    fn machine_arch(&self) -> Option<CpuArchitecture> {
         // FIXME: Don't hardcode unknown arch
-        Some(Arch::Unknown(self.row(4)?.to_string()))
+        Some(CpuArchitecture::Unknown(self.row(4)?.to_string()))
     }
 }
 
@@ -138,7 +138,7 @@ impl Target for Os {
     }
 
     #[inline(always)]
-    fn arch(self) -> Result<Arch> {
+    fn arch(self) -> Result<CpuArchitecture> {
         uname()?
             .machine_arch()
             .ok_or_else(super::err_missing_record)

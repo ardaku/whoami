@@ -10,7 +10,8 @@ use std::{
 use crate::{
     conversions,
     os::{Os, Target},
-    Arch, DesktopEnv, Language, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, Language, LanguagePreferences,
+    Platform, Result,
 };
 
 #[repr(C)]
@@ -390,8 +391,8 @@ impl Target for Os {
     }
 
     #[inline(always)]
-    fn desktop_env(self) -> Option<DesktopEnv> {
-        Some(DesktopEnv::Windows)
+    fn desktop_env(self) -> Option<DesktopEnvironment> {
+        Some(DesktopEnvironment::Windows)
     }
 
     #[inline(always)]
@@ -400,19 +401,19 @@ impl Target for Os {
     }
 
     #[inline(always)]
-    fn arch(self) -> Result<Arch> {
-        fn proc(processor_type: c_ulong) -> Result<Arch, c_ulong> {
+    fn arch(self) -> Result<CpuArchitecture> {
+        fn proc(processor_type: c_ulong) -> Result<CpuArchitecture, c_ulong> {
             Ok(match processor_type {
                 // PROCESSOR_INTEL_386
-                386 => Arch::I386,
+                386 => CpuArchitecture::I386,
                 // PROCESSOR_INTEL_486
-                486 => Arch::Unknown("I486".to_string()),
+                486 => CpuArchitecture::Unknown("I486".to_string()),
                 // PROCESSOR_INTEL_PENTIUM
-                586 => Arch::I586,
+                586 => CpuArchitecture::I586,
                 // PROCESSOR_INTEL_IA64
-                2200 => Arch::Unknown("IA64".to_string()),
+                2200 => CpuArchitecture::Unknown("IA64".to_string()),
                 // PROCESSOR_AMD_X8664
-                8664 => Arch::X64,
+                8664 => CpuArchitecture::X64,
                 v => return Err(v),
             })
         }
@@ -427,15 +428,15 @@ impl Target for Os {
         // https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/ns-sysinfoapi-system_info#members
         Ok(match buf.processor_architecture {
             // PROCESSOR_ARCHITECTURE_INTEL
-            0 => Arch::I686,
+            0 => CpuArchitecture::I686,
             // PROCESSOR_ARCHITECTURE_ARM
-            5 => Arch::ArmV6,
+            5 => CpuArchitecture::ArmV6,
             // PROCESSOR_ARCHITECTURE_IA64
-            6 => Arch::Unknown("IA64".to_string()),
+            6 => CpuArchitecture::Unknown("IA64".to_string()),
             // PROCESSOR_ARCHITECTURE_AMD64
-            9 => Arch::X64,
+            9 => CpuArchitecture::X64,
             // PROCESSOR_ARCHITECTURE_ARM64
-            12 => Arch::Arm64,
+            12 => CpuArchitecture::Arm64,
             // PROCESSOR_ARCHITECTURE_UNKNOWN
             0xFFFF => proc(buf.processor_type).map_err(|e| {
                 Error::new(ErrorKind::InvalidData, format!("Unknown arch: {e}"))
