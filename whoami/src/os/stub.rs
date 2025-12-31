@@ -2,7 +2,7 @@
 //!
 //! This can be used as a template when adding new target support.
 
-use alloc::string::{ToString, String};
+use alloc::string::{String, ToString};
 
 use super::OsString;
 use crate::{
