@@ -384,7 +384,7 @@ impl Target for Os {
             _ => "Unknown",
         };
 
-        Ok(format!(
+        Ok(alloc::format!(
             "Windows {}.{}.{} ({})",
             version.major_version,
             version.minor_version,
@@ -444,13 +444,13 @@ impl Target for Os {
             0xFFFF => proc(buf.processor_type).map_err(|e| {
                 Error::from_io(io::Error::new(
                     ErrorKind::InvalidData,
-                    format!("Unknown arch: {e}"),
+                    alloc::format!("Unknown arch: {e}"),
                 ))
             })?,
             invalid => proc(buf.processor_type).map_err(|e| {
                 Error::from_io(io::Error::new(
                     ErrorKind::InvalidData,
-                    format!("Invalid arch: {invalid}/{e}"),
+                    alloc::format!("Invalid arch: {invalid}/{e}"),
                 ))
             })?,
         })
@@ -460,7 +460,9 @@ impl Target for Os {
     fn account(self) -> Result<OsString> {
         match extended_name(ExtendedNameFormat::UserPrincipal) {
             Ok(name) => Ok(name),
-            Err(e) if e.kind() == ErrorKind::NotFound => username(),
+            Err(e) if io::Error::from(e).kind() == ErrorKind::NotFound => {
+                username()
+            }
             Err(e) => Err(e),
         }
     }
