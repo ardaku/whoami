@@ -2,6 +2,8 @@
 //!
 //! This can be used as a template when adding new target support.
 
+use alloc::string::{ToString, String};
+
 use super::OsString;
 use crate::{
     os::{Os, Target},
@@ -40,7 +42,7 @@ impl Target for Os {
 
     #[inline(always)]
     fn distro(self) -> Result<String> {
-        Ok(format!("Unknown {}", self.platform()))
+        Ok(alloc::format!("Unknown {}", self.platform()))
     }
 
     #[inline(always)]

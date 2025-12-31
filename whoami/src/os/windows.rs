@@ -1,6 +1,6 @@
 use std::{
-    ffi::{c_char, c_int, c_uchar, c_ulong, c_ushort, c_void, OsString},
-    io::{Error, ErrorKind},
+    ffi::{OsString, c_char, c_int, c_uchar, c_ulong, c_ushort, c_void},
+    io::{self, ErrorKind},
     mem::{self, MaybeUninit},
     os::windows::ffi::OsStringExt,
     prelude::rust_2021::*,
@@ -9,10 +9,9 @@ use std::{
 };
 
 use crate::{
-    conversions,
+    CpuArchitecture, DesktopEnvironment, Error, Language, LanguagePreferences,
+    Platform, Result, conversions,
     os::{Os, Target},
-    CpuArchitecture, DesktopEnvironment, Language, LanguagePreferences,
-    Platform, Result,
 };
 
 #[repr(C)]
@@ -119,8 +118,10 @@ fn username() -> Result<OsString> {
     let fail = unsafe { GetUserNameW(ptr::null_mut(), &mut size) == 0 };
     assert!(fail);
 
-    if Error::last_os_error().raw_os_error() != Some(ERR_INSUFFICIENT_BUFFER) {
-        return Err(Error::last_os_error());
+    if io::Error::last_os_error().raw_os_error()
+        != Some(ERR_INSUFFICIENT_BUFFER)
+    {
+        return Err(Error::from_io(io::Error::last_os_error()));
     }
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
@@ -131,7 +132,7 @@ fn username() -> Result<OsString> {
     let fail =
         unsafe { GetUserNameW(name.as_mut_ptr().cast(), &mut size) == 0 };
     if fail {
-        return Err(Error::last_os_error());
+        return Err(Error::from_io(io::Error::last_os_error()));
     }
     debug_assert_eq!(orig_size, size);
     unsafe {
@@ -152,7 +153,7 @@ fn extended_name(format: ExtendedNameFormat) -> Result<OsString> {
 
     assert!(fail);
 
-    let last_err = Error::last_os_error().raw_os_error();
+    let last_err = io::Error::last_os_error().raw_os_error();
 
     if last_err == Some(ERR_NONE_MAPPED) {
         return Err(Error::missing_record());
@@ -170,7 +171,7 @@ fn extended_name(format: ExtendedNameFormat) -> Result<OsString> {
         GetUserNameExW(format, name.as_mut_ptr().cast(), &mut name_len) == 0
     };
     if fail {
-        return Err(Error::last_os_error());
+        return Err(Error::from_io(Error::last_os_error()));
     }
 
     assert_eq!(buf_size, name_len + 1);
@@ -250,8 +251,8 @@ impl Target for Os {
 
         assert!(fail);
 
-        if Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
-            return Err(Error::last_os_error());
+        if io::Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
+            return Err(Error::from_io(io::Error::last_os_error()));
         }
 
         // Step 2. Allocate memory to put the Windows (UTF-16) string.
@@ -266,7 +267,7 @@ impl Target for Os {
                 &mut size,
             ) == 0
         } {
-            return Err(Error::last_os_error());
+            return Err(Error::from_io(io::Error::last_os_error()));
         }
 
         unsafe {
@@ -291,8 +292,8 @@ impl Target for Os {
 
         assert!(fail);
 
-        if Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
-            return Err(Error::last_os_error());
+        if io::Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
+            return Err(Error::from_io(Error::last_os_error()));
         }
 
         // Step 2. Allocate memory to put the Windows (UTF-16) string.
@@ -307,7 +308,7 @@ impl Target for Os {
                 &mut size,
             ) == 0
         } {
-            return Err(Error::last_os_error());
+            return Err(Error::from_io(Error::last_os_error()));
         }
 
         unsafe {
@@ -340,7 +341,7 @@ impl Target for Os {
             unsafe { LoadLibraryExW(path, ptr::null_mut(), 0x0000_0800) };
 
         if inst.is_null() {
-            return Err(Error::last_os_error());
+            return Err(Error::from_io(Error::last_os_error()));
         }
 
         let mut path = "RtlGetVersion\0".bytes().collect::<Vec<u8>>();
@@ -349,10 +350,10 @@ impl Target for Os {
 
         if func.is_null() {
             if unsafe { FreeLibrary(inst) } == 0 {
-                return Err(Error::last_os_error());
+                return Err(Error::from_io(Error::last_os_error()));
             }
 
-            return Err(Error::last_os_error());
+            return Err(Error::from_io(Error::last_os_error()));
         }
 
         let get_version: unsafe extern "system" fn(
@@ -369,7 +370,7 @@ impl Target for Os {
             get_version(version.as_mut_ptr());
 
             if FreeLibrary(inst) == 0 {
-                return Err(Error::last_os_error());
+                return Err(Error::from_io(Error::last_os_error()));
             }
 
             version.assume_init()
@@ -440,13 +441,16 @@ impl Target for Os {
             12 => CpuArchitecture::Arm64,
             // PROCESSOR_ARCHITECTURE_UNKNOWN
             0xFFFF => proc(buf.processor_type).map_err(|e| {
-                Error::new(ErrorKind::InvalidData, format!("Unknown arch: {e}"))
+                Error::from_io(io::Error::new(
+                    ErrorKind::InvalidData,
+                    format!("Unknown arch: {e}"),
+                ))
             })?,
             invalid => proc(buf.processor_type).map_err(|e| {
-                Error::new(
+                Error::from_io(io::Error::new(
                     ErrorKind::InvalidData,
                     format!("Invalid arch: {invalid}/{e}"),
-                )
+                ))
             })?,
         })
     }
