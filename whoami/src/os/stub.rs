@@ -2,11 +2,9 @@
 //!
 //! This can be used as a template when adding new target support.
 
-use std::{
-    ffi::OsString,
-    io::{Error, ErrorKind},
-};
+use std::io::{Error, ErrorKind};
 
+use super::OsString;
 use crate::{
     os::{Os, Target},
     CpuArchitecture, DesktopEnvironment, Language, LanguagePreferences,
@@ -114,15 +112,14 @@ impl Target for Os {
 
     #[inline(always)]
     fn arch(self) -> Result<CpuArchitecture> {
-        Ok(if cfg!(target_pointer_width = "64") {
-            CpuArchitecture::Wasm64
-        } else if cfg!(target_pointer_width = "32") {
-            CpuArchitecture::Wasm32
-        } else {
-            return Err(Error::new(
-                ErrorKind::Unsupported,
-                "Unexpected pointer width for target platform",
-            ));
-        })
+        #[cfg(target_pointer_width = "32")]
+        {
+            Ok(CpuArchitecture::Wasm64)
+        }
+
+        #[cfg(target_pointer_width = "64")]
+        {
+            Ok(CpuArchitecture::Wasm64)
+        }
     }
 }
