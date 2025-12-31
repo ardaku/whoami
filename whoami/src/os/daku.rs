@@ -1,10 +1,8 @@
-//! This is mostly the same as fake.rs for now
+//! Daku - mostly the same as stub.rs for now.
 
-use std::{
-    ffi::OsString,
-    io::{Error, ErrorKind},
-};
+use alloc::string::{String, ToString};
 
+use super::OsString;
 use crate::{
     os::{Os, Target},
     CpuArchitecture, DesktopEnvironment, Language, LanguagePreferences,
@@ -42,7 +40,7 @@ impl Target for Os {
 
     #[inline(always)]
     fn distro(self) -> Result<String> {
-        Ok("Emulated".to_string())
+        Ok(alloc::format!("Daku", self.platform()))
     }
 
     #[inline(always)]
@@ -57,15 +55,14 @@ impl Target for Os {
 
     #[inline(always)]
     fn arch(self) -> Result<CpuArchitecture> {
-        Ok(if cfg!(target_pointer_width = "64") {
-            CpuArchitecture::Wasm64
-        } else if cfg!(target_pointer_width = "32") {
-            CpuArchitecture::Wasm32
-        } else {
-            return Err(Error::new(
-                ErrorKind::Unsupported,
-                "Unexpected pointer width for target platform",
-            ));
-        })
+        #[cfg(target_pointer_width = "32")]
+        {
+            Ok(CpuArchitecture::Wasm64)
+        }
+
+        #[cfg(target_pointer_width = "64")]
+        {
+            Ok(CpuArchitecture::Wasm64)
+        }
     }
 }
