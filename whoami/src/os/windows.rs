@@ -1,5 +1,5 @@
 use std::{
-    ffi::{c_char, c_int, c_uchar, c_ulong, c_ushort, c_void, OsString},
+    ffi::{OsString, c_char, c_int, c_uchar, c_ulong, c_ushort, c_void},
     io::{self, ErrorKind},
     mem::{self, MaybeUninit},
     os::windows::ffi::OsStringExt,
@@ -9,10 +9,9 @@ use std::{
 };
 
 use crate::{
-    conversions,
-    os::{Os, Target},
     CpuArchitecture, DesktopEnvironment, Error, Language, LanguagePreferences,
-    Platform, Result,
+    Platform, Result, conversions,
+    os::{Os, Target},
 };
 
 #[repr(C)]
@@ -161,7 +160,7 @@ fn extended_name(format: ExtendedNameFormat) -> Result<OsString> {
     }
 
     if last_err != Some(ERR_MORE_DATA) {
-        return Err(Error::last_os_error());
+        return Err(Error::from_io(io::Error::last_os_error()));
     }
 
     // Step 2. Allocate memory to put the Windows (UTF-16) string.
@@ -172,7 +171,7 @@ fn extended_name(format: ExtendedNameFormat) -> Result<OsString> {
         GetUserNameExW(format, name.as_mut_ptr().cast(), &mut name_len) == 0
     };
     if fail {
-        return Err(Error::from_io(Error::last_os_error()));
+        return Err(Error::from_io(io::Error::last_os_error()));
     }
 
     assert_eq!(buf_size, name_len + 1);
@@ -294,7 +293,7 @@ impl Target for Os {
         assert!(fail);
 
         if io::Error::last_os_error().raw_os_error() != Some(ERR_MORE_DATA) {
-            return Err(Error::from_io(Error::last_os_error()));
+            return Err(Error::from_io(io::Error::last_os_error()));
         }
 
         // Step 2. Allocate memory to put the Windows (UTF-16) string.
@@ -309,7 +308,7 @@ impl Target for Os {
                 &mut size,
             ) == 0
         } {
-            return Err(Error::from_io(Error::last_os_error()));
+            return Err(Error::from_io(io::Error::last_os_error()));
         }
 
         unsafe {
@@ -342,7 +341,7 @@ impl Target for Os {
             unsafe { LoadLibraryExW(path, ptr::null_mut(), 0x0000_0800) };
 
         if inst.is_null() {
-            return Err(Error::from_io(Error::last_os_error()));
+            return Err(Error::from_io(io::Error::last_os_error()));
         }
 
         let mut path = "RtlGetVersion\0".bytes().collect::<Vec<u8>>();
@@ -351,10 +350,10 @@ impl Target for Os {
 
         if func.is_null() {
             if unsafe { FreeLibrary(inst) } == 0 {
-                return Err(Error::from_io(Error::last_os_error()));
+                return Err(Error::from_io(io::Error::last_os_error()));
             }
 
-            return Err(Error::from_io(Error::last_os_error()));
+            return Err(Error::from_io(io::Error::last_os_error()));
         }
 
         let get_version: unsafe extern "system" fn(
@@ -371,7 +370,7 @@ impl Target for Os {
             get_version(version.as_mut_ptr());
 
             if FreeLibrary(inst) == 0 {
-                return Err(Error::from_io(Error::last_os_error()));
+                return Err(Error::from_io(io::Error::last_os_error()));
             }
 
             version.assume_init()
