@@ -72,16 +72,17 @@
 )]
 mod stub;
 
-use std::{
-    env::{self, VarError},
-    ffi::OsString,
-    io::{Error, ErrorKind},
-};
+use alloc::{string::String, vec::Vec};
 
 use crate::{
-    CpuArchitecture, DesktopEnvironment, Language, LanguagePreferences,
+    CpuArchitecture, DesktopEnvironment, Error, Language, LanguagePreferences,
     Platform, Result,
 };
+
+#[cfg(feature = "std")]
+type OsString = std::ffi::OsString;
+#[cfg(not(feature = "std"))]
+type OsString = String;
 
 /// Implement `Target for Os` to add platform support for a target.
 pub(crate) struct Os;
@@ -115,32 +116,20 @@ pub(crate) trait Target: Sized {
 }
 
 // This is only used on some platforms
-#[allow(dead_code)]
-fn err_missing_record() -> Error {
-    Error::new(ErrorKind::NotFound, "Missing record")
-}
-
-// This is only used on some platforms
-#[allow(dead_code)]
-fn err_null_record() -> Error {
-    Error::new(ErrorKind::NotFound, "Null record")
-}
-
-// This is only used on some platforms
-#[allow(dead_code)]
-fn err_empty_record() -> Error {
-    Error::new(ErrorKind::NotFound, "Empty record")
-}
-
-// This is only used on some platforms
+#[cfg(feature = "std")]
 #[allow(dead_code)]
 fn unix_lang() -> Result<LanguagePreferences> {
-    use std::str::FromStr;
+    use std::{
+        env::{self, VarError},
+        str::FromStr,
+    };
 
     let env_var = |var: &str| match env::var(var) {
         Ok(value) => Ok(if value.is_empty() { None } else { Some(value) }),
         Err(VarError::NotPresent) => Ok(None),
-        Err(VarError::NotUnicode(_)) => Err(ErrorKind::InvalidData),
+        Err(VarError::NotUnicode(_)) => {
+            Err(Error::with_invalid_data("not unicode"))
+        }
     };
 
     // Uses priority defined in
@@ -149,7 +138,7 @@ fn unix_lang() -> Result<LanguagePreferences> {
     let lang = env_var("LANG")?;
 
     if lang.is_none() && lc_all.is_none() {
-        return Err(err_empty_record());
+        return Err(Error::empty_record());
     }
 
     // Standard locales that have a higher global precedence than their specific
@@ -179,7 +168,7 @@ fn unix_lang() -> Result<LanguagePreferences> {
 
     // All fields other than LANGUAGE can only contain a single value, so we
     // don't need to perform any splitting at this point.
-    let lang_from_var = |var| -> Result<Option<Language>, Error> {
+    let lang_from_var = |var| -> Result<Option<Language>> {
         env_var(var)?.as_deref().map(Language::from_str).transpose()
     };
 

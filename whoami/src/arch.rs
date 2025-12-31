@@ -1,9 +1,7 @@
-use std::{
-    fmt::{self, Display, Formatter},
-    io::{Error, ErrorKind},
-};
+use alloc::string::String;
+use core::fmt::{self, Display, Formatter};
 
-use crate::Result;
+use crate::{Error, Result};
 
 /// The address width of a CPU architecture
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
@@ -136,10 +134,11 @@ impl CpuArchitecture {
             | Self::Sparc64
             | Self::Wasm64
             | Self::X64 => Ok(Width::Bits64),
-            Self::Unknown(unknown_arch) => Err(Error::new(
-                ErrorKind::InvalidData,
-                format!("Tried getting width of unknown arch ({unknown_arch})"),
-            )),
+            Self::Unknown(unknown_arch) => {
+                Err(Error::with_invalid_data(alloc::format!(
+                    "Tried getting width of unknown arch ({unknown_arch})"
+                )))
+            }
         }
     }
 }

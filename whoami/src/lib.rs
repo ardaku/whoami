@@ -55,7 +55,9 @@
 //! ```
 //!
 //! [`OsString`]: std::ffi::OsString
+//! [`String`]: std::string::String
 
+#![no_std]
 #![warn(
     anonymous_parameters,
     missing_copy_implementations,
@@ -89,10 +91,16 @@
     html_favicon_url = "https://raw.githubusercontent.com/ardaku/whoami/v2/res/icon.svg"
 )]
 
+extern crate alloc;
+#[cfg(feature = "std")]
+extern crate std;
+
 mod api;
 mod arch;
+#[cfg(feature = "std")]
 mod conversions;
 mod desktop_env;
+mod error;
 mod lang_prefs;
 mod os;
 mod platform;
@@ -106,6 +114,7 @@ pub use self::{
     },
     arch::{CpuArchitecture, Width},
     desktop_env::DesktopEnvironment,
+    error::Error,
     lang_prefs::{Language, LanguagePreferences},
     platform::Platform,
     result::Result,

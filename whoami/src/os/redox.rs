@@ -1,13 +1,13 @@
 // We don't need unsafe, yay!
 #![forbid(unsafe_code)]
 
-use std::{borrow::Cow, ffi::OsString, fs, io::Error};
+use std::{borrow::Cow, ffi::OsString, fs, io, prelude::rust_2021::*};
 
 use libredox::{call, error};
 
 use crate::{
     os::{Os, Target},
-    CpuArchitecture, DesktopEnv, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnv, Error, LanguagePreferences, Platform, Result,
 };
 
 /// Row in the Redox /etc/passwd file
@@ -48,16 +48,16 @@ impl Uname<'_> {
     }
 }
 
-fn to_io_error(error: error::Error) -> Error {
-    Error::from_raw_os_error(error.errno())
+fn to_io_error(error: error::Error) -> io::Error {
+    io::Error::from_raw_os_error(error.errno())
 }
 
 fn euid() -> Result<usize> {
-    call::geteuid().map_err(to_io_error)
+    call::geteuid().map_err(to_io_error).map_err(Error::from_io)
 }
 
 fn egid() -> Result<usize> {
-    call::getegid().map_err(to_io_error)
+    call::getegid().map_err(to_io_error).map_err(Error::from_io)
 }
 
 fn passwd() -> Result<Passwd<'static>> {
@@ -72,7 +72,7 @@ fn passwd() -> Result<Passwd<'static>> {
         }
     }
 
-    Err(super::err_missing_record())
+    Err(Error::missing_record())
 }
 
 fn uname() -> Result<Uname<'static>> {
@@ -124,7 +124,7 @@ impl Target for Os {
             }
         }
 
-        Err(super::err_missing_record())
+        Err(Error::missing_record())
     }
 
     #[inline(always)]
@@ -139,8 +139,6 @@ impl Target for Os {
 
     #[inline(always)]
     fn arch(self) -> Result<CpuArchitecture> {
-        uname()?
-            .machine_arch()
-            .ok_or_else(super::err_missing_record)
+        uname()?.machine_arch().ok_or_else(Error::missing_record)
     }
 }

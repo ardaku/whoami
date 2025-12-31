@@ -1,17 +1,13 @@
 #[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
 compile_error!("Unexpected pointer width for target platform");
 
-use std::{
-    ffi::OsString,
-    io::{Error, ErrorKind},
-    str::FromStr,
-};
+use std::{ffi::OsString, io::ErrorKind, str::FromStr};
 
 use web_sys::window;
 
 use crate::{
     os::{Os, Target},
-    CpuArchitecture, DesktopEnvironment, Language, LanguagePreferences,
+    CpuArchitecture, DesktopEnvironment, Error, Language, LanguagePreferences,
     Platform, Result,
 };
 

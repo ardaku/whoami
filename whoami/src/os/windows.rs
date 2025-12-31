@@ -3,6 +3,7 @@ use std::{
     io::{Error, ErrorKind},
     mem::{self, MaybeUninit},
     os::windows::ffi::OsStringExt,
+    prelude::rust_2021::*,
     ptr,
     str::FromStr,
 };
@@ -154,7 +155,7 @@ fn extended_name(format: ExtendedNameFormat) -> Result<OsString> {
     let last_err = Error::last_os_error().raw_os_error();
 
     if last_err == Some(ERR_NONE_MAPPED) {
-        return Err(super::err_missing_record());
+        return Err(Error::missing_record());
     }
 
     if last_err != Some(ERR_MORE_DATA) {

@@ -1,4 +1,7 @@
-use std::fmt::{self, Display, Formatter};
+use std::{
+    fmt::{self, Display, Formatter},
+    string::String,
+};
 
 /// The desktop environment of a system
 #[derive(Debug, PartialEq, Eq, Clone)]
