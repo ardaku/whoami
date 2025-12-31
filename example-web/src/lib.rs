@@ -45,11 +45,11 @@ pub fn main() {
         whoami::distro().unwrap_or_default(),
     ));
     log(format!(
-        "Device's Desktop Env.  whoami::desktop_env():         {:?}",
-        whoami::desktop_env(),
+        "Device's Desktop Env.  whoami::desktop_env():         {}",
+        whoami::desktop_env().unwrap(),
     ));
     log(format!(
-        "Device's CPU Arch      whoami::arch():                {}",
-        whoami::arch(),
+        "Device's CPU Arch      whoami::cpu_arch():            {}",
+        whoami::cpu_arch(),
     ));
 }

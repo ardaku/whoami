@@ -1,9 +1,12 @@
-use std::fmt::{self, Display, Formatter};
+use std::{
+    fmt::{self, Display, Formatter},
+    string::String,
+};
 
 /// The desktop environment of a system
 #[derive(Debug, PartialEq, Eq, Clone)]
 #[non_exhaustive]
-pub enum DesktopEnv {
+pub enum DesktopEnvironment {
     /// Unknown desktop environment
     Unknown(String),
     /// Popular GTK-based desktop environment on Linux
@@ -31,7 +34,7 @@ pub enum DesktopEnv {
     /// Desktop environment for Android
     Android,
     /// Running as Web Assembly on a web page
-    WebBrowser,
+    WebBrowser(String),
     /// A desktop environment for a video game console
     Console,
     /// Ubuntu-branded GNOME
@@ -42,7 +45,7 @@ pub enum DesktopEnv {
     Orbital,
 }
 
-impl Display for DesktopEnv {
+impl Display for DesktopEnvironment {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         if let Self::Unknown(_) = self {
             f.write_str("Unknown: ")?;
@@ -62,7 +65,7 @@ impl Display for DesktopEnv {
             Self::Aqua => "Aqua",
             Self::Ios => "IOS",
             Self::Android => "Android",
-            Self::WebBrowser => "Web Browser",
+            Self::WebBrowser(a) => return write!(f, "WebBrowser ({a})"),
             Self::Console => "Console",
             Self::Ubuntu => "Ubuntu",
             Self::Ermine => "Ermine",
@@ -71,7 +74,7 @@ impl Display for DesktopEnv {
     }
 }
 
-impl DesktopEnv {
+impl DesktopEnvironment {
     /// Returns true if the desktop environment is based on GTK.
     pub fn is_gtk(&self) -> bool {
         *self == Self::Gnome

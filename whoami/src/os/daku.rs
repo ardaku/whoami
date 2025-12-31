@@ -1,20 +1,19 @@
-//! This is mostly the same as fake.rs for now
+//! Daku - mostly the same as stub.rs for now.
 
-use std::{
-    ffi::OsString,
-    io::{Error, ErrorKind},
-};
+use alloc::string::{String, ToString};
 
+use super::OsString;
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, LanguagePrefs, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, Language, LanguagePreferences,
+    Platform, Result,
 };
 
 impl Target for Os {
     #[inline(always)]
-    fn lang_prefs(self) -> Result<LanguagePrefs> {
-        Ok(LanguagePrefs {
-            fallbacks: [Language::from("en/US")].to_vec(),
+    fn lang_prefs(self) -> Result<LanguagePreferences> {
+        Ok(LanguagePreferences {
+            fallbacks: [Language::default()].to_vec(),
             ..Default::default()
         })
     }
@@ -41,30 +40,29 @@ impl Target for Os {
 
     #[inline(always)]
     fn distro(self) -> Result<String> {
-        Ok("Emulated".to_string())
+        Ok(alloc::format!("Daku {}", self.platform()))
     }
 
     #[inline(always)]
-    fn desktop_env(self) -> Option<DesktopEnv> {
+    fn desktop_env(self) -> Option<DesktopEnvironment> {
         None
     }
 
     #[inline(always)]
     fn platform(self) -> Platform {
-        Platform::Unknown("Daku".to_string())
+        Platform::Unknown("Emulated".to_string())
     }
 
     #[inline(always)]
-    fn arch(self) -> Result<Arch> {
-        Ok(if cfg!(target_pointer_width = "64") {
-            Arch::Wasm64
-        } else if cfg!(target_pointer_width = "32") {
-            Arch::Wasm32
-        } else {
-            return Err(Error::new(
-                ErrorKind::Unsupported,
-                "Unexpected pointer width for target platform",
-            ));
-        })
+    fn arch(self) -> Result<CpuArchitecture> {
+        #[cfg(target_pointer_width = "32")]
+        {
+            Ok(CpuArchitecture::Wasm64)
+        }
+
+        #[cfg(target_pointer_width = "64")]
+        {
+            Ok(CpuArchitecture::Wasm64)
+        }
     }
 }

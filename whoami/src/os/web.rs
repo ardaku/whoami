@@ -1,16 +1,14 @@
 #[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
 compile_error!("Unexpected pointer width for target platform");
 
-use std::{
-    ffi::OsString,
-    io::{Error, ErrorKind},
-};
+use std::{ffi::OsString, io::ErrorKind, str::FromStr};
 
 use web_sys::window;
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, Language, LanguagePrefs, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, Error, Language, LanguagePreferences,
+    Platform, Result,
 };
 
 // Get the user agent
@@ -23,17 +21,60 @@ fn document_domain() -> Option<String> {
     window()?.document()?.location()?.hostname().ok()
 }
 
+// Get the browser name and version for desktop environment
+fn browser_info() -> String {
+    let orig_string = user_agent().unwrap_or_default();
+    let start = if let Some(s) = orig_string.rfind(' ') {
+        s
+    } else {
+        return "Unknown Browser".to_string();
+    };
+    let string = orig_string
+        .get(start + 1..)
+        .unwrap_or("Unknown Browser")
+        .replace('/', " ");
+    let string = if let Some(s) = string.rfind("Safari") {
+        if let Some(s) = orig_string.rfind("Chrome") {
+            if let Some(e) = orig_string.get(s..).unwrap_or_default().find(' ')
+            {
+                orig_string
+                    .get(s..)
+                    .unwrap_or("Chrome")
+                    .get(..e)
+                    .unwrap_or("Chrome")
+                    .replace('/', " ")
+            } else {
+                "Chrome".to_string()
+            }
+        } else if orig_string.contains("Linux") {
+            "GNOME Web".to_string()
+        } else {
+            string.get(s..).unwrap_or("Safari").replace('/', " ")
+        }
+    } else if string.contains("Edg ") {
+        string.replace("Edg ", "Edge ")
+    } else if string.contains("OPR ") {
+        string.replace("OPR ", "Opera ")
+    } else {
+        string
+    };
+
+    string
+}
+
 impl Target for Os {
-    fn lang_prefs(self) -> Result<LanguagePrefs> {
+    fn lang_prefs(self) -> Result<LanguagePreferences> {
         if let Some(window) = window() {
             let langs = window
                 .navigator()
                 .languages()
                 .to_vec()
                 .into_iter()
-                .filter_map(|l| l.as_string().map(Language::from))
-                .collect::<Vec<_>>();
-            Ok(LanguagePrefs {
+                .filter_map(|l| {
+                    l.as_string().as_deref().map(Language::from_str)
+                })
+                .collect::<Result<Vec<_>>>()?;
+            Ok(LanguagePreferences {
                 fallbacks: langs,
                 ..Default::default()
             })
@@ -54,44 +95,7 @@ impl Target for Os {
     }
 
     fn devicename(self) -> Result<OsString> {
-        let orig_string = user_agent().unwrap_or_default();
-        let start = if let Some(s) = orig_string.rfind(' ') {
-            s
-        } else {
-            return Ok("Unknown Browser".to_string().into());
-        };
-        let string = orig_string
-            .get(start + 1..)
-            .unwrap_or("Unknown Browser")
-            .replace('/', " ");
-        let string = if let Some(s) = string.rfind("Safari") {
-            if let Some(s) = orig_string.rfind("Chrome") {
-                if let Some(e) =
-                    orig_string.get(s..).unwrap_or_default().find(' ')
-                {
-                    orig_string
-                        .get(s..)
-                        .unwrap_or("Chrome")
-                        .get(..e)
-                        .unwrap_or("Chrome")
-                        .replace('/', " ")
-                } else {
-                    "Chrome".to_string()
-                }
-            } else if orig_string.contains("Linux") {
-                "GNOME Web".to_string()
-            } else {
-                string.get(s..).unwrap_or("Safari").replace('/', " ")
-            }
-        } else if string.contains("Edg ") {
-            string.replace("Edg ", "Edge ")
-        } else if string.contains("OPR ") {
-            string.replace("OPR ", "Opera ")
-        } else {
-            string
-        };
-
-        Ok(string.into())
+        Ok("Browser".to_string().into())
     }
 
     fn hostname(self) -> Result<String> {
@@ -162,8 +166,8 @@ impl Target for Os {
     }
 
     #[inline(always)]
-    fn desktop_env(self) -> Option<DesktopEnv> {
-        Some(DesktopEnv::WebBrowser)
+    fn desktop_env(self) -> Option<DesktopEnvironment> {
+        Some(DesktopEnvironment::WebBrowser(browser_info()))
     }
 
     fn platform(self) -> Platform {
@@ -192,11 +196,11 @@ impl Target for Os {
     }
 
     #[inline(always)]
-    fn arch(self) -> Result<Arch> {
+    fn arch(self) -> Result<CpuArchitecture> {
         Ok(if cfg!(target_pointer_width = "64") {
-            Arch::Wasm64
+            CpuArchitecture::Wasm64
         } else {
-            Arch::Wasm32
+            CpuArchitecture::Wasm32
         })
     }
 }

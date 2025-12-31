@@ -1,13 +1,13 @@
 // We don't need unsafe, yay!
 #![forbid(unsafe_code)]
 
-use std::{borrow::Cow, ffi::OsString, fs, io::Error};
+use std::{borrow::Cow, ffi::OsString, fs, io, prelude::rust_2021::*};
 
 use libredox::{call, error};
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, LanguagePrefs, Platform, Result,
+    CpuArchitecture, DesktopEnv, Error, LanguagePreferences, Platform, Result,
 };
 
 /// Row in the Redox /etc/passwd file
@@ -42,22 +42,22 @@ impl Uname<'_> {
         self.0.lines().nth(number)
     }
 
-    fn machine_arch(&self) -> Option<Arch> {
+    fn machine_arch(&self) -> Option<CpuArchitecture> {
         // FIXME: Don't hardcode unknown arch
-        Some(Arch::Unknown(self.row(4)?.to_string()))
+        Some(CpuArchitecture::Unknown(self.row(4)?.to_string()))
     }
 }
 
-fn to_io_error(error: error::Error) -> Error {
-    Error::from_raw_os_error(error.errno())
+fn to_io_error(error: error::Error) -> io::Error {
+    io::Error::from_raw_os_error(error.errno())
 }
 
 fn euid() -> Result<usize> {
-    call::geteuid().map_err(to_io_error)
+    call::geteuid().map_err(to_io_error).map_err(Error::from_io)
 }
 
 fn egid() -> Result<usize> {
-    call::getegid().map_err(to_io_error)
+    call::getegid().map_err(to_io_error).map_err(Error::from_io)
 }
 
 fn passwd() -> Result<Passwd<'static>> {
@@ -72,7 +72,7 @@ fn passwd() -> Result<Passwd<'static>> {
         }
     }
 
-    Err(super::err_missing_record())
+    Err(Error::missing_record())
 }
 
 fn uname() -> Result<Uname<'static>> {
@@ -88,7 +88,7 @@ fn hostname() -> Result<String> {
 }
 
 impl Target for Os {
-    fn lang_prefs(self) -> Result<LanguagePrefs> {
+    fn lang_prefs(self) -> Result<LanguagePreferences> {
         super::unix_lang()
     }
 
@@ -124,7 +124,7 @@ impl Target for Os {
             }
         }
 
-        Err(super::err_missing_record())
+        Err(Error::missing_record())
     }
 
     #[inline(always)]
@@ -138,9 +138,7 @@ impl Target for Os {
     }
 
     #[inline(always)]
-    fn arch(self) -> Result<Arch> {
-        uname()?
-            .machine_arch()
-            .ok_or_else(super::err_missing_record)
+    fn arch(self) -> Result<CpuArchitecture> {
+        uname()?.machine_arch().ok_or_else(Error::missing_record)
     }
 }

@@ -1,9 +1,11 @@
+use alloc::string::String;
+#[cfg(feature = "std")]
 use std::{env, ffi::OsString};
 
 use crate::{
     conversions,
     os::{Os, Target},
-    Arch, DesktopEnv, LanguagePrefs, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, LanguagePreferences, Platform, Result,
 };
 
 macro_rules! report_message {
@@ -14,7 +16,7 @@ macro_rules! report_message {
 
 /// Get the CPU Architecture.
 #[inline(always)]
-pub fn arch() -> Arch {
+pub fn cpu_arch() -> CpuArchitecture {
     Target::arch(Os).expect(concat!("arch() failed.  ", report_message!()))
 }
 
@@ -29,12 +31,13 @@ pub fn account() -> Result<String> {
     account_os().and_then(conversions::string_from_os)
 }
 
-/// Get the user's account name; usually just the username, but may include an
-/// account server hostname.
+/// **`std`** Get the user's account name; usually just the username, but may
+/// include an account server hostname.
 ///
 /// If you don't want the account server hostname, use [`username()`].
 ///
 /// Example: `username@example.com`
+#[cfg(feature = "std")]
 #[inline(always)]
 pub fn account_os() -> Result<OsString> {
     Target::account(Os)
@@ -49,10 +52,11 @@ pub fn username() -> Result<String> {
     username_os().and_then(conversions::string_from_os)
 }
 
-/// Get the user's username.
+/// **`std`** Get the user's username.
 ///
 /// On unix-systems this differs from [`realname_os()`] most notably in that
 /// spaces are not allowed in the username.
+#[cfg(feature = "std")]
 #[inline(always)]
 pub fn username_os() -> Result<OsString> {
     Target::username(Os)
@@ -64,7 +68,8 @@ pub fn realname() -> Result<String> {
     realname_os().and_then(conversions::string_from_os)
 }
 
-/// Get the user's real (full) name.
+/// **`std`** Get the user's real (full) name.
+#[cfg(feature = "std")]
 #[inline(always)]
 pub fn realname_os() -> Result<OsString> {
     Target::realname(Os)
@@ -74,7 +79,45 @@ pub fn realname_os() -> Result<OsString> {
 ///
 /// Usually hostnames are case-insensitive, but it's not a hard requirement.
 ///
-/// FIXME: Document platform-specific character limitations
+/// # Platform-Specific Character Limitations
+///
+/// ## Unix/Linux/BSD
+/// - **Maximum length**: 255 bytes (excluding null terminator)
+/// - **Encoding**: Must be valid UTF-8
+/// - **Characters**: Typically follows RFC 952/1123 DNS hostname rules:
+///   - Alphanumeric characters (a-z, A-Z, 0-9)
+///   - Hyphens (-), but not at start or end
+/// - Note: POSIX allows any character except null and newline, but network
+///   hostnames should follow DNS rules for interoperability
+///
+/// ## Windows
+/// - **Maximum length**: 63 characters for DNS hostname (per label)
+/// - **Encoding**: UTF-16 (converted to UTF-8 String)
+/// - **Characters**: Follows DNS hostname rules (RFC 1123):
+///   - Alphanumeric characters (a-z, A-Z, 0-9)
+///   - Hyphens (-), but not at start or end
+///
+/// ## Redox
+/// - Reads from `/etc/hostname` file
+/// - First line of file is used as hostname
+/// - No inherent character limitations beyond file system
+///
+/// ## Web (WASM)
+/// - Returns the document's domain name
+/// - Follows DNS hostname rules as enforced by browsers
+/// - Must be valid UTF-8
+///
+/// ## Other Platforms
+/// - WASI: Returns system hostname or defaults to "localhost"
+/// - Default: Returns "localhost" for unsupported platforms
+///
+/// # Notes
+/// For maximum compatibility across all platforms and network protocols,
+/// hostnames should:
+/// - Be 63 characters or less
+/// - Contain only ASCII alphanumeric characters and hyphens
+/// - Not start or end with a hyphen
+/// - Be case-insensitive (though case may be preserved)
 #[inline(always)]
 pub fn hostname() -> Result<String> {
     Target::hostname(Os)
@@ -88,9 +131,10 @@ pub fn devicename() -> Result<String> {
     devicename_os().and_then(conversions::string_from_os)
 }
 
-/// Get the device name (also known as "Pretty Name").
+/// **`std`** Get the device name (also known as "Pretty Name").
 ///
 /// Often used to identify device for bluetooth pairing.
+#[cfg(feature = "std")]
 #[inline(always)]
 pub fn devicename_os() -> Result<OsString> {
     Target::devicename(Os)
@@ -111,12 +155,15 @@ pub fn distro() -> Result<String> {
 /// Returns `None` if a desktop environment is not available (for example in a
 /// TTY or over SSH)
 #[inline(always)]
-pub fn desktop_env() -> Option<DesktopEnv> {
-    if env::var_os("SSH_CLIENT").is_some()
-        || env::var_os("SSH_TTY").is_some()
-        || env::var_os("SSH_CONNECTION").is_some()
+pub fn desktop_env() -> Option<DesktopEnvironment> {
+    #[cfg(feature = "std")]
     {
-        return None;
+        if env::var_os("SSH_CLIENT").is_some()
+            || env::var_os("SSH_TTY").is_some()
+            || env::var_os("SSH_CONNECTION").is_some()
+        {
+            return None;
+        }
     }
 
     Target::desktop_env(Os)
@@ -130,9 +177,8 @@ pub fn platform() -> Platform {
 
 /// Get the user's preferred language(s).
 ///
-/// Returned as a [`LanguagePrefs`].  Unrecognized languages may
-/// either return an error or be skipped.
+/// Returned as an instance of [`LanguagePreferences`]
 #[inline(always)]
-pub fn lang_prefs() -> Result<LanguagePrefs> {
-    Target::lang_prefs(Os)
+pub fn lang_prefs() -> Result<LanguagePreferences> {
+    Target::lang_prefs(Os).map(LanguagePreferences::add_stripped_fallbacks)
 }

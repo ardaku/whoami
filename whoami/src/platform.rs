@@ -1,4 +1,5 @@
-use std::fmt::{self, Display, Formatter};
+use alloc::string::String;
+use core::fmt::{self, Display, Formatter};
 
 /// The underlying platform for a system
 #[allow(missing_docs)]
