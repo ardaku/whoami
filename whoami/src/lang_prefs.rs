@@ -30,7 +30,6 @@ use crate::{Error, Result};
 /// `-`, `_`, or `/`).
 ///
 /// [`ToString::to_string()`]: std::string::ToString::to_string
-#[non_exhaustive]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub struct Language {
     /// The language code for this language
@@ -45,7 +44,8 @@ pub struct Language {
 
 impl Default for Language {
     fn default() -> Self {
-        Self::from_str("en/US").expect("this is a bug; failed to parse en/US")
+        Self::from_str("en/US")
+            .expect("this is an internal bug (failed to parse en/US)")
     }
 }
 
@@ -209,7 +209,6 @@ impl PartialEq<&str> for Language {
 /// <https://man7.org/linux/man-pages/man7/locale.7.html>. Windows locale values
 /// are defined in <https://learn.microsoft.com/en-us/cpp/c-runtime-library/locale-categories>.
 #[derive(Debug, Clone, Default)]
-#[non_exhaustive]
 pub struct LanguagePreferences {
     /// Determines general user language preference, should be used in
     /// situations which are not encompassed by other [`LanguagePreferences`].

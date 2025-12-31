@@ -23,8 +23,8 @@ impl Display for Width {
 }
 
 /// The architecture of a CPU
-#[non_exhaustive]
 #[derive(Debug, PartialEq, Eq, Clone)]
+#[non_exhaustive]
 pub enum CpuArchitecture {
     /// Unknown Architecture
     Unknown(String),
