@@ -4,9 +4,9 @@ use alloc::string::{String, ToString};
 
 use super::OsString;
 use crate::{
-    os::{Os, Target},
     CpuArchitecture, DesktopEnvironment, Language, LanguagePreferences,
     Platform, Result,
+    os::{Os, Target},
 };
 
 impl Target for Os {
@@ -40,7 +40,7 @@ impl Target for Os {
 
     #[inline(always)]
     fn distro(self) -> Result<String> {
-        Ok(alloc::format!("Daku", self.platform()))
+        Ok(alloc::format!("Daku {}", self.platform()))
     }
 
     #[inline(always)]
@@ -50,7 +50,7 @@ impl Target for Os {
 
     #[inline(always)]
     fn platform(self) -> Platform {
-        Platform::Unknown("Daku".to_string())
+        Platform::Unknown("Emulated".to_string())
     }
 
     #[inline(always)]

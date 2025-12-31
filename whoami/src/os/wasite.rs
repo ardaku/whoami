@@ -4,8 +4,8 @@ compile_error!("Unexpected pointer width for target platform");
 use std::{env, ffi::OsString};
 
 use crate::{
-    os::{Os, Target},
     CpuArchitecture, DesktopEnvironment, LanguagePreferences, Platform, Result,
+    os::{Os, Target},
 };
 
 impl Target for Os {

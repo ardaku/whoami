@@ -9,7 +9,7 @@
 ))]
 use std::env;
 use std::{
-    ffi::{c_char, c_int, c_void, CStr, OsString},
+    ffi::{CStr, OsString, c_char, c_int, c_void},
     fs, io, mem,
     os::unix::ffi::OsStringExt,
     prelude::rust_2021::*,
@@ -17,15 +17,15 @@ use std::{
 };
 #[cfg(target_os = "macos")]
 use std::{
-    ffi::{c_long, c_uchar, OsStr},
+    ffi::{OsStr, c_long, c_uchar},
     os::unix::ffi::OsStrExt,
     ptr::null_mut,
 };
 
 use crate::{
-    os::{Os, Target},
     CpuArchitecture, DesktopEnvironment, Error, LanguagePreferences, Platform,
     Result,
+    os::{Os, Target},
 };
 
 #[cfg(any(target_os = "linux", target_os = "hurd"))]

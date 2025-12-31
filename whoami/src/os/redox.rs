@@ -6,8 +6,8 @@ use std::{borrow::Cow, ffi::OsString, fs, io, prelude::rust_2021::*};
 use libredox::{call, error};
 
 use crate::{
-    os::{Os, Target},
     CpuArchitecture, DesktopEnv, Error, LanguagePreferences, Platform, Result,
+    os::{Os, Target},
 };
 
 /// Row in the Redox /etc/passwd file
