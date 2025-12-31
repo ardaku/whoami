@@ -1,5 +1,5 @@
 use std::{
-    ffi::{OsString, c_char, c_int, c_uchar, c_ulong, c_ushort, c_void},
+    ffi::{c_char, c_int, c_uchar, c_ulong, c_ushort, c_void, OsString},
     io::{self, ErrorKind},
     mem::{self, MaybeUninit},
     os::windows::ffi::OsStringExt,
@@ -9,9 +9,10 @@ use std::{
 };
 
 use crate::{
-    CpuArchitecture, DesktopEnvironment, Error, Language, LanguagePreferences,
-    Platform, Result, conversions,
+    conversions,
     os::{Os, Target},
+    CpuArchitecture, DesktopEnvironment, Error, Language, LanguagePreferences,
+    Platform, Result,
 };
 
 #[repr(C)]

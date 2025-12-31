@@ -275,7 +275,18 @@ impl LanguagePreferences {
         &'a self,
         l: &Option<Language>,
     ) -> impl Iterator<Item = Language> + 'a {
-        (*l).into_iter().chain(self.fallbacks.iter().cloned())
+        let lang_without_country = if let Some(ref lang) = l {
+            lang.country.is_some().then_some(Language {
+                lang: lang.lang,
+                country: None,
+            })
+        } else {
+            None
+        };
+
+        (*l).into_iter()
+            .chain(lang_without_country)
+            .chain(self.fallbacks.iter().cloned())
     }
 
     /// Returns the collation langs of this [`LanguagePreferences`] in order of
@@ -340,6 +351,29 @@ impl LanguagePreferences {
     /// Time langs determine format and contents of date and time information.
     pub fn time_langs(&self) -> impl Iterator<Item = Language> + '_ {
         self.chain_fallbacks(&self.time)
+    }
+
+    pub(crate) fn add_stripped_fallbacks(mut self) -> Self {
+        let mut no_country_langs = Vec::new();
+
+        for lang in self.fallbacks.iter() {
+            if lang.country.is_some() {
+                no_country_langs.push(Language {
+                    lang: lang.lang,
+                    country: None,
+                });
+            } else {
+                let Some(i) = no_country_langs.iter().position(|x| x == lang)
+                else {
+                    continue;
+                };
+
+                no_country_langs.remove(i);
+            }
+        }
+
+        self.fallbacks.extend(no_country_langs);
+        self
     }
 }
 

@@ -180,5 +180,5 @@ pub fn platform() -> Platform {
 /// Returned as an instance of [`LanguagePreferences`]
 #[inline(always)]
 pub fn lang_prefs() -> Result<LanguagePreferences> {
-    Target::lang_prefs(Os)
+    Target::lang_prefs(Os).map(LanguagePreferences::add_stripped_fallbacks)
 }
