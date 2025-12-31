@@ -6,9 +6,9 @@ use std::{ffi::OsString, io::ErrorKind, str::FromStr};
 use web_sys::window;
 
 use crate::{
+    os::{Os, Target},
     CpuArchitecture, DesktopEnvironment, Error, Language, LanguagePreferences,
     Platform, Result,
-    os::{Os, Target},
 };
 
 // Get the user agent
