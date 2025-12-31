@@ -2,8 +2,6 @@
 //!
 //! This can be used as a template when adding new target support.
 
-use std::io::{Error, ErrorKind};
-
 use super::OsString;
 use crate::{
     os::{Os, Target},
