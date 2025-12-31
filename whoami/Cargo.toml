@@ -28,22 +28,34 @@ rust-version = "1.65"
 # Target specific dependency for redox
 [target.'cfg(all(target_os = "redox", not(target_arch = "wasm32")))'.dependencies.libredox]
 version = "0.1.12"
+features = ["call"]
+default-features = false
 
-# Target specific dependency for wasite
+# Target-specific dependency for wasite
 [target.'cfg(all(target_arch = "wasm32", target_os = "wasi"))'.dependencies.wasite]
 version = "0.1.0"
+optional = true
+default-features = false
 
 # Target-specific dependency for web browser
 [target.'cfg(all(target_arch = "wasm32", not(target_os = "wasi"), not(daku)))'.dependencies.web-sys]
 version = "0.3.77"
-features = ["Navigator", "Document", "Window", "Location"]
 optional = true
+features = ["Navigator", "Document", "Window", "Location"]
+default-features = false
 
 [features]
-default = ["web"]
-# Enabling this feature indicates that the wasm32-unknown-unknown target should
-# be assumed to be in a web environment where it can call DOM APIs.
-web = ["web-sys"]
+default = ["std", "wasi-wasite", "wasm-web"]
+
+# Instead of interfacing with the OS, force stubs to be used
+force-stub = []
+# Allow interfacing with the standard library and OS.
+std = ["web-sys?/std"]
+# Assume a wasite conforming environment on WASI (takes precedence over
+# `wasm-web`).
+wasi-wasite = ["dep:wasite"]
+# Assume a web environment where whoami can call DOM APIs on WASM.
+wasm-web = ["dep:web-sys"]
 
 [lints.rust]
 unexpected_cfgs = { level = "allow", check-cfg = ['cfg(daku)'] }

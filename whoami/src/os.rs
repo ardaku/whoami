@@ -1,15 +1,31 @@
 #![allow(unsafe_code)]
 
 // Daku
-#[cfg_attr(all(target_arch = "wasm32", daku), path = "os/daku.rs")]
+#[cfg_attr(
+    all(
+        not(any(
+            feature = "force-stub",
+            all(target_os = "wasi", feature = "wasi-wasite")
+        )),
+        target_arch = "wasm32",
+        daku,
+    ),
+    path = "os/daku.rs"
+)]
 // Redox
 #[cfg_attr(
-    all(target_os = "redox", not(target_arch = "wasm32")),
+    all(
+        not(any(feature = "force-stub", target_arch = "wasm32")),
+        feature = "std",
+        target_os = "redox",
+    ),
     path = "os/redox.rs"
 )]
 // Unix
 #[cfg_attr(
     all(
+        not(any(feature = "force-stub", target_arch = "wasm32")),
+        feature = "std",
         any(
             target_os = "linux",
             target_os = "macos",
@@ -20,41 +36,53 @@
             target_os = "illumos",
             target_os = "hurd",
         ),
-        not(target_arch = "wasm32")
     ),
     path = "os/unix.rs"
 )]
-// Wasi
-#[cfg_attr(
-    all(target_arch = "wasm32", target_os = "wasi"),
-    path = "os/wasi.rs"
-)]
-// Web
+// Wasite WASM
 #[cfg_attr(
     all(
+        not(feature = "force-stub"),
         target_arch = "wasm32",
-        not(target_os = "wasi"),
-        not(daku),
+        target_os = "wasi",
+        feature = "wasi-wasite",
+    ),
+    path = "os/wasite.rs"
+)]
+// Web WASM
+#[cfg_attr(
+    all(
+        not(any(
+            feature = "force-stub",
+            daku,
+            all(target_os = "wasi", feature = "wasi-wasite")
+        )),
         feature = "web",
     ),
     path = "os/web.rs"
 )]
 // Windows
 #[cfg_attr(
-    all(target_os = "windows", not(target_arch = "wasm32")),
+    all(
+        not(any(feature = "force-stub", target_arch = "wasm32")),
+        feature = "std",
+        target_os = "windows",
+    ),
     path = "os/windows.rs"
 )]
-mod target;
+mod stub;
 
-use std::{
-    env::{self, VarError},
-    ffi::OsString,
-    io::{Error, ErrorKind},
-};
+use alloc::{string::String, vec::Vec};
 
 use crate::{
-    Arch, DesktopEnv, Language, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, Error, Language, LanguagePreferences,
+    Platform, Result,
 };
+
+#[cfg(feature = "std")]
+type OsString = std::ffi::OsString;
+#[cfg(not(feature = "std"))]
+type OsString = String;
 
 /// Implement `Target for Os` to add platform support for a target.
 pub(crate) struct Os;
@@ -74,11 +102,11 @@ pub(crate) trait Target: Sized {
     /// Return the OS distribution's name.
     fn distro(self) -> Result<String>;
     /// Return the desktop environment.
-    fn desktop_env(self) -> Option<DesktopEnv>;
+    fn desktop_env(self) -> Option<DesktopEnvironment>;
     /// Return the target platform.
     fn platform(self) -> Platform;
     /// Return the computer's CPU architecture.
-    fn arch(self) -> Result<Arch>;
+    fn arch(self) -> Result<CpuArchitecture>;
 
     /// Return the user's account name (usually just the username, but may
     /// include an account server hostname).
@@ -88,32 +116,20 @@ pub(crate) trait Target: Sized {
 }
 
 // This is only used on some platforms
-#[allow(dead_code)]
-fn err_missing_record() -> Error {
-    Error::new(ErrorKind::NotFound, "Missing record")
-}
-
-// This is only used on some platforms
-#[allow(dead_code)]
-fn err_null_record() -> Error {
-    Error::new(ErrorKind::NotFound, "Null record")
-}
-
-// This is only used on some platforms
-#[allow(dead_code)]
-fn err_empty_record() -> Error {
-    Error::new(ErrorKind::NotFound, "Empty record")
-}
-
-// This is only used on some platforms
+#[cfg(feature = "std")]
 #[allow(dead_code)]
 fn unix_lang() -> Result<LanguagePreferences> {
-    use std::str::FromStr;
+    use std::{
+        env::{self, VarError},
+        str::FromStr,
+    };
 
     let env_var = |var: &str| match env::var(var) {
         Ok(value) => Ok(if value.is_empty() { None } else { Some(value) }),
         Err(VarError::NotPresent) => Ok(None),
-        Err(VarError::NotUnicode(_)) => Err(ErrorKind::InvalidData),
+        Err(VarError::NotUnicode(_)) => {
+            Err(Error::with_invalid_data("not unicode"))
+        }
     };
 
     // Uses priority defined in
@@ -122,7 +138,7 @@ fn unix_lang() -> Result<LanguagePreferences> {
     let lang = env_var("LANG")?;
 
     if lang.is_none() && lc_all.is_none() {
-        return Err(err_empty_record());
+        return Err(Error::empty_record());
     }
 
     // Standard locales that have a higher global precedence than their specific
@@ -152,7 +168,7 @@ fn unix_lang() -> Result<LanguagePreferences> {
 
     // All fields other than LANGUAGE can only contain a single value, so we
     // don't need to perform any splitting at this point.
-    let lang_from_var = |var| -> Result<Option<Language>, Error> {
+    let lang_from_var = |var| -> Result<Option<Language>> {
         env_var(var)?.as_deref().map(Language::from_str).transpose()
     };
 

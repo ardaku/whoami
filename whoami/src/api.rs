@@ -1,9 +1,11 @@
+use alloc::string::String;
+#[cfg(feature = "std")]
 use std::{env, ffi::OsString};
 
 use crate::{
     conversions,
     os::{Os, Target},
-    Arch, DesktopEnv, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, LanguagePreferences, Platform, Result,
 };
 
 macro_rules! report_message {
@@ -14,7 +16,7 @@ macro_rules! report_message {
 
 /// Get the CPU Architecture.
 #[inline(always)]
-pub fn arch() -> Arch {
+pub fn cpu_arch() -> CpuArchitecture {
     Target::arch(Os).expect(concat!("arch() failed.  ", report_message!()))
 }
 
@@ -29,12 +31,13 @@ pub fn account() -> Result<String> {
     account_os().and_then(conversions::string_from_os)
 }
 
-/// Get the user's account name; usually just the username, but may include an
-/// account server hostname.
+/// **`std`** Get the user's account name; usually just the username, but may
+/// include an account server hostname.
 ///
 /// If you don't want the account server hostname, use [`username()`].
 ///
 /// Example: `username@example.com`
+#[cfg(feature = "std")]
 #[inline(always)]
 pub fn account_os() -> Result<OsString> {
     Target::account(Os)
@@ -49,10 +52,11 @@ pub fn username() -> Result<String> {
     username_os().and_then(conversions::string_from_os)
 }
 
-/// Get the user's username.
+/// **`std`** Get the user's username.
 ///
 /// On unix-systems this differs from [`realname_os()`] most notably in that
 /// spaces are not allowed in the username.
+#[cfg(feature = "std")]
 #[inline(always)]
 pub fn username_os() -> Result<OsString> {
     Target::username(Os)
@@ -64,7 +68,8 @@ pub fn realname() -> Result<String> {
     realname_os().and_then(conversions::string_from_os)
 }
 
-/// Get the user's real (full) name.
+/// **`std`** Get the user's real (full) name.
+#[cfg(feature = "std")]
 #[inline(always)]
 pub fn realname_os() -> Result<OsString> {
     Target::realname(Os)
@@ -126,9 +131,10 @@ pub fn devicename() -> Result<String> {
     devicename_os().and_then(conversions::string_from_os)
 }
 
-/// Get the device name (also known as "Pretty Name").
+/// **`std`** Get the device name (also known as "Pretty Name").
 ///
 /// Often used to identify device for bluetooth pairing.
+#[cfg(feature = "std")]
 #[inline(always)]
 pub fn devicename_os() -> Result<OsString> {
     Target::devicename(Os)
@@ -149,12 +155,15 @@ pub fn distro() -> Result<String> {
 /// Returns `None` if a desktop environment is not available (for example in a
 /// TTY or over SSH)
 #[inline(always)]
-pub fn desktop_env() -> Option<DesktopEnv> {
-    if env::var_os("SSH_CLIENT").is_some()
-        || env::var_os("SSH_TTY").is_some()
-        || env::var_os("SSH_CONNECTION").is_some()
+pub fn desktop_env() -> Option<DesktopEnvironment> {
+    #[cfg(feature = "std")]
     {
-        return None;
+        if env::var_os("SSH_CLIENT").is_some()
+            || env::var_os("SSH_TTY").is_some()
+            || env::var_os("SSH_CONNECTION").is_some()
+        {
+            return None;
+        }
     }
 
     Target::desktop_env(Os)
@@ -171,5 +180,5 @@ pub fn platform() -> Platform {
 /// Returned as an instance of [`LanguagePreferences`]
 #[inline(always)]
 pub fn lang_prefs() -> Result<LanguagePreferences> {
-    Target::lang_prefs(Os)
+    Target::lang_prefs(Os).map(LanguagePreferences::add_stripped_fallbacks)
 }

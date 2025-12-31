@@ -1,11 +1,13 @@
 use std::{
     fmt::{self, Display, Formatter},
-    io::{Error, ErrorKind},
+    io::{self, ErrorKind},
     num::NonZeroU8,
     str::FromStr,
+    string::String,
+    vec::Vec,
 };
 
-use crate::Result;
+use crate::{Error, Result};
 
 /// A spoken language identifier
 ///
@@ -26,6 +28,8 @@ use crate::Result;
 ///
 /// You can compare languages with strings (where the separator can be any of
 /// `-`, `_`, or `/`).
+///
+/// [`ToString::to_string()`]: std::string::ToString::to_string
 #[non_exhaustive]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub struct Language {
@@ -56,49 +60,60 @@ impl FromStr for Language {
         let lang = s.split_terminator('.').next().unwrap_or_default();
 
         if lang.is_empty() {
-            return Err(Error::new(ErrorKind::NotFound, "Empty record"));
+            return Err(Error::from_io(io::Error::new(
+                ErrorKind::NotFound,
+                "Empty record",
+            )));
         }
 
         // Split apart lang and country
         let mut parts = lang.split(SEPARATORS);
         let lang = parts
             .next()
-            .ok_or_else(|| Error::new(ErrorKind::InvalidData, "No lang"))?
+            .ok_or_else(|| {
+                Error::from_io(io::Error::new(
+                    ErrorKind::InvalidData,
+                    "No lang",
+                ))
+            })?
             .as_bytes();
         let country = parts.next().unwrap_or("\0\0").as_bytes();
 
         // Verify that the lengths are valid
         if parts.next().is_some() {
-            return Err(Error::new(ErrorKind::InvalidData, "Invalid locale"));
+            return Err(Error::from_io(io::Error::new(
+                ErrorKind::InvalidData,
+                "Invalid locale",
+            )));
         } else if lang.len() != 2 {
-            return Err(Error::new(
+            return Err(Error::from_io(io::Error::new(
                 ErrorKind::InvalidData,
                 "Invalid length lang code",
-            ));
+            )));
         } else if country.len() != 2 {
-            return Err(Error::new(
+            return Err(Error::from_io(io::Error::new(
                 ErrorKind::InvalidData,
                 "Invalid length country code",
-            ));
+            )));
         }
 
         // Verify the contents are valid
         let Some(lang) = NonZeroU8::new(lang[0]).zip(NonZeroU8::new(lang[1]))
         else {
-            return Err(Error::new(
+            return Err(Error::from_io(io::Error::new(
                 ErrorKind::InvalidData,
                 "Lang code contains NUL",
-            ));
+            )));
         };
         let lang = [lang.0, lang.1];
 
         if (country[0] == 0 || country[1] == 0)
             && (country[0] != 0 || country[1] != 0)
         {
-            return Err(Error::new(
+            return Err(Error::from_io(io::Error::new(
                 ErrorKind::InvalidData,
                 "Country code contains NUL",
-            ));
+            )));
         }
 
         let country = NonZeroU8::new(country[0])
@@ -108,20 +123,20 @@ impl FromStr for Language {
         if !(lang[0].get().is_ascii_lowercase()
             && lang[1].get().is_ascii_lowercase())
         {
-            return Err(Error::new(
+            return Err(Error::from_io(io::Error::new(
                 ErrorKind::InvalidData,
                 "Lang code not ascii lowercase",
-            ));
+            )));
         }
 
         if let Some(ref country) = country {
             if !(country[0].get().is_ascii_uppercase()
                 && country[1].get().is_ascii_uppercase())
             {
-                return Err(Error::new(
+                return Err(Error::from_io(io::Error::new(
                     ErrorKind::InvalidData,
                     "Country code not ascii uppercase",
-                ));
+                )));
             }
         }
 
@@ -260,7 +275,18 @@ impl LanguagePreferences {
         &'a self,
         l: &Option<Language>,
     ) -> impl Iterator<Item = Language> + 'a {
-        (*l).into_iter().chain(self.fallbacks.iter().cloned())
+        let lang_without_country = if let Some(ref lang) = l {
+            lang.country.is_some().then_some(Language {
+                lang: lang.lang,
+                country: None,
+            })
+        } else {
+            None
+        };
+
+        (*l).into_iter()
+            .chain(lang_without_country)
+            .chain(self.fallbacks.iter().cloned())
     }
 
     /// Returns the collation langs of this [`LanguagePreferences`] in order of
@@ -325,6 +351,29 @@ impl LanguagePreferences {
     /// Time langs determine format and contents of date and time information.
     pub fn time_langs(&self) -> impl Iterator<Item = Language> + '_ {
         self.chain_fallbacks(&self.time)
+    }
+
+    pub(crate) fn add_stripped_fallbacks(mut self) -> Self {
+        let mut no_country_langs = Vec::new();
+
+        for lang in self.fallbacks.iter() {
+            if lang.country.is_some() {
+                no_country_langs.push(Language {
+                    lang: lang.lang,
+                    country: None,
+                });
+            } else {
+                let Some(i) = no_country_langs.iter().position(|x| x == lang)
+                else {
+                    continue;
+                };
+
+                no_country_langs.remove(i);
+            }
+        }
+
+        self.fallbacks.extend(no_country_langs);
+        self
     }
 }
 

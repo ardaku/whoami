@@ -1,9 +1,12 @@
-use std::fmt::{self, Display, Formatter};
+use std::{
+    fmt::{self, Display, Formatter},
+    string::String,
+};
 
 /// The desktop environment of a system
 #[derive(Debug, PartialEq, Eq, Clone)]
 #[non_exhaustive]
-pub enum DesktopEnv {
+pub enum DesktopEnvironment {
     /// Unknown desktop environment
     Unknown(String),
     /// Popular GTK-based desktop environment on Linux
@@ -42,7 +45,7 @@ pub enum DesktopEnv {
     Orbital,
 }
 
-impl Display for DesktopEnv {
+impl Display for DesktopEnvironment {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         if let Self::Unknown(_) = self {
             f.write_str("Unknown: ")?;
@@ -71,7 +74,7 @@ impl Display for DesktopEnv {
     }
 }
 
-impl DesktopEnv {
+impl DesktopEnvironment {
     /// Returns true if the desktop environment is based on GTK.
     pub fn is_gtk(&self) -> bool {
         *self == Self::Gnome

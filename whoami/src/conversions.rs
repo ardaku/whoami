@@ -1,9 +1,6 @@
-use std::{
-    ffi::OsString,
-    io::{Error, ErrorKind},
-};
+use std::{ffi::OsString, string::String};
 
-use crate::Result;
+use crate::{Error, Result};
 
 pub(crate) fn string_from_os(string: OsString) -> Result<String> {
     #[cfg(any(
@@ -15,9 +12,10 @@ pub(crate) fn string_from_os(string: OsString) -> Result<String> {
         use std::os::unix::ffi::OsStringExt;
         #[cfg(target_os = "wasi")]
         use std::os::wasi::ffi::OsStringExt;
+        use std::string::ToString;
 
         String::from_utf8(string.into_vec())
-            .map_err(|e| Error::new(ErrorKind::InvalidData, e))
+            .map_err(|e| Error::with_invalid_data(e.to_string()))
     }
 
     #[cfg(any(
@@ -25,8 +23,8 @@ pub(crate) fn string_from_os(string: OsString) -> Result<String> {
         all(target_arch = "wasm32", not(target_os = "wasi")),
     ))]
     {
-        string.into_string().map_err(|_| {
-            Error::new(ErrorKind::InvalidData, "Not valid unicode")
-        })
+        string
+            .into_string()
+            .map_err(|_| Error::with_invalid_data("Not valid unicode"))
     }
 }

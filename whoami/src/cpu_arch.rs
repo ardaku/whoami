@@ -26,8 +26,8 @@ impl Display for Width {
 #[non_exhaustive]
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum CpuArchitecture {
-    /// Unknown Architecture
-    Unknown(String),
+    /// Other Architecture
+    Other(String),
     /// ARMv5
     ArmV5,
     /// ARMv6 (Sometimes just referred to as ARM)
@@ -76,12 +76,12 @@ pub enum CpuArchitecture {
 
 impl Display for CpuArchitecture {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        if let Self::Unknown(_) = self {
+        if let Self::Other(_) = self {
             f.write_str("Unknown: ")?;
         }
 
         f.write_str(match self {
-            Self::Unknown(arch) => arch,
+            Self::Other(arch) => arch,
             Self::ArmV5 => "armv5",
             Self::ArmV6 => "armv6",
             Self::ArmV7 => "armv7",

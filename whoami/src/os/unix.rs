@@ -10,10 +10,9 @@
 use std::env;
 use std::{
     ffi::{c_char, c_int, c_void, CStr, OsString},
-    fs,
-    io::{Error, ErrorKind},
-    mem,
+    fs, io, mem,
     os::unix::ffi::OsStringExt,
+    prelude::rust_2021::*,
     slice,
 };
 #[cfg(target_os = "macos")]
@@ -25,7 +24,8 @@ use std::{
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, Error, LanguagePreferences, Platform,
+    Result,
 };
 
 #[cfg(any(target_os = "linux", target_os = "hurd"))]
@@ -163,7 +163,7 @@ unsafe fn strlen_gecos(cs: *const c_void) -> usize {
 
 fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
     if string.is_null() {
-        return Err(super::err_null_record());
+        return Err(Error::null_record());
     }
 
     // Get a byte slice of the c string.
@@ -171,7 +171,7 @@ fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
         let length = strlen_gecos(string);
 
         if length == 0 {
-            return Err(super::err_empty_record());
+            return Err(Error::empty_record());
         }
 
         slice::from_raw_parts(string.cast(), length)
@@ -183,7 +183,7 @@ fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
 
 fn os_from_cstring(string: *const c_void) -> Result<OsString> {
     if string.is_null() {
-        return Err(super::err_null_record());
+        return Err(Error::null_record());
     }
 
     // Get a byte slice of the c string.
@@ -191,7 +191,7 @@ fn os_from_cstring(string: *const c_void) -> Result<OsString> {
         let length = strlen(string);
 
         if length == 0 {
-            return Err(super::err_empty_record());
+            return Err(Error::empty_record());
         }
 
         slice::from_raw_parts(string.cast(), length)
@@ -260,13 +260,13 @@ fn getpwuid(name: Name) -> Result<OsString> {
             );
 
             if ret != 0 {
-                return Err(Error::last_os_error());
+                return Err(Error::from_io(io::Error::last_os_error()));
             }
 
             let _passwd = _passwd.assume_init();
 
             if _passwd.is_null() {
-                return Err(super::err_null_record());
+                return Err(Error::null_record());
             }
             passwd.assume_init()
         }
@@ -281,7 +281,7 @@ fn getpwuid(name: Name) -> Result<OsString> {
             );
 
             if ret.is_null() {
-                return Err(Error::last_os_error());
+                return Err(Error::from_io(io::Error::last_os_error()));
             }
             passwd.assume_init()
         }
@@ -338,16 +338,14 @@ fn distro_xml(data: String) -> Result<String> {
 
     Ok(if let Some(product_name) = product_name {
         if let Some(user_visible_version) = user_visible_version {
-            format!("{product_name} {user_visible_version}")
+            std::format!("{product_name} {user_visible_version}")
         } else {
             product_name.to_string()
         }
     } else {
         user_visible_version
-            .map(|v| format!("Mac OS (Unknown) {v}"))
-            .ok_or_else(|| {
-                Error::new(ErrorKind::InvalidData, "Parsing failed")
-            })?
+            .map(|v| std::format!("Mac OS (Unknown) {v}"))
+            .ok_or_else(|| Error::with_invalid_data("Parsing failed"))?
     })
 }
 
@@ -463,7 +461,7 @@ impl Target for Os {
             });
 
             if out.as_bytes().is_empty() {
-                return Err(super::err_empty_record());
+                return Err(Error::empty_record());
             }
 
             Ok(out)
@@ -479,7 +477,7 @@ impl Target for Os {
             }
 
             if nodename.is_empty() {
-                return Err(super::err_empty_record());
+                return Err(Error::empty_record());
             }
 
             Ok(OsString::from_vec(nodename))
@@ -494,16 +492,16 @@ impl Target for Os {
             target_os = "hurd",
         ))]
         {
-            let machine_info = fs::read("/etc/machine-info")?;
+            let machine_info =
+                fs::read("/etc/machine-info").map_err(Error::from_io)?;
 
             for i in machine_info.split(|b| *b == b'\n') {
                 let mut j = i.split(|b| *b == b'=');
 
                 if j.next() == Some(b"PRETTY_HOSTNAME") {
-                    let pretty_hostname = j.next().ok_or(Error::new(
-                        ErrorKind::InvalidData,
-                        "parsing failed",
-                    ))?;
+                    let pretty_hostname = j
+                        .next()
+                        .ok_or(Error::with_invalid_data("parsing failed"))?;
                     let pretty_hostname = pretty_hostname
                         .strip_prefix(b"\"")
                         .unwrap_or(pretty_hostname)
@@ -523,8 +521,7 @@ impl Target for Os {
                                     Some(b'\'') => b'\'',
                                     Some(b'"') => b'"',
                                     _ => {
-                                        return Err(Error::new(
-                                            ErrorKind::InvalidData,
+                                        return Err(Error::with_invalid_data(
                                             "parsing failed",
                                         ));
                                     }
@@ -541,7 +538,7 @@ impl Target for Os {
                 }
             }
 
-            Err(super::err_missing_record())
+            Err(Error::missing_record())
         }
     }
 
@@ -551,15 +548,14 @@ impl Target for Os {
 
         unsafe {
             if gethostname(string.as_mut_ptr().cast(), 255) == -1 {
-                return Err(Error::last_os_error());
+                return Err(Error::from_io(io::Error::last_os_error()));
             }
 
             string.set_len(strlen(string.as_ptr().cast()));
         };
 
-        String::from_utf8(string).map_err(|_| {
-            Error::new(ErrorKind::InvalidData, "Hostname not valid UTF-8")
-        })
+        String::from_utf8(string)
+            .map_err(|_| Error::with_invalid_data("Hostname not valid UTF-8"))
     }
 
     fn distro(self) -> Result<String> {
@@ -574,7 +570,7 @@ impl Target for Os {
             ) {
                 distro_xml(data)
             } else {
-                Err(super::err_missing_record())
+                Err(Error::missing_record())
             }
         }
 
@@ -588,9 +584,10 @@ impl Target for Os {
             target_os = "hurd",
         ))]
         {
-            let program = fs::read("/etc/os-release")?;
+            let program =
+                fs::read("/etc/os-release").map_err(Error::from_io)?;
             let distro = String::from_utf8_lossy(&program);
-            let err = || Error::new(ErrorKind::InvalidData, "Parsing failed");
+            let err = || Error::with_invalid_data("Parsing failed");
             let mut fallback = None;
 
             for i in distro.split('\n') {
@@ -620,7 +617,7 @@ impl Target for Os {
         }
     }
 
-    fn desktop_env(self) -> Option<DesktopEnv> {
+    fn desktop_env(self) -> Option<DesktopEnvironment> {
         #[cfg(target_os = "macos")]
         let env = OsStr::new("Aqua");
 
@@ -639,21 +636,21 @@ impl Target for Os {
         let env = env.to_string_lossy();
 
         Some(if env.eq_ignore_ascii_case("AQUA") {
-            DesktopEnv::Aqua
+            DesktopEnvironment::Aqua
         } else if env.eq_ignore_ascii_case("GNOME") {
-            DesktopEnv::Gnome
+            DesktopEnvironment::Gnome
         } else if env.eq_ignore_ascii_case("LXDE") {
-            DesktopEnv::Lxde
+            DesktopEnvironment::Lxde
         } else if env.eq_ignore_ascii_case("OPENBOX") {
-            DesktopEnv::Openbox
+            DesktopEnvironment::Openbox
         } else if env.eq_ignore_ascii_case("I3") {
-            DesktopEnv::I3
+            DesktopEnvironment::I3
         } else if env.eq_ignore_ascii_case("UBUNTU") {
-            DesktopEnv::Ubuntu
+            DesktopEnvironment::Ubuntu
         } else if env.eq_ignore_ascii_case("PLASMA5") {
-            DesktopEnv::Plasma
+            DesktopEnvironment::Plasma
         } else {
-            DesktopEnv::Unknown(env.to_string())
+            DesktopEnvironment::Unknown(env.to_string())
         })
     }
 
@@ -691,11 +688,11 @@ impl Target for Os {
     }
 
     #[inline(always)]
-    fn arch(self) -> Result<Arch> {
+    fn arch(self) -> Result<CpuArchitecture> {
         let mut buf = UtsName::default();
 
         if unsafe { uname(&mut buf) } == -1 {
-            return Err(Error::last_os_error());
+            return Err(Error::from_io(io::Error::last_os_error()));
         }
 
         let arch_str =
@@ -703,28 +700,28 @@ impl Target for Os {
 
         Ok(match arch_str.as_ref() {
             "aarch64" | "arm64" | "aarch64_be" | "armv8b" | "armv8l" => {
-                Arch::Arm64
+                CpuArchitecture::Arm64
             }
-            "armv5" => Arch::ArmV5,
-            "armv6" | "arm" => Arch::ArmV6,
-            "armv7" => Arch::ArmV7,
-            "i386" => Arch::I386,
-            "i586" => Arch::I586,
-            "i686" | "i686-AT386" => Arch::I686,
-            "mips" => Arch::Mips,
-            "mipsel" => Arch::MipsEl,
-            "mips64" => Arch::Mips64,
-            "mips64el" => Arch::Mips64El,
-            "powerpc" | "ppc" | "ppcle" => Arch::PowerPc,
-            "powerpc64" | "ppc64" | "ppc64le" => Arch::PowerPc64,
-            "powerpc64le" => Arch::PowerPc64Le,
-            "riscv32" => Arch::Riscv32,
-            "riscv64" => Arch::Riscv64,
-            "s390x" => Arch::S390x,
-            "sparc" => Arch::Sparc,
-            "sparc64" => Arch::Sparc64,
-            "x86_64" | "amd64" => Arch::X64,
-            _ => Arch::Unknown(arch_str.into_owned()),
+            "armv5" => CpuArchitecture::ArmV5,
+            "armv6" | "arm" => CpuArchitecture::ArmV6,
+            "armv7" => CpuArchitecture::ArmV7,
+            "i386" => CpuArchitecture::I386,
+            "i586" => CpuArchitecture::I586,
+            "i686" | "i686-AT386" => CpuArchitecture::I686,
+            "mips" => CpuArchitecture::Mips,
+            "mipsel" => CpuArchitecture::MipsEl,
+            "mips64" => CpuArchitecture::Mips64,
+            "mips64el" => CpuArchitecture::Mips64El,
+            "powerpc" | "ppc" | "ppcle" => CpuArchitecture::PowerPc,
+            "powerpc64" | "ppc64" | "ppc64le" => CpuArchitecture::PowerPc64,
+            "powerpc64le" => CpuArchitecture::PowerPc64Le,
+            "riscv32" => CpuArchitecture::Riscv32,
+            "riscv64" => CpuArchitecture::Riscv64,
+            "s390x" => CpuArchitecture::S390x,
+            "sparc" => CpuArchitecture::Sparc,
+            "sparc64" => CpuArchitecture::Sparc64,
+            "x86_64" | "amd64" => CpuArchitecture::X64,
+            _ => CpuArchitecture::Unknown(arch_str.into_owned()),
         })
     }
 }

@@ -5,7 +5,7 @@ use std::{env, ffi::OsString};
 
 use crate::{
     os::{Os, Target},
-    Arch, DesktopEnv, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, LanguagePreferences, Platform, Result,
 };
 
 impl Target for Os {
@@ -45,9 +45,10 @@ impl Target for Os {
     }
 
     #[inline(always)]
-    fn desktop_env(self) -> Option<DesktopEnv> {
-        env::var_os("DESKTOP_SESSION")
-            .map(|env| DesktopEnv::Unknown(env.to_string_lossy().to_string()))
+    fn desktop_env(self) -> Option<DesktopEnvironment> {
+        env::var_os("DESKTOP_SESSION").map(|env| {
+            DesktopEnvironment::Unknown(env.to_string_lossy().to_string())
+        })
     }
 
     #[inline(always)]
@@ -56,11 +57,11 @@ impl Target for Os {
     }
 
     #[inline(always)]
-    fn arch(self) -> Result<Arch> {
+    fn arch(self) -> Result<CpuArchitecture> {
         Ok(if cfg!(target_pointer_width = "64") {
-            Arch::Wasm64
+            CpuArchitecture::Wasm64
         } else {
-            Arch::Wasm32
+            CpuArchitecture::Wasm32
         })
     }
 }

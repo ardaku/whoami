@@ -49,7 +49,7 @@ pub fn main() {
         whoami::desktop_env().unwrap(),
     ));
     log(format!(
-        "Device's CPU Arch      whoami::arch():                {}",
-        whoami::arch(),
+        "Device's CPU Arch      whoami::cpu_arch():            {}",
+        whoami::cpu_arch(),
     ));
 }
