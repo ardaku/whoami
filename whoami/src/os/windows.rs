@@ -458,12 +458,12 @@ impl Target for Os {
 
     #[inline(always)]
     fn account(self) -> Result<OsString> {
-        match extended_name(ExtendedNameFormat::UserPrincipal) {
+        match extended_name(ExtendedNameFormat::UserPrincipal)
+            .map(io::Error::from)
+        {
             Ok(name) => Ok(name),
-            Err(e) if io::Error::from(e).kind() == ErrorKind::NotFound => {
-                username()
-            }
-            Err(e) => Err(e),
+            Err(e) if e.kind() == ErrorKind::NotFound => username(),
+            Err(e) => Err(Error::from_io(e)),
         }
     }
 }
