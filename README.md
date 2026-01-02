@@ -54,8 +54,9 @@ MSRV is updated according to the [Ardaku MSRV guidelines], so it will only get
 updated on minor and major version bumps.  All 2.x releases will be maintained
 with bugfixes until the end of 2027 at minimum.
 
- - WhoAmI 2.2: Rust 1.85 MSRV (bump to get the 2024 edition)
- - WhoAmI 2.1: Rust 1.75 MSRV (bump to pull in nix, etc.)
+ - WhoAmI 2.2: Rust 1.85 MSRV (bump to get the 2024 edition, pull in nix, etc.)
+ - WhoAmI 2.1: Rust 1.75 MSRV (bump for new lang features, faster CI, pull in
+   libc, etc.)
  - WhoAmI 2.0: Rust 1.65 MSRV (support based on original 2.0 plan)
  - WhoAmI 1.x: Rust 1.40 MSRV (old MSRV policy, maintained until end of 2025 at
    minimum)
@@ -71,14 +72,14 @@ full manual test suite is run for each change that affects multiple platforms.
 
 ## License
 
-Copyright © 2017-2025 The WhoAmI Contributors.
+Copyright © 2017-2026 The WhoAmI Contributors.
 
 Licensed under any of
- - Apache License, Version 2.0, ([LICENSE_APACHE] or
+ - Apache License, Version 2.0, ([LICENSE\_APACHE] or
    <https://www.apache.org/licenses/LICENSE-2.0>)
- - Boost Software License, Version 1.0, ([LICENSE_BOOST] or
+ - Boost Software License, Version 1.0, ([LICENSE\_BOOST] or
    <https://www.boost.org/LICENSE_1_0.txt>)
- - MIT License, ([LICENSE_MIT] or <https://mit-license.org/>)
+ - MIT License, ([LICENSE\_MIT] or <https://mit-license.org/>)
 
 at your option.
 
