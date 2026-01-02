@@ -469,7 +469,8 @@ impl Target for Os {
 
         #[cfg(target_os = "illumos")]
         {
-            let mut nodename = fs::read("/etc/nodename")?;
+            let mut nodename =
+                fs::read("/etc/nodename").map_err(Error::from_io)?;
 
             // Remove all at and after the first newline (before end of file)
             if let Some(slice) = nodename.split(|x| *x == b'\n').next() {
