@@ -1,11 +1,9 @@
-use std::{
+use core::{
     fmt::{self, Display, Formatter},
-    io::{self, ErrorKind},
     num::NonZeroU8,
     str::FromStr,
-    string::String,
-    vec::Vec,
 };
+use alloc::{vec::Vec, string::String};
 
 use crate::{Error, Result};
 
@@ -60,10 +58,7 @@ impl FromStr for Language {
         let lang = s.split_terminator('.').next().unwrap_or_default();
 
         if lang.is_empty() {
-            return Err(Error::from_io(io::Error::new(
-                ErrorKind::NotFound,
-                "Empty record",
-            )));
+            return Err(Error::empty_record());
         }
 
         // Split apart lang and country
@@ -71,49 +66,41 @@ impl FromStr for Language {
         let lang = parts
             .next()
             .ok_or_else(|| {
-                Error::from_io(io::Error::new(
-                    ErrorKind::InvalidData,
-                    "No lang",
-                ))
+                Error::with_invalid_data("No lang")
             })?
             .as_bytes();
         let country = parts.next().unwrap_or("\0\0").as_bytes();
 
         // Verify that the lengths are valid
         if parts.next().is_some() {
-            return Err(Error::from_io(io::Error::new(
-                ErrorKind::InvalidData,
+            return Err(Error::with_invalid_data(
                 "Invalid locale",
-            )));
+            ));
         } else if lang.len() != 2 {
-            return Err(Error::from_io(io::Error::new(
-                ErrorKind::InvalidData,
+            return Err(Error::with_invalid_data(
                 "Invalid length lang code",
-            )));
+            ));
         } else if country.len() != 2 {
-            return Err(Error::from_io(io::Error::new(
-                ErrorKind::InvalidData,
+            return Err(Error::with_invalid_data(
                 "Invalid length country code",
-            )));
+            ));
         }
 
         // Verify the contents are valid
         let Some(lang) = NonZeroU8::new(lang[0]).zip(NonZeroU8::new(lang[1]))
         else {
-            return Err(Error::from_io(io::Error::new(
-                ErrorKind::InvalidData,
+            return Err(Error::with_invalid_data(
                 "Lang code contains NUL",
-            )));
+            ));
         };
         let lang = [lang.0, lang.1];
 
         if (country[0] == 0 || country[1] == 0)
             && (country[0] != 0 || country[1] != 0)
         {
-            return Err(Error::from_io(io::Error::new(
-                ErrorKind::InvalidData,
+            return Err(Error::with_invalid_data(
                 "Country code contains NUL",
-            )));
+            ));
         }
 
         let country = NonZeroU8::new(country[0])
@@ -123,20 +110,18 @@ impl FromStr for Language {
         if !(lang[0].get().is_ascii_lowercase()
             && lang[1].get().is_ascii_lowercase())
         {
-            return Err(Error::from_io(io::Error::new(
-                ErrorKind::InvalidData,
+            return Err(Error::with_invalid_data(
                 "Lang code not ascii lowercase",
-            )));
+            ));
         }
 
         if let Some(ref country) = country {
             if !(country[0].get().is_ascii_uppercase()
                 && country[1].get().is_ascii_uppercase())
             {
-                return Err(Error::from_io(io::Error::new(
-                    ErrorKind::InvalidData,
+                return Err(Error::with_invalid_data(
                     "Country code not ascii uppercase",
-                )));
+                ));
             }
         }
 

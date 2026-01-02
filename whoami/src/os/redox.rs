@@ -114,7 +114,8 @@ impl Target for Os {
 
     #[inline(always)]
     fn distro(self) -> Result<String> {
-        let release_file = fs::read_to_string("/etc/os-release")?;
+        let release_file =
+            fs::read_to_string("/etc/os-release").map_err(Error::from_io)?;
 
         for kv in release_file.lines() {
             if let Some(kv) = kv.strip_prefix("PRETTY_NAME=\"") {

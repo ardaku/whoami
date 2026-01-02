@@ -97,7 +97,6 @@ extern crate std;
 
 mod api;
 mod arch;
-#[cfg(feature = "std")]
 mod conversions;
 mod desktop_env;
 mod error;
@@ -119,3 +118,4 @@ pub use self::{
     platform::Platform,
     result::Result,
 };
+use self::conversions::OsString;

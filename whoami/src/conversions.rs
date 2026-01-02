@@ -1,8 +1,21 @@
-use std::{ffi::OsString, string::String};
+use alloc::string::String;
 
-use crate::{Error, Result};
+use crate::Result;
 
+#[cfg(feature = "std")]
+pub(super) type OsString = std::ffi::OsString;
+#[cfg(not(feature = "std"))]
+pub(super) type OsString = String;
+
+#[cfg(not(feature = "std"))]
+pub(crate) fn string_from_os(string: String) -> Result<String> {
+    Ok(string)
+}
+
+#[cfg(feature = "std")]
 pub(crate) fn string_from_os(string: OsString) -> Result<String> {
+    use crate::Error;
+
     #[cfg(any(
         all(not(target_os = "windows"), not(target_arch = "wasm32")),
         all(target_arch = "wasm32", target_os = "wasi"),

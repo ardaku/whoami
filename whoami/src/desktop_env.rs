@@ -1,7 +1,5 @@
-use std::{
-    fmt::{self, Display, Formatter},
-    string::String,
-};
+use alloc::string::String;
+use core::fmt::{self, Display, Formatter};
 
 /// The desktop environment of a system
 #[derive(Debug, PartialEq, Eq, Clone)]

@@ -1,14 +1,15 @@
 #[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
 compile_error!("Unexpected pointer width for target platform");
 
-use std::{ffi::OsString, io::ErrorKind, str::FromStr};
+use core::str::FromStr;
+use std::io::ErrorKind;
 
 use web_sys::window;
 
 use crate::{
     os::{Os, Target},
     CpuArchitecture, DesktopEnvironment, Error, Language, LanguagePreferences,
-    Platform, Result,
+    Platform, Result, OsString,
 };
 
 // Get the user agent
@@ -80,7 +81,6 @@ impl Target for Os {
             })
         } else {
             Err(Error::new(
-                ErrorKind::NotFound,
                 "Failed to retrieve languages: Window object is missing",
             ))
         }
@@ -103,16 +103,14 @@ impl Target for Os {
             .filter(|x| !x.is_empty())
             .ok_or_else(|| {
                 Error::new(
-                    ErrorKind::NotFound,
                     "Domain missing, failed to retrieve document domain from window"
                 )
             })
     }
 
     fn distro(self) -> Result<String> {
-        let string = user_agent()
-            .ok_or_else(|| Error::from(ErrorKind::PermissionDenied))?;
-        let err = || Error::new(ErrorKind::InvalidData, "Parsing failed");
+        let string = user_agent().ok_or_else(|| Error::permission_denied())?;
+        let err = || Error::with_invalid_data("Parsing failed");
         let begin = string.find('(').ok_or_else(err)?;
         let end = string.find(')').ok_or_else(err)?;
         let string = &string[begin + 1..end];
