@@ -22,22 +22,22 @@ impl Target for Os {
 
     #[inline(always)]
     fn realname(self) -> Result<OsString> {
-        Ok("Anonymous".to_string().into())
+        Ok(OsString::from("Anonymous"))
     }
 
     #[inline(always)]
     fn username(self) -> Result<OsString> {
-        Ok("anonymous".to_string().into())
+        Ok(OsString::from("anonymous"))
     }
 
     #[inline(always)]
     fn devicename(self) -> Result<OsString> {
-        Ok("Unknown".to_string().into())
+        Ok(OsString::from("Unknown"))
     }
 
     #[inline(always)]
     fn hostname(self) -> Result<String> {
-        Ok("localhost".to_string())
+        Ok(String::from("localhost"))
     }
 
     #[inline(always)]
@@ -114,7 +114,7 @@ impl Target for Os {
     fn arch(self) -> Result<CpuArchitecture> {
         #[cfg(target_pointer_width = "32")]
         {
-            Ok(CpuArchitecture::Wasm64)
+            Ok(CpuArchitecture::Wasm32)
         }
 
         #[cfg(target_pointer_width = "64")]

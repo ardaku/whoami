@@ -7,7 +7,6 @@ use std::io::Error as IoError;
 struct IoError(Cow<'static, str>);
 
 /// An I/O error; can be converted to [`std::io::Error`].
-#[non_exhaustive]
 #[derive(Debug)]
 pub struct Error(IoError);
 

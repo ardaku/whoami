@@ -15,6 +15,7 @@ macro_rules! report_message {
 }
 
 /// Get the CPU Architecture.
+#[must_use]
 #[inline(always)]
 pub fn cpu_arch() -> CpuArchitecture {
     Target::arch(Os).expect(concat!("arch() failed.  ", report_message!()))
@@ -154,6 +155,7 @@ pub fn distro() -> Result<String> {
 ///
 /// Returns `None` if a desktop environment is not available (for example in a
 /// TTY or over SSH)
+#[must_use]
 #[inline(always)]
 pub fn desktop_env() -> Option<DesktopEnvironment> {
     #[cfg(feature = "std")]
@@ -170,6 +172,7 @@ pub fn desktop_env() -> Option<DesktopEnvironment> {
 }
 
 /// Get the platform.
+#[must_use]
 #[inline(always)]
 pub fn platform() -> Platform {
     Target::platform(Os)
