@@ -9,6 +9,8 @@ use std::{
 pub enum DesktopEnvironment {
     /// Unknown desktop environment
     Unknown(String),
+    /// Running as Web Assembly on a web page
+    WebBrowser(String),
     /// Popular GTK-based desktop environment on Linux
     Gnome,
     /// One of the desktop environments for a specific version of Windows
@@ -33,8 +35,6 @@ pub enum DesktopEnvironment {
     Ios,
     /// Desktop environment for Android
     Android,
-    /// Running as Web Assembly on a web page
-    WebBrowser(String),
     /// A desktop environment for a video game console
     Console,
     /// Ubuntu-branded GNOME
@@ -52,7 +52,8 @@ impl Display for DesktopEnvironment {
         }
 
         f.write_str(match self {
-            Self::Unknown(a) => a,
+            Self::Unknown(de) => de,
+            Self::WebBrowser(de) => return write!(f, "WebBrowser ({de})"),
             Self::Gnome => "Gnome",
             Self::Windows => "Windows",
             Self::Lxde => "LXDE",
@@ -65,7 +66,6 @@ impl Display for DesktopEnvironment {
             Self::Aqua => "Aqua",
             Self::Ios => "IOS",
             Self::Android => "Android",
-            Self::WebBrowser(a) => return write!(f, "WebBrowser ({a})"),
             Self::Console => "Console",
             Self::Ubuntu => "Ubuntu",
             Self::Ermine => "Ermine",
@@ -76,17 +76,22 @@ impl Display for DesktopEnvironment {
 
 impl DesktopEnvironment {
     /// Returns true if the desktop environment is based on GTK.
-    pub fn is_gtk(&self) -> bool {
-        *self == Self::Gnome
-            || *self == Self::Ubuntu
-            || *self == Self::Cinnamon
-            || *self == Self::Lxde
-            || *self == Self::Mate
-            || *self == Self::Xfce
+    #[must_use]
+    pub const fn is_gtk(&self) -> bool {
+        matches!(
+            self,
+            Self::Gnome
+                | Self::Ubuntu
+                | Self::Cinnamon
+                | Self::Lxde
+                | Self::Mate
+                | Self::Xfce
+        )
     }
 
     /// Returns true if the desktop environment is based on KDE.
-    pub fn is_kde(&self) -> bool {
-        *self == Self::Plasma
+    #[must_use]
+    pub const fn is_kde(&self) -> bool {
+        matches!(self, Self::Plasma)
     }
 }
