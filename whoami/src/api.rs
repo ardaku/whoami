@@ -3,8 +3,8 @@ use alloc::string::String;
 use crate::{
     conversions,
     os::{Os, Target},
-    CpuArchitecture, DesktopEnvironment, LanguagePreferences, Platform, Result,
-    OsString,
+    CpuArchitecture, DesktopEnvironment, LanguagePreferences, OsString,
+    Platform, Result,
 };
 
 macro_rules! report_message {

@@ -72,11 +72,11 @@
 )]
 mod stub;
 
-use alloc::{string::String};
+use alloc::string::String;
 
 use crate::{
-    CpuArchitecture, DesktopEnvironment, LanguagePreferences,
-    Platform, Result, OsString,
+    CpuArchitecture, DesktopEnvironment, LanguagePreferences, OsString,
+    Platform, Result,
 };
 
 /// Implement `Target for Os` to add platform support for a target.

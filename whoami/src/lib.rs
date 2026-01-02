@@ -105,6 +105,7 @@ mod os;
 mod platform;
 mod result;
 
+use self::conversions::OsString;
 pub use self::{
     api::{
         account, account_os, cpu_arch, desktop_env, devicename, devicename_os,
@@ -118,4 +119,3 @@ pub use self::{
     platform::Platform,
     result::Result,
 };
-use self::conversions::OsString;

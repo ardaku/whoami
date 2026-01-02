@@ -1,9 +1,9 @@
+use alloc::{string::String, vec::Vec};
 use core::{
     fmt::{self, Display, Formatter},
     num::NonZeroU8,
     str::FromStr,
 };
-use alloc::{vec::Vec, string::String};
 
 use crate::{Error, Result};
 
@@ -65,21 +65,15 @@ impl FromStr for Language {
         let mut parts = lang.split(SEPARATORS);
         let lang = parts
             .next()
-            .ok_or_else(|| {
-                Error::with_invalid_data("No lang")
-            })?
+            .ok_or_else(|| Error::with_invalid_data("No lang"))?
             .as_bytes();
         let country = parts.next().unwrap_or("\0\0").as_bytes();
 
         // Verify that the lengths are valid
         if parts.next().is_some() {
-            return Err(Error::with_invalid_data(
-                "Invalid locale",
-            ));
+            return Err(Error::with_invalid_data("Invalid locale"));
         } else if lang.len() != 2 {
-            return Err(Error::with_invalid_data(
-                "Invalid length lang code",
-            ));
+            return Err(Error::with_invalid_data("Invalid length lang code"));
         } else if country.len() != 2 {
             return Err(Error::with_invalid_data(
                 "Invalid length country code",
@@ -89,18 +83,14 @@ impl FromStr for Language {
         // Verify the contents are valid
         let Some(lang) = NonZeroU8::new(lang[0]).zip(NonZeroU8::new(lang[1]))
         else {
-            return Err(Error::with_invalid_data(
-                "Lang code contains NUL",
-            ));
+            return Err(Error::with_invalid_data("Lang code contains NUL"));
         };
         let lang = [lang.0, lang.1];
 
         if (country[0] == 0 || country[1] == 0)
             && (country[0] != 0 || country[1] != 0)
         {
-            return Err(Error::with_invalid_data(
-                "Country code contains NUL",
-            ));
+            return Err(Error::with_invalid_data("Country code contains NUL"));
         }
 
         let country = NonZeroU8::new(country[0])

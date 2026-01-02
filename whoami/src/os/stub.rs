@@ -7,7 +7,7 @@ use alloc::string::{String, ToString};
 use crate::{
     os::{Os, Target},
     CpuArchitecture, DesktopEnvironment, Language, LanguagePreferences,
-    Platform, Result,OsString
+    OsString, Platform, Result,
 };
 
 impl Target for Os {

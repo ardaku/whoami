@@ -723,7 +723,7 @@ impl Target for Os {
             "s390x" => CpuArchitecture::S390x,
             "sparc" => CpuArchitecture::Sparc,
             "sparc64" => CpuArchitecture::Sparc64,
-            "x86_64" | "amd64" => CpuArchitecture::X64,
+            "x86_64" | "amd64" | "i86pc" => CpuArchitecture::X64,
             _ => CpuArchitecture::Unknown(arch_str.into_owned()),
         })
     }

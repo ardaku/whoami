@@ -9,7 +9,7 @@ use web_sys::window;
 use crate::{
     os::{Os, Target},
     CpuArchitecture, DesktopEnvironment, Error, Language, LanguagePreferences,
-    Platform, Result, OsString,
+    OsString, Platform, Result,
 };
 
 // Get the user agent
