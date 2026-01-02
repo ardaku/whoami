@@ -44,6 +44,9 @@ optional = true
 features = ["Navigator", "Document", "Window", "Location"]
 default-features = false
 
+[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
+wasm-bindgen-test = "0.3"
+
 [features]
 default = ["std", "wasi-wasite", "wasm-web"]
 
