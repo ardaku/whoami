@@ -650,6 +650,8 @@ impl Target for Os {
             DesktopEnvironment::Ubuntu
         } else if env.eq_ignore_ascii_case("PLASMA5") {
             DesktopEnvironment::Plasma
+        } else if env.eq_ignore_ascii_case("XFCE") {
+            DesktopEnvironment::Xfce
         } else {
             DesktopEnvironment::Unknown(env.to_string())
         })
