@@ -112,7 +112,7 @@ impl Target for Os {
     }
 
     fn distro(self) -> Result<String> {
-        let string = user_agent().ok_or_else(|| Error::permission_denied())?;
+        let string = user_agent().ok_or_else(Error::permission_denied)?;
         let err = || Error::with_invalid_data("Parsing failed");
         let begin = string.find('(').ok_or_else(err)?;
         let end = string.find(')').ok_or_else(err)?;
