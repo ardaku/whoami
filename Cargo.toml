@@ -1,6 +1,7 @@
 [workspace]
 resolver = "3"
 members = ["example-web", "whoami", "xtask"]
+exclude = ["build"]
 
 [profile.release]
 opt-level = "s" # Tell `rustc` to optimize for small code size.

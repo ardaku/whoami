@@ -273,32 +273,9 @@ Set passwords / hostnames to "test" when prompted.
     </details>
  - [ ] Testing complete on Redox
     <details><summary>Redox (virtualized on Fedora Silverblue) Testing</summary>
-    <https://doc.redox-os.org/book/ch08-01-advanced-build.html#understanding-cross-compilation-for-redox>
+    <https://doc.redox-os.org/book/building-redox.html>
 
-    ### Update Rust Nightly and Stable
-
-    ```shell
-    rustup update nightly stable
-    rustup target add --toolchain stable x86_64-unknown-redox
-    ```
-
-    ### Install pre-requisites
-
-    ```shell
-    sudo dnf install podman git file autoconf vim bison flex genisoimage gperf glibc-devel.i686 expat expat-devel fuse-devel fuse3-devel gmp-devel perl-HTML-Parser libpng-devel libtool libjpeg-turbo-devel libvorbis-devel SDL2_ttf-devel mesa-libOSMesa-devel m4 nasm po4a syslinux texinfo sdl12-compat-devel ninja-build meson python3-mako make gcc gcc-c++ openssl patch automake perl-Pod-Html perl-FindBin gperf curl gettext-devel perl-Pod-Xhtml pkgconf-pkg-config cmake cbindgen just mpfr-devel qemu doxygen 'perl(ExtUtils::MakeMaker)'
-
-    cargo install --locked --force --version 0.1.1 cargo-config
-    ```
-
-    ### Get redox source
-
-    ```shell
-    mkdir -p build/
-    cd build/
-    git clone https://gitlab.redox-os.org/redox-os/redox.git --origin upstream --recursive
-    cd redox
-    git submodule update --recursive --init
-    ```
+    Run through "Preparing the build"
 
     ### Create our demo recipe
 
@@ -306,8 +283,8 @@ Set passwords / hostnames to "test" when prompted.
     testing branch.
 
     ```shell
-    mkdir -p build/redox/cookbook/recipes/demos/whome/
-    cp recipe.toml build/redox/cookbook/recipes/demos/whome/
+    mkdir -p build/redox/recipes/demos/whome/
+    cp recipe.toml build/redox/recipes/demos/whome/
     cp build/redox/config/desktop.toml build/redox/config/x86_64/ardaku.toml
     ```
 
