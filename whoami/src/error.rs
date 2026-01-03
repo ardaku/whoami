@@ -20,7 +20,7 @@ impl core::error::Error for Error {}
 
 #[allow(dead_code)]
 impl Error {
-    fn new(message: &'static str) -> Self {
+    pub(crate) fn new(message: &'static str) -> Self {
         #[cfg(not(feature = "std"))]
         {
             Self::from_io(IoError(message.into()))

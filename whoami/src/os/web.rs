@@ -1,8 +1,8 @@
 #[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
 compile_error!("Unexpected pointer width for target platform");
 
+use alloc::{string::{String, ToString}, vec::Vec};
 use core::str::FromStr;
-use std::io::ErrorKind;
 
 use web_sys::window;
 
@@ -128,7 +128,7 @@ impl Target for Os {
             };
             let string = &string[begin + 3..end];
 
-            format!("Windows {string}")
+            alloc::format!("Windows {string}")
         } else if string.contains("Linux") {
             let string = if string.contains("X11") || string.contains("Wayland")
             {

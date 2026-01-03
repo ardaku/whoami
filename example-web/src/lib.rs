@@ -33,7 +33,7 @@ pub fn main() {
         whoami::devicename().unwrap_or_default(),
     ));
     log(format!(
-        "Device's Hostname      whoami::fallible::hostname():  {}",
+        "Device's Hostname      whoami::hostname():            {}",
         whoami::hostname().unwrap_or_else(|_| "localhost".to_string()),
     ));
     log(format!(

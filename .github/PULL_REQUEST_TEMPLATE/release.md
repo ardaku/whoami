@@ -349,13 +349,13 @@ Set passwords / hostnames to "test" when prompted.
     ```console
     User's Name            whoami::realname():            Anonymous
     User's Username        whoami::username():            anonymous
-    User's Language        whoami::langs():               en/US;en
-    Device's Pretty Name   whoami::devicename():          Firefox 136.0
-    Device's Hostname      whoami::fallible::hostname():  localhost
+    User's Language        whoami::lang_prefs():          Collation=en/US:en,CharClasses=en/US:en,Monetary=en/US:en,Messages=en/US:en,Numeric=en/US:en,Time=en/US:en
+    Device's Pretty Name   whoami::devicename():          Browser
+    Device's Hostname      whoami::hostname():            localhost
     Device's Platform      whoami::platform():            Linux
     Device's OS Distro     whoami::distro():              Unknown Linux
-    Device's Desktop Env.  whoami::desktop_env():         Web Browser
-    Device's CPU Arch      whoami::arch():                wasm32
+    Device's Desktop Env.  whoami::desktop_env():         Web Browser (Firefox 146.0)
+    Device's CPU Arch      whoami::cpu_arch():            wasm32
     ```
 
     Check the web console in Opera:
@@ -363,13 +363,13 @@ Set passwords / hostnames to "test" when prompted.
     ```console
     User's Name            whoami::realname():            Anonymous
     User's Username        whoami::username():            anonymous
-    User's Language        whoami::langs():               en/US;en
-    Device's Pretty Name   whoami::devicename():          Opera 107.0.0.0
-    Device's Hostname      whoami::fallible::hostname():  localhost
+    User's Language        whoami::lang_prefs():          Collation=en/US:en,CharClasses=en/US:en,Monetary=en/US:en,Messages=en/US:en,Numeric=en/US:en,Time=en/US:en
+    Device's Pretty Name   whoami::devicename():          Browser
+    Device's Hostname      whoami::hostname():            localhost
     Device's Platform      whoami::platform():            Linux
     Device's OS Distro     whoami::distro():              Unknown Linux
-    Device's Desktop Env.  whoami::desktop_env():         Web Browser
-    Device's CPU Arch      whoami::arch():                wasm32
+    Device's Desktop Env.  whoami::desktop_env():         Web Browser (Opera 125.0.0.0)
+    Device's CPU Arch      whoami::cpu_arch():            wasm32
     ```
 
     Check the web console in Chrome:
@@ -377,13 +377,13 @@ Set passwords / hostnames to "test" when prompted.
     ```console
     User's Name            whoami::realname():            Anonymous
     User's Username        whoami::username():            anonymous
-    User's Language        whoami::langs():               en/US;en
-    Device's Pretty Name   whoami::devicename():          Chrome 122.0.0.0
-    Device's Hostname      whoami::fallible::hostname():  localhost
+    User's Language        whoami::lang_prefs():          Collation=en/US:en,CharClasses=en/US:en,Monetary=en/US:en,Messages=en/US:en,Numeric=en/US:en,Time=en/US:en
+    Device's Pretty Name   whoami::devicename():          Browser
+    Device's Hostname      whoami::hostname():            localhost
     Device's Platform      whoami::platform():            Linux
     Device's OS Distro     whoami::distro():              Unknown Linux
-    Device's Desktop Env.  whoami::desktop_env():         Web Browser
-    Device's CPU Arch      whoami::arch():                wasm32
+    Device's Desktop Env.  whoami::desktop_env():         Web Browser (Chrome 143.0.0.0)
+    Device's CPU Arch      whoami::cpu_arch():            wasm32
     ```
 
     Check the web console in Ungoogled Chromium:
@@ -391,13 +391,13 @@ Set passwords / hostnames to "test" when prompted.
     ```console
     User's Name            whoami::realname():            Anonymous
     User's Username        whoami::username():            anonymous
-    User's Language        whoami::langs():               en/US;en
-    Device's Pretty Name   whoami::devicename():          Chrome 122.0.0.0
-    Device's Hostname      whoami::fallible::hostname():  localhost
+    User's Language        whoami::lang_prefs():          Collation=en/US:en,CharClasses=en/US:en,Monetary=en/US:en,Messages=en/US:en,Numeric=en/US:en,Time=en/US:en
+    Device's Pretty Name   whoami::devicename():          Browser
+    Device's Hostname      whoami::hostname():            localhost
     Device's Platform      whoami::platform():            Linux
     Device's OS Distro     whoami::distro():              Unknown Linux
-    Device's Desktop Env.  whoami::desktop_env():         Web Browser
-    Device's CPU Arch      whoami::arch():                wasm32
+    Device's Desktop Env.  whoami::desktop_env():         Web Browser (Chrome 143.0.0.0)
+    Device's CPU Arch      whoami::cpu_arch():            wasm32
     ```
 
     Check the web console in GNOME Web (Epiphany):
@@ -405,13 +405,13 @@ Set passwords / hostnames to "test" when prompted.
     ```console
     User's Name            whoami::realname():            Anonymous
     User's Username        whoami::username():            anonymous
-    User's Language        whoami::langs():               en/US
-    Device's Pretty Name   whoami::devicename():          GNOME Web
-    Device's Hostname      whoami::fallible::hostname():  localhost
+    User's Language        whoami::lang_prefs():          Collation=en/US:en,CharClasses=en/US:en,Monetary=en/US:en,Messages=en/US:en,Numeric=en/US:en,Time=en/US:en
+    Device's Pretty Name   whoami::devicename():          Browser
+    Device's Hostname      whoami::hostname():            localhost
     Device's Platform      whoami::platform():            Linux
     Device's OS Distro     whoami::distro():              Unknown Linux
-    Device's Desktop Env.  whoami::desktop_env():         Web Browser
-    Device's CPU Arch      whoami::arch():                wasm32
+    Device's Desktop Env.  whoami::desktop_env():         Web Browser (GNOME Web)
+    Device's CPU Arch      whoami::cpu_arch():            wasm32
     ```
 
 # Changelog
