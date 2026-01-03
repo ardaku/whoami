@@ -119,7 +119,7 @@ Set passwords / hostnames to "test" when prompted.
     Device's CPU Arch      whoami::cpu_arch():            x86_64
     ```
     </details>
- - [ ] Testing complete on Windows 10
+ - [ ] Testing complete on Windows 11
     <details><summary>Windows Testing</summary>
     Clone whoami, open Git BASH, and run:
 
@@ -131,18 +131,18 @@ Set passwords / hostnames to "test" when prompted.
     Expect to see something like:
 
     ```console
-    WhoAmI 1.5.0
+    WhoAmI 2.0.0
 
-    User's Language        whoami::langs():               en/US
-    User's Name            whoami::realname():            Aldaron Lau
-    User's Username        whoami::username():            Aldaron Lau
-    User's Username        whoami::fallible::account():   Aldaron Lau
-    Device's Pretty Name   whoami::devicename():          Helpy-Witch
-    Device's Hostname      whoami::fallible::hostname():  HELPY-WITCH
+    User's Language        whoami::lang_prefs():          Collation=en/US:en,CharClasses=en/US:en,Monetary=en/US:en,Messages=en/US:en,Numeric=en/US:en,Time=en/US:en
+    User's Name            whoami::realname():            Jeryn Lau
+    User's Username        whoami::username():            aldar
+    User's Username        whoami::account():             aldar
+    Device's Pretty Name   whoami::devicename():          chiypfu
+    Device's Hostname      whoami::hostname():            chiypfu
     Device's Platform      whoami::platform():            Windows
-    Device's OS Distro     whoami::distro():              Windows 10.0.19044 (Workstation)
+    Device's OS Distro     whoami::distro():              Windows 11 (10.0.26200) (Workstation)
     Device's Desktop Env.  whoami::desktop_env():         Windows
-    Device's CPU Arch      whoami::arch():                x86_64
+    Device's CPU Arch      whoami::cpu_arch():            x86_64
     ```
     </details>
  - [ ] Testing complete on macOS Catalina
@@ -157,18 +157,18 @@ Set passwords / hostnames to "test" when prompted.
     Expect to see something like:
 
     ```console
-    WhoAmI 1.5.0
+    WhoAmI 2.0.0
 
-    User's Language        whoami::langs():               en/US
+    User's Language        whoami::lang_prefs():          Collation=en/US:en,CharClasses=en/US:en,Monetary=en/US:en,Messages=en/US:en,Numeric=en/US:en,Time=en/US:en
     User's Name            whoami::realname():            Aldaron Lau
     User's Username        whoami::username():            aldaronlau
-    User's Username        whoami::fallible::account():   aldaronlau
+    User's Username        whoami::account():             aldaronlau
     Device's Pretty Name   whoami::devicename():          Aldaron’s MacBook Air
-    Device's Hostname      whoami::fallible::hostname():  Aldarons-MacBook-Air.local
-    Device's Platform      whoami::platform():            Mac OS
+    Device's Hostname      whoami::hostname():            Aldarons-MacBook-Air.local
+    Device's Platform      whoami::platform():            macOS
     Device's OS Distro     whoami::distro():              Mac OS X 10.15.7
     Device's Desktop Env.  whoami::desktop_env():         Aqua
-    Device's CPU Arch      whoami::arch():                x86_64
+    Device's CPU Arch      whoami::cpu_arch():            x86_64
     ```
     </details>
  - [ ] Testing complete on FreeBSD
