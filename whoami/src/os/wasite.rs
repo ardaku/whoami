@@ -1,42 +1,75 @@
 #[cfg(not(any(target_pointer_width = "32", target_pointer_width = "64")))]
 compile_error!("Unexpected pointer width for target platform");
 
-use std::{env, ffi::OsString};
+use alloc::{
+    string::{String, ToString},
+    vec::Vec,
+};
+use core::str::FromStr;
 
 use crate::{
     os::{Os, Target},
-    CpuArchitecture, DesktopEnvironment, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, Language, LanguagePreferences,
+    OsString, Platform, Result,
 };
 
 impl Target for Os {
     fn lang_prefs(self) -> Result<LanguagePreferences> {
-        super::unix_lang()
+        let langs = wasite::environment().user.langs;
+        let fallbacks = langs
+            .other()
+            .map(Language::from_str)
+            .collect::<Result<Vec<Language>>>()?;
+        let collation = langs
+            .collation()
+            .next()
+            .map(Language::from_str)
+            .transpose()?;
+        let char_classes = langs
+            .char_class()
+            .next()
+            .map(Language::from_str)
+            .transpose()?;
+        let monetary = langs
+            .monetary()
+            .next()
+            .map(Language::from_str)
+            .transpose()?;
+        let messages =
+            langs.message().next().map(Language::from_str).transpose()?;
+        let numeric =
+            langs.numeric().next().map(Language::from_str).transpose()?;
+        let time = langs.time().next().map(Language::from_str).transpose()?;
+
+        Ok(LanguagePreferences {
+            fallbacks,
+            collation,
+            char_classes,
+            monetary,
+            messages,
+            numeric,
+            time,
+        })
     }
 
     #[inline(always)]
     fn realname(self) -> Result<OsString> {
-        Ok(wasite::user()
-            .unwrap_or_else(|_e| "Anonymous".to_string())
-            .into())
+        self.username()
     }
 
     #[inline(always)]
     fn username(self) -> Result<OsString> {
-        Ok(wasite::user()
-            .unwrap_or_else(|_e| "anonymous".to_string())
-            .into())
+        Ok(wasite::environment().user.username.into())
     }
 
     #[inline(always)]
     fn devicename(self) -> Result<OsString> {
-        Ok(wasite::name()
-            .unwrap_or_else(|_e| "Unknown".to_string())
-            .into())
+        Ok(wasite::environment().host.name.into())
     }
 
     #[inline(always)]
     fn hostname(self) -> Result<String> {
-        Ok(wasite::hostname().unwrap_or_else(|_e| "localhost".to_string()))
+        Ok(wasite::environment().host.hostname.into())
     }
 
     #[inline(always)]
@@ -46,9 +79,7 @@ impl Target for Os {
 
     #[inline(always)]
     fn desktop_env(self) -> Option<DesktopEnvironment> {
-        env::var_os("DESKTOP_SESSION").map(|env| {
-            DesktopEnvironment::Unknown(env.to_string_lossy().to_string())
-        })
+        Some(DesktopEnvironment::Unknown("Nucleic".to_string()))
     }
 
     #[inline(always)]

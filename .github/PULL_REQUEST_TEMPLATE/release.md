@@ -260,14 +260,14 @@ Set passwords / hostnames to "test" when prompted.
     WhoAmI 2.0.0
 
     User's Language        whoami::lang_prefs():          Collation=,CharClasses=,Monetary=,Messages=,Numeric=,Time=
-    User's Name            whoami::realname():            Jeryn Lau
-    User's Username        whoami::username():            jerynlau
-    User's Username        whoami::account():             jerynlau
-    Device's Pretty Name   whoami::devicename():          <unknown>
-    Device's Hostname      whoami::hostname():            
-    Device's Platform      whoami::platform():            
-    Device's OS Distro     whoami::distro():              
-    Device's Desktop Env.  whoami::desktop_env():         <unknown>
+    User's Name            whoami::realname():            Tribblix Jack
+    User's Username        whoami::username():            jack
+    User's Username        whoami::account():             jack
+    Device's Pretty Name   whoami::devicename():          tribblix
+    Device's Hostname      whoami::hostname():            tribblix
+    Device's Platform      whoami::platform():            illumos
+    Device's OS Distro     whoami::distro():              Tribblix
+    Device's Desktop Env.  whoami::desktop_env():         XFCE
     Device's CPU Arch      whoami::cpu_arch():            x86_64
     ```
     </details>
