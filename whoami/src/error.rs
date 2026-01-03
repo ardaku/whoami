@@ -4,7 +4,7 @@ use std::io::Error as IoError;
 
 #[cfg(not(feature = "std"))]
 #[derive(Clone, PartialEq, Eq, Debug)]
-struct IoError(Cow<'static, str>);
+pub(crate) struct IoError(Cow<'static, str>);
 
 /// An I/O error; can be converted to [`std::io::Error`].
 #[derive(Debug)]
@@ -66,9 +66,23 @@ impl Error {
     pub(crate) fn empty_record() -> Self {
         Self::new("Empty record")
     }
+
+    pub(crate) fn permission_denied() -> Self {
+        #[cfg(not(feature = "std"))]
+        {
+            Self::from_io(IoError("Permission denied".into()))
+        }
+
+        #[cfg(feature = "std")]
+        {
+            Self::from_io(IoError::new(
+                std::io::ErrorKind::PermissionDenied,
+                "Permission denied",
+            ))
+        }
+    }
 }
 
-#[cfg(feature = "std")]
 impl From<Error> for IoError {
     fn from(err: Error) -> Self {
         err.0

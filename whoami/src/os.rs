@@ -72,17 +72,12 @@
 )]
 mod stub;
 
-use alloc::{string::String, vec::Vec};
+use alloc::string::String;
 
 use crate::{
-    CpuArchitecture, DesktopEnvironment, Error, Language, LanguagePreferences,
+    CpuArchitecture, DesktopEnvironment, LanguagePreferences, OsString,
     Platform, Result,
 };
-
-#[cfg(feature = "std")]
-type OsString = std::ffi::OsString;
-#[cfg(not(feature = "std"))]
-type OsString = String;
 
 /// Implement `Target for Os` to add platform support for a target.
 pub(crate) struct Os;
@@ -122,7 +117,10 @@ fn unix_lang() -> Result<LanguagePreferences> {
     use std::{
         env::{self, VarError},
         str::FromStr,
+        vec::Vec,
     };
+
+    use crate::{Error, Language};
 
     let env_var = |var: &str| match env::var(var) {
         Ok(value) => Ok(if value.is_empty() { None } else { Some(value) }),

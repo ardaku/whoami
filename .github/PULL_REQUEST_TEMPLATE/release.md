@@ -4,7 +4,9 @@
 
 ## Regression testing plan for all platforms
 
- - [ ] Testing complete on Fedora Silverblue 41.
+Set passwords / hostnames to "test" when prompted.
+
+ - [ ] Testing complete on Fedora Silverblue 43.
     <details><summary>Linux / Fedora Silverblue Testing</summary>
     Open a terminal (outside of toolbx), and:
 
@@ -18,65 +20,65 @@
     Expect to see something like:
 
     ```console
-    WhoAmI 1.6.0
-    
-    User's Language        whoami::langs():               en/US
-    User's Name            whoami::realname():            Jeryn Aldaron Lau
-    User's Username        whoami::username():            jeron
-    User's Username        whoami::fallible::account():   jeron
-    Device's Pretty Name   whoami::devicename():          ¡Zeatei~
-    Device's Hostname      whoami::fallible::hostname():  zeatei
+    WhoAmI 2.0.0
+
+    User's Language        whoami::lang_prefs():          Collation=en/US:en,CharClasses=en/US:en,Monetary=en/US:en,Messages=en/US:en,Numeric=en/US:en,Time=en/US:en
+    User's Name            whoami::realname():            Jeryn Lau
+    User's Username        whoami::username():            jerynlau
+    User's Username        whoami::account():             jerynlau
+    Device's Pretty Name   whoami::devicename():          Ta'ra
+    Device's Hostname      whoami::hostname():            taiara
     Device's Platform      whoami::platform():            Linux
-    Device's OS Distro     whoami::distro():              Fedora Linux 41.20250305.0 (Silverblue)
+    Device's OS Distro     whoami::distro():              Fedora Linux 43.20251220.0 (Silverblue)
     Device's Desktop Env.  whoami::desktop_env():         Gnome
-    Device's CPU Arch      whoami::arch():                x86_64
+    Device's CPU Arch      whoami::cpu_arch():            x86_64
     ```
 
     ```console
-    WhoAmI 1.6.0
-    
-    User's Language        whoami::langs():                 "en/US"
-    User's Name            whoami::realname_os():           "Jeryn Aldaron Lau"
-    User's Username        whoami::username_os():           "jeron"
-    User's Account         whoami::fallible::account_os():  "jeron"
-    Device's Pretty Name   whoami::devicename_os():         "¡Zeatei~"
-    Device's Hostname      whoami::fallible::hostname():    "zeatei"
+    WhoAmI 2.0.0
+
+    User's Language        whoami::lang_prefs():            LanguagePreferences { fallbacks: [Language { lang: [101, 110], country: Some([85, 83]) }, Language { lang: [101, 110], country: None }], collation: None, char_classes: None, monetary: None, messages: None, numeric: None, time: None }
+    User's Name            whoami::realname_os():           "Jeryn Lau"
+    User's Username        whoami::username_os():           "jerynlau"
+    User's Account         whoami::account_os():            "jerynlau"
+    Device's Pretty Name   whoami::devicename_os():         "Ta\'ra"
+    Device's Hostname      whoami::hostname():              "taiara"
     Device's Platform      whoami::platform():              Linux
-    Device's OS Distro     whoami::distro():                "Fedora Linux 41.20250305.0 (Silverblue)"
-    Device's Desktop Env.  whoami::desktop_env():           Gnome
-    Device's CPU Arch      whoami::arch():                  X64
+    Device's OS Distro     whoami::distro():                Ok("Fedora Linux 43.20251220.0 (Silverblue)")
+    Device's Desktop Env.  whoami::desktop_env():           Some(Gnome)
+    Device's CPU Arch      whoami::cpu_arch():              X64
     ```
 
     Now, `toolbx enter`, and do the same.  Expecting something like:
 
     ```console
-    WhoAmI 1.6.0
-    
-    User's Language        whoami::langs():               en/US
-    User's Name            whoami::realname():            Jeron Lau
-    User's Username        whoami::username():            jeron
-    User's Username        whoami::fallible::account():   jeron
-    Device's Pretty Name   whoami::devicename():          toolbx
-    Device's Hostname      whoami::fallible::hostname():  toolbx
+    WhoAmI 2.0.0
+
+    User's Language        whoami::lang_prefs():          Collation=en/US:en,CharClasses=en/US:en,Monetary=en/US:en,Messages=en/US:en,Numeric=en/US:en,Time=en/US:en
+    User's Name            whoami::realname():            Jeryn Lau
+    User's Username        whoami::username():            jerynlau
+    User's Username        whoami::account():             jerynlau
+    Device's Pretty Name   whoami::devicename():          <unknown>
+    Device's Hostname      whoami::hostname():            toolbx
     Device's Platform      whoami::platform():            Linux
-    Device's OS Distro     whoami::distro():              Fedora Linux 41 (Toolbx Container Image)
+    Device's OS Distro     whoami::distro():              Fedora Linux 43 (Toolbx Container Image)
     Device's Desktop Env.  whoami::desktop_env():         Gnome
-    Device's CPU Arch      whoami::arch():                x86_64
+    Device's CPU Arch      whoami::cpu_arch():            x86_64
     ```
 
     ```console
-    WhoAmI 1.6.0
-    
-    User's Language        whoami::langs():                 "en/US"
-    User's Name            whoami::realname_os():           "Jeron Lau"
-    User's Username        whoami::username_os():           "jeron"
-    User's Account         whoami::fallible::account_os():  "jeron"
-    Device's Pretty Name   whoami::devicename_os():         "toolbx"
-    Device's Hostname      whoami::fallible::hostname():    "toolbx"
+    WhoAmI 2.0.0
+
+    User's Language        whoami::lang_prefs():            LanguagePreferences { fallbacks: [Language { lang: [101, 110], country: Some([85, 83]) }, Language { lang: [101, 110], country: None }], collation: None, char_classes: None, monetary: None, messages: None, numeric: None, time: None }
+    User's Name            whoami::realname_os():           "Jeryn Lau"
+    User's Username        whoami::username_os():           "jerynlau"
+    User's Account         whoami::account_os():            "jerynlau"
+    Device's Pretty Name   whoami::devicename_os():         "<unknown>"
+    Device's Hostname      whoami::hostname():              "toolbx"
     Device's Platform      whoami::platform():              Linux
-    Device's OS Distro     whoami::distro():                "Fedora Linux 41 (Toolbx Container Image)"
-    Device's Desktop Env.  whoami::desktop_env():           Gnome
-    Device's CPU Arch      whoami::arch():                  X64
+    Device's OS Distro     whoami::distro():                Ok("Fedora Linux 43 (Toolbx Container Image)")
+    Device's Desktop Env.  whoami::desktop_env():           Some(Gnome)
+    Device's CPU Arch      whoami::cpu_arch():              X64
     ```
     </details>
  - [ ] Testing complete on Ubuntu Linux 24.04.1 LTS
@@ -103,21 +105,21 @@
     Expect to see something like:
 
     ```console
-    WhoAmI 1.6.0
+    WhoAmI 2.0.0
 
-    User's Language        whoami::langs():               en/US
-    User's Name            whoami::realname():            Jeron Lau
-    User's Username        whoami::username():            aldaron
-    User's Username        whoami::fallible::account():   aldaron
-    Device's Pretty Name   whoami::devicename():          ubuntu-box
-    Device's Hostname      whoami::fallible::hostname():  ubuntu-box
+    User's Language        whoami::lang_prefs():          Collation=en/US:en,CharClasses=en/US:en,Monetary=en/US:en,Messages=en/US:en,Numeric=en/US:en,Time=en/US:en
+    User's Name            whoami::realname():            Jeryn Lau
+    User's Username        whoami::username():            jeryn-lau
+    User's Username        whoami::account():             jeryn-lau
+    Device's Pretty Name   whoami::devicename():          Taiara
+    Device's Hostname      whoami::hostname():            Taiara
     Device's Platform      whoami::platform():            Linux
-    Device's OS Distro     whoami::distro():              Ubuntu 24.04.1 LTS
+    Device's OS Distro     whoami::distro():              Ubuntu 25.10
     Device's Desktop Env.  whoami::desktop_env():         Ubuntu
-    Device's CPU Arch      whoami::arch():                x86_64
+    Device's CPU Arch      whoami::cpu_arch():            x86_64
     ```
     </details>
- - [ ] Testing complete on Windows 10
+ - [ ] Testing complete on Windows 11
     <details><summary>Windows Testing</summary>
     Clone whoami, open Git BASH, and run:
 
@@ -129,18 +131,18 @@
     Expect to see something like:
 
     ```console
-    WhoAmI 1.5.0
+    WhoAmI 2.0.0
 
-    User's Language        whoami::langs():               en/US
-    User's Name            whoami::realname():            Aldaron Lau
-    User's Username        whoami::username():            Aldaron Lau
-    User's Username        whoami::fallible::account():   Aldaron Lau
-    Device's Pretty Name   whoami::devicename():          Helpy-Witch
-    Device's Hostname      whoami::fallible::hostname():  HELPY-WITCH
+    User's Language        whoami::lang_prefs():          Collation=en/US:en,CharClasses=en/US:en,Monetary=en/US:en,Messages=en/US:en,Numeric=en/US:en,Time=en/US:en
+    User's Name            whoami::realname():            Jeryn Lau
+    User's Username        whoami::username():            aldar
+    User's Username        whoami::account():             aldar
+    Device's Pretty Name   whoami::devicename():          chiypfu
+    Device's Hostname      whoami::hostname():            chiypfu
     Device's Platform      whoami::platform():            Windows
-    Device's OS Distro     whoami::distro():              Windows 10.0.19044 (Workstation)
+    Device's OS Distro     whoami::distro():              Windows 11 (10.0.26200) (Workstation)
     Device's Desktop Env.  whoami::desktop_env():         Windows
-    Device's CPU Arch      whoami::arch():                x86_64
+    Device's CPU Arch      whoami::cpu_arch():            x86_64
     ```
     </details>
  - [ ] Testing complete on macOS Catalina
@@ -155,18 +157,18 @@
     Expect to see something like:
 
     ```console
-    WhoAmI 1.5.0
+    WhoAmI 2.0.0
 
-    User's Language        whoami::langs():               en/US
+    User's Language        whoami::lang_prefs():          Collation=en/US:en,CharClasses=en/US:en,Monetary=en/US:en,Messages=en/US:en,Numeric=en/US:en,Time=en/US:en
     User's Name            whoami::realname():            Aldaron Lau
     User's Username        whoami::username():            aldaronlau
-    User's Username        whoami::fallible::account():   aldaronlau
+    User's Username        whoami::account():             aldaronlau
     Device's Pretty Name   whoami::devicename():          Aldaron’s MacBook Air
-    Device's Hostname      whoami::fallible::hostname():  Aldarons-MacBook-Air.local
-    Device's Platform      whoami::platform():            Mac OS
+    Device's Hostname      whoami::hostname():            Aldarons-MacBook-Air.local
+    Device's Platform      whoami::platform():            macOS
     Device's OS Distro     whoami::distro():              Mac OS X 10.15.7
     Device's Desktop Env.  whoami::desktop_env():         Aqua
-    Device's CPU Arch      whoami::arch():                x86_64
+    Device's CPU Arch      whoami::cpu_arch():            x86_64
     ```
     </details>
  - [ ] Testing complete on FreeBSD
@@ -200,18 +202,18 @@
     Expect to see something like:
 
     ```console
-    WhoAmI 1.5.0
+    WhoAmI 2.0.0
 
-    User's Language        whoami::langs():               
-    User's Name            whoami::realname():            Aldaron Lau
-    User's Username        whoami::username():            aldaron
-    User's Username        whoami::fallible::account():   aldaron
-    Device's Pretty Name   whoami::devicename():          bsdtime
-    Device's Hostname      whoami::fallible::hostname():  bsdtime
+    User's Language        whoami::lang_prefs():          Collation=,CharClasses=,Monetary=,Messages=,Numeric=,Time=
+    User's Name            whoami::realname():            Jeryn Lau
+    User's Username        whoami::username():            jerynlau
+    User's Username        whoami::account():             jerynlau
+    Device's Pretty Name   whoami::devicename():          <unknown>
+    Device's Hostname      whoami::hostname():            testing
     Device's Platform      whoami::platform():            BSD
-    Device's OS Distro     whoami::distro():              FreeBSD 14.0-RELEASE
-    Device's Desktop Env.  whoami::desktop_env():         Unknown: Unknown
-    Device's CPU Arch      whoami::arch():                x86_64
+    Device's OS Distro     whoami::distro():              FreeBSD 14.3-RELEASE
+    Device's Desktop Env.  whoami::desktop_env():         <unknown>
+    Device's CPU Arch      whoami::cpu_arch():            x86_64
     ```
     </details>
  - [ ] Testing complete on illumos
@@ -255,47 +257,25 @@
     Expected output is
 
     ```console
-    WhoAmI 1.5.0
+    WhoAmI 2.0.0
 
-    User's Language        whoami::langs():               ??
+    User's Language        whoami::lang_prefs():          Collation=,CharClasses=,Monetary=,Messages=,Numeric=,Time=
     User's Name            whoami::realname():            Tribblix Jack
     User's Username        whoami::username():            jack
+    User's Username        whoami::account():             jack
     Device's Pretty Name   whoami::devicename():          tribblix
-    Device's Hostname      whoami::fallible::hostname():  tribblix
+    Device's Hostname      whoami::hostname():            tribblix
     Device's Platform      whoami::platform():            illumos
     Device's OS Distro     whoami::distro():              Tribblix
-    Device's Desktop Env.  whoami::desktop_env():         Unknown: Unknown
-    Device's CPU Arch      whoami::arch():                Unknown: i86pc
+    Device's Desktop Env.  whoami::desktop_env():         XFCE
+    Device's CPU Arch      whoami::cpu_arch():            x86_64
     ```
     </details>
  - [ ] Testing complete on Redox
     <details><summary>Redox (virtualized on Fedora Silverblue) Testing</summary>
-    <https://doc.redox-os.org/book/ch08-01-advanced-build.html#understanding-cross-compilation-for-redox>
+    <https://doc.redox-os.org/book/building-redox.html>
 
-    ### Update Rust Nightly and Stable
-
-    ```shell
-    rustup update nightly stable
-    rustup target add --toolchain stable x86_64-unknown-redox
-    ```
-
-    ### Install pre-requisites
-
-    ```shell
-    sudo dnf install podman git file autoconf vim bison flex genisoimage gperf glibc-devel.i686 expat expat-devel fuse-devel fuse3-devel gmp-devel perl-HTML-Parser libpng-devel libtool libjpeg-turbo-devel libvorbis-devel SDL2_ttf-devel mesa-libOSMesa-devel m4 nasm po4a syslinux texinfo sdl12-compat-devel ninja-build meson python3-mako make gcc gcc-c++ openssl patch automake perl-Pod-Html perl-FindBin gperf curl gettext-devel perl-Pod-Xhtml pkgconf-pkg-config cmake cbindgen just mpfr-devel qemu doxygen 'perl(ExtUtils::MakeMaker)'
-
-    cargo install --locked --force --version 0.1.1 cargo-config
-    ```
-
-    ### Get redox source
-
-    ```shell
-    mkdir -p build/
-    cd build/
-    git clone https://gitlab.redox-os.org/redox-os/redox.git --origin upstream --recursive
-    cd redox
-    git submodule update --recursive --init
-    ```
+    Run through "Preparing the build"
 
     ### Create our demo recipe
 
@@ -303,8 +283,8 @@
     testing branch.
 
     ```shell
-    mkdir -p build/redox/cookbook/recipes/demos/whome/
-    cp recipe.toml build/redox/cookbook/recipes/demos/whome/
+    mkdir -p build/redox/recipes/demos/whome/
+    cp recipe.toml build/redox/recipes/demos/whome/
     cp build/redox/config/desktop.toml build/redox/config/x86_64/ardaku.toml
     ```
 

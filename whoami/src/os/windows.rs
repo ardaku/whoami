@@ -384,13 +384,23 @@ impl Target for Os {
             _ => "Unknown",
         };
 
-        Ok(alloc::format!(
-            "Windows {}.{}.{} ({})",
-            version.major_version,
-            version.minor_version,
-            version.build_number,
-            product,
-        ))
+        if version.major_version >= 10 && version.build_number > 22000 {
+            Ok(alloc::format!(
+                "Windows 11 ({}.{}.{}) ({})",
+                version.major_version,
+                version.minor_version,
+                version.build_number,
+                product,
+            ))
+        } else {
+            Ok(alloc::format!(
+                "Windows {}.{}.{} ({})",
+                version.major_version,
+                version.minor_version,
+                version.build_number,
+                product,
+            ))
+        }
     }
 
     #[inline(always)]

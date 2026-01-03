@@ -2,11 +2,10 @@
 
 use alloc::string::{String, ToString};
 
-use super::OsString;
 use crate::{
     os::{Os, Target},
     CpuArchitecture, DesktopEnvironment, Language, LanguagePreferences,
-    Platform, Result,
+    OsString, Platform, Result,
 };
 
 impl Target for Os {

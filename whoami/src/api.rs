@@ -1,11 +1,10 @@
 use alloc::string::String;
-#[cfg(feature = "std")]
-use std::{env, ffi::OsString};
 
 use crate::{
     conversions,
     os::{Os, Target},
-    CpuArchitecture, DesktopEnvironment, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, LanguagePreferences, OsString,
+    Platform, Result,
 };
 
 macro_rules! report_message {
@@ -32,13 +31,12 @@ pub fn account() -> Result<String> {
     account_os().and_then(conversions::string_from_os)
 }
 
-/// **`std`** Get the user's account name; usually just the username, but may
+/// Get the user's account name; usually just the username, but may
 /// include an account server hostname.
 ///
 /// If you don't want the account server hostname, use [`username()`].
 ///
 /// Example: `username@example.com`
-#[cfg(feature = "std")]
 #[inline(always)]
 pub fn account_os() -> Result<OsString> {
     Target::account(Os)
@@ -53,11 +51,10 @@ pub fn username() -> Result<String> {
     username_os().and_then(conversions::string_from_os)
 }
 
-/// **`std`** Get the user's username.
+/// Get the user's username.
 ///
 /// On unix-systems this differs from [`realname_os()`] most notably in that
 /// spaces are not allowed in the username.
-#[cfg(feature = "std")]
 #[inline(always)]
 pub fn username_os() -> Result<OsString> {
     Target::username(Os)
@@ -69,8 +66,7 @@ pub fn realname() -> Result<String> {
     realname_os().and_then(conversions::string_from_os)
 }
 
-/// **`std`** Get the user's real (full) name.
-#[cfg(feature = "std")]
+/// Get the user's real (full) name.
 #[inline(always)]
 pub fn realname_os() -> Result<OsString> {
     Target::realname(Os)
@@ -132,10 +128,9 @@ pub fn devicename() -> Result<String> {
     devicename_os().and_then(conversions::string_from_os)
 }
 
-/// **`std`** Get the device name (also known as "Pretty Name").
+/// Get the device name (also known as "Pretty Name").
 ///
 /// Often used to identify device for bluetooth pairing.
-#[cfg(feature = "std")]
 #[inline(always)]
 pub fn devicename_os() -> Result<OsString> {
     Target::devicename(Os)
@@ -160,9 +155,9 @@ pub fn distro() -> Result<String> {
 pub fn desktop_env() -> Option<DesktopEnvironment> {
     #[cfg(feature = "std")]
     {
-        if env::var_os("SSH_CLIENT").is_some()
-            || env::var_os("SSH_TTY").is_some()
-            || env::var_os("SSH_CONNECTION").is_some()
+        if std::env::var_os("SSH_CLIENT").is_some()
+            || std::env::var_os("SSH_TTY").is_some()
+            || std::env::var_os("SSH_CONNECTION").is_some()
         {
             return None;
         }

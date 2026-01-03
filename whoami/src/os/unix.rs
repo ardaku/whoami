@@ -469,7 +469,8 @@ impl Target for Os {
 
         #[cfg(target_os = "illumos")]
         {
-            let mut nodename = fs::read("/etc/nodename")?;
+            let mut nodename =
+                fs::read("/etc/nodename").map_err(Error::from_io)?;
 
             // Remove all at and after the first newline (before end of file)
             if let Some(slice) = nodename.split(|x| *x == b'\n').next() {
@@ -649,6 +650,8 @@ impl Target for Os {
             DesktopEnvironment::Ubuntu
         } else if env.eq_ignore_ascii_case("PLASMA5") {
             DesktopEnvironment::Plasma
+        } else if env.eq_ignore_ascii_case("XFCE") {
+            DesktopEnvironment::Xfce
         } else {
             DesktopEnvironment::Unknown(env.to_string())
         })
@@ -720,7 +723,7 @@ impl Target for Os {
             "s390x" => CpuArchitecture::S390x,
             "sparc" => CpuArchitecture::Sparc,
             "sparc64" => CpuArchitecture::Sparc64,
-            "x86_64" | "amd64" => CpuArchitecture::X64,
+            "x86_64" | "amd64" | "i86pc" => CpuArchitecture::X64,
             _ => CpuArchitecture::Unknown(arch_str.into_owned()),
         })
     }
