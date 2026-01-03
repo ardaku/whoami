@@ -57,6 +57,7 @@
             daku,
             all(target_os = "wasi", feature = "wasi-wasite")
         )),
+        target_arch = "wasm32",
         feature = "wasm-web",
     ),
     path = "os/web.rs"
