@@ -1,13 +1,14 @@
 // We don't need unsafe, yay!
 #![forbid(unsafe_code)]
 
-use std::{borrow::Cow, ffi::OsString, fs, io, prelude::rust_2021::*};
+use std::{borrow::Cow, fs, io, prelude::rust_2021::*};
 
 use libredox::{call, error};
 
 use crate::{
     os::{Os, Target},
-    CpuArchitecture, DesktopEnv, Error, LanguagePreferences, Platform, Result,
+    CpuArchitecture, DesktopEnvironment, Error, LanguagePreferences, OsString,
+    Platform, Result,
 };
 
 /// Row in the Redox /etc/passwd file
@@ -62,7 +63,8 @@ fn egid() -> Result<usize> {
 
 fn passwd() -> Result<Passwd<'static>> {
     let (euid, egid) = (euid()?, egid()?);
-    let passwd_file = fs::read_to_string("/etc/passwd")?;
+    let passwd_file =
+        fs::read_to_string("/etc/passwd").map_err(Error::from_io)?;
 
     for user in passwd_file.lines() {
         let passwd = Passwd(user.into());
@@ -76,13 +78,14 @@ fn passwd() -> Result<Passwd<'static>> {
 }
 
 fn uname() -> Result<Uname<'static>> {
-    let uname_file = fs::read_to_string("sys:uname")?;
+    let uname_file = fs::read_to_string("sys:uname").map_err(Error::from_io)?;
 
     Ok(Uname(uname_file.into()))
 }
 
 fn hostname() -> Result<String> {
-    let hostname_file = fs::read_to_string("/etc/hostname")?;
+    let hostname_file =
+        fs::read_to_string("/etc/hostname").map_err(Error::from_io)?;
 
     Ok(hostname_file.lines().next().unwrap_or_default().to_string())
 }
@@ -129,8 +132,8 @@ impl Target for Os {
     }
 
     #[inline(always)]
-    fn desktop_env(self) -> Option<DesktopEnv> {
-        Some(DesktopEnv::Orbital)
+    fn desktop_env(self) -> Option<DesktopEnvironment> {
+        Some(DesktopEnvironment::Orbital)
     }
 
     #[inline(always)]

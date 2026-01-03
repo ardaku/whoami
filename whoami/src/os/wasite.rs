@@ -69,7 +69,7 @@ impl Target for Os {
 
     #[inline(always)]
     fn hostname(self) -> Result<String> {
-        Ok(wasite::environment().host.hostname.into())
+        Ok(wasite::environment().host.hostname)
     }
 
     #[inline(always)]
