@@ -179,7 +179,7 @@ fn unix_lang() -> Result<LanguagePreferences> {
             .unwrap_or(Vec::new()),
         collation: lang_from_var("LC_COLLATE")?,
         char_classes: lang_from_var("LC_CTYPE")?,
-        monetary: lang_from_var("LC_MONTEARY")?,
+        monetary: lang_from_var("LC_MONETARY")?,
         messages: lang_from_var("LC_MESSAGES")?,
         numeric: lang_from_var("LC_NUMERIC")?,
         time: lang_from_var("LC_TIME")?,
