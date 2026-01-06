@@ -16,7 +16,8 @@ jobs:
     - uses: taiki-e/checkout-action@v1
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
-    - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup default ${{ matrix.tc }}
+    - run: rustup component add rustfmt clippy
     - run: cargo update
     - run: cargo fmt --check
     - run: cargo clippy -- -D warnings
@@ -37,7 +38,8 @@ jobs:
     - uses: taiki-e/checkout-action@v1
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
-    - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup default ${{ matrix.tc }}
+    - run: rustup component add clippy
     - run: rustup target add ${{ matrix.cc }}
     - run: cargo update
     - run: cargo clippy --target=${{ matrix.cc }} -- -D warnings
@@ -52,7 +54,8 @@ jobs:
     - uses: taiki-e/checkout-action@v1
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
-    - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup default ${{ matrix.tc }}
+    - run: rustup component add clippy
     - run: rustup target add ${{ matrix.cc }}
     - run: cargo clippy --target=${{ matrix.cc }} -- -D warnings
   checks-cross-compile-wasm:
@@ -66,7 +69,8 @@ jobs:
     - uses: taiki-e/checkout-action@v1
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
-    - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup default ${{ matrix.tc }}
+    - run: rustup component add clippy
     - run: rustup target add ${{ matrix.cc }}
     - run: cargo clippy --target=${{ matrix.cc }} -- -D warnings
     - run: cargo update
@@ -82,7 +86,7 @@ jobs:
     - uses: taiki-e/checkout-action@v1
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
-    - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup default ${{ matrix.tc }}
     - run: cargo doc
     - run: cargo test --all
   cross-compile:
@@ -102,7 +106,7 @@ jobs:
     - uses: taiki-e/checkout-action@v1
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
-    - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --target=${{ matrix.cc }} -p whoami
   cross-compile-ios:
@@ -116,7 +120,7 @@ jobs:
     - uses: taiki-e/checkout-action@v1
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
-    - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --target=${{ matrix.cc }}
   cross-compile-wasm:
@@ -130,7 +134,7 @@ jobs:
     - uses: taiki-e/checkout-action@v1
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
-    - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --target=${{ matrix.cc }}
     - run: cargo update
@@ -147,7 +151,7 @@ jobs:
     - uses: taiki-e/checkout-action@v1
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
-    - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --target=${{ matrix.cc }} -p whoami
   cross-compile-redox:
@@ -161,7 +165,7 @@ jobs:
     - uses: taiki-e/checkout-action@v1
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
-    - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --target=${{ matrix.cc }} -p whoami
   clippy-cross-compile:
@@ -177,6 +181,7 @@ jobs:
     - uses: taiki-e/checkout-action@v1
     - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
-    - run: rustup toolchain install ${{ matrix.tc }}
+    - run: rustup default ${{ matrix.tc }}
+    - run: rustup component add clippy
     - run: rustup target add ${{ matrix.cc }}
     - run: cargo clippy --target=${{ matrix.cc }} -- -D warnings
