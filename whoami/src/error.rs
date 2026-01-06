@@ -12,7 +12,7 @@ pub struct Error(IoError);
 
 impl core::fmt::Display for Error {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        core::fmt::Display::fmt(&self, f)
+        core::fmt::Display::fmt(&self.0, f)
     }
 }
 
