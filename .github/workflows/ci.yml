@@ -102,6 +102,13 @@ jobs:
         - i686-unknown-linux-gnu
         - wasm32-wasip1
         - x86_64-apple-darwin
+        exclude:
+        - tc: 1.65.0
+          cc: wasm32-wasip1
+        include:
+        - os: ubuntu-latest
+          tc: 1.65.0
+          cc: wasm32-wasi
     steps:
     - uses: taiki-e/checkout-action@v1
     - uses: taiki-e/install-action@v2
