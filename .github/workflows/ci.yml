@@ -14,7 +14,6 @@ jobs:
         tc: [nightly]
     steps:
     - uses: taiki-e/checkout-action@v1
-    - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: rustup component add rustfmt clippy
@@ -36,7 +35,6 @@ jobs:
         - x86_64-apple-darwin
     steps:
     - uses: taiki-e/checkout-action@v1
-    - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: rustup component add clippy
@@ -52,7 +50,6 @@ jobs:
         cc: [aarch64-apple-ios]
     steps:
     - uses: taiki-e/checkout-action@v1
-    - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: rustup component add clippy
@@ -67,7 +64,6 @@ jobs:
         cc: [wasm32-unknown-unknown]
     steps:
     - uses: taiki-e/checkout-action@v1
-    - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: rustup component add clippy
@@ -84,7 +80,6 @@ jobs:
         tc: [1.65.0, stable, beta, nightly]
     steps:
     - uses: taiki-e/checkout-action@v1
-    - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: cargo doc
@@ -111,7 +106,6 @@ jobs:
           cc: wasm32-wasi
     steps:
     - uses: taiki-e/checkout-action@v1
-    - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
@@ -125,7 +119,6 @@ jobs:
         cc: [aarch64-apple-ios]
     steps:
     - uses: taiki-e/checkout-action@v1
-    - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
@@ -139,7 +132,6 @@ jobs:
         cc: [wasm32-unknown-unknown]
     steps:
     - uses: taiki-e/checkout-action@v1
-    - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
@@ -156,7 +148,6 @@ jobs:
         cc: [x86_64-unknown-illumos]
     steps:
     - uses: taiki-e/checkout-action@v1
-    - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
@@ -170,7 +161,6 @@ jobs:
         cc: [x86_64-unknown-redox]
     steps:
     - uses: taiki-e/checkout-action@v1
-    - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
@@ -186,7 +176,6 @@ jobs:
         - x86_64-unknown-redox
     steps:
     - uses: taiki-e/checkout-action@v1
-    - uses: taiki-e/install-action@v2
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: rustup component add clippy
