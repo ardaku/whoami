@@ -56,7 +56,7 @@ impl Target for Os {
     fn arch(self) -> Result<CpuArchitecture> {
         #[cfg(target_pointer_width = "32")]
         {
-            Ok(CpuArchitecture::Wasm64)
+            Ok(CpuArchitecture::Wasm32)
         }
 
         #[cfg(target_pointer_width = "64")]
