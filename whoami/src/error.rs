@@ -16,6 +16,9 @@ impl core::fmt::Display for Error {
     }
 }
 
+#[cfg(feature = "std")]
+impl std::error::Error for Error {}
+#[cfg(not(feature = "std"))]
 impl core::error::Error for Error {}
 
 #[allow(dead_code)]

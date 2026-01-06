@@ -1,5 +1,6 @@
 [workspace]
-resolver = "3"
+# FIXME: bump to `3` with MSRV >=1.84
+resolver = "2"
 members = ["example-web", "whoami", "xtask"]
 exclude = ["build"]
 
