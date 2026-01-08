@@ -61,6 +61,12 @@ with bugfixes until the end of 2027 at minimum.
  - WhoAmI 1.x: Rust 1.40 MSRV (old MSRV policy, maintained until end of 2025 at
    minimum)
 
+Target-Specific MSRVs:
+
+ - When the `std` feature is disabled, WhoAmI bumps the MSRV to Rust 1.81 for
+   the WhoAmI 2.0 and WhoAmI 2.1 release tracks.  This feature should usually
+   stay enabled, unless you have a specific use-case targeting no-std.
+
 ## Binary
 
 [whome] - `whoami` command RiR (Re-written in Rust) that depends on this crate.
@@ -94,14 +100,14 @@ licensed as described above, without any additional terms or conditions.
 If you want help using or contributing to this library, feel free to send me an
 email at <aldaronlau@gmail.com>.
 
-[Changelog]: https://github.com/ardaku/whoami/releases
-[Source]: https://github.com/ardaku/whoami
-[Getting Started]: https://docs.rs/whoami#getting-started
 [documentation]: https://docs.rs/whoami
-[LICENSE_APACHE]: https://github.com/ardaku/whoami/blob/v2/LICENSE_APACHE
-[LICENSE_MIT]: https://github.com/ardaku/whoami/blob/v2/LICENSE_MIT
-[LICENSE_BOOST]: https://github.com/ardaku/whoami/blob/v2/LICENSE_BOOST
-[Ardaku MSRV guidelines]: https://github.com/ardaku/.github/blob/v1/profile/MSRV.md
-[WhoAmI Logo]: https://raw.githubusercontent.com/ardaku/whoami/v2/res/icon.svg
-[Web Assembly]: https://github.com/ardaku/whoami/blob/v2/WASM.md
 [whome]: https://crates.io/crates/whome
+[Ardaku MSRV guidelines]: https://github.com/ardaku/.github/blob/v1/profile/MSRV.md
+[Changelog]: https://github.com/ardaku/whoami/releases
+[Getting Started]: https://docs.rs/whoami#getting-started
+[LICENSE\_APACHE]: https://github.com/ardaku/whoami/blob/v2/LICENSE_APACHE
+[LICENSE\_BOOST]: https://github.com/ardaku/whoami/blob/v2/LICENSE_BOOST
+[LICENSE\_MIT]: https://github.com/ardaku/whoami/blob/v2/LICENSE_MIT
+[Source]: https://github.com/ardaku/whoami
+[Web Assembly]: https://github.com/ardaku/whoami/blob/v2/WASM.md
+[WhoAmI Logo]: https://raw.githubusercontent.com/ardaku/whoami/v2/res/icon.svg
