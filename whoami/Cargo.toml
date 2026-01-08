@@ -33,7 +33,7 @@ default-features = false
 
 # Target-specific dependency for wasite
 [target.'cfg(all(target_arch = "wasm32", target_os = "wasi"))'.dependencies.wasite]
-version = "1.0.1"
+version = "1.0.2"
 optional = true
 default-features = false
 
