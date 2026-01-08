@@ -100,7 +100,7 @@ mod arch;
 mod conversions;
 mod desktop_env;
 mod error;
-mod lang_prefs;
+mod langs;
 mod os;
 mod platform;
 mod result;
@@ -115,7 +115,7 @@ pub use self::{
     arch::{CpuArchitecture, Width},
     desktop_env::DesktopEnvironment,
     error::Error,
-    lang_prefs::{Language, LanguagePreferences},
+    langs::{Language, LanguagePreferences},
     platform::Platform,
     result::Result,
 };
