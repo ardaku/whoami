@@ -23,7 +23,7 @@ include = [
     "../README.md",
     "/src/*",
 ]
-rust-version = "1.65"
+rust-version = "1.75"
 
 # Target specific dependency for redox
 [target.'cfg(all(target_os = "redox", not(target_arch = "wasm32")))'.dependencies.libredox]
