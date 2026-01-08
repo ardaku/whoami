@@ -248,8 +248,8 @@ impl LanguagePreferences {
     fn chain_fallbacks<'a>(
         &'a self,
         l: &Option<Language>,
-    ) -> impl Iterator<Item = Language> + 'a {
-        let lang_without_country = if let Some(ref lang) = l {
+    ) -> impl Iterator<Item = Language> + 'a + use<'a> {
+        let lang_without_country = if let Some(lang) = l {
             lang.country.is_some().then_some(Language {
                 lang: lang.lang,
                 country: None,

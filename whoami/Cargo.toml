@@ -1,7 +1,7 @@
 [package]
 name = "whoami"
 version = "2.2.0"
-edition = "2021"
+edition = "2024"
 license = "Apache-2.0 OR BSL-1.0 OR MIT"
 documentation = "https://docs.rs/whoami"
 homepage = "https://github.com/ardaku/whoami/releases"
@@ -23,7 +23,7 @@ include = [
     "../README.md",
     "/src/*",
 ]
-rust-version = "1.75"
+rust-version = "1.85"
 
 # Target specific dependency for redox
 [target.'cfg(all(target_os = "redox", not(target_arch = "wasm32")))'.dependencies.libredox]

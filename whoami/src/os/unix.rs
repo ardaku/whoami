@@ -95,7 +95,7 @@ extern "system" {
     target_os = "openbsd",
     target_os = "hurd",
 ))]
-extern "system" {
+unsafe extern "system" {
     fn getpwuid_r(
         uid: u32,
         pwd: *mut PassWd,
@@ -105,7 +105,7 @@ extern "system" {
     ) -> i32;
 }
 
-extern "system" {
+unsafe extern "system" {
     fn geteuid() -> u32;
     fn gethostname(name: *mut c_void, len: usize) -> i32;
 }
@@ -142,23 +142,27 @@ enum Name {
 }
 
 unsafe fn strlen(cs: *const c_void) -> usize {
-    let mut len = 0;
-    let mut cs: *const u8 = cs.cast();
-    while *cs != 0 {
-        len += 1;
-        cs = cs.offset(1);
+    unsafe {
+        let mut len = 0;
+        let mut cs: *const u8 = cs.cast();
+        while *cs != 0 {
+            len += 1;
+            cs = cs.offset(1);
+        }
+        len
     }
-    len
 }
 
 unsafe fn strlen_gecos(cs: *const c_void) -> usize {
-    let mut len = 0;
-    let mut cs: *const u8 = cs.cast();
-    while *cs != 0 && *cs != b',' {
-        len += 1;
-        cs = cs.offset(1);
+    unsafe {
+        let mut len = 0;
+        let mut cs: *const u8 = cs.cast();
+        while *cs != 0 && *cs != b',' {
+            len += 1;
+            cs = cs.offset(1);
+        }
+        len
     }
-    len
 }
 
 fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
@@ -414,30 +418,32 @@ impl Default for UtsName {
 
 #[inline(always)]
 unsafe fn uname(buf: *mut UtsName) -> c_int {
-    extern "C" {
-        #[cfg(any(
-            target_os = "linux",
-            target_os = "macos",
-            target_os = "dragonfly",
-            target_os = "netbsd",
-            target_os = "openbsd",
-            target_os = "illumos",
-            target_os = "hurd",
-        ))]
-        fn uname(buf: *mut UtsName) -> c_int;
+    unsafe {
+        unsafe extern "C" {
+            #[cfg(any(
+                target_os = "linux",
+                target_os = "macos",
+                target_os = "dragonfly",
+                target_os = "netbsd",
+                target_os = "openbsd",
+                target_os = "illumos",
+                target_os = "hurd",
+            ))]
+            fn uname(buf: *mut UtsName) -> c_int;
 
+            #[cfg(target_os = "freebsd")]
+            fn __xuname(nmln: c_int, buf: *mut c_void) -> c_int;
+        }
+
+        // Polyfill `uname()` for FreeBSD
+        #[inline(always)]
         #[cfg(target_os = "freebsd")]
-        fn __xuname(nmln: c_int, buf: *mut c_void) -> c_int;
-    }
+        unsafe extern "C" fn uname(buf: *mut UtsName) -> c_int {
+            __xuname(256, buf.cast())
+        }
 
-    // Polyfill `uname()` for FreeBSD
-    #[inline(always)]
-    #[cfg(target_os = "freebsd")]
-    unsafe extern "C" fn uname(buf: *mut UtsName) -> c_int {
-        __xuname(256, buf.cast())
+        uname(buf)
     }
-
-    uname(buf)
 }
 
 impl Target for Os {
