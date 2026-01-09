@@ -34,7 +34,16 @@ jobs:
         - tc: nightly
           up: cargo update
         - os: macos-latest
-          tc: [1.65.0, stable, beta, nightly]
+          tc: 1.65.0
+          cc: aarch64-apple-ios
+        - os: macos-latest
+          tc: stable
+          cc: aarch64-apple-ios
+        - os: macos-latest
+          tc: beta
+          cc: aarch64-apple-ios
+        - os: macos-latest
+          tc: nightly
           cc: aarch64-apple-ios
         exclude:
         - tc: 1.65.0
@@ -75,7 +84,16 @@ jobs:
         - tc: nightly
           up: cargo update
         - os: macos-latest
-          tc: [1.81.0, stable, beta, nightly]
+          tc: 1.81.0
+          cc: aarch64-apple-ios
+        - os: macos-latest
+          tc: stable
+          cc: aarch64-apple-ios
+        - os: macos-latest
+          tc: beta
+          cc: aarch64-apple-ios
+        - os: macos-latest
+          tc: nightly
           cc: aarch64-apple-ios
     steps:
     - uses: taiki-e/checkout-action@v1
@@ -100,6 +118,7 @@ jobs:
     - uses: taiki-e/checkout-action@v1
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
+    - run: rustup component add rustfmt
     - if: ${{ matrix.up }}
       run: ${{ matrix.up }}
     - run: cargo fmt --check
