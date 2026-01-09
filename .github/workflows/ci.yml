@@ -20,6 +20,8 @@ jobs:
     - run: cargo update
     - run: cargo fmt --check
     - run: cargo clippy -- -D warnings
+    - run: cargo clippy --no-default-features -- -D warnings
+    - run: cargo clippy --no-default-features --features="force-stub" -- -D warnings
   checks-cross-compile:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -110,6 +112,7 @@ jobs:
     - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --target=${{ matrix.cc }} -p whoami
+    - run: cargo build --target=${{ matrix.cc }} -p whoami --no-default-features
   cross-compile-ios:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -122,7 +125,8 @@ jobs:
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
-    - run: cargo build --target=${{ matrix.cc }}
+    - run: cargo build --target=${{ matrix.cc }} -p whoami
+    - run: cargo build --target=${{ matrix.cc }} -p whoami --no-default-features 
   cross-compile-wasm:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -135,9 +139,10 @@ jobs:
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
-    - run: cargo build --target=${{ matrix.cc }}
-    - run: cargo build --no-default-features --target=${{ matrix.cc }}
+    - run: cargo build --target=${{ matrix.cc }} -p whoami
+    - run: cargo build --target=${{ matrix.cc }} -p whoami --no-default-features
     - run: RUSTFLAGS="--cfg daku" cargo build --target=${{ matrix.cc }}
+    - run: RUSTFLAGS="--cfg daku" cargo build --target=${{ matrix.cc }} --no-default-features
   cross-compile-illumos:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -151,6 +156,7 @@ jobs:
     - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --target=${{ matrix.cc }} -p whoami
+    - run: cargo build --target=${{ matrix.cc }} -p whoami --no-default-features
   cross-compile-redox:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -164,6 +170,7 @@ jobs:
     - run: rustup default ${{ matrix.tc }}
     - run: rustup target add ${{ matrix.cc }}
     - run: cargo build --target=${{ matrix.cc }} -p whoami
+    - run: cargo build --target=${{ matrix.cc }} -p whoami --no-default-features
   clippy-cross-compile:
     runs-on: ${{ matrix.os }}
     strategy:
