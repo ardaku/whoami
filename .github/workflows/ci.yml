@@ -6,184 +6,102 @@ env:
   RUSTUP_AUTO_INSTALL: 0
 
 jobs:
-  checks:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        tc: [nightly]
-    steps:
-    - uses: taiki-e/checkout-action@v1
-    - run: rustup set profile minimal
-    - run: rustup default ${{ matrix.tc }}
-    - run: rustup component add rustfmt clippy
-    - run: cargo update
-    - run: cargo fmt --check
-    - run: cargo clippy -- -D warnings
-    - run: cargo clippy --no-default-features -- -D warnings
-    - run: cargo clippy --no-default-features --features="force-stub" -- -D warnings
-  checks-cross-compile:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        tc: [nightly]
-        cc:
-        - aarch64-linux-android
-        - i686-pc-windows-gnu
-        - i686-unknown-freebsd
-        - i686-unknown-linux-gnu
-        - wasm32-wasip1
-        - x86_64-apple-darwin
-    steps:
-    - uses: taiki-e/checkout-action@v1
-    - run: rustup set profile minimal
-    - run: rustup default ${{ matrix.tc }}
-    - run: rustup component add clippy
-    - run: rustup target add ${{ matrix.cc }}
-    - run: cargo update
-    - run: cargo clippy --target=${{ matrix.cc }} -- -D warnings
-  checks-cross-compile-ios:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest]
-        tc: [nightly]
-        cc: [aarch64-apple-ios]
-    steps:
-    - uses: taiki-e/checkout-action@v1
-    - run: rustup set profile minimal
-    - run: rustup default ${{ matrix.tc }}
-    - run: rustup component add clippy
-    - run: rustup target add ${{ matrix.cc }}
-    - run: cargo clippy --target=${{ matrix.cc }} -- -D warnings
-  checks-cross-compile-wasm:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        tc: [nightly]
-        cc: [wasm32-unknown-unknown]
-    steps:
-    - uses: taiki-e/checkout-action@v1
-    - run: rustup set profile minimal
-    - run: rustup default ${{ matrix.tc }}
-    - run: rustup component add clippy
-    - run: rustup target add ${{ matrix.cc }}
-    - run: cargo clippy --target=${{ matrix.cc }} -- -D warnings
-    - run: cargo update
-    - run: cargo clippy --no-default-features --target=${{ matrix.cc }} -- -D warnings
-    - run: RUSTFLAGS="--cfg daku" cargo clippy --target=${{ matrix.cc }} -- -D warnings
-  test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        tc: [1.65.0, stable, beta, nightly]
-    steps:
-    - uses: taiki-e/checkout-action@v1
-    - run: rustup set profile minimal
-    - run: rustup default ${{ matrix.tc }}
-    - run: cargo doc
-    - run: cargo test --all
-  cross-compile:
+  building-and-clippy-checks:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest]
         tc: [1.65.0, stable, beta, nightly]
         cc:
+        - x86_64-unknown-linux-gnu
+        - x86_64-unknown-illumos
+        - x86_64-unknown-redox
+        - wasm32-unknown-unknown
         - aarch64-linux-android
         - i686-pc-windows-gnu
         - i686-unknown-freebsd
         - i686-unknown-linux-gnu
         - wasm32-wasip1
         - x86_64-apple-darwin
-        exclude:
-        - tc: 1.65.0
-          cc: wasm32-wasip1
+        rf: [RUSTFLAGS=""]
         include:
+        - os: ubuntu-latest
+          cc: wasm32-unknown-unknown
+          rf: [RUSTFLAGS="--cfg daku"]
         - os: ubuntu-latest
           tc: 1.65.0
           cc: wasm32-wasi
-    steps:
-    - uses: taiki-e/checkout-action@v1
-    - run: rustup set profile minimal
-    - run: rustup default ${{ matrix.tc }}
-    - run: rustup target add ${{ matrix.cc }}
-    - run: cargo build --target=${{ matrix.cc }} -p whoami
-    - run: cargo build --target=${{ matrix.cc }} -p whoami --no-default-features
-  cross-compile-ios:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest]
-        tc: [1.65.0, stable, beta, nightly]
-        cc: [aarch64-apple-ios]
-    steps:
-    - uses: taiki-e/checkout-action@v1
-    - run: rustup set profile minimal
-    - run: rustup default ${{ matrix.tc }}
-    - run: rustup target add ${{ matrix.cc }}
-    - run: cargo build --target=${{ matrix.cc }} -p whoami
-    - run: cargo build --target=${{ matrix.cc }} -p whoami --no-default-features 
-  cross-compile-wasm:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        tc: [1.65.0, stable, beta, nightly]
-        cc: [wasm32-unknown-unknown]
-    steps:
-    - uses: taiki-e/checkout-action@v1
-    - run: rustup set profile minimal
-    - run: rustup default ${{ matrix.tc }}
-    - run: rustup target add ${{ matrix.cc }}
-    - run: cargo build --target=${{ matrix.cc }} -p whoami
-    - run: cargo build --target=${{ matrix.cc }} -p whoami --no-default-features
-    - run: RUSTFLAGS="--cfg daku" cargo build --target=${{ matrix.cc }}
-    - run: RUSTFLAGS="--cfg daku" cargo build --target=${{ matrix.cc }} --no-default-features
-  cross-compile-illumos:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        tc: [1.65.0, stable, beta, nightly]
-        cc: [x86_64-unknown-illumos]
-    steps:
-    - uses: taiki-e/checkout-action@v1
-    - run: rustup set profile minimal
-    - run: rustup default ${{ matrix.tc }}
-    - run: rustup target add ${{ matrix.cc }}
-    - run: cargo build --target=${{ matrix.cc }} -p whoami
-    - run: cargo build --target=${{ matrix.cc }} -p whoami --no-default-features
-  cross-compile-redox:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        tc: [1.65.0, stable, beta, nightly]
-        cc: [x86_64-unknown-redox]
-    steps:
-    - uses: taiki-e/checkout-action@v1
-    - run: rustup set profile minimal
-    - run: rustup default ${{ matrix.tc }}
-    - run: rustup target add ${{ matrix.cc }}
-    - run: cargo build --target=${{ matrix.cc }} -p whoami
-    - run: cargo build --target=${{ matrix.cc }} -p whoami --no-default-features
-  clippy-cross-compile:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        tc: [nightly]
-        cc:
-        - x86_64-unknown-illumos
-        - x86_64-unknown-redox
+        - tc: nightly
+          up: cargo update
+        - os: macos-latest
+          tc: [1.65.0, stable, beta, nightly]
+          cc: aarch64-apple-ios
+        exclude:
+        - tc: 1.65.0
+          cc: wasm32-wasip1
     steps:
     - uses: taiki-e/checkout-action@v1
     - run: rustup set profile minimal
     - run: rustup default ${{ matrix.tc }}
     - run: rustup component add clippy
     - run: rustup target add ${{ matrix.cc }}
-    - run: cargo clippy --target=${{ matrix.cc }} -- -D warnings
+    - if: ${{ matrix.up }}
+      run: ${{ matrix.up }}
+    - run: ${{ matrix.rf }} cargo build --target=${{ matrix.cc }} -p whoami
+    - run: ${{ matrix.rf }} cargo clippy --target=${{ matrix.cc }} -p whoami -- -D warnings
+  # can be merged with build-and-clippy in whoami 2.2
+  building-and-clippy-checks-no-std:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        tc: [1.81.0, stable, beta, nightly]
+        cc:
+        - x86_64-unknown-linux-gnu
+        - x86_64-unknown-illumos
+        - x86_64-unknown-redox
+        - wasm32-unknown-unknown
+        - aarch64-linux-android
+        - i686-pc-windows-gnu
+        - i686-unknown-freebsd
+        - i686-unknown-linux-gnu
+        - wasm32-wasip1
+        - x86_64-apple-darwin
+        rf: [RUSTFLAGS=""]
+        include:
+        - os: ubuntu-latest
+          cc: wasm32-unknown-unknown
+          rf: RUSTFLAGS="--cfg daku"
+        - tc: nightly
+          up: cargo update
+        - os: macos-latest
+          tc: [1.81.0, stable, beta, nightly]
+          cc: aarch64-apple-ios
+    steps:
+    - uses: taiki-e/checkout-action@v1
+    - run: rustup set profile minimal
+    - run: rustup default ${{ matrix.tc }}
+    - run: rustup component add clippy
+    - run: rustup target add ${{ matrix.cc }}
+    - if: ${{ matrix.up }}
+      run: ${{ matrix.up }}
+    - run: ${{ matrix.rf }} cargo build --target=${{ matrix.cc }} --no-default-features -p whoami 
+    - run: ${{ matrix.rf }} cargo clippy --target=${{ matrix.cc }} --no-default-features -p whoami -- -D warnings
+  testing:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        tc: [1.65.0, stable, beta, nightly]
+        include:
+        - tc: nightly
+          up: cargo update
+    steps:
+    - uses: taiki-e/checkout-action@v1
+    - run: rustup set profile minimal
+    - run: rustup default ${{ matrix.tc }}
+    - if: ${{ matrix.up }}
+      run: ${{ matrix.up }}
+    - run: cargo fmt --check
+    - run: cargo doc -p whoami
+    - run: cargo test --all
