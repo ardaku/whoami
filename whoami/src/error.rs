@@ -1,7 +1,7 @@
 use alloc::borrow::Cow;
+use core::fmt;
 #[cfg(feature = "std")]
 use std::io::Error as IoError;
-use core::fmt;
 
 #[cfg(not(feature = "std"))]
 #[derive(Clone, PartialEq, Eq, Debug)]
