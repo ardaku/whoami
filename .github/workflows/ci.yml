@@ -27,7 +27,7 @@ jobs:
         include:
         - os: ubuntu-latest
           cc: wasm32-unknown-unknown
-          rf: [RUSTFLAGS="--cfg daku"]
+          rf: RUSTFLAGS="--cfg daku"
         - os: ubuntu-latest
           tc: 1.65.0
           cc: wasm32-wasi
