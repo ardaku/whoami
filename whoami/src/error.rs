@@ -1,4 +1,5 @@
 use alloc::borrow::Cow;
+use core::fmt;
 #[cfg(feature = "std")]
 use std::io::Error as IoError;
 
@@ -6,13 +7,20 @@ use std::io::Error as IoError;
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub(crate) struct IoError(Cow<'static, str>);
 
+#[cfg(not(feature = "std"))]
+impl fmt::Display for IoError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(&self.0, f)
+    }
+}
+
 /// An I/O error; can be converted to [`std::io::Error`].
 #[derive(Debug)]
 pub struct Error(IoError);
 
-impl core::fmt::Display for Error {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        core::fmt::Display::fmt(&self.0, f)
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(&self.0, f)
     }
 }
 
