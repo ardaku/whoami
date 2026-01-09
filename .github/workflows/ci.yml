@@ -55,9 +55,10 @@ jobs:
     - run: rustup component add clippy
     - run: rustup target add ${{ matrix.cc }}
     - if: ${{ matrix.up }}
-      run: ${{ matrix.up }}
+      steps:
+      - run: ${{ matrix.up }}
+      - run: ${{ matrix.rf }} cargo clippy --target=${{ matrix.cc }} -p whoami -- -D warnings
     - run: ${{ matrix.rf }} cargo build --target=${{ matrix.cc }} -p whoami
-    - run: ${{ matrix.rf }} cargo clippy --target=${{ matrix.cc }} -p whoami -- -D warnings
   # can be merged with build-and-clippy in whoami 2.2
   building-and-clippy-checks-no-std:
     runs-on: ${{ matrix.os }}
@@ -102,9 +103,10 @@ jobs:
     - run: rustup component add clippy
     - run: rustup target add ${{ matrix.cc }}
     - if: ${{ matrix.up }}
-      run: ${{ matrix.up }}
+      steps:
+      - run: ${{ matrix.up }}
+      - run: ${{ matrix.rf }} cargo clippy --target=${{ matrix.cc }} --no-default-features -p whoami -- -D warnings
     - run: ${{ matrix.rf }} cargo build --target=${{ matrix.cc }} --no-default-features -p whoami 
-    - run: ${{ matrix.rf }} cargo clippy --target=${{ matrix.cc }} --no-default-features -p whoami -- -D warnings
   testing:
     runs-on: ${{ matrix.os }}
     strategy:
