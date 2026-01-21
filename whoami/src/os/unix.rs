@@ -656,6 +656,8 @@ impl Target for Os {
             DesktopEnvironment::Xfce
         } else if env.eq_ignore_ascii_case("NIRI") {
             DesktopEnvironment::Niri
+        } else if env.eq_ignore_ascii_case("HYPRLAND") {
+            DesktopEnvironment::Hyprland
         } else {
             DesktopEnvironment::Unknown(env.to_string())
         })

@@ -43,6 +43,8 @@ pub enum DesktopEnvironment {
     Orbital,
     /// Wayland scrolling window manager for Linux
     Niri,
+    /// Wayland tiling window manager for Linux
+    Hyprland,
 }
 
 impl Display for DesktopEnvironment {
@@ -71,6 +73,7 @@ impl Display for DesktopEnvironment {
             Self::Ermine => "Ermine",
             Self::Orbital => "Orbital",
             Self::Niri => "Niri",
+            Self::Hyprland => "Hyprland",
         })
     }
 }
