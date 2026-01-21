@@ -631,7 +631,9 @@ impl Target for Os {
             target_os = "illumos",
             target_os = "hurd",
         ))]
-        let env = env::var_os("DESKTOP_SESSION")?;
+        let env = env::var_os("XDG_SESSION_DESKTOP")
+            .or_else(|| env::var_os("DESKTOP_SESSION"))
+            .or_else(|| env::var_os("XDG_CURRENT_DESKTOP"))?;
 
         // convert `OsStr` to `Cow`
         let env = env.to_string_lossy();
