@@ -658,6 +658,8 @@ impl Target for Os {
             DesktopEnvironment::Niri
         } else if env.eq_ignore_ascii_case("HYPRLAND") {
             DesktopEnvironment::Hyprland
+        } else if env.eq_ignore_ascii_case("COSMIC") {
+            DesktopEnvironment::Cosmic
         } else {
             DesktopEnvironment::Unknown(env.to_string())
         })
