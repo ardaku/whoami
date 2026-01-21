@@ -654,6 +654,8 @@ impl Target for Os {
             DesktopEnvironment::Plasma
         } else if env.eq_ignore_ascii_case("XFCE") {
             DesktopEnvironment::Xfce
+        } else if env.eq_ignore_ascii_case("NIRI") {
+            DesktopEnvironment::Niri
         } else {
             DesktopEnvironment::Unknown(env.to_string())
         })

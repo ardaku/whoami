@@ -41,6 +41,8 @@ pub enum DesktopEnvironment {
     Ermine,
     /// Default desktop environment for Redox
     Orbital,
+    /// Wayland scrolling window manager for Linux
+    Niri,
 }
 
 impl Display for DesktopEnvironment {
@@ -68,6 +70,7 @@ impl Display for DesktopEnvironment {
             Self::Ubuntu => "Ubuntu",
             Self::Ermine => "Ermine",
             Self::Orbital => "Orbital",
+            Self::Niri => "Niri",
         })
     }
 }
@@ -84,6 +87,7 @@ impl DesktopEnvironment {
                 | Self::Lxde
                 | Self::Mate
                 | Self::Xfce
+                | Self::Niri
         )
     }
 
