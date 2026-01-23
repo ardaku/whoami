@@ -631,7 +631,9 @@ impl Target for Os {
             target_os = "illumos",
             target_os = "hurd",
         ))]
-        let env = env::var_os("DESKTOP_SESSION")?;
+        let env = env::var_os("XDG_SESSION_DESKTOP")
+            .or_else(|| env::var_os("DESKTOP_SESSION"))
+            .or_else(|| env::var_os("XDG_CURRENT_DESKTOP"))?;
 
         // convert `OsStr` to `Cow`
         let env = env.to_string_lossy();
@@ -652,6 +654,12 @@ impl Target for Os {
             DesktopEnvironment::Plasma
         } else if env.eq_ignore_ascii_case("XFCE") {
             DesktopEnvironment::Xfce
+        } else if env.eq_ignore_ascii_case("NIRI") {
+            DesktopEnvironment::Niri
+        } else if env.eq_ignore_ascii_case("HYPRLAND") {
+            DesktopEnvironment::Hyprland
+        } else if env.eq_ignore_ascii_case("COSMIC") {
+            DesktopEnvironment::Cosmic
         } else {
             DesktopEnvironment::Unknown(env.to_string())
         })
