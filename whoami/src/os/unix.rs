@@ -105,11 +105,6 @@ extern "system" {
     ) -> i32;
 }
 
-extern "system" {
-    fn geteuid() -> u32;
-    fn gethostname(name: *mut c_void, len: usize) -> i32;
-}
-
 #[cfg(target_os = "macos")]
 #[link(name = "CoreFoundation", kind = "framework")]
 extern "system" {
@@ -252,7 +247,7 @@ fn getpwuid(name: Name) -> Result<OsString> {
         {
             let mut _passwd = mem::MaybeUninit::<*mut PassWd>::uninit();
             let ret = getpwuid_r(
-                geteuid(),
+                libc::geteuid(),
                 passwd.as_mut_ptr(),
                 buffer.as_mut_ptr() as *mut c_void,
                 BUF_SIZE,
@@ -274,7 +269,7 @@ fn getpwuid(name: Name) -> Result<OsString> {
         #[cfg(target_os = "illumos")]
         {
             let ret = getpwuid_r(
-                geteuid(),
+                libc::geteuid(),
                 passwd.as_mut_ptr(),
                 buffer.as_mut_ptr() as *mut c_void,
                 BUF_SIZE.try_into().unwrap_or(c_int::MAX),
@@ -548,7 +543,7 @@ impl Target for Os {
         let mut string = Vec::<u8>::with_capacity(256);
 
         unsafe {
-            if gethostname(string.as_mut_ptr().cast(), 255) == -1 {
+            if libc::gethostname(string.as_mut_ptr().cast(), 255) == -1 {
                 return Err(Error::from_io(io::Error::last_os_error()));
             }
 
