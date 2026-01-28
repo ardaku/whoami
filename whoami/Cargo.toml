@@ -25,9 +25,17 @@ include = [
 ]
 rust-version = "1.75"
 
-# Target specific dependency for redox
+# Target-specific dependency for unix-like
+[target.'cfg(all(any(target_os = "linux", target_os = "macos", target_os = "dragonfly", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd", target_os = "illumos", target_os = "hurd"), not(target_arch = "wasm32")))'.dependencies.libc]
+version = "0.2.180"
+optional = true
+features = []
+default-features = false
+
+# Target-specific dependency for redox
 [target.'cfg(all(target_os = "redox", not(target_arch = "wasm32")))'.dependencies.libredox]
 version = "0.1.12"
+optional = true
 features = ["call"]
 default-features = false
 
@@ -35,6 +43,7 @@ default-features = false
 [target.'cfg(all(target_arch = "wasm32", target_os = "wasi"))'.dependencies.wasite]
 version = "1.0.2"
 optional = true
+features = []
 default-features = false
 
 # Target-specific dependency for web browser
@@ -50,7 +59,7 @@ default = ["std", "wasi-wasite", "wasm-web"]
 # Instead of interfacing with the OS, force stubs to be used
 force-stub = []
 # Allow interfacing with the standard library and OS.
-std = ["web-sys?/std"]
+std = ["dep:libc", "dep:libredox", "libc?/std", "web-sys?/std"]
 # Assume a wasite conforming environment on WASI (takes precedence over
 # `wasm-web`).
 wasi-wasite = ["dep:wasite"]
