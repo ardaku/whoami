@@ -160,53 +160,26 @@ fn getpwuid(name: Name) -> Result<OsString> {
 
     // Get passwd `struct`.
     let passwd = unsafe {
-        #[cfg(any(
-            target_os = "linux",
-            target_os = "macos",
-            target_os = "dragonfly",
-            target_os = "freebsd",
-            target_os = "netbsd",
-            target_os = "openbsd",
-            target_os = "hurd",
-        ))]
-        {
-            let mut _passwd = mem::MaybeUninit::<*mut libc::passwd>::uninit();
-            let ret = libc::getpwuid_r(
-                libc::geteuid(),
-                passwd.as_mut_ptr(),
-                buffer.as_mut_ptr().cast(),
-                BUF_SIZE,
-                _passwd.as_mut_ptr(),
-            );
+        let mut _passwd = mem::MaybeUninit::<*mut libc::passwd>::uninit();
+        let ret = libc::getpwuid_r(
+            libc::geteuid(),
+            passwd.as_mut_ptr(),
+            buffer.as_mut_ptr().cast(),
+            BUF_SIZE,
+            _passwd.as_mut_ptr(),
+        );
 
-            if ret != 0 {
-                return Err(Error::from_io(io::Error::last_os_error()));
-            }
-
-            let _passwd = _passwd.assume_init();
-
-            if _passwd.is_null() {
-                return Err(Error::null_record());
-            }
-
-            passwd.assume_init()
+        if ret != 0 {
+            return Err(Error::from_io(io::Error::last_os_error()));
         }
 
-        #[cfg(target_os = "illumos")]
-        {
-            let ret = libc::getpwuid_r(
-                libc::geteuid(),
-                passwd.as_mut_ptr(),
-                buffer.as_mut_ptr().cast(),
-                BUF_SIZE.try_into().unwrap_or(std::ffi::c_int::MAX),
-            );
+        let _passwd = _passwd.assume_init();
 
-            if ret.is_null() {
-                return Err(Error::from_io(io::Error::last_os_error()));
-            }
-
-            passwd.assume_init()
+        if _passwd.is_null() {
+            return Err(Error::null_record());
         }
+
+        passwd.assume_init()
     };
 
     // Extract names.
