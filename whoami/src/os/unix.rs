@@ -60,7 +60,7 @@ enum Name {
 }
 
 trait Terminators {
-    const CHARS: &[u8];
+    const CHARS: &'static [u8];
 }
 
 struct Nul;
@@ -68,11 +68,11 @@ struct Nul;
 struct NulOrComma;
 
 impl Terminators for Nul {
-    const CHARS: &[u8] = &[b'\0'];
+    const CHARS: &'static [u8] = &[b'\0'];
 }
 
 impl Terminators for NulOrComma {
-    const CHARS: &[u8] = &[b'\0', b','];
+    const CHARS: &'static [u8] = &[b'\0', b','];
 }
 
 unsafe fn strlen<T>(mut cs: *const u8) -> usize
