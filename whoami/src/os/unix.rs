@@ -68,11 +68,11 @@ struct Nul;
 struct NulOrComma;
 
 impl Terminators for Nul {
-    const CHARS: &'static [u8] = &[b'\0'];
+    const CHARS: &'static [u8] = b"\0";
 }
 
 impl Terminators for NulOrComma {
-    const CHARS: &'static [u8] = &[b'\0', b','];
+    const CHARS: &'static [u8] = b"\0,";
 }
 
 unsafe fn strlen<T>(mut cs: *const u8) -> usize
