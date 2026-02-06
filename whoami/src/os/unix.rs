@@ -59,10 +59,29 @@ enum Name {
     Real,
 }
 
-unsafe fn strlen(mut cs: *const u8) -> usize {
+trait Terminators {
+    const CHARS: &'static [u8];
+}
+
+struct Nul;
+
+struct NulOrComma;
+
+impl Terminators for Nul {
+    const CHARS: &'static [u8] = b"\0";
+}
+
+impl Terminators for NulOrComma {
+    const CHARS: &'static [u8] = b"\0,";
+}
+
+unsafe fn strlen<T>(mut cs: *const u8) -> usize
+where
+    T: Terminators,
+{
     let mut len = 0;
 
-    while *cs != 0 {
+    while !T::CHARS.contains(&*cs) {
         len += 1;
         cs = cs.offset(1);
     }
@@ -70,25 +89,17 @@ unsafe fn strlen(mut cs: *const u8) -> usize {
     len
 }
 
-unsafe fn strlen_gecos(mut cs: *const u8) -> usize {
-    let mut len = 0;
-
-    while *cs != 0 && *cs != b',' {
-        len += 1;
-        cs = cs.offset(1);
-    }
-
-    len
-}
-
-fn os_from_cstring_gecos(string: *const u8) -> Result<OsString> {
+fn os_from_cstring<T>(string: *const u8) -> Result<OsString>
+where
+    T: Terminators,
+{
     if string.is_null() {
         return Err(Error::null_record());
     }
 
     // Get a byte slice of the c string.
     let slice = unsafe {
-        let length = strlen_gecos(string);
+        let length = strlen::<T>(string);
 
         if length == 0 {
             return Err(Error::empty_record());
@@ -99,55 +110,6 @@ fn os_from_cstring_gecos(string: *const u8) -> Result<OsString> {
 
     // Turn byte slice into Rust String.
     Ok(OsString::from_vec(slice.to_vec()))
-}
-
-fn os_from_cstring(string: *const u8) -> Result<OsString> {
-    if string.is_null() {
-        return Err(Error::null_record());
-    }
-
-    // Get a byte slice of the c string.
-    let slice = unsafe {
-        let length = strlen(string);
-
-        if length == 0 {
-            return Err(Error::empty_record());
-        }
-
-        slice::from_raw_parts(string, length)
-    };
-
-    // Turn byte slice into Rust String.
-    Ok(OsString::from_vec(slice.to_vec()))
-}
-
-#[cfg(target_os = "macos")]
-fn os_from_cfstring(string: *mut c_void) -> OsString {
-    if string.is_null() {
-        return "".to_string().into();
-    }
-
-    unsafe {
-        let len = CFStringGetLength(string);
-        let capacity =
-            CFStringGetMaximumSizeForEncoding(len, 134_217_984 /* UTF8 */) + 1;
-        let mut out = Vec::with_capacity(capacity as usize);
-        if CFStringGetCString(
-            string,
-            out.as_mut_ptr(),
-            capacity,
-            134_217_984, /* UTF8 */
-        ) != 0
-        {
-            out.set_len(strlen(out.as_ptr().cast())); // Remove trailing NUL byte
-            out.shrink_to_fit();
-            CFRelease(string);
-            OsString::from_vec(out)
-        } else {
-            CFRelease(string);
-            "".to_string().into()
-        }
-    }
 }
 
 // This function must allocate, because a slice or `Cow<OsStr>` would still
@@ -184,64 +146,10 @@ fn getpwuid(name: Name) -> Result<OsString> {
 
     // Extract names.
     if let Name::Real = name {
-        os_from_cstring_gecos(passwd.pw_gecos.cast())
+        os_from_cstring::<NulOrComma>(passwd.pw_gecos.cast())
     } else {
-        os_from_cstring(passwd.pw_name.cast())
+        os_from_cstring::<Nul>(passwd.pw_name.cast())
     }
-}
-
-#[cfg(target_os = "macos")]
-fn distro_xml(data: String) -> Result<String> {
-    let mut product_name = None;
-    let mut user_visible_version = None;
-
-    if let Some(start) = data.find("<dict>") {
-        if let Some(end) = data.find("</dict>") {
-            let mut set_product_name = false;
-            let mut set_user_visible_version = false;
-
-            for line in data[start + "<dict>".len()..end].lines() {
-                let line = line.trim();
-
-                if let Some(key) = line.strip_prefix("<key>") {
-                    match key.trim_end_matches("</key>") {
-                        "ProductName" => set_product_name = true,
-                        "ProductUserVisibleVersion" => {
-                            set_user_visible_version = true
-                        }
-                        "ProductVersion" => {
-                            if user_visible_version.is_none() {
-                                set_user_visible_version = true
-                            }
-                        }
-                        _ => {}
-                    }
-                } else if let Some(value) = line.strip_prefix("<string>") {
-                    if set_product_name {
-                        product_name =
-                            Some(value.trim_end_matches("</string>"));
-                        set_product_name = false;
-                    } else if set_user_visible_version {
-                        user_visible_version =
-                            Some(value.trim_end_matches("</string>"));
-                        set_user_visible_version = false;
-                    }
-                }
-            }
-        }
-    }
-
-    Ok(if let Some(product_name) = product_name {
-        if let Some(user_visible_version) = user_visible_version {
-            std::format!("{product_name} {user_visible_version}")
-        } else {
-            product_name.to_string()
-        }
-    } else {
-        user_visible_version
-            .map(|v| std::format!("Mac OS (Unknown) {v}"))
-            .ok_or_else(|| Error::with_invalid_data("Parsing failed"))?
-    })
 }
 
 impl Target for Os {
@@ -260,6 +168,37 @@ impl Target for Os {
     fn devicename(self) -> Result<OsString> {
         #[cfg(target_os = "macos")]
         {
+            fn os_from_cfstring(string: *mut c_void) -> OsString {
+                if string.is_null() {
+                    return String::new().into();
+                }
+
+                unsafe {
+                    let len = CFStringGetLength(string);
+                    let capacity = CFStringGetMaximumSizeForEncoding(
+                        len,
+                        134_217_984, /* UTF8 */
+                    ) + 1;
+                    let mut out = Vec::with_capacity(capacity as usize);
+                    if CFStringGetCString(
+                        string,
+                        out.as_mut_ptr(),
+                        capacity,
+                        134_217_984, /* UTF8 */
+                    ) != 0
+                    {
+                        // Remove trailing NUL byte
+                        out.set_len(strlen::<Nul>(out.as_ptr().cast()));
+                        out.shrink_to_fit();
+                        CFRelease(string);
+                        OsString::from_vec(out)
+                    } else {
+                        CFRelease(string);
+                        String::new().into()
+                    }
+                }
+            }
+
             let out = os_from_cfstring(unsafe {
                 SCDynamicStoreCopyComputerName(null_mut(), null_mut())
             });
@@ -356,7 +295,7 @@ impl Target for Os {
                 return Err(Error::from_io(io::Error::last_os_error()));
             }
 
-            string.set_len(strlen(string.as_ptr().cast()));
+            string.set_len(strlen::<Nul>(string.as_ptr().cast()));
         };
 
         String::from_utf8(string)
@@ -366,6 +305,65 @@ impl Target for Os {
     fn distro(self) -> Result<String> {
         #[cfg(target_os = "macos")]
         {
+            fn distro_xml(data: String) -> Result<String> {
+                let mut product_name = None;
+                let mut user_visible_version = None;
+
+                if let Some(start) = data.find("<dict>") {
+                    if let Some(end) = data.find("</dict>") {
+                        let mut set_product_name = false;
+                        let mut set_user_visible_version = false;
+
+                        for line in data[start + "<dict>".len()..end].lines() {
+                            let line = line.trim();
+
+                            if let Some(key) = line.strip_prefix("<key>") {
+                                match key.trim_end_matches("</key>") {
+                                    "ProductName" => set_product_name = true,
+                                    "ProductUserVisibleVersion" => {
+                                        set_user_visible_version = true
+                                    }
+                                    "ProductVersion" => {
+                                        if user_visible_version.is_none() {
+                                            set_user_visible_version = true
+                                        }
+                                    }
+                                    _ => {}
+                                }
+                            } else if let Some(value) =
+                                line.strip_prefix("<string>")
+                            {
+                                if set_product_name {
+                                    product_name = Some(
+                                        value.trim_end_matches("</string>"),
+                                    );
+                                    set_product_name = false;
+                                } else if set_user_visible_version {
+                                    user_visible_version = Some(
+                                        value.trim_end_matches("</string>"),
+                                    );
+                                    set_user_visible_version = false;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Ok(if let Some(product_name) = product_name {
+                    if let Some(user_visible_version) = user_visible_version {
+                        std::format!("{product_name} {user_visible_version}")
+                    } else {
+                        product_name.to_string()
+                    }
+                } else {
+                    user_visible_version
+                        .map(|v| std::format!("Mac OS (Unknown) {v}"))
+                        .ok_or_else(|| {
+                            Error::with_invalid_data("Parsing failed")
+                        })?
+                })
+            }
+
             if let Ok(data) = fs::read_to_string(
                 "/System/Library/CoreServices/ServerVersion.plist",
             ) {
@@ -379,15 +377,7 @@ impl Target for Os {
             }
         }
 
-        #[cfg(any(
-            target_os = "linux",
-            target_os = "dragonfly",
-            target_os = "freebsd",
-            target_os = "netbsd",
-            target_os = "openbsd",
-            target_os = "illumos",
-            target_os = "hurd",
-        ))]
+        #[cfg(not(target_os = "macos"))]
         {
             let program =
                 fs::read("/etc/os-release").map_err(Error::from_io)?;
@@ -426,15 +416,7 @@ impl Target for Os {
         #[cfg(target_os = "macos")]
         let env = OsStr::new("Aqua");
 
-        #[cfg(any(
-            target_os = "linux",
-            target_os = "dragonfly",
-            target_os = "freebsd",
-            target_os = "netbsd",
-            target_os = "openbsd",
-            target_os = "illumos",
-            target_os = "hurd",
-        ))]
+        #[cfg(not(target_os = "macos"))]
         let env = env::var_os("XDG_SESSION_DESKTOP")
             .or_else(|| env::var_os("DESKTOP_SESSION"))
             .or_else(|| env::var_os("XDG_CURRENT_DESKTOP"))?;
