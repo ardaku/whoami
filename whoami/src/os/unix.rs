@@ -8,18 +8,18 @@
     target_os = "hurd",
 ))]
 use std::env;
+#[cfg(target_os = "macos")]
 use std::{
-    ffi::{c_char, c_int, c_void, CStr, OsString},
+    ffi::{c_long, c_uchar, c_void, OsStr},
+    os::unix::ffi::OsStrExt,
+    ptr::null_mut,
+};
+use std::{
+    ffi::{CStr, OsString},
     fs, io, mem,
     os::unix::ffi::OsStringExt,
     prelude::rust_2021::*,
     slice,
-};
-#[cfg(target_os = "macos")]
-use std::{
-    ffi::{c_long, c_uchar, OsStr},
-    os::unix::ffi::OsStrExt,
-    ptr::null_mut,
 };
 
 use crate::{
@@ -27,83 +27,6 @@ use crate::{
     CpuArchitecture, DesktopEnvironment, Error, LanguagePreferences, Platform,
     Result,
 };
-
-#[cfg(any(target_os = "linux", target_os = "hurd"))]
-#[repr(C)]
-struct PassWd {
-    pw_name: *const c_void,
-    pw_passwd: *const c_void,
-    pw_uid: u32,
-    pw_gid: u32,
-    pw_gecos: *const c_void,
-    pw_dir: *const c_void,
-    pw_shell: *const c_void,
-}
-
-#[cfg(any(
-    target_os = "macos",
-    target_os = "dragonfly",
-    target_os = "freebsd",
-    target_os = "openbsd",
-    target_os = "netbsd"
-))]
-#[repr(C)]
-struct PassWd {
-    pw_name: *const c_void,
-    pw_passwd: *const c_void,
-    pw_uid: u32,
-    pw_gid: u32,
-    pw_change: isize,
-    pw_class: *const c_void,
-    pw_gecos: *const c_void,
-    pw_dir: *const c_void,
-    pw_shell: *const c_void,
-    pw_expire: isize,
-    pw_fields: i32,
-}
-
-#[cfg(target_os = "illumos")]
-#[repr(C)]
-struct PassWd {
-    pw_name: *const c_void,
-    pw_passwd: *const c_void,
-    pw_uid: u32,
-    pw_gid: u32,
-    pw_age: *const c_void,
-    pw_comment: *const c_void,
-    pw_gecos: *const c_void,
-    pw_dir: *const c_void,
-    pw_shell: *const c_void,
-}
-
-#[cfg(target_os = "illumos")]
-extern "system" {
-    fn getpwuid_r(
-        uid: u32,
-        pwd: *mut PassWd,
-        buf: *mut c_void,
-        buflen: c_int,
-    ) -> *mut PassWd;
-}
-
-#[cfg(any(
-    target_os = "linux",
-    target_os = "macos",
-    target_os = "dragonfly",
-    target_os = "freebsd",
-    target_os = "netbsd",
-    target_os = "openbsd",
-    target_os = "hurd",
-))]
-extern "system" {
-    fn getpwuid_r(
-        uid: u32,
-        pwd: *mut PassWd,
-        buf: *mut c_void,
-        buflen: usize,
-        result: *mut *mut PassWd,
-    ) -> i32;
-}
 
 #[cfg(target_os = "macos")]
 #[link(name = "CoreFoundation", kind = "framework")]
@@ -136,27 +59,29 @@ enum Name {
     Real,
 }
 
-unsafe fn strlen(cs: *const c_void) -> usize {
+unsafe fn strlen(mut cs: *const u8) -> usize {
     let mut len = 0;
-    let mut cs: *const u8 = cs.cast();
+
     while *cs != 0 {
         len += 1;
         cs = cs.offset(1);
     }
+
     len
 }
 
-unsafe fn strlen_gecos(cs: *const c_void) -> usize {
+unsafe fn strlen_gecos(mut cs: *const u8) -> usize {
     let mut len = 0;
-    let mut cs: *const u8 = cs.cast();
+
     while *cs != 0 && *cs != b',' {
         len += 1;
         cs = cs.offset(1);
     }
+
     len
 }
 
-fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
+fn os_from_cstring_gecos(string: *const u8) -> Result<OsString> {
     if string.is_null() {
         return Err(Error::null_record());
     }
@@ -169,14 +94,14 @@ fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
             return Err(Error::empty_record());
         }
 
-        slice::from_raw_parts(string.cast(), length)
+        slice::from_raw_parts(string, length)
     };
 
     // Turn byte slice into Rust String.
     Ok(OsString::from_vec(slice.to_vec()))
 }
 
-fn os_from_cstring(string: *const c_void) -> Result<OsString> {
+fn os_from_cstring(string: *const u8) -> Result<OsString> {
     if string.is_null() {
         return Err(Error::null_record());
     }
@@ -189,7 +114,7 @@ fn os_from_cstring(string: *const c_void) -> Result<OsString> {
             return Err(Error::empty_record());
         }
 
-        slice::from_raw_parts(string.cast(), length)
+        slice::from_raw_parts(string, length)
     };
 
     // Turn byte slice into Rust String.
@@ -231,9 +156,9 @@ fn os_from_cfstring(string: *mut c_void) -> OsString {
 fn getpwuid(name: Name) -> Result<OsString> {
     const BUF_SIZE: usize = 16_384; // size from the man page
     let mut buffer = mem::MaybeUninit::<[u8; BUF_SIZE]>::uninit();
-    let mut passwd = mem::MaybeUninit::<PassWd>::uninit();
+    let mut passwd = mem::MaybeUninit::<libc::passwd>::uninit();
 
-    // Get PassWd `struct`.
+    // Get passwd `struct`.
     let passwd = unsafe {
         #[cfg(any(
             target_os = "linux",
@@ -245,11 +170,11 @@ fn getpwuid(name: Name) -> Result<OsString> {
             target_os = "hurd",
         ))]
         {
-            let mut _passwd = mem::MaybeUninit::<*mut PassWd>::uninit();
-            let ret = getpwuid_r(
+            let mut _passwd = mem::MaybeUninit::<*mut libc::passwd>::uninit();
+            let ret = libc::getpwuid_r(
                 libc::geteuid(),
                 passwd.as_mut_ptr(),
-                buffer.as_mut_ptr() as *mut c_void,
+                buffer.as_mut_ptr().cast(),
                 BUF_SIZE,
                 _passwd.as_mut_ptr(),
             );
@@ -263,30 +188,32 @@ fn getpwuid(name: Name) -> Result<OsString> {
             if _passwd.is_null() {
                 return Err(Error::null_record());
             }
+
             passwd.assume_init()
         }
 
         #[cfg(target_os = "illumos")]
         {
-            let ret = getpwuid_r(
+            let ret = libc::getpwuid_r(
                 libc::geteuid(),
                 passwd.as_mut_ptr(),
-                buffer.as_mut_ptr() as *mut c_void,
-                BUF_SIZE.try_into().unwrap_or(c_int::MAX),
+                buffer.as_mut_ptr().cast(),
+                BUF_SIZE.try_into().unwrap_or(std::ffi::c_int::MAX),
             );
 
             if ret.is_null() {
                 return Err(Error::from_io(io::Error::last_os_error()));
             }
+
             passwd.assume_init()
         }
     };
 
     // Extract names.
     if let Name::Real = name {
-        os_from_cstring_gecos(passwd.pw_gecos)
+        os_from_cstring_gecos(passwd.pw_gecos.cast())
     } else {
-        os_from_cstring(passwd.pw_name)
+        os_from_cstring(passwd.pw_name.cast())
     }
 }
 
@@ -342,97 +269,6 @@ fn distro_xml(data: String) -> Result<String> {
             .map(|v| std::format!("Mac OS (Unknown) {v}"))
             .ok_or_else(|| Error::with_invalid_data("Parsing failed"))?
     })
-}
-
-#[cfg(any(
-    target_os = "macos",
-    target_os = "freebsd",
-    target_os = "netbsd",
-    target_os = "openbsd",
-))]
-#[repr(C)]
-struct UtsName {
-    sysname: [c_char; 256],
-    nodename: [c_char; 256],
-    release: [c_char; 256],
-    version: [c_char; 256],
-    machine: [c_char; 256],
-}
-
-#[cfg(target_os = "illumos")]
-#[repr(C)]
-struct UtsName {
-    sysname: [c_char; 257],
-    nodename: [c_char; 257],
-    release: [c_char; 257],
-    version: [c_char; 257],
-    machine: [c_char; 257],
-}
-
-#[cfg(target_os = "dragonfly")]
-#[repr(C)]
-struct UtsName {
-    sysname: [c_char; 32],
-    nodename: [c_char; 32],
-    release: [c_char; 32],
-    version: [c_char; 32],
-    machine: [c_char; 32],
-}
-
-#[cfg(any(target_os = "linux", target_os = "android",))]
-#[repr(C)]
-struct UtsName {
-    sysname: [c_char; 65],
-    nodename: [c_char; 65],
-    release: [c_char; 65],
-    version: [c_char; 65],
-    machine: [c_char; 65],
-    domainname: [c_char; 65],
-}
-
-#[cfg(target_os = "hurd")]
-#[repr(C)]
-struct UtsName {
-    sysname: [c_char; 1024],
-    nodename: [c_char; 1024],
-    release: [c_char; 1024],
-    version: [c_char; 1024],
-    machine: [c_char; 1024],
-}
-
-// Buffer initialization
-impl Default for UtsName {
-    fn default() -> Self {
-        unsafe { mem::zeroed() }
-    }
-}
-
-#[inline(always)]
-unsafe fn uname(buf: *mut UtsName) -> c_int {
-    extern "C" {
-        #[cfg(any(
-            target_os = "linux",
-            target_os = "macos",
-            target_os = "dragonfly",
-            target_os = "netbsd",
-            target_os = "openbsd",
-            target_os = "illumos",
-            target_os = "hurd",
-        ))]
-        fn uname(buf: *mut UtsName) -> c_int;
-
-        #[cfg(target_os = "freebsd")]
-        fn __xuname(nmln: c_int, buf: *mut c_void) -> c_int;
-    }
-
-    // Polyfill `uname()` for FreeBSD
-    #[inline(always)]
-    #[cfg(target_os = "freebsd")]
-    unsafe extern "C" fn uname(buf: *mut UtsName) -> c_int {
-        __xuname(256, buf.cast())
-    }
-
-    uname(buf)
 }
 
 impl Target for Os {
@@ -695,9 +531,9 @@ impl Target for Os {
 
     #[inline(always)]
     fn arch(self) -> Result<CpuArchitecture> {
-        let mut buf = UtsName::default();
+        let mut buf: libc::utsname = unsafe { mem::zeroed() };
 
-        if unsafe { uname(&mut buf) } == -1 {
+        if unsafe { libc::uname(&mut buf) } == -1 {
             return Err(Error::from_io(io::Error::last_os_error()));
         }
 
