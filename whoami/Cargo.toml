@@ -25,8 +25,15 @@ include = [
 ]
 rust-version = "1.75"
 
+# Target-specific dependency for apple
+[target.'cfg(target_vendor = "apple")'.dependencies.objc2-system-configuration]
+version = "0.3.2"
+optional = true
+features = ["SCDynamicStore", "SCDynamicStoreCopySpecific"]
+default-features = false
+
 # Target-specific dependency for unix-like
-[target.'cfg(all(any(target_os = "linux", target_os = "macos", target_os = "dragonfly", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd", target_os = "illumos", target_os = "hurd"), not(target_arch = "wasm32")))'.dependencies.libc]
+[target.'cfg(all(any(target_vendor = "apple", target_os = "linux", target_os = "dragonfly", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd", target_os = "illumos", target_os = "hurd"), not(target_arch = "wasm32")))'.dependencies.libc]
 version = "0.2.180"
 optional = true
 features = []
@@ -59,7 +66,13 @@ default = ["std", "wasi-wasite", "wasm-web"]
 # Instead of interfacing with the OS, force stubs to be used
 force-stub = []
 # Allow interfacing with the standard library and OS.
-std = ["dep:libc", "dep:libredox", "libc?/std", "web-sys?/std"]
+std = [
+    "dep:libc",
+    "dep:libredox",
+    "dep:objc2-system-configuration",
+    "libc?/std",
+    "web-sys?/std",
+]
 # Assume a wasite conforming environment on WASI (takes precedence over
 # `wasm-web`).
 wasi-wasite = ["dep:wasite"]

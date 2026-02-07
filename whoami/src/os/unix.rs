@@ -1,20 +1,5 @@
-#[cfg(any(
-    target_os = "linux",
-    target_os = "dragonfly",
-    target_os = "freebsd",
-    target_os = "netbsd",
-    target_os = "openbsd",
-    target_os = "illumos",
-    target_os = "hurd",
-))]
-use std::env;
-#[cfg(target_os = "macos")]
 use std::{
-    ffi::{c_long, c_uchar, c_void, OsStr},
-    os::unix::ffi::OsStrExt,
-    ptr::null_mut,
-};
-use std::{
+    borrow::Cow,
     ffi::{CStr, OsString},
     fs, io, mem,
     os::unix::ffi::OsStringExt,
@@ -27,32 +12,6 @@ use crate::{
     CpuArchitecture, DesktopEnvironment, Error, LanguagePreferences, Platform,
     Result,
 };
-
-#[cfg(target_os = "macos")]
-#[link(name = "CoreFoundation", kind = "framework")]
-extern "system" {
-    fn CFStringGetCString(
-        the_string: *mut c_void,
-        buffer: *mut u8,
-        buffer_size: c_long,
-        encoding: u32,
-    ) -> c_uchar;
-    fn CFStringGetLength(the_string: *mut c_void) -> c_long;
-    fn CFStringGetMaximumSizeForEncoding(
-        length: c_long,
-        encoding: u32,
-    ) -> c_long;
-    fn CFRelease(cf: *const c_void);
-}
-
-#[cfg(target_os = "macos")]
-#[link(name = "SystemConfiguration", kind = "framework")]
-extern "system" {
-    fn SCDynamicStoreCopyComputerName(
-        store: *mut c_void,
-        encoding: *mut u32,
-    ) -> *mut c_void;
-}
 
 enum Name {
     User,
@@ -166,48 +125,26 @@ impl Target for Os {
     }
 
     fn devicename(self) -> Result<OsString> {
-        #[cfg(target_os = "macos")]
+        #[cfg(target_vendor = "apple")]
         {
-            fn os_from_cfstring(string: *mut c_void) -> OsString {
-                if string.is_null() {
-                    return String::new().into();
-                }
+            use std::ptr::null_mut;
 
-                unsafe {
-                    let len = CFStringGetLength(string);
-                    let capacity = CFStringGetMaximumSizeForEncoding(
-                        len,
-                        134_217_984, /* UTF8 */
-                    ) + 1;
-                    let mut out = Vec::with_capacity(capacity as usize);
-                    if CFStringGetCString(
-                        string,
-                        out.as_mut_ptr(),
-                        capacity,
-                        134_217_984, /* UTF8 */
-                    ) != 0
-                    {
-                        // Remove trailing NUL byte
-                        out.set_len(strlen::<Nul>(out.as_ptr().cast()));
-                        out.shrink_to_fit();
-                        CFRelease(string);
-                        OsString::from_vec(out)
-                    } else {
-                        CFRelease(string);
-                        String::new().into()
-                    }
-                }
-            }
+            use objc2_system_configuration::SCDynamicStore;
 
-            let out = os_from_cfstring(unsafe {
-                SCDynamicStoreCopyComputerName(null_mut(), null_mut())
-            });
+            let Some(name) =
+                (unsafe { SCDynamicStore::computer_name(None, null_mut()) })
+            else {
+                return Err(Error::missing_record());
+            };
+            // this should be able to convert whichever encoding is being used
+            // to UTF-8, so we shouldn't have to worry about invalid codepoints.
+            let name = name.to_string();
 
-            if out.as_bytes().is_empty() {
+            if name.is_empty() {
                 return Err(Error::empty_record());
             }
 
-            Ok(out)
+            Ok(name.into())
         }
 
         #[cfg(target_os = "illumos")]
@@ -303,7 +240,7 @@ impl Target for Os {
     }
 
     fn distro(self) -> Result<String> {
-        #[cfg(target_os = "macos")]
+        #[cfg(target_vendor = "apple")]
         {
             fn distro_xml(data: String) -> Result<String> {
                 let mut product_name = None;
@@ -377,7 +314,7 @@ impl Target for Os {
             }
         }
 
-        #[cfg(not(target_os = "macos"))]
+        #[cfg(not(target_vendor = "apple"))]
         {
             let program =
                 fs::read("/etc/os-release").map_err(Error::from_io)?;
@@ -413,16 +350,16 @@ impl Target for Os {
     }
 
     fn desktop_env(self) -> Option<DesktopEnvironment> {
-        #[cfg(target_os = "macos")]
-        let env = OsStr::new("Aqua");
+        #[cfg(target_vendor = "apple")]
+        let env: Cow<'static, str> = "Aqua".into();
 
-        #[cfg(not(target_os = "macos"))]
-        let env = env::var_os("XDG_SESSION_DESKTOP")
-            .or_else(|| env::var_os("DESKTOP_SESSION"))
-            .or_else(|| env::var_os("XDG_CURRENT_DESKTOP"))?;
-
-        // convert `OsStr` to `Cow`
-        let env = env.to_string_lossy();
+        #[cfg(not(target_vendor = "apple"))]
+        let env: Cow<'static, str> = std::env::var_os("XDG_SESSION_DESKTOP")
+            .or_else(|| std::env::var_os("DESKTOP_SESSION"))
+            .or_else(|| std::env::var_os("XDG_CURRENT_DESKTOP"))?
+            .into_string()
+            .unwrap_or_else(|e| e.to_string_lossy().into_owned())
+            .into();
 
         Some(if env.eq_ignore_ascii_case("AQUA") {
             DesktopEnvironment::Aqua
@@ -458,7 +395,7 @@ impl Target for Os {
             Platform::Linux
         }
 
-        #[cfg(target_os = "macos")]
+        #[cfg(target_vendor = "apple")]
         {
             Platform::Mac
         }

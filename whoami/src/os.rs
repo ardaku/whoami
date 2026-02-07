@@ -27,8 +27,8 @@
         not(any(feature = "force-stub", target_arch = "wasm32")),
         feature = "std",
         any(
+            target_vendor = "apple",
             target_os = "linux",
-            target_os = "macos",
             target_os = "dragonfly",
             target_os = "freebsd",
             target_os = "netbsd",
