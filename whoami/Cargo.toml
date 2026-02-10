@@ -34,7 +34,7 @@ default-features = false
 
 # Target-specific dependency for unix-like
 [target.'cfg(all(any(target_vendor = "apple", target_os = "linux", target_os = "dragonfly", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd", target_os = "illumos", target_os = "hurd"), not(target_arch = "wasm32")))'.dependencies.libc]
-version = "0.2.180"
+version = "0.2.181"
 optional = true
 features = []
 default-features = false
