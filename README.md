@@ -43,7 +43,7 @@ WhoAmI targets all platforms that can run Rust, including:
    - WASI (Wasite, others) **untested, testing planned later**
    - Daku (Ardaku/Quantii, others) **planned later**
  - Android **planned later**
- - iOS / watchOS / tvOS **planned later**
+ - iOS / watchOS / tvOS **untested**
  - Fuchsia **planned later**
  - GNU/Hurd **untested**
  - Others? (make a PR or open an issue)
