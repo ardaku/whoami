@@ -260,10 +260,10 @@ impl Target for Os {
                                     "ProductUserVisibleVersion" => {
                                         set_user_visible_version = true
                                     }
-                                    "ProductVersion" => {
-                                        if user_visible_version.is_none() {
-                                            set_user_visible_version = true
-                                        }
+                                    "ProductVersion"
+                                        if user_visible_version.is_none() =>
+                                    {
+                                        set_user_visible_version = true
                                     }
                                     _ => {}
                                 }
