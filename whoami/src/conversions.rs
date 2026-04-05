@@ -18,7 +18,11 @@ pub(crate) fn string_from_os(string: OsString) -> Result<String> {
 
     #[cfg(any(
         all(not(target_os = "windows"), not(target_arch = "wasm32")),
-        all(target_arch = "wasm32", target_os = "wasi"),
+        all(
+            target_arch = "wasm32",
+            target_os = "wasi",
+            not(target_env = "p2")
+        ),
     ))]
     {
         #[cfg(not(target_os = "wasi"))]
@@ -34,6 +38,7 @@ pub(crate) fn string_from_os(string: OsString) -> Result<String> {
     #[cfg(any(
         target_os = "windows",
         all(target_arch = "wasm32", not(target_os = "wasi")),
+        target_env = "p2",
     ))]
     {
         string
