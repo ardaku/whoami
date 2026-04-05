@@ -52,8 +52,11 @@ WhoAmI targets all platforms that can run Rust, including:
 
 MSRV is updated according to the [Ardaku MSRV guidelines], so it will only get
 updated on minor and major version bumps.  All 2.x releases will be maintained
-with bugfixes until the end of 2027 at minimum.
+with bugfixes until the end of 2027 at minimum.  Past MSRV bumps and future
+plans:
 
+ - WhoAmI 2.3: Rust 1.95 MSRV (bump to get `cfg_select! {}` to make FFI code
+   prettier)
  - WhoAmI 2.2: Rust 1.85 MSRV (bump to get the 2024 edition, pull in nix, etc.)
  - WhoAmI 2.1: Rust 1.75 MSRV (bump for new lang features, faster CI, pull in
    libc, etc.)
