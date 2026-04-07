@@ -22,6 +22,7 @@ jobs:
         - i686-unknown-freebsd
         - i686-unknown-linux-gnu
         - wasm32-wasip1
+        - wasm32-wasip2
         - x86_64-apple-darwin
         rf: [RUSTFLAGS=""]
         include:
@@ -48,6 +49,7 @@ jobs:
         exclude:
         - tc: 1.75.0
           cc: wasm32-wasip1
+          cc: wasm32-wasip2
     steps:
     - uses: taiki-e/checkout-action@v1
     - run: rustup set profile minimal
@@ -76,6 +78,7 @@ jobs:
         - i686-unknown-freebsd
         - i686-unknown-linux-gnu
         - wasm32-wasip1
+        - wasm32-wasip2
         - x86_64-apple-darwin
         rf: [RUSTFLAGS=""]
         include:
