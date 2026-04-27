@@ -49,10 +49,9 @@ jobs:
           rustup override set ${{ matrix.tc }}
       - name: Build for Web
         run: |
-          cargo hack build --workspace --all-targets \
-            "--target=wasm32-unknown-unknown" -p whoami_web
-          cargo hack clippy --workspace --all-targets \
-            "--target=wasm32-unknown-unknown" -p whoami_web -- -D warnings
+          cargo hack build "--target=wasm32-unknown-unknown" -p whoami_web
+          cargo hack clippy "--target=wasm32-unknown-unknown" -p whoami_web -- \
+            -D warnings
   daku:
     name: "Daku"
     runs-on: ubuntu-latest

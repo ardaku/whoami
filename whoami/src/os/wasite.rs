@@ -59,11 +59,13 @@ impl Target for Os {
 
     #[inline(always)]
     fn username(self) -> Result<OsString> {
+        #[allow(clippy::useless_conversion)]
         Ok(wasite::environment().user.username.into())
     }
 
     #[inline(always)]
     fn devicename(self) -> Result<OsString> {
+        #[allow(clippy::useless_conversion)]
         Ok(wasite::environment().host.name.into())
     }
 
