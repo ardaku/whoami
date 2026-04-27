@@ -314,10 +314,8 @@ fn distro_xml(data: String) -> Result<String> {
                         "ProductUserVisibleVersion" => {
                             set_user_visible_version = true
                         }
-                        "ProductVersion" => {
-                            if user_visible_version.is_none() {
-                                set_user_visible_version = true
-                            }
+                        "ProductVersion" if user_visible_version.is_none() => {
+                            set_user_visible_version = true
                         }
                         _ => {}
                     }
