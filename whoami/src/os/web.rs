@@ -90,14 +90,17 @@ impl Target for Os {
     }
 
     fn realname(self) -> Result<OsString> {
+        #[allow(clippy::useless_conversion)]
         Ok("Anonymous".to_string().into())
     }
 
     fn username(self) -> Result<OsString> {
+        #[allow(clippy::useless_conversion)]
         Ok("anonymous".to_string().into())
     }
 
     fn devicename(self) -> Result<OsString> {
+        #[allow(clippy::useless_conversion)]
         Ok("Browser".to_string().into())
     }
 
