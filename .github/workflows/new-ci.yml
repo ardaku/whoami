@@ -26,6 +26,9 @@ jobs:
         tc: ["1.85", "stable", "beta", "nightly"]
     steps:
       - uses: taiki-e/checkout-action@v1
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-hack
       - uses: actions/cache@v5
         with:
           path: |
