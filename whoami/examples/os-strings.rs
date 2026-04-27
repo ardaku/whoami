@@ -1,3 +1,5 @@
+#[allow(clippy::useless_conversion)]
+
 fn main() {
     println!("WhoAmI {}", env!("CARGO_PKG_VERSION"));
     println!();
