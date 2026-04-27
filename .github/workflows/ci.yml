@@ -1,6 +1,6 @@
 on: [push, pull_request]
 
-name: tests
+name: tests-legacy
 
 env:
   RUSTUP_AUTO_INSTALL: 0
