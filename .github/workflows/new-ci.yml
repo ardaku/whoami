@@ -16,7 +16,7 @@ env:
     --mutually-exclusive-features force-stub,wasi-wasite
     --mutually-exclusive-features force-stub,wasm-web
     --mutually-exclusive-features wasi-wasite,wasm-web
-  daku_env: 'RUSTFLAGS="--cfg daku"'
+  daku_cfg: "--cfg daku"
 jobs:
   daku:
     name: "Daku"
@@ -45,9 +45,9 @@ jobs:
           rustup override set ${{ matrix.tc }}
       - name: Build for Daku
         run: |
-          $daku_env cargo hack build --workspace --all-targets \
+          RUSTFLAGS=$daku_cfg cargo hack build --workspace --all-targets \
             "--target=wasm32-unknown-unknown" $cargo_hack_flags
-          $daku_env cargo hack clippy --workspace --all-targets \
+          RUSTFLAGS=$daku_cfg cargo hack clippy --workspace --all-targets \
             "--target=wasm32-unknown-unknown" $cargo_hack_flags -- -D warnings
   checks:
     name: "Checks"
