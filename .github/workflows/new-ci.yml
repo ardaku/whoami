@@ -40,7 +40,7 @@ jobs:
           rustup toolchain install ${{ matrix.tc }} \
             --profile minimal \
             -c clippy \
-            wasm32-unknown-unknown \
+            -t wasm32-unknown-unknown \
             --no-self-update
           rustup override set ${{ matrix.tc }}
       - name: Build for Daku
