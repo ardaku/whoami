@@ -1,0 +1,158 @@
+name: tests
+on:
+  push:
+    branches:
+      - 'v[0-9]+.[0-9]+'
+  pull_request:
+defaults:
+  run:
+    shell: bash
+    working-directory: .
+env:
+  RUSTUP_AUTO_INSTALL: 0
+  cargo_hack_flags: >
+    --feature-powerset
+    --mutually-exclusive-features force-stub,std
+    --mutually-exclusive-features force-stub,wasi-wasite
+    --mutually-exclusive-features force-stub,wasm-web
+    --mutually-exclusive-features wasi-wasite,wasm-web
+    --exclude whoami_web
+  daku_cfg: "--cfg daku"
+jobs:
+  web:
+    name: "Web"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tc: ["1.85", "stable", "beta", "nightly"]
+    steps:
+      - uses: taiki-e/checkout-action@v1
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-hack
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: web-${{ matrix.tc }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install Rust
+        run: |
+          rustup toolchain install ${{ matrix.tc }} \
+            --profile minimal \
+            -c clippy \
+            -t wasm32-unknown-unknown \
+            --no-self-update
+          rustup override set ${{ matrix.tc }}
+      - name: Build for Web
+        run: |
+          cargo hack build "--target=wasm32-unknown-unknown" -p whoami_web
+          cargo hack clippy "--target=wasm32-unknown-unknown" -p whoami_web -- \
+            -D warnings
+  daku:
+    name: "Daku"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tc: ["1.85", "stable", "beta", "nightly"]
+    steps:
+      - uses: taiki-e/checkout-action@v1
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-hack
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: daku-${{ matrix.tc }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install Rust
+        run: |
+          rustup toolchain install ${{ matrix.tc }} \
+            --profile minimal \
+            -c clippy \
+            -t wasm32-unknown-unknown \
+            --no-self-update
+          rustup override set ${{ matrix.tc }}
+      - name: Build for Daku
+        run: |
+          RUSTFLAGS=$daku_cfg cargo hack build --workspace --all-targets \
+            "--target=wasm32-unknown-unknown" $cargo_hack_flags
+          RUSTFLAGS=$daku_cfg cargo hack clippy --workspace --all-targets \
+            "--target=wasm32-unknown-unknown" $cargo_hack_flags -- -D warnings
+  checks:
+    name: "Checks"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        tc: ["1.85", "stable", "beta", "nightly"]
+        include:
+        - tc: stable
+        - tc: beta
+        - tc: nightly
+        - os: ubuntu-latest
+          cc: "-t \
+            aarch64-linux-android,\
+            i686-pc-windows-gnu,\
+            i686-unknown-linux-gnu,\
+            x86_64-unknown-illumos,\
+            i686-unknown-freebsd,\
+            x86_64-unknown-redox"
+        - os: macos-latest
+          cc: "-t \
+            aarch64-apple-ios,\
+            x86_64-apple-darwin"
+        - os: ubuntu-latest
+          cc: "-t \
+            wasm32-wasip1,\
+            wasm32-wasip2,\
+            wasm32-unknown-unknown"
+    steps:
+      - uses: taiki-e/checkout-action@v1
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-hack
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-${{ matrix.tc }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install Rust
+        run: |
+          rustup toolchain install ${{ matrix.tc }} \
+            --profile minimal \
+            -c clippy,rustfmt \
+            ${{ matrix.cc }} \
+            --no-self-update
+          rustup override set ${{ matrix.tc }}
+      - name: Check code formatting
+        run: cargo fmt --check
+      - name: Checking clippy for warnings
+        run: |
+          cargo hack build --workspace --all-targets $cargo_hack_flags
+          cargo hack clippy --workspace --all-targets $cargo_hack_flags -- \
+            -D warnings
+      - if: ${{ matrix.cc }}
+        name: Checking cross-compilation works
+        run: |
+          for target in $(echo ${{ matrix.cc }} | sed 's/-t //g' | sed 's/,/ /g')
+          do
+            cargo hack build --workspace "--target=$target" $cargo_hack_flags
+            cargo hack clippy --workspace "--target=$target" $cargo_hack_flags \
+              -- -D warnings
+          done
+      - name: Check doc generation succeeds
+        run: cargo doc --all-features --no-deps
+      - name: Running tests
+        run: cargo hack test --workspace $cargo_hack_flags

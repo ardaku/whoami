@@ -52,11 +52,7 @@
 // Web WASM
 #[cfg_attr(
     all(
-        not(any(
-            feature = "force-stub",
-            daku,
-            all(target_os = "wasi", feature = "wasi-wasite")
-        )),
+        not(any(feature = "force-stub", daku, target_os = "wasi")),
         target_arch = "wasm32",
         feature = "wasm-web",
     ),
