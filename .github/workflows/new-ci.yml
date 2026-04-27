@@ -16,8 +16,43 @@ env:
     --mutually-exclusive-features force-stub,wasi-wasite
     --mutually-exclusive-features force-stub,wasm-web
     --mutually-exclusive-features wasi-wasite,wasm-web
+    --exclude whoami_web
   daku_cfg: "--cfg daku"
 jobs:
+  web:
+    name: "Web"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tc: ["1.85", "stable", "beta", "nightly"]
+    steps:
+      - uses: taiki-e/checkout-action@v1
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-hack
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: web-${{ matrix.tc }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install Rust
+        run: |
+          rustup toolchain install ${{ matrix.tc }} \
+            --profile minimal \
+            -c clippy \
+            -t wasm32-unknown-unknown \
+            --no-self-update
+          rustup override set ${{ matrix.tc }}
+      - name: Build for Web
+        run: |
+          cargo hack build --workspace --all-targets \
+            "--target=wasm32-unknown-unknown" -p whoami_web
+          cargo hack clippy --workspace --all-targets \
+            "--target=wasm32-unknown-unknown" -p whoami_web -- -D warnings
   daku:
     name: "Daku"
     runs-on: ubuntu-latest
