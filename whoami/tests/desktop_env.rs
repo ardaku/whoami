@@ -1,4 +1,4 @@
-#![cfg(all(unix, not(target_vendor = "apple")))]
+#![cfg(all(unix, not(target_vendor = "apple"), feature = "std"))]
 
 use whoami::DesktopEnvironment;
 
