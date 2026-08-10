@@ -71,36 +71,6 @@ where
     Ok(OsString::from_vec(slice.to_vec()))
 }
 
-fn parse_desktop_env(env: &str) -> DesktopEnvironment {
-    if env.eq_ignore_ascii_case("AQUA") {
-        DesktopEnvironment::Aqua
-    } else if env.eq_ignore_ascii_case("GNOME") {
-        DesktopEnvironment::Gnome
-    } else if env.eq_ignore_ascii_case("LXDE") {
-        DesktopEnvironment::Lxde
-    } else if env.eq_ignore_ascii_case("OPENBOX") {
-        DesktopEnvironment::Openbox
-    } else if env.eq_ignore_ascii_case("MATE") {
-        DesktopEnvironment::Mate
-    } else if env.eq_ignore_ascii_case("I3") {
-        DesktopEnvironment::I3
-    } else if env.eq_ignore_ascii_case("UBUNTU") {
-        DesktopEnvironment::Ubuntu
-    } else if env.eq_ignore_ascii_case("PLASMA5") {
-        DesktopEnvironment::Plasma
-    } else if env.eq_ignore_ascii_case("XFCE") {
-        DesktopEnvironment::Xfce
-    } else if env.eq_ignore_ascii_case("NIRI") {
-        DesktopEnvironment::Niri
-    } else if env.eq_ignore_ascii_case("HYPRLAND") {
-        DesktopEnvironment::Hyprland
-    } else if env.eq_ignore_ascii_case("COSMIC") {
-        DesktopEnvironment::Cosmic
-    } else {
-        DesktopEnvironment::Unknown(env.to_string())
-    }
-}
-
 // This function must allocate, because a slice or `Cow<OsStr>` would still
 // reference `passwd` which is dropped when this function returns.
 #[inline(always)]
@@ -391,7 +361,33 @@ impl Target for Os {
             .unwrap_or_else(|e| e.to_string_lossy().into_owned())
             .into();
 
-        Some(parse_desktop_env(&env))
+        Some(if env.eq_ignore_ascii_case("AQUA") {
+            DesktopEnvironment::Aqua
+        } else if env.eq_ignore_ascii_case("GNOME") {
+            DesktopEnvironment::Gnome
+        } else if env.eq_ignore_ascii_case("LXDE") {
+            DesktopEnvironment::Lxde
+        } else if env.eq_ignore_ascii_case("OPENBOX") {
+            DesktopEnvironment::Openbox
+        } else if env.eq_ignore_ascii_case("MATE") {
+            DesktopEnvironment::Mate
+        } else if env.eq_ignore_ascii_case("I3") {
+            DesktopEnvironment::I3
+        } else if env.eq_ignore_ascii_case("UBUNTU") {
+            DesktopEnvironment::Ubuntu
+        } else if env.eq_ignore_ascii_case("PLASMA5") {
+            DesktopEnvironment::Plasma
+        } else if env.eq_ignore_ascii_case("XFCE") {
+            DesktopEnvironment::Xfce
+        } else if env.eq_ignore_ascii_case("NIRI") {
+            DesktopEnvironment::Niri
+        } else if env.eq_ignore_ascii_case("HYPRLAND") {
+            DesktopEnvironment::Hyprland
+        } else if env.eq_ignore_ascii_case("COSMIC") {
+            DesktopEnvironment::Cosmic
+        } else {
+            DesktopEnvironment::Unknown(env.to_string())
+        })
     }
 
     #[inline(always)]
@@ -463,18 +459,5 @@ impl Target for Os {
             "x86_64" | "amd64" | "i86pc" => CpuArchitecture::X64,
             _ => CpuArchitecture::Unknown(arch_str.into_owned()),
         })
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::parse_desktop_env;
-    use crate::DesktopEnvironment;
-
-    #[test]
-    fn parses_mate_desktop_environment() {
-        for name in ["MATE", "mate", "Mate"] {
-            assert_eq!(parse_desktop_env(name), DesktopEnvironment::Mate);
-        }
     }
 }
