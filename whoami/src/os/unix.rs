@@ -358,35 +358,30 @@ impl Target for Os {
             .or_else(|| std::env::var_os("DESKTOP_SESSION"))
             .or_else(|| std::env::var_os("XDG_CURRENT_DESKTOP"))?
             .into_string()
-            .unwrap_or_else(|e| e.to_string_lossy().into_owned())
-            .into();
+            .map(Cow::from)
+            .unwrap_or_else(|e| e.to_string_lossy().into_owned().into());
 
-        Some(if env.eq_ignore_ascii_case("AQUA") {
-            DesktopEnvironment::Aqua
-        } else if env.eq_ignore_ascii_case("GNOME") {
-            DesktopEnvironment::Gnome
-        } else if env.eq_ignore_ascii_case("LXDE") {
-            DesktopEnvironment::Lxde
-        } else if env.eq_ignore_ascii_case("OPENBOX") {
-            DesktopEnvironment::Openbox
-        } else if env.eq_ignore_ascii_case("MATE") {
-            DesktopEnvironment::Mate
-        } else if env.eq_ignore_ascii_case("I3") {
-            DesktopEnvironment::I3
-        } else if env.eq_ignore_ascii_case("UBUNTU") {
-            DesktopEnvironment::Ubuntu
-        } else if env.eq_ignore_ascii_case("PLASMA5") {
-            DesktopEnvironment::Plasma
-        } else if env.eq_ignore_ascii_case("XFCE") {
-            DesktopEnvironment::Xfce
-        } else if env.eq_ignore_ascii_case("NIRI") {
-            DesktopEnvironment::Niri
-        } else if env.eq_ignore_ascii_case("HYPRLAND") {
-            DesktopEnvironment::Hyprland
-        } else if env.eq_ignore_ascii_case("COSMIC") {
-            DesktopEnvironment::Cosmic
-        } else {
-            DesktopEnvironment::Unknown(env.to_string())
+        Some('env: {
+            for (value, desktop_env) in [
+                ("AQUA", DesktopEnvironment::Aqua),
+                ("GNOME", DesktopEnvironment::Gnome),
+                ("LXDE", DesktopEnvironment::Lxde),
+                ("OPENBOX", DesktopEnvironment::Openbox),
+                ("MATE", DesktopEnvironment::Mate),
+                ("I3", DesktopEnvironment::I3),
+                ("UBUNTU", DesktopEnvironment::Ubuntu),
+                ("PLASMA5", DesktopEnvironment::Plasma),
+                ("XFCE", DesktopEnvironment::Xfce),
+                ("NIRI", DesktopEnvironment::Niri),
+                ("HYPRLAND", DesktopEnvironment::Hyprland),
+                ("COSMIC", DesktopEnvironment::Cosmic),
+            ] {
+                if env.eq_ignore_ascii_case(value) {
+                    break 'env desktop_env;
+                }
+            }
+
+            DesktopEnvironment::Unknown(env.into_owned())
         })
     }
 
