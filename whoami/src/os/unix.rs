@@ -369,6 +369,8 @@ impl Target for Os {
             DesktopEnvironment::Lxde
         } else if env.eq_ignore_ascii_case("OPENBOX") {
             DesktopEnvironment::Openbox
+        } else if env.eq_ignore_ascii_case("MATE") {
+            DesktopEnvironment::Mate
         } else if env.eq_ignore_ascii_case("I3") {
             DesktopEnvironment::I3
         } else if env.eq_ignore_ascii_case("UBUNTU") {
