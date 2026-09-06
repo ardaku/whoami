@@ -5,7 +5,7 @@ use std::{
     mem::MaybeUninit,
     os::unix::ffi::OsStringExt,
     prelude::rust_2021::*,
-    slice,
+    slice, str,
 };
 
 use crate::{
@@ -33,6 +33,23 @@ impl Terminators for Nul {
 
 impl Terminators for NulOrComma {
     const CHARS: &'static [u8] = b"\0,";
+}
+
+unsafe fn errno() -> *mut libc::c_int {
+    #[cfg(target_os = "illumos")]
+    {
+        libc::___errno()
+    }
+
+    #[cfg(target_vendor = "apple")]
+    {
+        libc::___error()
+    }
+
+    #[cfg(not(any(target_vendor = "apple", target_os = "illumos")))]
+    {
+        libc::__errno_location()
+    }
 }
 
 /// Calculate length with custom terminator and maximum length
@@ -84,12 +101,12 @@ fn getpwuid(name: Name) -> Result<OsString> {
     // Get passwd `struct`.
     let passwd = unsafe {
         // Need to set errno to 0 before calling getpwuid in case of errors
-        *libc::__errno_location() = 0;
+        *errno() = 0;
 
         let ret = libc::getpwuid(libc::geteuid());
 
         if ret.is_null() {
-            return Err(if *libc::__errno_location() == 0 {
+            return Err(if *errno() == 0 {
                 Error::missing_record()
             } else {
                 Error::from_io(io::Error::last_os_error())
