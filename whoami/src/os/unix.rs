@@ -2,6 +2,7 @@ use std::{
     borrow::Cow,
     ffi::{CStr, OsString},
     fs, io, mem,
+    mem::MaybeUninit,
     os::unix::ffi::OsStringExt,
     prelude::rust_2021::*,
     slice,
@@ -34,21 +35,23 @@ impl Terminators for NulOrComma {
     const CHARS: &'static [u8] = b"\0,";
 }
 
-unsafe fn strlen<T>(mut cs: *const u8) -> usize
+/// Calculate length with custom terminator and maximum length
+unsafe fn strlen<T>(mut cs: *const u8, max: usize) -> usize
 where
     T: Terminators,
 {
-    let mut len = 0;
+    for len in 0..max {
+        if T::CHARS.contains(&*cs) {
+            return len;
+        }
 
-    while !T::CHARS.contains(&*cs) {
-        len += 1;
         cs = cs.offset(1);
     }
 
-    len
+    max
 }
 
-fn os_from_cstring<T>(string: *const u8) -> Result<OsString>
+fn os_from_cstring<T>(string: *const libc::c_char) -> Result<OsString>
 where
     T: Terminators,
 {
@@ -56,9 +59,14 @@ where
         return Err(Error::null_record());
     }
 
+    // Cast `c_char` to `u8`
+    let string = string.cast();
+
     // Get a byte slice of the c string.
     let slice = unsafe {
-        let length = strlen::<T>(string);
+        // We don't know how big, should be more than enough (according to man
+        // pages)
+        let length = strlen::<T>(string, 16_384);
 
         if length == 0 {
             return Err(Error::empty_record());
@@ -71,43 +79,31 @@ where
     Ok(OsString::from_vec(slice.to_vec()))
 }
 
-// This function must allocate, because a slice or `Cow<OsStr>` would still
-// reference `passwd` which is dropped when this function returns.
 #[inline(always)]
 fn getpwuid(name: Name) -> Result<OsString> {
-    const BUF_SIZE: usize = 16_384; // size from the man page
-    let mut buffer = mem::MaybeUninit::<[u8; BUF_SIZE]>::uninit();
-    let mut passwd = mem::MaybeUninit::<libc::passwd>::uninit();
-
     // Get passwd `struct`.
     let passwd = unsafe {
-        let mut _passwd = mem::MaybeUninit::<*mut libc::passwd>::uninit();
-        let ret = libc::getpwuid_r(
-            libc::geteuid(),
-            passwd.as_mut_ptr(),
-            buffer.as_mut_ptr().cast(),
-            BUF_SIZE,
-            _passwd.as_mut_ptr(),
-        );
+        // Need to set errno to 0 before calling getpwuid in case of errors
+        *libc::__errno_location() = 0;
 
-        if ret != 0 {
-            return Err(Error::from_io(io::Error::last_os_error()));
+        let ret = libc::getpwuid(libc::geteuid());
+
+        if ret.is_null() {
+            return Err(if *libc::__errno_location() == 0 {
+                Error::missing_record()
+            } else {
+                Error::from_io(io::Error::last_os_error())
+            });
         }
 
-        let _passwd = _passwd.assume_init();
-
-        if _passwd.is_null() {
-            return Err(Error::null_record());
-        }
-
-        passwd.assume_init()
+        ret
     };
 
     // Extract names.
     if let Name::Real = name {
-        os_from_cstring::<NulOrComma>(passwd.pw_gecos.cast())
+        os_from_cstring::<NulOrComma>(unsafe { (*passwd).pw_gecos })
     } else {
-        os_from_cstring::<Nul>(passwd.pw_name.cast())
+        os_from_cstring::<Nul>(unsafe { (*passwd).pw_name })
     }
 }
 
@@ -224,19 +220,30 @@ impl Target for Os {
     }
 
     fn hostname(self) -> Result<String> {
-        // Maximum hostname length = 255, plus a NULL byte.
-        let mut string = Vec::<u8>::with_capacity(256);
+        // Maximum hostname length = 255, plus a optional / potential NULL byte.
+        //
+        // The byte at index 255 is irrelevant to whoami; Max out at the length
+        // of 255 (index 254) if no null is found.
+        let mut string = MaybeUninit::<[u8; 256]>::uninit();
 
-        unsafe {
+        // Read the hostname and get a slice into the initialized part of the
+        // string.
+        let string = unsafe {
             if libc::gethostname(string.as_mut_ptr().cast(), 255) == -1 {
                 return Err(Error::from_io(io::Error::last_os_error()));
             }
 
-            string.set_len(strlen::<Nul>(string.as_ptr().cast()));
+            slice::from_raw_parts(
+                string.as_ptr().cast::<u8>(),
+                strlen::<Nul>(string.as_ptr().cast(), 255),
+            )
         };
 
-        String::from_utf8(string)
-            .map_err(|_| Error::with_invalid_data("Hostname not valid UTF-8"))
+        // Only allocate once its known the hostname is valid, to the specific
+        // known length
+        Ok(str::from_utf8(string)
+            .map_err(|_| Error::with_invalid_data("Hostname not valid UTF-8"))?
+            .to_owned())
     }
 
     fn distro(self) -> Result<String> {
