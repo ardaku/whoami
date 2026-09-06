@@ -36,7 +36,12 @@ impl Terminators for NulOrComma {
 }
 
 unsafe fn errno() -> *mut libc::c_int {
-    #[cfg(target_os = "illumos")]
+    #[cfg(any(
+        target_os = "illumos",
+        target_os = "freebsd",
+        target_os = "netbsd",
+        target_os = "openbsd",
+    ))]
     {
         libc::___errno()
     }
@@ -46,7 +51,13 @@ unsafe fn errno() -> *mut libc::c_int {
         libc::__error()
     }
 
-    #[cfg(not(any(target_vendor = "apple", target_os = "illumos")))]
+    #[cfg(not(any(
+        target_vendor = "apple",
+        target_os = "illumos",
+        target_os = "freebsd",
+        target_os = "netbsd",
+        target_os = "openbsd"
+    )))]
     {
         libc::__errno_location()
     }
