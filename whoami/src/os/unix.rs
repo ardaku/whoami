@@ -43,7 +43,7 @@ unsafe fn errno() -> *mut libc::c_int {
 
     #[cfg(target_vendor = "apple")]
     {
-        libc::___error()
+        libc::__error()
     }
 
     #[cfg(not(any(target_vendor = "apple", target_os = "illumos")))]
