@@ -49,6 +49,7 @@
 //!
 //! [`OsString`]: std::ffi::OsString
 
+#![allow(deprecated)]
 #![warn(
     anonymous_parameters,
     missing_copy_implementations,
@@ -80,7 +81,6 @@ mod os;
 mod platform;
 mod result;
 
-#[allow(deprecated)]
 pub use self::{
     api::{
         arch, desktop_env, devicename, devicename_os, distro, distro_os,
