@@ -232,7 +232,7 @@ fn os_from_cfstring(string: *mut c_void) -> OsString {
         ) != 0
         {
             // Remove trailing NUL byte
-            out.set_len(strlen(out.as_ptr().cast(), max_len));
+            out.set_len(strlen::<Nul>(out.as_ptr().cast(), max_len));
             out.shrink_to_fit();
             CFRelease(string);
             OsString::from_vec(out)
