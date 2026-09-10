@@ -18,7 +18,6 @@ use std::{
         raw::{c_char, c_int, c_void},
         unix::ffi::OsStringExt,
     },
-    prelude::rust_2021::*,
     slice, str,
 };
 #[cfg(target_os = "macos")]
