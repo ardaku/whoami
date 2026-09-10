@@ -11,15 +11,17 @@ use std::convert::TryInto;
 ))]
 use std::env;
 use std::{
-    ffi::{c_void, CStr, OsString},
+    ffi::{CStr, OsString},
     fs,
     io::{Error, ErrorKind},
     mem,
+    mem::MaybeUninit,
     os::{
-        raw::{c_char, c_int},
+        raw::{c_char, c_int, c_void},
         unix::ffi::OsStringExt,
     },
-    slice,
+    prelude::rust_2021::*,
+    slice, str,
 };
 #[cfg(target_os = "macos")]
 use std::{
@@ -38,13 +40,13 @@ use crate::{
 #[cfg(any(target_os = "linux", target_os = "hurd"))]
 #[repr(C)]
 struct PassWd {
-    pw_name: *const c_void,
-    pw_passwd: *const c_void,
+    pw_name: *const c_char,
+    pw_passwd: *const c_char,
     pw_uid: u32,
     pw_gid: u32,
-    pw_gecos: *const c_void,
-    pw_dir: *const c_void,
-    pw_shell: *const c_void,
+    pw_gecos: *const c_char,
+    pw_dir: *const c_char,
+    pw_shell: *const c_char,
 }
 
 #[cfg(any(
@@ -56,15 +58,15 @@ struct PassWd {
 ))]
 #[repr(C)]
 struct PassWd {
-    pw_name: *const c_void,
-    pw_passwd: *const c_void,
+    pw_name: *const c_char,
+    pw_passwd: *const c_char,
     pw_uid: u32,
     pw_gid: u32,
     pw_change: isize,
-    pw_class: *const c_void,
-    pw_gecos: *const c_void,
-    pw_dir: *const c_void,
-    pw_shell: *const c_void,
+    pw_class: *const c_char,
+    pw_gecos: *const c_char,
+    pw_dir: *const c_char,
+    pw_shell: *const c_char,
     pw_expire: isize,
     pw_fields: i32,
 }
@@ -72,44 +74,15 @@ struct PassWd {
 #[cfg(target_os = "illumos")]
 #[repr(C)]
 struct PassWd {
-    pw_name: *const c_void,
-    pw_passwd: *const c_void,
+    pw_name: *const c_char,
+    pw_passwd: *const c_char,
     pw_uid: u32,
     pw_gid: u32,
-    pw_age: *const c_void,
-    pw_comment: *const c_void,
-    pw_gecos: *const c_void,
-    pw_dir: *const c_void,
-    pw_shell: *const c_void,
-}
-
-#[cfg(target_os = "illumos")]
-extern "system" {
-    fn getpwuid_r(
-        uid: u32,
-        pwd: *mut PassWd,
-        buf: *mut c_void,
-        buflen: c_int,
-    ) -> *mut PassWd;
-}
-
-#[cfg(any(
-    target_os = "linux",
-    target_os = "macos",
-    target_os = "dragonfly",
-    target_os = "freebsd",
-    target_os = "netbsd",
-    target_os = "openbsd",
-    target_os = "hurd",
-))]
-extern "system" {
-    fn getpwuid_r(
-        uid: u32,
-        pwd: *mut PassWd,
-        buf: *mut c_void,
-        buflen: usize,
-        result: *mut *mut PassWd,
-    ) -> i32;
+    pw_age: *const c_char,
+    pw_comment: *const c_char,
+    pw_gecos: *const c_char,
+    pw_dir: *const c_char,
+    pw_shell: *const c_char,
 }
 
 extern "system" {
@@ -148,54 +121,93 @@ enum Name {
     Real,
 }
 
-unsafe fn strlen(cs: *const c_void) -> usize {
-    let mut len = 0;
-    let mut cs: *const u8 = cs.cast();
-    while *cs != 0 {
-        len += 1;
-        cs = cs.offset(1);
-    }
-    len
+trait Terminators {
+    const CHARS: &'static [u8];
 }
 
-unsafe fn strlen_gecos(cs: *const c_void) -> usize {
-    let mut len = 0;
-    let mut cs: *const u8 = cs.cast();
-    while *cs != 0 && *cs != b',' {
-        len += 1;
-        cs = cs.offset(1);
-    }
-    len
+struct Nul;
+
+struct NulOrComma;
+
+impl Terminators for Nul {
+    const CHARS: &'static [u8] = b"\0";
 }
 
-fn os_from_cstring_gecos(string: *const c_void) -> Result<OsString> {
-    if string.is_null() {
-        return Err(super::err_null_record());
-    }
+impl Terminators for NulOrComma {
+    const CHARS: &'static [u8] = b"\0,";
+}
 
-    // Get a byte slice of the c string.
-    let slice = unsafe {
-        let length = strlen_gecos(string);
-
-        if length == 0 {
-            return Err(super::err_empty_record());
+unsafe fn errno() -> *mut c_int {
+    #[cfg(any(
+        target_os = "illumos",
+        target_os = "netbsd",
+        target_os = "openbsd",
+    ))]
+    {
+        extern "system" {
+            fn ___errno() -> *mut c_int;
         }
 
-        slice::from_raw_parts(string.cast(), length)
-    };
+        ___errno()
+    }
 
-    // Turn byte slice into Rust String.
-    Ok(OsString::from_vec(slice.to_vec()))
+    #[cfg(any(target_vendor = "apple", target_os = "freebsd"))]
+    {
+        extern "system" {
+            fn __error() -> *mut c_int;
+        }
+
+        __error()
+    }
+
+    #[cfg(not(any(
+        target_vendor = "apple",
+        target_os = "illumos",
+        target_os = "freebsd",
+        target_os = "netbsd",
+        target_os = "openbsd"
+    )))]
+    {
+        extern "system" {
+            fn __errno_location() -> *mut c_int;
+        }
+
+        __errno_location()
+    }
 }
 
-fn os_from_cstring(string: *const c_void) -> Result<OsString> {
+/// Calculate length with custom terminator and maximum length
+unsafe fn strlen<T>(mut cs: *const u8, max: usize) -> usize
+where
+    T: Terminators,
+{
+    for len in 0..max {
+        if T::CHARS.contains(&*cs) {
+            return len;
+        }
+
+        cs = cs.offset(1);
+    }
+
+    max
+}
+
+fn os_from_cstring<T>(string: *const c_char) -> Result<OsString>
+where
+    T: Terminators,
+{
     if string.is_null() {
         return Err(super::err_null_record());
     }
 
+    // Cast `c_char` to `u8`
+    let string = string.cast();
+
     // Get a byte slice of the c string.
     let slice = unsafe {
-        let length = strlen(string);
+        // We don't know how big, should be more than enough (according to man
+        // pages)
+        let length = strlen::<T>(string, 16_384);
 
         if length == 0 {
             return Err(super::err_empty_record());
@@ -218,7 +230,8 @@ fn os_from_cfstring(string: *mut c_void) -> OsString {
         let len = CFStringGetLength(string);
         let capacity =
             CFStringGetMaximumSizeForEncoding(len, 134_217_984 /* UTF8 */) + 1;
-        let mut out = Vec::with_capacity(capacity as usize);
+        let max_len = capacity as usize;
+        let mut out = Vec::with_capacity(max_len);
         if CFStringGetCString(
             string,
             out.as_mut_ptr(),
@@ -226,7 +239,8 @@ fn os_from_cfstring(string: *mut c_void) -> OsString {
             134_217_984, /* UTF8 */
         ) != 0
         {
-            out.set_len(strlen(out.as_ptr().cast())); // Remove trailing NUL byte
+            // Remove trailing NUL byte
+            out.set_len(strlen::<Nul>(out.as_ptr().cast(), max_len));
             out.shrink_to_fit();
             CFRelease(string);
             OsString::from_vec(out)
@@ -237,68 +251,35 @@ fn os_from_cfstring(string: *mut c_void) -> OsString {
     }
 }
 
-// This function must allocate, because a slice or `Cow<OsStr>` would still
-// reference `passwd` which is dropped when this function returns.
 #[inline(always)]
 fn getpwuid(name: Name) -> Result<OsString> {
-    const BUF_SIZE: usize = 16_384; // size from the man page
-    let mut buffer = mem::MaybeUninit::<[u8; BUF_SIZE]>::uninit();
-    let mut passwd = mem::MaybeUninit::<PassWd>::uninit();
+    extern "system" {
+        fn getpwuid(uid: u32) -> *mut PassWd;
+    }
 
-    // Get PassWd `struct`.
+    // Get passwd `struct`.
     let passwd = unsafe {
-        #[cfg(any(
-            target_os = "linux",
-            target_os = "macos",
-            target_os = "dragonfly",
-            target_os = "freebsd",
-            target_os = "netbsd",
-            target_os = "openbsd",
-            target_os = "hurd",
-        ))]
-        {
-            let mut _passwd = mem::MaybeUninit::<*mut PassWd>::uninit();
-            let ret = getpwuid_r(
-                geteuid(),
-                passwd.as_mut_ptr(),
-                buffer.as_mut_ptr() as *mut c_void,
-                BUF_SIZE,
-                _passwd.as_mut_ptr(),
-            );
+        // Need to set errno to 0 before calling getpwuid in case of errors
+        *errno() = 0;
 
-            if ret != 0 {
-                return Err(Error::last_os_error());
-            }
+        let ret = getpwuid(geteuid());
 
-            let _passwd = _passwd.assume_init();
-
-            if _passwd.is_null() {
-                return Err(super::err_null_record());
-            }
-            passwd.assume_init()
+        if ret.is_null() {
+            return Err(if *errno() == 0 {
+                super::err_missing_record()
+            } else {
+                Error::last_os_error()
+            });
         }
 
-        #[cfg(target_os = "illumos")]
-        {
-            let ret = getpwuid_r(
-                geteuid(),
-                passwd.as_mut_ptr(),
-                buffer.as_mut_ptr() as *mut c_void,
-                BUF_SIZE.try_into().unwrap_or(c_int::MAX),
-            );
-
-            if ret.is_null() {
-                return Err(Error::last_os_error());
-            }
-            passwd.assume_init()
-        }
+        ret
     };
 
     // Extract names.
     if let Name::Real = name {
-        os_from_cstring_gecos(passwd.pw_gecos)
+        os_from_cstring::<NulOrComma>(unsafe { (*passwd).pw_gecos })
     } else {
-        os_from_cstring(passwd.pw_name)
+        os_from_cstring::<Nul>(unsafe { (*passwd).pw_name })
     }
 }
 
@@ -559,20 +540,32 @@ impl Target for Os {
     }
 
     fn hostname(self) -> Result<String> {
-        // Maximum hostname length = 255, plus a NULL byte.
-        let mut string = Vec::<u8>::with_capacity(256);
+        // Maximum hostname length = 255, plus a optional / potential NULL byte.
+        //
+        // The byte at index 255 is irrelevant to whoami; Max out at the length
+        // of 255 (index 254) if no null is found.
+        let mut string = MaybeUninit::<[u8; 256]>::uninit();
 
-        unsafe {
+        // Read the hostname and get a slice into the initialized part of the
+        // string.
+        let string = unsafe {
             if gethostname(string.as_mut_ptr().cast(), 255) == -1 {
                 return Err(Error::last_os_error());
             }
 
-            string.set_len(strlen(string.as_ptr().cast()));
+            slice::from_raw_parts(
+                string.as_ptr().cast::<u8>(),
+                strlen::<Nul>(string.as_ptr().cast(), 255),
+            )
         };
 
-        String::from_utf8(string).map_err(|_| {
-            Error::new(ErrorKind::InvalidData, "Hostname not valid UTF-8")
-        })
+        // Only allocate once its known the hostname is valid, to the specific
+        // known length
+        Ok(str::from_utf8(string)
+            .map_err(|_| {
+                Error::new(ErrorKind::InvalidData, "Hostname not valid UTF-8")
+            })?
+            .to_owned())
     }
 
     fn distro(self) -> Result<String> {
