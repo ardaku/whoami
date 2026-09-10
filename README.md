@@ -52,17 +52,17 @@ WhoAmI targets all platforms that can run Rust, including:
 
 MSRV is updated according to the [Ardaku MSRV guidelines], so it will only get
 updated on minor and major version bumps.  All 2.x releases will be maintained
-with bugfixes until the end of 2027 at minimum.  Past MSRV bumps and future
-plans:
+with bugfixes until the end of 2027 at minimum, AND at least 1.5 years after the
+minimum supported Rust version was released (whichever is later).  Past MSRV
+bumps and future plans:
 
  - WhoAmI 2.3: Rust 1.95 MSRV (bump to get `cfg_select! {}` to make FFI code
    prettier)
  - WhoAmI 2.2: Rust 1.85 MSRV (bump to get the 2024 edition, pull in nix, etc.)
  - WhoAmI 2.1: Rust 1.75 MSRV (bump for new lang features, faster CI, pull in
-   libc, etc.)
- - WhoAmI 2.0: Rust 1.65 MSRV (support based on original 2.0 plan)
- - WhoAmI 1.x: Rust 1.40 MSRV (old MSRV policy, maintained until end of 2025 at
-   minimum)
+   libc, etc., maintained until the end of 2027)
+ - WhoAmI 2.0: Rust 1.65 MSRV (promised MSRV, maintained until the end of 2027)
+ - WhoAmI 1.x: Rust 1.40 MSRV (old MSRV policy, maintained until end of 2026)
 
 Target-Specific MSRVs:
 
@@ -98,10 +98,26 @@ Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
 licensed as described above, without any additional terms or conditions.
 
+## AI / LLM (Non-)Usage
+
+All of my projects are developed without using AI/LLM tooling.  LLM usage for
+contributions to any of my projects is strictly disallowed, with the exception
+of LLM tooling trained on exclusively CC0, Unlicense, or equivalently-licensed
+code.  Additionally, any LLM tooling used for contributions must not claim or
+require claiming its own authorship according to its usage policy.
+
+By opening a PR on any of my repositories, you assert that the work (excluding
+any test data) is either human generated, computer generated trained on works in
+the public domain (with generated works under your sole ownership to license),
+or a combination of the two.  LLM bug reports are welcome as issues, as long as
+there is a disclaimer that it was discovered with an LLM.  For comments on PRs
+and issues, LLM usage is strictly disallowed, including quoting or citing an
+LLM's opinion or suggestion.
+
 ## Help
 
 If you want help using or contributing to this library, feel free to send me an
-email at <aldaronlau@gmail.com>.
+email at <aldaronlau+oss@gmail.com>.
 
 [documentation]: https://docs.rs/whoami
 [whome]: https://crates.io/crates/whome
