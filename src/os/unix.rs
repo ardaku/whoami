@@ -300,12 +300,10 @@ fn distro_xml(data: String) -> Result<String> {
                     match line["<key>".len()..].trim_end_matches("</key>") {
                         "ProductName" => set_product_name = true,
                         "ProductUserVisibleVersion" => {
-                            set_user_visible_version = true
+                            set_user_visible_version = true;
                         }
-                        "ProductVersion" => {
-                            if user_visible_version.is_none() {
-                                set_user_visible_version = true
-                            }
+                        "ProductVersion" if user_visible_version.is_none() => {
+                            set_user_visible_version = true;
                         }
                         _ => {}
                     }
