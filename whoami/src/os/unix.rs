@@ -222,7 +222,8 @@ fn os_from_cfstring(string: *mut c_void) -> OsString {
         let len = CFStringGetLength(string);
         let capacity =
             CFStringGetMaximumSizeForEncoding(len, 134_217_984 /* UTF8 */) + 1;
-        let mut out = Vec::with_capacity(capacity as usize);
+        let max_len = capacity as usize;
+        let mut out = Vec::with_capacity(max_len);
         if CFStringGetCString(
             string,
             out.as_mut_ptr(),
@@ -231,7 +232,7 @@ fn os_from_cfstring(string: *mut c_void) -> OsString {
         ) != 0
         {
             // Remove trailing NUL byte
-            out.set_len(strlen(out.as_ptr().cast(), capacity));
+            out.set_len(strlen(out.as_ptr().cast(), max_len));
             out.shrink_to_fit();
             CFRelease(string);
             OsString::from_vec(out)
