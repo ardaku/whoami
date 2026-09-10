@@ -11,8 +11,8 @@ Preëxisting issues are not required for opening a PR.  Open a PR for each chang
 you wish to submit.  All PRs will be merged with the squash-and-merge method (so
 individual commits won't show up in the history).  Try to keep PRs as small as
 possible given the type of change.  Don't hesitate to reach out to me at
-<aldaronlau@gmail.com> if you don't feel that you can contribute, or you don't
-feel welcomed, and I'll try my best to make it better.
+<aldaronlau+oss@gmail.com> if you don't feel that you can contribute, or you
+don't feel welcomed, and I'll try my best to make it better.
 
 If you're going to work on a PR, it would be preferred to let me know ahead of
 time (unless it's a quick fix), and open a draft PR if it's a large one.  Then
@@ -23,7 +23,33 @@ development going.
 
 Happy coding!
 
+# Code of Conduct
+
+Please follow the
+[code of conduct](https://github.com/ardaku/whoami/blob/v2/CODE_OF_CONDUCT.md)
+
+## AI / LLM (Non-)Usage
+
+All of my projects are developed without using AI/LLM tooling.  LLM usage for
+contributions to any of my projects is strictly disallowed, with the exception
+of LLM tooling trained on exclusively CC0, Unlicense, or equivalently-licensed
+code.  Additionally, any LLM tooling used for contributions must not claim or
+require claiming its own authorship according to its usage policy.
+
+By opening a PR on any of my repositories, you assert that the work (excluding
+any test data) is either human generated, computer generated trained on works in
+the public domain (with generated works under your sole ownership to license),
+or a combination of the two.  LLM bug reports are welcome as issues, as long as
+there is a disclaimer that it was discovered with an LLM.  For comments on PRs
+and issues, LLM usage is strictly disallowed, including quoting or citing an
+LLM's opinion or suggestion.
+
+## Security Issues
+
+If you wish to keep a security vulnerability private before it is patched, you
+can email me at <aldaronlau+oss@gmail.com>
+
 [open an issue]: https://github.com/ardaku/whoami/issues
-[send me an email]: mailto:aldaronlau@gmail.com
+[send me an email]: mailto:aldaronlau+oss@gmail.com
 [open a PR]: https://github.com/ardaku/whoami/pulls
 [Post to GitHub Discussions]: https://github.com/ardaku/whoami/discussions
