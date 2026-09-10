@@ -230,7 +230,8 @@ fn os_from_cfstring(string: *mut c_void) -> OsString {
             134_217_984, /* UTF8 */
         ) != 0
         {
-            out.set_len(strlen(out.as_ptr().cast())); // Remove trailing NUL byte
+            // Remove trailing NUL byte
+            out.set_len(strlen(out.as_ptr().cast(), capacity));
             out.shrink_to_fit();
             CFRelease(string);
             OsString::from_vec(out)
