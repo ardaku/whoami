@@ -1,6 +1,7 @@
 [package]
 name = "whoami_web"
 edition = "2021"
+rust-version = "1.75"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -13,11 +14,11 @@ optional = true
 # wasm-bindgen lets us export our main function to the javascript that runs the
 # web assembly module.
 [dependencies.wasm-bindgen]
-version = "0.2.100"
+version = "0.2.117"
 
 # The `web-sys` crate lets us log in the web console.
 [dependencies.web-sys]
-version = "0.3.77"
+version = "0.3.94"
 features = ["console"]
 
 # `whoami` - the crate we're testing!
