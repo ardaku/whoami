@@ -34,7 +34,7 @@ default-features = false
 
 # Target-specific dependency for unix-like
 [target.'cfg(all(any(target_vendor = "apple", target_os = "linux", target_os = "dragonfly", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd", target_os = "illumos", target_os = "hurd"), not(target_arch = "wasm32")))'.dependencies.libc]
-version = "0.2.186"
+version = "0.2.190"
 optional = true
 features = []
 default-features = false
@@ -55,7 +55,7 @@ default-features = false
 
 # Target-specific dependency for web browser
 [target.'cfg(all(target_arch = "wasm32", not(target_os = "wasi"), not(daku)))'.dependencies.web-sys]
-version = "0.3.85"
+version = "0.3.106"
 optional = true
 features = ["Navigator", "Document", "Window", "Location"]
 default-features = false
