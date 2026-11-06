@@ -53,9 +53,9 @@ checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
 
 [[package]]
 name = "libredox"
-version = "0.1.20"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "28d0a00925a9f930d679b6789b721e3a7f9ed110f41b86d2497caa780c3a070a"
+checksum = "482919959e69f0d67493e9220edb433ffc42ae98e59ceba4ed58697eb49b9bf8"
 dependencies = [
  "libc",
 ]
